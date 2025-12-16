@@ -78,42 +78,42 @@ export default function Home() {
       headline: 'Major shift in federal housing policy',
       summary: 'Government announces new affordability measures targeting first-time buyers. Implementation timeline unclear.',
       whyMatters: 'If you\'re under 35, this could affect your mortgage approval process by spring.',
-      image: 'https://images.unsplash.com/photo-1502673530728-f79b4cab31b1?auto=format&fit=crop&w=800&q=80'
+      image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80'
     },
     {
       category: 'LOCAL',
       headline: 'Toronto Film Festival announces surprise opener',
       summary: 'World premiere confirmed for September. Director attached, cast TBA.',
       whyMatters: 'Downtown streets close Sept 7–10. Plan your commute now.',
-      image: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=800&q=80'
+      image: 'https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?auto=format&fit=crop&w=800&q=80'
     },
     {
       category: 'AI TOOL',
       headline: 'Claude 4 now writes production code',
       summary: 'Anthropic releases model with autonomous debugging. Early access rolling out.',
       whyMatters: 'Could cut dev time 30%. Beta waitlist open until Friday.',
-      image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80'
+      image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80'
     },
     {
       category: 'LEARN',
       headline: 'Word of the day: Zeitgeist',
       summary: 'The defining spirit or mood of a particular period, especially as shown in ideas and beliefs.',
       whyMatters: 'Shows up in business writing 3x more than casual conversation.',
-      image: 'https://images.unsplash.com/photo-1453738773917-9c3eff1db985?auto=format&fit=crop&w=800&q=80'
+      image: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=800&q=80'
     },
     {
       category: 'EVENTS',
       headline: 'Free startup meetup at MaRS this Thursday',
       summary: '6pm, networking + panel on product-market fit. RSVP required.',
       whyMatters: 'Last event had 3 hiring founders. Bring business cards.',
-      image: 'https://images.unsplash.com/photo-1515165562835-c4c1bfa1f61b?auto=format&fit=crop&w=800&q=80'
+      image: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=800&q=80'
     },
     {
       category: 'GOALS',
       headline: 'You\'re 2 days from your weekly streak',
       summary: 'Current: 5 days reading. Target: 7 days. Almost there.',
       whyMatters: 'Hit 7 and unlock your first badge. Keep going.',
-      image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80'
+      image: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&w=800&q=80'
     }
   ]
 
@@ -132,7 +132,7 @@ export default function Home() {
       <nav className="nav">
         <div className="nav-inner">
           <div className="nav-logo">
-            <Image src="/logo.svg" alt="Relevant" width={40} height={40} style={{ display: 'block' }} />
+            <Image src="/logo-black.svg" alt="Relevant" width={40} height={40} style={{ display: 'block' }} />
           </div>
           <div className="nav-links">
             <a href="#pricing" className="nav-link">Pricing</a>
@@ -153,6 +153,9 @@ export default function Home() {
         {/* Hero */}
         <section className="hero">
           <div className="container">
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '32px' }}>
+              <Image src="/logo-black.svg" alt="Relevant" width={80} height={80} />
+            </div>
             <h1>Stay Relevant</h1>
             <div style={{ maxWidth: '680px', margin: '0 auto' }}>
               <p className="hero-tagline" style={{ marginBottom: '12px' }}>
@@ -213,28 +216,30 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Feed Cards Grid */}
-            <div className="feed-grid">
-              {feedCards.map((card, i) => (
-                <div key={i} className="feed-card">
-                  <div className="feed-image-wrapper">
-                    <Image 
-                      src={card.image} 
-                      alt={card.headline} 
-                      fill 
-                      sizes="(max-width: 768px) 100vw, 300px"
-                      className="feed-image"
-                    />
+            {/* Feed Cards - Horizontal Scroll */}
+            <div className="feed-scroll-container">
+              <div className="feed-scroll">
+                {feedCards.map((card, i) => (
+                  <div key={i} className="feed-card">
+                    <div className="feed-image-wrapper">
+                      <Image 
+                        src={card.image} 
+                        alt={card.headline} 
+                        fill 
+                        sizes="320px"
+                        className="feed-image"
+                      />
+                    </div>
+                    <div className="feed-category">{card.category}</div>
+                    <h3 className="feed-headline">{card.headline}</h3>
+                    <p className="feed-summary">{card.summary}</p>
+                    <div className="feed-why-matters">
+                      <div className="feed-why-label">WHY IT MATTERS</div>
+                      <p className="feed-why-text">{card.whyMatters}</p>
+                    </div>
                   </div>
-                  <div className="feed-category">{card.category}</div>
-                  <h3 className="feed-headline">{card.headline}</h3>
-                  <p className="feed-summary">{card.summary}</p>
-                  <div className="feed-why-matters">
-                    <div className="feed-why-label">WHY IT MATTERS</div>
-                    <p className="feed-why-text">{card.whyMatters}</p>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </section>
