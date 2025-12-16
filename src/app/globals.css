@@ -163,7 +163,7 @@ a:focus-visible {
 
 /* Section */
 .section {
-  padding: 100px 24px;
+  padding: 50px 24px;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 
@@ -171,7 +171,7 @@ a:focus-visible {
   font-size: clamp(32px, 5vw, 48px);
   font-weight: 600;
   letter-spacing: -0.03em;
-  margin-bottom: 64px;
+  margin-bottom: 48px;
   text-align: center;
 }
 
@@ -198,6 +198,12 @@ a:focus-visible {
   font-size: 16px;
   font-weight: 400;
   transition: all 0.2s ease;
+}
+
+.textarea {
+  min-height: 160px;
+  resize: vertical;
+  line-height: 1.6;
 }
 
 .input::placeholder {
@@ -329,6 +335,20 @@ a:focus-visible {
   transition: all 0.2s ease;
   display: flex;
   flex-direction: column;
+}
+
+.feed-image-wrapper {
+  position: relative;
+  width: 100%;
+  padding-top: 60%;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.feed-image {
+  object-fit: cover;
 }
 
 .feed-card:hover {
@@ -480,7 +500,74 @@ a:focus-visible {
   line-height: 1.6;
 }
 
+/* Contact */
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 32px;
+  align-items: stretch;
+}
+
+.contact-card {
+  padding: 32px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-height: 100%;
+}
+
+.contact-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  font-size: 15px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.contact-list {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 15px;
+  opacity: 0.7;
+}
+
+.contact-form {
+  padding: 32px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.contact-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.contact-form button {
+  align-self: flex-start;
+}
+
+.contact-form .message {
+  text-align: left;
+  margin-top: 8px;
+}
+
 @media (max-width: 768px) {
+  .section {
+    padding: 60px 20px;
+  }
+
   .feed-card {
     padding: 20px;
   }

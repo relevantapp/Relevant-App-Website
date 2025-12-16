@@ -7,6 +7,9 @@ export default function Home() {
   const [email, setEmail] = useState('')
   const [waitlistStatus, setWaitlistStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [waitlistMessage, setWaitlistMessage] = useState('')
+  const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' })
+  const [contactStatus, setContactStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [contactFeedback, setContactFeedback] = useState('')
 
   const handleWaitlist = async (e: FormEvent) => {
     e.preventDefault()
@@ -35,6 +38,38 @@ export default function Home() {
     }
   }
 
+  const handleContactSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setContactStatus('loading')
+    setContactFeedback('')
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: contactForm.email.trim(),
+          name: contactForm.name.trim(),
+          message: contactForm.message.trim(),
+          subject: 'Message from the Relevant landing page',
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setContactStatus('success')
+        setContactFeedback(data.message || 'Message sent! Talk soon.')
+        setContactForm({ name: '', email: '', message: '' })
+      } else {
+        throw new Error(data.error || 'Failed to send message')
+      }
+    } catch (error) {
+      setContactStatus('error')
+      setContactFeedback(error instanceof Error ? error.message : 'Something went wrong')
+    }
+  }
+
   const currentYear = new Date().getFullYear()
 
   const feedCards = [
@@ -42,37 +77,43 @@ export default function Home() {
       category: 'NEWS',
       headline: 'Major shift in federal housing policy',
       summary: 'Government announces new affordability measures targeting first-time buyers. Implementation timeline unclear.',
-      whyMatters: 'If you\'re under 35, this could affect your mortgage approval process by spring.'
+      whyMatters: 'If you\'re under 35, this could affect your mortgage approval process by spring.',
+      image: 'https://images.unsplash.com/photo-1502673530728-f79b4cab31b1?auto=format&fit=crop&w=800&q=80'
     },
     {
       category: 'LOCAL',
       headline: 'Toronto Film Festival announces surprise opener',
       summary: 'World premiere confirmed for September. Director attached, cast TBA.',
-      whyMatters: 'Downtown streets close Sept 7–10. Plan your commute now.'
+      whyMatters: 'Downtown streets close Sept 7–10. Plan your commute now.',
+      image: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=800&q=80'
     },
     {
       category: 'AI TOOL',
       headline: 'Claude 4 now writes production code',
       summary: 'Anthropic releases model with autonomous debugging. Early access rolling out.',
-      whyMatters: 'Could cut dev time 30%. Beta waitlist open until Friday.'
+      whyMatters: 'Could cut dev time 30%. Beta waitlist open until Friday.',
+      image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80'
     },
     {
       category: 'LEARN',
       headline: 'Word of the day: Zeitgeist',
       summary: 'The defining spirit or mood of a particular period, especially as shown in ideas and beliefs.',
-      whyMatters: 'Shows up in business writing 3x more than casual conversation.'
+      whyMatters: 'Shows up in business writing 3x more than casual conversation.',
+      image: 'https://images.unsplash.com/photo-1453738773917-9c3eff1db985?auto=format&fit=crop&w=800&q=80'
     },
     {
       category: 'EVENTS',
       headline: 'Free startup meetup at MaRS this Thursday',
       summary: '6pm, networking + panel on product-market fit. RSVP required.',
-      whyMatters: 'Last event had 3 hiring founders. Bring business cards.'
+      whyMatters: 'Last event had 3 hiring founders. Bring business cards.',
+      image: 'https://images.unsplash.com/photo-1515165562835-c4c1bfa1f61b?auto=format&fit=crop&w=800&q=80'
     },
     {
       category: 'GOALS',
       headline: 'You\'re 2 days from your weekly streak',
       summary: 'Current: 5 days reading. Target: 7 days. Almost there.',
-      whyMatters: 'Hit 7 and unlock your first badge. Keep going.'
+      whyMatters: 'Hit 7 and unlock your first badge. Keep going.',
+      image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80'
     }
   ]
 
@@ -139,7 +180,7 @@ export default function Home() {
         </section>
 
         {/* The Feed Preview */}
-        <section className="section" style={{ paddingTop: '120px', paddingBottom: '120px' }}>
+        <section className="section" style={{ paddingTop: '90px', paddingBottom: '90px' }}>
           <div className="container">
             <h2 className="section-title" style={{ marginBottom: '80px' }}>The Feed</h2>
             
@@ -176,6 +217,15 @@ export default function Home() {
             <div className="feed-grid">
               {feedCards.map((card, i) => (
                 <div key={i} className="feed-card">
+                  <div className="feed-image-wrapper">
+                    <Image 
+                      src={card.image} 
+                      alt={card.headline} 
+                      fill 
+                      sizes="(max-width: 768px) 100vw, 300px"
+                      className="feed-image"
+                    />
+                  </div>
                   <div className="feed-category">{card.category}</div>
                   <h3 className="feed-headline">{card.headline}</h3>
                   <p className="feed-summary">{card.summary}</p>
@@ -262,6 +312,71 @@ export default function Home() {
             <a href="#waitlist" className="btn btn-primary" style={{ fontSize: '18px', padding: '18px 48px' }}>
               Join Waitlist
             </a>
+          </div>
+        </section>
+
+        {/* Contact */}
+        <section id="contact" className="section">
+          <div className="container">
+            <h2 className="section-title">Need something else?</h2>
+            <div className="contact-grid">
+              <div className="contact-card">
+                <p style={{ fontSize: '18px', fontWeight: 500, marginBottom: '16px' }}>
+                  Partnerships, press, or product questions? Drop a note and it hits our inbox instantly.
+                </p>
+                <p style={{ fontSize: '15px', opacity: 0.7, marginBottom: '24px' }}>
+                  We reply within a day. Prefer sending directly?
+                </p>
+                <div className="contact-pill">support@getrelevantapp.com</div>
+                <div className="contact-list">
+                  <span>• Collabs & sponsorships</span>
+                  <span>• Press & speaking</span>
+                  <span>• Product feedback</span>
+                </div>
+              </div>
+              <form className="contact-form" onSubmit={handleContactSubmit}>
+                <div className="contact-form-grid">
+                  <input
+                    type="text"
+                    value={contactForm.name}
+                    onChange={(e) => setContactForm((prev) => ({ ...prev, name: e.target.value }))}
+                    placeholder="Your name"
+                    className="input"
+                    disabled={contactStatus === 'loading'}
+                  />
+                  <input
+                    type="email"
+                    value={contactForm.email}
+                    onChange={(e) => setContactForm((prev) => ({ ...prev, email: e.target.value }))}
+                    placeholder="you@email.com"
+                    required
+                    className="input"
+                    disabled={contactStatus === 'loading'}
+                  />
+                </div>
+                <textarea
+                  value={contactForm.message}
+                  onChange={(e) => setContactForm((prev) => ({ ...prev, message: e.target.value }))}
+                  placeholder="What should we know?"
+                  required
+                  className="input textarea"
+                  rows={4}
+                  disabled={contactStatus === 'loading'}
+                />
+                <button 
+                  type="submit" 
+                  className="btn btn-primary"
+                  disabled={contactStatus === 'loading'}
+                >
+                  {contactStatus === 'loading' ? 'Sending...' : 'Send message'}
+                </button>
+                {contactFeedback && (
+                  <p className={`message ${contactStatus === 'success' ? 'message-success' : 'message-error'}`}>
+                    {contactFeedback}
+                  </p>
+                )}
+              </form>
+            </div>
           </div>
         </section>
 
