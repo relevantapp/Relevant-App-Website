@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
           from: 'Relevant Contact Form <onboarding@resend.dev>',
           to: ['support@getrelevantapp.com'],
           subject: subject || 'New Contact Form Submission',
-          replyTo: email,
+          reply_to: email,
           html: `
             <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto;">
               <h2 style="color: #000;">New Contact Form Message</h2>
