@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, FormEvent } from 'react'
+import Image from 'next/image'
 
 export default function Home() {
   const [email, setEmail] = useState('')
@@ -90,7 +91,7 @@ export default function Home() {
       <nav className="nav">
         <div className="nav-inner">
           <div className="nav-logo">
-            <img src="/logo.svg" alt="Relevant" style={{ width: '40px', height: '40px', display: 'block' }} />
+            <Image src="/logo.svg" alt="Relevant" width={40} height={40} style={{ display: 'block' }} />
           </div>
           <div className="nav-links">
             <a href="#pricing" className="nav-link">Pricing</a>
@@ -130,7 +131,7 @@ export default function Home() {
                   Free 7-day trial at launch • $4.99/month after
                 </p>
                 <p style={{ fontSize: '13px', opacity: 0.5, marginTop: '8px' }}>
-                  5 minutes a day. That's it.
+                  5 minutes a day. That&apos;s it.
                 </p>
               </div>
             </div>
@@ -234,13 +235,13 @@ export default function Home() {
             <h2 className="section-title">Why Relevant Exists</h2>
             <div style={{ fontSize: 'clamp(16px, 2.5vw, 18px)', lineHeight: 1.7, opacity: 0.85, fontWeight: 300, letterSpacing: '-0.01em' }}>
               <p style={{ marginBottom: '20px' }}>
-                I got tired of feeling behind. Every group chat had a topic I missed. Every dinner had a reference I didn't get.
+                I got tired of feeling behind. Every group chat had a topic I missed. Every dinner had a reference I didn&apos;t get.
               </p>
               <p style={{ marginBottom: '20px' }}>
-                Reading more didn't help. I just felt overwhelmed and guilty.
+                Reading more didn&apos;t help. I just felt overwhelmed and guilty.
               </p>
               <p style={{ marginBottom: '20px' }}>
-                So I built this. A feed that assumes you're busy. That values your attention. That tells you why something matters before asking you to care.
+                So I built this. A feed that assumes you&apos;re busy. That values your attention. That tells you why something matters before asking you to care.
               </p>
               <p style={{ opacity: 0.7 }}>
                 No guilt. No FOMO. Just relevance.
