@@ -265,26 +265,36 @@ export default function Home() {
         <section className="section">
           <div className="container">
             <h2 className="section-title" style={{ marginBottom: '60px' }}>Built for your life, not everyone else&apos;s</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '32px', maxWidth: '1000px', margin: '0 auto' }}>
-              <div style={{ padding: '28px', background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.12)', borderRadius: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '24px', maxWidth: '1100px', margin: '0 auto' }}>
+              <div style={{ padding: '24px', background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.12)', borderRadius: '16px' }}>
                 <div style={{ fontSize: '32px', marginBottom: '16px' }}>👨‍💼</div>
                 <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '12px' }}>Startup Founder</h3>
                 <p style={{ fontSize: '15px', opacity: 0.7, lineHeight: 1.6 }}>Funding trends, competitor moves, YC updates, local tech events, productivity tools.</p>
               </div>
-              <div style={{ padding: '28px', background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.12)', borderRadius: '16px' }}>
+              <div style={{ padding: '24px', background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.12)', borderRadius: '16px' }}>
                 <div style={{ fontSize: '32px', marginBottom: '16px' }}>👨‍💻</div>
                 <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '12px' }}>Software Engineer</h3>
                 <p style={{ fontSize: '15px', opacity: 0.7, lineHeight: 1.6 }}>New frameworks, AI coding tools, remote jobs, tech layoffs, industry shifts.</p>
               </div>
-              <div style={{ padding: '28px', background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.12)', borderRadius: '16px' }}>
-                <div style={{ fontSize: '32px', marginBottom: '16px' }}>🎨</div>
-                <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '12px' }}>Creative Professional</h3>
-                <p style={{ fontSize: '15px', opacity: 0.7, lineHeight: 1.6 }}>Design trends, AI art tools, freelance rates, portfolio tips, client work.</p>
-              </div>
-              <div style={{ padding: '28px', background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.12)', borderRadius: '16px' }}>
+              <div style={{ padding: '24px', background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.12)', borderRadius: '16px' }}>
                 <div style={{ fontSize: '32px', marginBottom: '16px' }}>📊</div>
+                <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '12px' }}>Product Manager</h3>
+                <p style={{ fontSize: '15px', opacity: 0.7, lineHeight: 1.6 }}>Product trends, user research, roadmap strategies, PM tools, career growth.</p>
+              </div>
+              <div style={{ padding: '24px', background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.12)', borderRadius: '16px' }}>
+                <div style={{ fontSize: '32px', marginBottom: '16px' }}>📈</div>
+                <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '12px' }}>Sales Professional</h3>
+                <p style={{ fontSize: '15px', opacity: 0.7, lineHeight: 1.6 }}>Sales tactics, closing tips, CRM updates, commission trends, client insights.</p>
+              </div>
+              <div style={{ padding: '24px', background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.12)', borderRadius: '16px' }}>
+                <div style={{ fontSize: '32px', marginBottom: '16px' }}>🎨</div>
+                <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '12px' }}>Marketing Leader</h3>
+                <p style={{ fontSize: '15px', opacity: 0.7, lineHeight: 1.6 }}>Campaign strategies, growth tactics, brand trends, AI marketing, analytics.</p>
+              </div>
+              <div style={{ padding: '24px', background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.12)', borderRadius: '16px' }}>
+                <div style={{ fontSize: '32px', marginBottom: '16px' }}>💼</div>
                 <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '12px' }}>Business Professional</h3>
-                <p style={{ fontSize: '15px', opacity: 0.7, lineHeight: 1.6 }}>Market updates, leadership insights, industry news, networking events, career growth.</p>
+                <p style={{ fontSize: '15px', opacity: 0.7, lineHeight: 1.6 }}>Market updates, leadership insights, industry news, networking events.</p>
               </div>
             </div>
             <p style={{ textAlign: 'center', fontSize: '16px', opacity: 0.6, marginTop: '48px', maxWidth: '600px', margin: '48px auto 0' }}>
