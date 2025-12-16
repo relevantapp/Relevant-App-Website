@@ -196,6 +196,88 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Daily Brief Preview */}
+        <section className="section" style={{ paddingTop: '120px', paddingBottom: '120px', background: '#000' }}>
+          <div className="container">
+            <div style={{ maxWidth: '980px', margin: '0 auto' }}>
+              <div style={{ textAlign: 'center', marginBottom: '80px' }}>
+                <p style={{ fontSize: '13px', fontWeight: 600, letterSpacing: '0.1em', opacity: 0.5, marginBottom: '20px' }}>DAILY BRIEF</p>
+                <h2 style={{ fontSize: '48px', fontWeight: 700, marginBottom: '20px', letterSpacing: '-0.03em' }}>
+                  Your 2-minute brief
+                </h2>
+                <p style={{ fontSize: '18px', opacity: 0.7, maxWidth: '600px', margin: '0 auto' }}>
+                  Every morning. Career-first. Money-aware. Only productive. No filler.
+                </p>
+              </div>
+
+              {/* Brief Preview Card */}
+              <div style={{
+                maxWidth: '680px',
+                margin: '0 auto',
+                background: 'rgba(255, 255, 255, 0.03)',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                borderRadius: '16px',
+                padding: '48px',
+                boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4)'
+              }}>
+                {/* Brief Header */}
+                <div style={{ marginBottom: '40px', paddingBottom: '24px', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                  <h3 style={{ fontSize: '24px', fontWeight: 600, marginBottom: '8px' }}>Today&apos;s Brief</h3>
+                  <p style={{ fontSize: '14px', opacity: 0.5 }}>Tuesday, April 15 • 2 min read</p>
+                </div>
+
+                {/* Brief Items */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '36px' }}>
+                  <div>
+                    <p style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.08em', opacity: 0.5, marginBottom: '12px' }}>ONE THING CHANGING</p>
+                    <h4 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '8px', lineHeight: 1.4 }}>
+                      Remote work tax rules shift in 6 states
+                    </h4>
+                    <p style={{ fontSize: '15px', opacity: 0.7, lineHeight: 1.6, marginBottom: '12px' }}>
+                      New withholding requirements for distributed teams. Affects payroll starting May 1.
+                    </p>
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      borderLeft: '2px solid rgba(255, 255, 255, 0.3)',
+                      padding: '12px 16px',
+                      borderRadius: '4px',
+                      marginTop: '12px'
+                    }}>
+                      <p style={{ fontSize: '14px', fontWeight: 500, opacity: 0.9 }}>
+                        💡 If you manage payroll or work remote, check your state&apos;s list by Friday.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <p style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.08em', opacity: 0.5, marginBottom: '12px' }}>ONE SMART MOVE</p>
+                    <h4 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '8px', lineHeight: 1.4 }}>
+                      Set your AI budget now
+                    </h4>
+                    <p style={{ fontSize: '15px', opacity: 0.7, lineHeight: 1.6 }}>
+                      Teams are spending $200/month per person on ChatGPT, Claude, and tools they forget about. Audit before it compounds.
+                    </p>
+                  </div>
+
+                  <div>
+                    <p style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.08em', opacity: 0.5, marginBottom: '12px' }}>ONE SIGNAL TO WATCH</p>
+                    <h4 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '8px', lineHeight: 1.4 }}>
+                      3 competitors raised this week
+                    </h4>
+                    <p style={{ fontSize: '15px', opacity: 0.7, lineHeight: 1.6 }}>
+                      Your space is heating up. Know who&apos;s funded, what they&apos;re building, and how much runway they have.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <p style={{ textAlign: 'center', fontSize: '14px', opacity: 0.5, marginTop: '48px' }}>
+                Built for professionals who need to stay sharp without wasting time.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* The Feed Preview */}
         <section className="section" style={{ paddingTop: '90px', paddingBottom: '90px' }}>
           <div className="container">
@@ -346,6 +428,111 @@ export default function Home() {
           </div>
         </section>
 
+        {/* You Should Know Section */}
+        <section className="section" style={{ paddingTop: '90px', paddingBottom: '90px' }}>
+          <div className="container">
+            <div style={{ maxWidth: '980px', margin: '0 auto' }}>
+              <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+                <h2 style={{ fontSize: '48px', fontWeight: 700, marginBottom: '16px', letterSpacing: '-0.03em' }}>
+                  Worth knowing today
+                </h2>
+                <p style={{ fontSize: '18px', opacity: 0.7, maxWidth: '600px', margin: '0 auto' }}>
+                  Things you would&apos;ve missed. Now you won&apos;t.
+                </p>
+              </div>
+
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                gap: '32px',
+                maxWidth: '980px',
+                margin: '0 auto'
+              }}>
+                {/* Card 1 */}
+                <div style={{
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  borderRadius: '12px',
+                  padding: '32px',
+                  transition: 'all 0.3s ease'
+                }}>
+                  <p style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.1em', opacity: 0.5, marginBottom: '16px' }}>CITY</p>
+                  <h3 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '12px', lineHeight: 1.3 }}>
+                    Subway delays on Line 1 until Friday
+                  </h3>
+                  <p style={{ fontSize: '15px', opacity: 0.7, lineHeight: 1.6, marginBottom: '16px' }}>
+                    Track work between Union and King. Add 15 minutes to your commute.
+                  </p>
+                  <div style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderLeft: '2px solid rgba(255, 255, 255, 0.3)',
+                    padding: '10px 14px',
+                    borderRadius: '4px',
+                    fontSize: '13px',
+                    fontWeight: 500
+                  }}>
+                    💡 Shuttle buses running. Or take King streetcar.
+                  </div>
+                </div>
+
+                {/* Card 2 */}
+                <div style={{
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  borderRadius: '12px',
+                  padding: '32px',
+                  transition: 'all 0.3s ease'
+                }}>
+                  <p style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.1em', opacity: 0.5, marginBottom: '16px' }}>TECH</p>
+                  <h3 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '12px', lineHeight: 1.3 }}>
+                    GitHub Actions now 2x faster
+                  </h3>
+                  <p style={{ fontSize: '15px', opacity: 0.7, lineHeight: 1.6, marginBottom: '16px' }}>
+                    New runners with better caching. Same price. Available now in all repos.
+                  </p>
+                  <div style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderLeft: '2px solid rgba(255, 255, 255, 0.3)',
+                    padding: '10px 14px',
+                    borderRadius: '4px',
+                    fontSize: '13px',
+                    fontWeight: 500
+                  }}>
+                    💡 Switch your workflows this week and cut CI time in half.
+                  </div>
+                </div>
+
+                {/* Card 3 */}
+                <div style={{
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  borderRadius: '12px',
+                  padding: '32px',
+                  transition: 'all 0.3s ease'
+                }}>
+                  <p style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.1em', opacity: 0.5, marginBottom: '16px' }}>MONEY</p>
+                  <h3 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '12px', lineHeight: 1.3 }}>
+                    Your SaaS bill just went up 12%
+                  </h3>
+                  <p style={{ fontSize: '15px', opacity: 0.7, lineHeight: 1.6, marginBottom: '16px' }}>
+                    Notion, Slack, Figma all announced price increases this month. Check your invoices.
+                  </p>
+                  <div style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderLeft: '2px solid rgba(255, 255, 255, 0.3)',
+                    padding: '10px 14px',
+                    borderRadius: '4px',
+                    fontSize: '13px',
+                    fontWeight: 500
+                  }}>
+                    💡 Grandfathered plans expire June 1. Lock in old pricing now.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* How It Works */}
         <section className="section">
           <div className="container">
@@ -353,18 +540,23 @@ export default function Home() {
             <div className="steps-grid">
               <div className="step-card">
                 <div className="step-number">1</div>
-                <h3>Choose your goals</h3>
-                <p>Career growth, stay local, learn daily. Pick what matters.</p>
+                <h3>Tell us about you</h3>
+                <p>Your role, industry, city. Takes 60 seconds.</p>
               </div>
               <div className="step-card">
                 <div className="step-number">2</div>
-                <h3>Choose your city and interests</h3>
-                <p>Toronto tech? Miami founder? We tailor the feed to you.</p>
+                <h3>Pick your direction</h3>
+                <p>Career growth? Money moves? Staying local? You choose.</p>
               </div>
               <div className="step-card">
                 <div className="step-number">3</div>
-                <h3>Daily feed + progress</h3>
-                <p>Read. Learn. Track streaks. Stay consistent.</p>
+                <h3>We tailor your feed</h3>
+                <p>News, tools, events, learning. Built around your life.</p>
+              </div>
+              <div className="step-card">
+                <div className="step-number">4</div>
+                <h3>Get the &quot;why it matters&quot;</h3>
+                <p>Every story explains what it means for you. No guessing.</p>
               </div>
             </div>
           </div>
