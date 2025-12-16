@@ -16,32 +16,37 @@ function isValidEmail(email: string): boolean {
   return emailRegex.test(email)
 }
 
-async function saveToFile(userEmail: string) {
-  // Save to file instead of sending email
-  try {
-    const fs = await import('fs/promises')
-    const path = await import('path')
-    
-    const waitlistDir = path.join(process.cwd(), 'waitlist-data')
-    const filePath = path.join(waitlistDir, 'emails.txt')
-    
-    // Create directory if it doesn't exist
+async function sendWaitlistNotification(userEmail: string) {
+  // Send notification email
+  if (process.env.RESEND_API_KEY) {
     try {
-      await fs.mkdir(waitlistDir, { recursive: true })
-    } catch (e) {
-      // Directory might already exist
+      const { Resend } = await import('resend')
+      const resend = new Resend(process.env.RESEND_API_KEY)
+
+      await resend.emails.send({
+        from: 'Relevant Waitlist <onboarding@resend.dev>',
+        to: ['support@getrelevantapp.com'],
+        subject: '🎉 New Waitlist Signup!',
+        html: `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #000;">New Waitlist Signup</h2>
+            <p style="font-size: 16px; color: #333;">Someone just joined the Relevant waitlist!</p>
+            <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+              <p style="margin: 0; font-size: 18px; font-weight: 600; color: #000;">${userEmail}</p>
+            </div>
+            <p style="font-size: 14px; color: #666;">Signed up at: ${new Date().toLocaleString()}</p>
+          </div>
+        `,
+      })
+
+      console.log(`✅ Waitlist notification sent for: ${userEmail}`)
+      return true
+    } catch (error) {
+      console.error('Failed to send waitlist notification:', error)
+      return false
     }
-    
-    const timestamp = new Date().toISOString()
-    const entry = `${timestamp} | ${userEmail}\n`
-    
-    await fs.appendFile(filePath, entry)
-    console.log(`✅ Saved to file: ${userEmail}`)
-    return true
-  } catch (error) {
-    console.error('Failed to save to file:', error)
-    return false
   }
+  return false
 }
 
 export async function POST(request: NextRequest) {
@@ -64,8 +69,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Save to file
-    await saveToFile(email)
+    // Send notification email
+    await sendWaitlistNotification(email)
 
     // Try Vercel KV if available
     if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
