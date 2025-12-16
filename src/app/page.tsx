@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
+import { useState, FormEvent, useEffect } from 'react'
 import Image from 'next/image'
 
 export default function Home() {
@@ -10,6 +10,20 @@ export default function Home() {
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' })
   const [contactStatus, setContactStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [contactFeedback, setContactFeedback] = useState('')
+  const [showStickyCTA, setShowStickyCTA] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (waitlistStatus === 'success') {
+        setShowStickyCTA(false)
+        return
+      }
+      setShowStickyCTA(window.scrollY > 800)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [waitlistStatus])
 
   const handleWaitlist = async (e: FormEvent) => {
     e.preventDefault()
@@ -156,16 +170,16 @@ export default function Home() {
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '32px' }}>
               <Image src="/logo-black.svg" alt="Relevant" width={80} height={80} />
             </div>
-            <h1>Stay Relevant</h1>
+            <h1>Stay Relevant in 5 Minutes a Day</h1>
             <div style={{ maxWidth: '680px', margin: '0 auto' }}>
-              <p className="hero-tagline" style={{ marginBottom: '12px' }}>
-                Too much news. Not enough time.
+              <p className="hero-tagline" style={{ marginBottom: '8px' }}>
+                News, local context, learning, and AI.
               </p>
-              <p className="hero-tagline" style={{ marginBottom: '12px' }}>
-                You feel guilty skipping articles. You feel behind.
+              <p className="hero-tagline" style={{ marginBottom: '20px' }}>
+                Explained clearly. Built for busy people.
               </p>
-              <p className="hero-tagline" style={{ marginBottom: '32px', opacity: 1, fontWeight: 500 }}>
-                We built a feed that respects your time and keeps you sharp.
+              <p className="hero-identity" style={{ fontSize: '15px', opacity: 0.6, marginBottom: '32px', letterSpacing: '-0.01em' }}>
+                Designed for busy professionals who still want to stay sharp.
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', marginTop: '40px' }}>
                 <a href="#waitlist" className="btn btn-primary" style={{ fontSize: '18px', padding: '18px 48px' }}>
@@ -185,7 +199,10 @@ export default function Home() {
         {/* The Feed Preview */}
         <section className="section" style={{ paddingTop: '90px', paddingBottom: '90px' }}>
           <div className="container">
-            <h2 className="section-title" style={{ marginBottom: '80px' }}>The Feed</h2>
+            <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+              <h2 className="section-title" style={{ marginBottom: '16px' }}>Your daily feed looks like this</h2>
+              <p style={{ fontSize: '16px', opacity: 0.6, letterSpacing: '-0.01em' }}>Tailored to your work, your city, and what you care about.</p>
+            </div>
             
             {/* Phone Mockup */}
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '80px' }}>
@@ -244,6 +261,65 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Personalized for You */}
+        <section className="section">
+          <div className="container">
+            <h2 className="section-title" style={{ marginBottom: '60px' }}>Built for your life, not everyone else&apos;s</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '32px', maxWidth: '1000px', margin: '0 auto' }}>
+              <div style={{ padding: '28px', background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.12)', borderRadius: '16px' }}>
+                <div style={{ fontSize: '32px', marginBottom: '16px' }}>👨‍💼</div>
+                <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '12px' }}>Startup Founder</h3>
+                <p style={{ fontSize: '15px', opacity: 0.7, lineHeight: 1.6 }}>Funding trends, competitor moves, YC updates, local tech events, productivity tools.</p>
+              </div>
+              <div style={{ padding: '28px', background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.12)', borderRadius: '16px' }}>
+                <div style={{ fontSize: '32px', marginBottom: '16px' }}>👨‍💻</div>
+                <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '12px' }}>Software Engineer</h3>
+                <p style={{ fontSize: '15px', opacity: 0.7, lineHeight: 1.6 }}>New frameworks, AI coding tools, remote jobs, tech layoffs, industry shifts.</p>
+              </div>
+              <div style={{ padding: '28px', background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.12)', borderRadius: '16px' }}>
+                <div style={{ fontSize: '32px', marginBottom: '16px' }}>🎨</div>
+                <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '12px' }}>Creative Professional</h3>
+                <p style={{ fontSize: '15px', opacity: 0.7, lineHeight: 1.6 }}>Design trends, AI art tools, freelance rates, portfolio tips, client work.</p>
+              </div>
+              <div style={{ padding: '28px', background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.12)', borderRadius: '16px' }}>
+                <div style={{ fontSize: '32px', marginBottom: '16px' }}>📊</div>
+                <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '12px' }}>Business Professional</h3>
+                <p style={{ fontSize: '15px', opacity: 0.7, lineHeight: 1.6 }}>Market updates, leadership insights, industry news, networking events, career growth.</p>
+              </div>
+            </div>
+            <p style={{ textAlign: 'center', fontSize: '16px', opacity: 0.6, marginTop: '48px', maxWidth: '600px', margin: '48px auto 0' }}>
+              Tell us your role, industry, and goals. We build a feed that actually fits your life.
+            </p>
+          </div>
+        </section>
+
+        {/* Before vs After */}
+        <section className="section">
+          <div className="container">
+            <h2 className="section-title" style={{ marginBottom: '60px' }}>Staying informed shouldn&apos;t feel like work</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '48px', maxWidth: '900px', margin: '0 auto' }}>
+              <div>
+                <h3 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '24px', opacity: 0.5 }}>Before</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', fontSize: '16px', lineHeight: 1.6, opacity: 0.7 }}>
+                  <p>Too many apps</p>
+                  <p>Long articles you don&apos;t finish</p>
+                  <p>Group chats talking about things you missed</p>
+                  <p>Still feel behind</p>
+                </div>
+              </div>
+              <div>
+                <h3 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '24px' }}>With Relevant</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', fontSize: '16px', lineHeight: 1.6 }}>
+                  <p>One feed</p>
+                  <p>Clear context</p>
+                  <p>You know why things matter</p>
+                  <p>You actually remember what you read</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* What You Get */}
         <section className="section">
           <div className="container">
@@ -286,21 +362,14 @@ export default function Home() {
 
         {/* Why Relevant Exists */}
         <section className="section">
-          <div className="container" style={{ maxWidth: '700px', textAlign: 'center' }}>
-            <h2 className="section-title">Why Relevant Exists</h2>
-            <div style={{ fontSize: 'clamp(16px, 2.5vw, 18px)', lineHeight: 1.7, opacity: 0.85, fontWeight: 300, letterSpacing: '-0.01em' }}>
-              <p style={{ marginBottom: '20px' }}>
-                I got tired of feeling behind. Every group chat had a topic I missed. Every dinner had a reference I didn&apos;t get.
-              </p>
-              <p style={{ marginBottom: '20px' }}>
-                Reading more didn&apos;t help. I just felt overwhelmed and guilty.
-              </p>
-              <p style={{ marginBottom: '20px' }}>
-                So I built this. A feed that assumes you&apos;re busy. That values your attention. That tells you why something matters before asking you to care.
-              </p>
-              <p style={{ opacity: 0.7 }}>
-                No guilt. No FOMO. Just relevance.
-              </p>
+          <div className="container" style={{ maxWidth: '600px', textAlign: 'center' }}>
+            <h2 className="section-title" style={{ marginBottom: '48px' }}>Why Relevant exists</h2>
+            <div style={{ fontSize: '18px', lineHeight: 1.8, display: 'flex', flexDirection: 'column', gap: '24px', textAlign: 'left' }}>
+              <p>We all try to stay updated.<br />We skim headlines. Save articles. Open tabs.</p>
+              <p>But somehow, we still feel behind.</p>
+              <p>It&apos;s not because we don&apos;t care.<br />It&apos;s because we&apos;re busy.</p>
+              <p>So we built Relevant.<br />A feed that assumes you have a life.</p>
+              <p style={{ fontWeight: 500 }}>No guilt.<br />No FOMO.<br />Just what matters.</p>
             </div>
           </div>
         </section>
@@ -311,8 +380,8 @@ export default function Home() {
             <h2 className="section-title">Pricing</h2>
             <div style={{ marginBottom: '40px' }}>
               <p style={{ fontSize: '24px', fontWeight: 500, marginBottom: '8px' }}>Free 7-day trial</p>
-              <p style={{ fontSize: '18px', opacity: 0.7, marginBottom: '24px' }}>Then $4.99/month</p>
-              <p style={{ fontSize: '14px', opacity: 0.5 }}>Less than a coffee. Cancel anytime.</p>
+              <p style={{ fontSize: '18px', opacity: 0.7, marginBottom: '12px' }}>Then $4.99/month</p>
+              <p style={{ fontSize: '14px', opacity: 0.6 }}>Less than a coffee. More useful than most apps you scroll.</p>
             </div>
             <a href="#waitlist" className="btn btn-primary" style={{ fontSize: '18px', padding: '18px 48px' }}>
               Join Waitlist
@@ -389,6 +458,7 @@ export default function Home() {
         <section id="waitlist" className="section">
           <div className="container">
             <h2 className="section-title">Get Early Access</h2>
+            <p style={{ textAlign: 'center', fontSize: '16px', opacity: 0.7, marginBottom: '32px' }}>Early access is limited</p>
             <form onSubmit={handleWaitlist} className="waitlist-form">
               <div className="input-group">
                 <input
@@ -411,6 +481,11 @@ export default function Home() {
               {waitlistMessage && (
                 <p className={`message ${waitlistStatus === 'success' ? 'message-success' : 'message-error'}`}>
                   {waitlistMessage}
+                </p>
+              )}
+              {!waitlistMessage && (
+                <p style={{ textAlign: 'center', fontSize: '13px', opacity: 0.5, marginTop: '16px' }}>
+                  No spam. One email when it&apos;s ready.
                 </p>
               )}
             </form>
@@ -437,6 +512,18 @@ export default function Home() {
             </p>
           </div>
         </footer>
+
+        {/* Sticky Mobile CTA */}
+        <div className={`sticky-cta ${showStickyCTA ? 'visible' : ''} ${waitlistStatus === 'success' ? 'hidden' : ''}`}>
+          <a 
+            href="#waitlist" 
+            className="btn btn-primary" 
+            style={{ width: '100%', display: 'block', textAlign: 'center', padding: '16px' }}
+            onClick={() => setShowStickyCTA(false)}
+          >
+            Join Waitlist
+          </a>
+        </div>
       </main>
     </>
   )
