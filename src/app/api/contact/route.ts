@@ -30,14 +30,23 @@ export async function POST(request: NextRequest) {
         const resend = new Resend(process.env.RESEND_API_KEY)
 
         await resend.emails.send({
-          from: 'Relevant Contact Form <onboarding@resend.dev>', // Change to your verified domain
-          to: 'support@getrelevantapp.com',
+          from: 'Relevant Contact Form <onboarding@resend.dev>',
+          to: ['support@getrelevantapp.com'],
           subject: subject || 'New Contact Form Submission',
+          replyTo: email,
           html: `
-            <h2>New Contact Form Submission</h2>
-            <p><strong>From:</strong> ${name || 'Anonymous'} (${email})</p>
-            <p><strong>Message:</strong></p>
-            <p>${message}</p>
+            <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto;">
+              <h2 style="color: #000;">New Contact Form Message</h2>
+              <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <p style="margin: 0 0 10px 0;"><strong>From:</strong> ${name || 'Anonymous'}</p>
+                <p style="margin: 0 0 10px 0;"><strong>Email:</strong> ${email}</p>
+                <p style="margin: 0;"><strong>Time:</strong> ${new Date().toLocaleString()}</p>
+              </div>
+              <div style="background: #fff; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+                <p style="margin: 0 0 10px 0; font-weight: 600;">Message:</p>
+                <p style="margin: 0; white-space: pre-wrap;">${message}</p>
+              </div>
+            </div>
           `,
         })
 
