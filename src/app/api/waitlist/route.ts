@@ -23,9 +23,9 @@ async function sendNotificationEmail(userEmail: string) {
       const { Resend } = await import('resend')
       const resend = new Resend(process.env.RESEND_API_KEY)
 
-      await resend.emails.send({
+      const result = await resend.emails.send({
         from: 'Relevant Waitlist <onboarding@resend.dev>',
-        to: 'support@getrelevantapp.com',
+        to: ['support@getrelevantapp.com'],
         subject: '🎉 New Waitlist Signup!',
         html: `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto;">
