@@ -766,12 +766,37 @@ a:focus-visible {
   display: none;
 }
 
+.phone-content-horizontal {
+  padding: 12px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  height: calc(100% - 120px);
+  display: flex;
+  gap: 12px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.phone-content-horizontal::-webkit-scrollbar {
+  display: none;
+}
+
 .phone-card {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
   padding: 14px;
   margin-bottom: 10px;
+}
+
+.phone-card-horizontal {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 14px;
+  min-width: calc(100% - 24px);
+  scroll-snap-align: start;
+  flex-shrink: 0;
 }
 
 /* Sticky Mobile CTA */
