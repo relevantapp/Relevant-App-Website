@@ -316,6 +316,12 @@ export default function Home() {
             </div>
 
             {/* Feed Cards - Horizontal Scroll */}
+            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+              <p style={{ fontSize: '14px', opacity: 0.5, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '18px' }}>👆</span>
+                Swipe to see all 6 cards
+              </p>
+            </div>
             <div className="feed-scroll-container">
               <div className="feed-scroll">
                 {feedCards.map((card, i) => (
@@ -526,6 +532,33 @@ export default function Home() {
                     fontWeight: 500
                   }}>
                     💡 Grandfathered plans expire June 1. Lock in old pricing now.
+                  </div>
+                </div>
+
+                {/* Card 4 */}
+                <div style={{
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  borderRadius: '12px',
+                  padding: '32px',
+                  transition: 'all 0.3s ease'
+                }}>
+                  <p style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.1em', opacity: 0.5, marginBottom: '16px' }}>CAREER</p>
+                  <h3 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '12px', lineHeight: 1.3 }}>
+                    Senior roles now require AI experience
+                  </h3>
+                  <p style={{ fontSize: '15px', opacity: 0.7, lineHeight: 1.6, marginBottom: '16px' }}>
+                    78% of job postings for senior positions mention AI skills. Up from 12% last year.
+                  </p>
+                  <div style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderLeft: '2px solid rgba(255, 255, 255, 0.3)',
+                    padding: '10px 14px',
+                    borderRadius: '4px',
+                    fontSize: '13px',
+                    fontWeight: 500
+                  }}>
+                    💡 Start building projects with Claude or ChatGPT. Add them to your portfolio.
                   </div>
                 </div>
               </div>
