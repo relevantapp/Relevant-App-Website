@@ -299,17 +299,36 @@ export default function Home() {
                   </div>
                   <div className="phone-header">Relevant</div>
                   <div className="phone-content">
-                    {feedCards.slice(0, 3).map((card, i) => (
-                      <div key={i} className="phone-card">
-                        <div style={{ fontSize: '9px', fontWeight: 600, letterSpacing: '0.05em', opacity: 0.5, marginBottom: '6px' }}>{card.category}</div>
-                        <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '6px', lineHeight: 1.3 }}>{card.headline}</div>
-                        <div style={{ fontSize: '11px', opacity: 0.6, marginBottom: '8px', lineHeight: 1.4 }}>{card.summary}</div>
-                        <div style={{ paddingTop: '8px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-                          <div style={{ fontSize: '8px', fontWeight: 700, letterSpacing: '0.08em', opacity: 0.4, marginBottom: '4px' }}>WHY IT MATTERS</div>
-                          <div style={{ fontSize: '11px', fontWeight: 500, lineHeight: 1.4 }}>{card.whyMatters}</div>
-                        </div>
+                    <div className="phone-card-single">
+                      <div style={{ 
+                        width: '100%', 
+                        height: '180px', 
+                        borderRadius: '8px', 
+                        overflow: 'hidden', 
+                        marginBottom: '12px',
+                        position: 'relative'
+                      }}>
+                        <Image 
+                          src={feedCards[0].image}
+                          alt={feedCards[0].headline}
+                          fill
+                          style={{ objectFit: 'cover' }}
+                        />
                       </div>
-                    ))}
+                      <div style={{ fontSize: '9px', fontWeight: 600, letterSpacing: '0.05em', opacity: 0.5, marginBottom: '8px' }}>{feedCards[0].category}</div>
+                      <div style={{ fontSize: '15px', fontWeight: 600, marginBottom: '8px', lineHeight: 1.3 }}>{feedCards[0].headline}</div>
+                      <div style={{ fontSize: '12px', opacity: 0.7, marginBottom: '12px', lineHeight: 1.5 }}>{feedCards[0].summary}</div>
+                      <div style={{ 
+                        paddingTop: '12px', 
+                        borderTop: '1px solid rgba(255,255,255,0.1)',
+                        background: 'rgba(255, 255, 255, 0.03)',
+                        padding: '12px',
+                        borderRadius: '6px'
+                      }}>
+                        <div style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.08em', opacity: 0.5, marginBottom: '6px' }}>WHY IT MATTERS</div>
+                        <div style={{ fontSize: '12px', fontWeight: 500, lineHeight: 1.5, opacity: 0.9 }}>{feedCards[0].whyMatters}</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
