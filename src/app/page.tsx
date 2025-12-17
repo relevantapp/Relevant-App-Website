@@ -287,7 +287,7 @@ export default function Home() {
             </div>
             
             {/* Phone Mockup */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '48px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '80px' }}>
               <div className="phone-mockup">
                 <div className="phone-notch"></div>
                 <div className="phone-screen">
@@ -298,9 +298,9 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="phone-header">Relevant</div>
-                  <div className="phone-content-horizontal">
-                    {feedCards.map((card, i) => (
-                      <div key={i} className="phone-card-horizontal">
+                  <div className="phone-content">
+                    {feedCards.slice(0, 3).map((card, i) => (
+                      <div key={i} className="phone-card">
                         <div style={{ fontSize: '9px', fontWeight: 600, letterSpacing: '0.05em', opacity: 0.5, marginBottom: '6px' }}>{card.category}</div>
                         <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '6px', lineHeight: 1.3 }}>{card.headline}</div>
                         <div style={{ fontSize: '11px', opacity: 0.6, marginBottom: '8px', lineHeight: 1.4 }}>{card.summary}</div>
@@ -313,17 +313,16 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              <div style={{ marginTop: '24px', textAlign: 'center' }}>
-                <p style={{ fontSize: '14px', opacity: 0.5, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                  <span style={{ fontSize: '18px' }}>👈</span>
-                  Swipe to see all 6 cards
-                  <span style={{ fontSize: '18px' }}>👉</span>
-                </p>
-              </div>
             </div>
 
-            {/* Feed Cards - Desktop View */}
-            <div className="feed-scroll-container" style={{ display: 'none' }}>
+            {/* Feed Cards - Horizontal Scroll */}
+            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+              <p style={{ fontSize: '14px', opacity: 0.5, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '18px' }}>�</span>
+                Swipe to see all 6 cards
+              </p>
+            </div>
+            <div className="feed-scroll-container">
               <div className="feed-scroll">
                 {feedCards.map((card, i) => (
                   <div key={i} className="feed-card">
