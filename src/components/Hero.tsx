@@ -1,9 +1,22 @@
 import EmailForm from './EmailForm'
+import Image from 'next/image'
 
 export default function Hero() {
   return (
     <section className="min-h-screen flex items-center justify-center px-4 py-20">
       <div className="max-w-3xl mx-auto text-center">
+        {/* Logo */}
+        <div className="flex justify-center mb-8 animate-fade-in-up">
+          <Image 
+            src="/logo.svg" 
+            alt="Relevant Logo" 
+            width={80} 
+            height={80}
+            className="rounded-2xl"
+            priority
+          />
+        </div>
+
         {/* Coming Soon Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium mb-8 animate-fade-in-up">
           <span className="relative flex h-2 w-2">

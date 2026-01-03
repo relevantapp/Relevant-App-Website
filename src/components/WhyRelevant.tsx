@@ -31,35 +31,31 @@ const benefits = [
 
 export default function WhyRelevant() {
   return (
-    <section id="why-relevant" className="py-20 px-4">
-      <div className="max-w-5xl mx-auto">
+    <section id="why-relevant" className="section">
+      <div className="container">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-            Why Relevant?
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            We built Relevant because staying informed shouldn&apos;t feel like a chore—or an addiction.
-          </p>
-        </div>
+        <h2 className="section-title">Why Relevant?</h2>
+        <p className="text-center text-lg opacity-70 max-w-2xl mx-auto mb-12">
+          We built Relevant because staying informed shouldn&apos;t feel like a chore—or an addiction.
+        </p>
 
         {/* Benefits Grid */}
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
           {benefits.map((benefit) => (
             <div
               key={benefit.title}
               className="text-center p-6"
             >
               {/* Icon */}
-              <div className="inline-flex items-center justify-center w-14 h-14 bg-blue-100 text-blue-600 rounded-full mb-5">
+              <div className="inline-flex items-center justify-center w-14 h-14 bg-white/10 text-white rounded-full mb-5">
                 {benefit.icon}
               </div>
               
               {/* Content */}
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+              <h3 className="text-xl font-semibold text-white mb-3">
                 {benefit.title}
               </h3>
-              <p className="text-gray-600">
+              <p className="text-white/70">
                 {benefit.description}
               </p>
             </div>
@@ -67,11 +63,11 @@ export default function WhyRelevant() {
         </div>
 
         {/* Quote/Highlight Box */}
-        <div className="mt-16 bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-8 sm:p-12 text-center text-white">
-          <p className="text-xl sm:text-2xl font-medium mb-4">
+        <div className="mt-16 bg-white/5 border border-white/10 rounded-2xl p-8 sm:p-12 text-center max-w-3xl mx-auto">
+          <p className="text-xl sm:text-2xl font-medium mb-4 text-white">
             &ldquo;Information is only useful if you can act on it. Everything else is noise.&rdquo;
           </p>
-          <p className="text-blue-200">
+          <p className="text-white/50">
             — The philosophy behind Relevant
           </p>
         </div>
