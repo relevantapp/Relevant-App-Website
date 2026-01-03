@@ -97,7 +97,7 @@ export default function PrivacyPolicy() {
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">11. Privacy Rights</h2>
             <p className="text-gray-300 leading-relaxed">
-              Users have rights under GDPR, PIPEDA, US state laws, CCPA/CPRA, Quebec Law 25, and Mexico's LFPDPPP.
+              Users have rights under GDPR, PIPEDA, US state laws, CCPA/CPRA, Quebec Law 25, and Mexico&apos;s LFPDPPP.
             </p>
           </section>
 
@@ -116,7 +116,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-white mb-3">14. Children's Privacy</h2>
+            <h2 className="text-xl font-semibold text-white mb-3">14. Children&apos;s Privacy</h2>
             <p className="text-gray-300 leading-relaxed">
               Relevant is not intended for children under the age of 13 and does not knowingly collect their data.
             </p>

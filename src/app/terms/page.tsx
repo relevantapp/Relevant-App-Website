@@ -104,7 +104,7 @@ export default function TermsAndConditions() {
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">12. Limitation of Liability</h2>
             <p className="text-gray-300 leading-relaxed">
-              The service is provided "as is." Relevant is not liable for indirect damages or decisions made based on content.
+              The service is provided &quot;as is.&quot; Relevant is not liable for indirect damages or decisions made based on content.
             </p>
           </section>
 
