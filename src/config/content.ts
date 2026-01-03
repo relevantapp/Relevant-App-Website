@@ -11,7 +11,7 @@ export const siteConfig = {
 export const heroContent = {
   headline: 'Know what matters.',
   subheadline: 'Relevant is a personalized relevance engine that filters endless updates into signal for your work, goals, and next role.',
-  cta: 'Join the waitlist',
+  cta: 'Get early access',
   microcopy: 'Early access. No spam.',
 }
 
@@ -23,6 +23,7 @@ export const problemContent = {
     'Always feeling behind at work',
   ],
   closing: 'Relevant fixes this by making relevance the default.',
+  clarityLine: 'Relevant helps you decide what to pay attention to.',
 }
 
 export const whatIsContent = {
@@ -110,6 +111,7 @@ export const waitlistContent = {
 export const pricingContent = {
   title: 'Pricing',
   disclaimer: 'Joining the waitlist is free. Pricing applies at launch.',
+  earlyAccessNote: "You won't be charged during early access.",
   trial: 'Free 7-day trial',
   price: 'Then $4.99/month',
   value: 'Less than a coffee. More useful than most apps you scroll.',
@@ -120,7 +122,7 @@ export const navLinks = [
   { label: 'How it works', href: '#how-it-works' },
   { label: 'Features', href: '#features' },
   { label: 'Pricing', href: '#pricing' },
-  { label: 'Join waitlist', href: '#waitlist' },
+  { label: 'Get early access', href: '#waitlist' },
 ]
 
 export const footerLinks = [

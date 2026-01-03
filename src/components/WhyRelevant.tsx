@@ -36,7 +36,8 @@ export default function WhyRelevant() {
         {/* Section Header */}
         <h2 className="section-title">Why Relevant?</h2>
         <p className="text-center text-lg opacity-70 max-w-2xl mx-auto mb-12">
-          We built Relevant because staying informed shouldn&apos;t feel like a chore—or an addiction.
+          Staying informed shouldn&apos;t feel like a chore—or an addiction.<br />
+          Relevant turns information into something you can act on.
         </p>
 
         {/* Benefits Grid */}

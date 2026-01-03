@@ -158,6 +158,7 @@ export default function Home() {
               ))}
             </ul>
             <p className="problem-closing">{problemContent.closing}</p>
+            <p className="clarity-line">{problemContent.clarityLine}</p>
           </div>
         </section>
 
@@ -187,8 +188,8 @@ export default function Home() {
         <section className="section section-dark">
           <div className="container">
             <div className="section-header">
-              <p className="section-label">DAILY BRIEF</p>
-              <h2 className="section-title">Your 2-minute morning edge</h2>
+              <p className="section-label">ONE WAY RELEVANT SHOWS UP</p>
+              <h2 className="section-title">The daily brief is just the start.</h2>
               <p className="section-subtitle">What changed. What to do. Why it matters.</p>
             </div>
 
@@ -230,6 +231,7 @@ export default function Home() {
         <section className="section section-dark">
           <div className="container">
             <div className="section-header">
+              <p className="example-label">Example: what a Relevant card looks like</p>
               <h2 className="section-title">Your feed, personalized</h2>
               <p className="section-subtitle">Every card has a &quot;why it matters&quot; — so you know what to do next.</p>
             </div>
@@ -325,6 +327,7 @@ export default function Home() {
         {/* 8. PRICING SECTION */}
         <section id="pricing" className="section section-pricing">
           <div className="container container-narrow">
+            <p className="early-access-note">{pricingContent.earlyAccessNote}</p>
             <p className="pricing-disclaimer">{pricingContent.disclaimer}</p>
             <h2 className="section-title">{pricingContent.title}</h2>
             <div className="pricing-details">
@@ -359,7 +362,7 @@ export default function Home() {
             style={{ width: '100%', display: 'block', textAlign: 'center', padding: '16px' }}
             onClick={() => setShowStickyCTA(false)}
           >
-            Join Waitlist
+            Get early access
           </a>
         </div>
       </main>
