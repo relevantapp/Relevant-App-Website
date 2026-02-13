@@ -4,5 +4,9 @@
   "devCommand": "next dev",
   "installCommand": "npm install",
   "framework": "nextjs",
-  "outputDirectory": ".next"
+  "outputDirectory": ".next",
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": "https://ebmglyjbeueunlsqeahr.supabase.co",
+    "SUPABASE_URL": "https://ebmglyjbeueunlsqeahr.supabase.co"
+  }
 }

@@ -5,6 +5,10 @@ export const metadata: Metadata = {
   title: 'Relevant - Stay Informed Without the Noise',
   description: 'Get a personalized news feed that cuts through the clutter. No doom scrolling, no noise—just what matters to you.',
   keywords: ['news', 'personalized feed', 'relevant news', 'no doom scrolling', 'curated content'],
+  icons: {
+    icon: '/icon.png',
+    apple: '/apple-icon.png',
+  },
   openGraph: {
     title: 'Relevant - Stay Informed Without the Noise',
     description: 'Get a personalized news feed that cuts through the clutter. No doom scrolling, no noise—just what matters to you.',

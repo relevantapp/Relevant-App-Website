@@ -133,6 +133,13 @@ Personal story from founder:
 - Email: support@getrelevantapp.com
 - Instagram link
 
+#### 10. Public Signal Share Page
+- **Route**: `/signal/[id]`
+- **Purpose**: Public, mobile-friendly share view for a single signal.
+- **Entry**: Share links point to `https://www.getrelevantapp.com/?signal=<id>` which server-redirects to the route above (so social previews can read metadata without running JavaScript).
+- **Content**: Headline, synthesis, What happened, Why it matters, consequence chain (Why this matters to you), What to watch next, sources, and updated date.
+- **CTA**: Access request form with platform selection (iOS or Android) and store account email.
+
 ---
 
 ## Design System
@@ -185,6 +192,7 @@ Personal story from founder:
 ### APIs & Services
 - **Resend** - Email notifications (configured with RESEND_API_KEY)
 - **Vercel KV** - Optional database for production email storage
+- **Supabase Edge Functions** - Public signal data + waitlist capture for share links
 
 ---
 
@@ -232,6 +240,41 @@ Personal story from founder:
 - Includes reply_to field for easy responses
 - Falls back to mailto link if Resend unavailable
 
+### GET https://<SUPABASE_URL>/functions/v1/public-signal?signal=<id>
+**Purpose**: Public signal payload for share pages
+
+**Response**:
+- Success: `{ "success": true, "signal": { ... } }`
+- Error: `{ "success": false, "error": "Signal not found" }`
+
+**Behavior**:
+- No auth required (read-only)
+- Returns the latest stored signal item for the event id (prefers newest timeline update, falls back to event memory)
+- Includes `imageUrl`, `consequence_steps`, and `what_to_watch` when present (so the web view matches the app's intelligence output)
+
+### POST https://<SUPABASE_URL>/functions/v1/public-waitlist
+**Purpose**: Capture early access emails from share pages
+
+**Request Body**:
+```json
+{
+   "email": "user@example.com",
+   "signal_id": "uuid",
+   "source": "share-web",
+   "platform": "ios",
+   "ios_apple_id": "user@example.com",
+   "android_play_email": null
+}
+```
+
+**Response**:
+- Success: `{ "success": true, "status": "signed_up" }`
+- Already signed up: `{ "success": true, "status": "already_signed_up" }`
+
+**Behavior**:
+- Stores a single row per email (case-insensitive)
+- Ties the signup to the shared signal when provided
+
 ---
 
 ## Environment Variables
@@ -246,6 +289,16 @@ RESEND_API_KEY=your_resend_api_key_here
 KV_URL=your_vercel_kv_url
 KV_REST_API_URL=your_vercel_kv_rest_api_url
 KV_REST_API_TOKEN=your_vercel_kv_token
+```
+
+### Required for Share Pages
+```
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+```
+
+### Optional for Server Fetch (Share Pages)
+```
+SUPABASE_URL=https://your-project.supabase.co
 ```
 
 ---

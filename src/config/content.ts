@@ -113,8 +113,8 @@ export const pricingContent = {
   disclaimer: 'Joining the waitlist is free. Pricing applies at launch.',
   earlyAccessNote: "You won't be charged during early access.",
   trial: 'Free 7-day trial',
-  price: 'Then $4.99/month',
-  value: 'Less than a coffee. More useful than most apps you scroll.',
+  price: 'Then $9.99/month',
+  value: 'Less than a meal out. The signals that move your next decision.',
 }
 
 export const navLinks = [
