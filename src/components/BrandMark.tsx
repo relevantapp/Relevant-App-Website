@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 type BrandMarkProps = {
   href?: string
@@ -10,7 +11,14 @@ export default function BrandMark({ href, ariaLabel = 'Relevant home', className
   const classes = ['brand-lockup', className].filter(Boolean).join(' ')
   const mark = (
     <>
-      <span className="brand-dot" />
+      <Image
+        src="/logo.svg"
+        alt="Relevant"
+        width={28}
+        height={28}
+        className="brand-logo"
+        unoptimized
+      />
       <span className="brand-wordmark">Relevant</span>
     </>
   )

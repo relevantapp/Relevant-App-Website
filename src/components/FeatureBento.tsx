@@ -29,7 +29,7 @@ function ConsequenceChainCard() {
     <div className="bento-chain" ref={containerRef}>
       <div className={`bento-chain-node bento-chain-event${step >= 1 ? ' bento-chain-node--visible' : ''}`}>
         <span className="bento-chain-node-type">EVENT</span>
-        <span className="bento-chain-node-text">Fed signals rate cuts</span>
+        <span className="bento-chain-node-text">Interest rates hold steady</span>
       </div>
       <div className={`bento-chain-arrow${step >= 2 ? ' bento-chain-arrow--visible' : ''}`}>
         <svg width="40" height="16" viewBox="0 0 40 16" fill="none">
@@ -38,7 +38,7 @@ function ConsequenceChainCard() {
       </div>
       <div className={`bento-chain-node bento-chain-dimension${step >= 2 ? ' bento-chain-node--visible' : ''}`}>
         <span className="bento-chain-node-type" style={{ color: '#FBBF24' }}>YOUR DIMENSION</span>
-        <span className="bento-chain-node-text">Series A runway</span>
+        <span className="bento-chain-node-text">Your company&rsquo;s expansion plan</span>
       </div>
       <div className={`bento-chain-arrow${step >= 3 ? ' bento-chain-arrow--visible' : ''}`}>
         <svg width="40" height="16" viewBox="0 0 40 16" fill="none">
@@ -47,14 +47,14 @@ function ConsequenceChainCard() {
       </div>
       <div className={`bento-chain-node bento-chain-consequence${step >= 3 ? ' bento-chain-node--visible' : ''}`}>
         <span className="bento-chain-node-type" style={{ color: '#4ADE80' }}>CONSEQUENCE</span>
-        <span className="bento-chain-node-text">Bridge round extends 6-12 months</span>
+        <span className="bento-chain-node-text">You have 6 more months of cheap capital</span>
       </div>
       {step >= 4 && (
         <div className="bento-chain-branch">
           <div className="bento-chain-branch-line" />
           <div className="bento-chain-node bento-chain-node--visible bento-chain-branch-node">
-            <span className="bento-chain-node-type" style={{ color: '#A78BFA' }}>IF CPI &lt; 3.2%</span>
-            <span className="bento-chain-node-text">Accelerated timeline (74% likely)</span>
+            <span className="bento-chain-node-type" style={{ color: '#A78BFA' }}>IF INFLATION &lt; 2.5%</span>
+            <span className="bento-chain-node-text">Timeline could extend further (74% likely)</span>
           </div>
         </div>
       )}
@@ -64,22 +64,22 @@ function ConsequenceChainCard() {
 
 /* ─── Card 2: Multi-Source ─── */
 
-const FAN_SOURCES = ['Reuters', 'Bloomberg', 'Financial Times', 'WSJ', 'CNBC']
+const SOURCES = ['Reuters', 'Financial Times', 'Bloomberg']
 
 function MultiSourceCard() {
   return (
     <div className="bento-multisource">
-      <div className="bento-fan">
-        {FAN_SOURCES.map((src, i) => (
+      <div className="bento-source-stack">
+        {SOURCES.map((src, i) => (
           <div
             key={src}
-            className="bento-fan-card"
+            className="bento-source-card"
             style={{
-              '--fan-i': i,
-              '--fan-total': FAN_SOURCES.length,
+              '--stack-i': i,
             } as React.CSSProperties}
           >
-            <span className="bento-fan-label">{src}</span>
+            <span className="bento-source-dot" />
+            <span className="bento-source-name">{src}</span>
           </div>
         ))}
       </div>
@@ -90,25 +90,35 @@ function MultiSourceCard() {
       </div>
       <div className="bento-collapsed-signal">
         <span className="bento-collapsed-dot" style={{ background: '#60A5FA' }} />
-        <span className="bento-collapsed-text">1 signal</span>
+        <span className="bento-collapsed-text">3 sources, 1 signal</span>
       </div>
     </div>
   )
 }
 
-/* ─── Card 3: Ask AI ─── */
+/* ─── Card 3: Ask Deeper ─── */
 
-function AskAICard() {
+function AskDeeperCard() {
   return (
     <div className="bento-chat">
-      <div className="bento-chat-summary">
-        Federal Reserve Signals Accelerated Rate Cuts
+      <div className="bento-chat-context">
+        <span className="bento-chat-context-label">SIGNAL</span>
+        <span className="bento-chat-context-text">Fed signals rate pause through Q3 2026</span>
       </div>
-      <div className="bento-chat-bubble bento-chat-user">
-        How does this affect my Q2 hiring plan?
+      <div className="bento-chat-messages">
+        <div className="bento-chat-bubble bento-chat-user">
+          How does this affect my hiring budget?
+        </div>
+        <div className="bento-chat-bubble bento-chat-ai">
+          <span className="bento-chat-ai-text">
+            With borrowing costs holding steady, your Q3 budget frees up roughly $180K
+            &mdash; enough for 1-2 additional hires at your target comp band.
+            I&rsquo;d move before September.
+          </span>
+        </div>
       </div>
-      <div className="bento-chat-bubble bento-chat-ai">
-        Your cost of capital drops ~40bps. That frees approximately $180K in Q2 budget — enough for 1.5 additional headcount at your target comp band.
+      <div className="bento-chat-input">
+        <span className="bento-chat-input-placeholder">Ask anything about this signal…</span>
       </div>
     </div>
   )
@@ -117,10 +127,10 @@ function AskAICard() {
 /* ─── Card 4: Influence Dimensions ─── */
 
 const DIMS = [
-  'Federal Reserve policy', 'Series A conditions', 'AI regulation',
-  'Cloud pricing', 'Supply chain risk', 'Canadian housing',
-  'Competitor: Stripe', 'Biotech M&A', 'Tariff policy',
-  'Defense budget', 'Streaming churn', 'Ad spend shifts',
+  'SaaS pricing shifts', 'Federal Reserve policy', 'AI infrastructure spend',
+  'Competitor: Stripe', 'Supply chain risk', 'Canadian housing market',
+  'Series A conditions', 'Ad spend reallocation', 'Data privacy regulation',
+  'Cloud cost trajectory', 'Remote work policy', 'Interest rate exposure',
 ]
 
 function DimensionsCard() {
@@ -181,22 +191,37 @@ function GoalsCard() {
   )
 }
 
-/* ─── Card 6: Finite Feed ─── */
+/* ─── Card 6: Listen & Watch ─── */
 
-function FiniteFeedCard() {
+function ListenWatchCard() {
   return (
-    <div className="bento-finite">
-      <div className="bento-finite-mini-cards">
-        <div className="bento-finite-mini" style={{ '--accent': '#60A5FA' } as React.CSSProperties} />
-        <div className="bento-finite-mini" style={{ '--accent': '#4ADE80' } as React.CSSProperties} />
-        <div className="bento-finite-mini bento-finite-mini--faded" style={{ '--accent': '#FBBF24' } as React.CSSProperties} />
-      </div>
-      <div className="bento-finite-done">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <circle cx="16" cy="16" r="14" stroke="var(--success)" strokeWidth="2" />
-          <path d="M10 16l4 4 8-8" stroke="var(--success)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-        <span>You&rsquo;re caught up</span>
+    <div className="bento-listen">
+      <div className="bento-listen-items">
+        <div className="bento-listen-item">
+          <div className="bento-listen-icon bento-listen-icon--podcast">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 18v-6a9 9 0 0 1 18 0v6" />
+              <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" />
+            </svg>
+          </div>
+          <div className="bento-listen-meta">
+            <span className="bento-listen-type">PODCAST</span>
+            <span className="bento-listen-title">The rate pause explained</span>
+            <span className="bento-listen-duration">12 min · auto-matched</span>
+          </div>
+        </div>
+        <div className="bento-listen-item">
+          <div className="bento-listen-icon bento-listen-icon--video">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3" />
+            </svg>
+          </div>
+          <div className="bento-listen-meta">
+            <span className="bento-listen-type">VIDEO</span>
+            <span className="bento-listen-title">AI pricing revolution</span>
+            <span className="bento-listen-duration">8 min · auto-matched</span>
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -229,13 +254,13 @@ export default function FeatureBento() {
       <div className="site-frame">
         <div className="section-heading reveal-on-scroll">
           <span className="section-kicker">INSIDE THE APP</span>
-          <h2>More than a feed.</h2>
+          <h2>More than a feed. An intelligence layer.</h2>
         </div>
 
         <div className="bento-grid">
           <BentoCard
             label="CONSEQUENCE MAP"
-            description="We don't just tell you what happened. We trace what it means for you."
+            description="Every signal traces forward. Here's how a rate decision connects to your budget."
             className="bento-card--wide"
           >
             <ConsequenceChainCard />
@@ -243,37 +268,37 @@ export default function FeatureBento() {
 
           <BentoCard
             label="MULTI-SOURCE"
-            description="Same story. Eight publishers. One signal."
+            description="Same story, reported by three publishers. We verify, merge, and give you one clear signal."
           >
             <MultiSourceCard />
           </BentoCard>
 
           <BentoCard
             label="ASK DEEPER"
-            description="Read the signal. Then ask it anything."
+            description="Read a signal, then ask it anything. Like having an analyst on call."
           >
-            <AskAICard />
+            <AskDeeperCard />
           </BentoCard>
 
           <BentoCard
             label="YOUR DIMENSIONS"
-            description="150+ things that can affect you. Computed from who you are."
+            description="The things that can affect your work. Automatically built from your profile."
           >
             <DimensionsCard />
           </BentoCard>
 
           <BentoCard
             label="GOALS"
-            description="Don't just know things. Use them."
+            description="Track what you're working toward. Relevant connects signals to your progress."
           >
             <GoalsCard />
           </BentoCard>
 
           <BentoCard
-            label="YOU'RE DONE"
-            description="No infinite scroll. When you've read everything, we tell you."
+            label="LISTEN & WATCH"
+            description="Some signals come with a podcast or video. Found automatically — no searching."
           >
-            <FiniteFeedCard />
+            <ListenWatchCard />
           </BentoCard>
         </div>
       </div>

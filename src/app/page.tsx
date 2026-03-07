@@ -2,8 +2,8 @@
 
 import { FormEvent, useEffect, useState } from 'react'
 import BrandMark from '@/components/BrandMark'
-import InteractiveSignal from '@/components/InteractiveSignal'
-import NoiseToSignal from '@/components/NoiseToSignal'
+import InteractiveSignalLive from '@/components/InteractiveSignalLive'
+import HeroFunnel from '@/components/HeroFunnel'
 import HowItWorks from '@/components/HowItWorks'
 import FeatureBento from '@/components/FeatureBento'
 import PhoneMockup from '@/components/PhoneMockup'
@@ -37,6 +37,22 @@ export default function Home() {
       { threshold: 0.08, rootMargin: '-20px' }
     )
     document.querySelectorAll('.reveal-on-scroll').forEach((el) => observer.observe(el))
+    // Also observe stagger containers to trigger child reveals
+    document.querySelectorAll('.reveal-stagger').forEach((container) => {
+      const staggerObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              container.querySelectorAll('.reveal-on-scroll').forEach((child) => {
+                child.classList.add('revealed')
+              })
+            }
+          })
+        },
+        { threshold: 0.1 }
+      )
+      staggerObserver.observe(container)
+    })
     return () => observer.disconnect()
   }, [])
 
@@ -98,7 +114,7 @@ export default function Home() {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
               )}
             </button>
-            <a href="#access" className="nav-button">Get early access</a>
+            <a href="#access" className="nav-button">Join waitlist</a>
           </div>
         </div>
       </nav>
@@ -108,47 +124,47 @@ export default function Home() {
         <section className="hero-section">
           <div className="site-frame hero-split">
             <div className="hero-left">
-              <span className="hero-badge">BUILT FOR SIGNAL, NOT SCROLLING</span>
+              <span className="hero-badge">YOUR PERSONAL RELEVANCE ENGINE</span>
               <h1 className="hero-title">
-                Know what{'\n'}changed{'\n'}before it{'\n'}changes{'\n'}your quarter.
+                Know what{' '}matters.{'\n'}Skip what{' '}doesn&rsquo;t.
               </h1>
               <p className="hero-sub">
-                Relevant turns ambient noise into ranked signal — what changed, why it matters to you, and what to do next.
+                Relevant scans thousands of articles every day and shows you only what affects your work, your goals, and your next move — explained in plain language.
               </p>
               <div className="hero-actions">
-                <a href="#access" className="btn-primary btn-pill">Request private beta</a>
-                <a href="#product" className="btn-secondary btn-pill">See the product flow</a>
+                <a href="#access" className="btn-primary btn-pill">Get early access</a>
+                <a href="#how-it-works" className="btn-secondary btn-pill">See how it works</a>
               </div>
               <div className="hero-cards">
                 <div className="hero-info-card">
-                  <span className="hero-info-kicker">ENTRY FLOW</span>
-                  <p className="hero-info-text">Onboarding to live feed</p>
+                  <span className="hero-info-kicker">SETUP</span>
+                  <p className="hero-info-text">4 questions, 2 minutes</p>
                 </div>
                 <div className="hero-info-card">
-                  <span className="hero-info-kicker">CORE LOOP</span>
-                  <p className="hero-info-text">{`Signal \u2192 meaning \u2192 next move`}</p>
+                  <span className="hero-info-kicker">YOUR FEED</span>
+                  <p className="hero-info-text">Daily signals, not a firehose</p>
                 </div>
                 <div className="hero-info-card">
-                  <span className="hero-info-kicker">SURFACE MIX</span>
-                  <p className="hero-info-text">Brief, feed, detail, Ask AI</p>
+                  <span className="hero-info-kicker">EVERY SIGNAL</span>
+                  <p className="hero-info-text">What happened, why, what to do</p>
                 </div>
               </div>
             </div>
             <div className="hero-right">
-              <NoiseToSignal />
+              <HeroFunnel />
             </div>
           </div>
         </section>
 
-        {/* SIGNAL — interactive demo */}
+        {/* SIGNAL — live demo */}
         <section id="signal" className="section-block">
           <div className="site-frame">
             <div className="section-heading reveal-on-scroll">
-              <span className="section-kicker">THE ENGINE</span>
+              <span className="section-kicker">REAL SIGNALS</span>
               <h2>Not a headline. A signal.</h2>
-              <p>Every signal answers three questions for your role, goals, and next move.</p>
+              <p>Every signal tells you what happened, why it matters to you, and what to do about it. These are real.</p>
             </div>
-            <InteractiveSignal />
+            <InteractiveSignalLive />
           </div>
         </section>
 
@@ -169,7 +185,7 @@ export default function Home() {
           <div className="site-frame">
             <div className="section-heading reveal-on-scroll">
               <span className="section-kicker">PRICING</span>
-              <h2>One plan. No tiers.</h2>
+              <h2>One plan. No tiers. No surprises.</h2>
             </div>
             <div className="pricing-center reveal-on-scroll">
               <div className="pricing-card pricing-card--glow">
@@ -178,8 +194,8 @@ export default function Home() {
                   <strong>$4.99</strong>
                   <span>/ month</span>
                 </div>
-                <p className="pricing-details">Free 7-day trial &middot; Cancel anytime &middot; No credit card to join</p>
-                <p className="pricing-value">Less than a coffee. More useful than most apps you scroll.</p>
+                <p className="pricing-details">Free 7-day trial &middot; Cancel anytime &middot; No credit card to start</p>
+                <p className="pricing-value">Less than a coffee a month. More useful than the 30 tabs you opened this morning.</p>
               </div>
             </div>
           </div>
@@ -190,8 +206,8 @@ export default function Home() {
           <div className="site-frame access-shell">
             <div className="access-copy reveal-on-scroll">
               <span className="section-kicker">EARLY ACCESS</span>
-              <h2>Information you should read.<br />Not information you could read.</h2>
-              <p>Relevant is in early access. Join the waitlist.</p>
+              <h2>Stop reading everything.<br />Start knowing what matters.</h2>
+              <p>Relevant is in early access. Drop your email and we&rsquo;ll send your invite.</p>
             </div>
             <form onSubmit={handleWaitlist} className="waitlist-card reveal-on-scroll">
               <span className="waitlist-label">Request access</span>
@@ -226,7 +242,7 @@ export default function Home() {
         <div className="site-frame footer-inner">
           <div className="footer-brand">
             <BrandMark />
-            <span>The information you should read.</span>
+            <span>Know what matters. Skip what doesn&rsquo;t.</span>
           </div>
           <div className="footer-social">
             <a href="https://www.instagram.com/relevant.app/" target="_blank" rel="noopener noreferrer" className="footer-social-link" aria-label="Instagram">

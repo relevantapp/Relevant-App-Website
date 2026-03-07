@@ -52,6 +52,7 @@ function OnboardingDemo() {
   const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null)
   const [selectedRole, setSelectedRole] = useState<string | null>(null)
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null)
+  const [company, setCompany] = useState('')
   const [dimensions, setDimensions] = useState<string[]>([])
 
   useEffect(() => {
@@ -62,13 +63,16 @@ function OnboardingDemo() {
     if (selectedRole && ROLE_DIMENSIONS[selectedRole]) {
       dims.push(ROLE_DIMENSIONS[selectedRole])
     }
+    if (company.trim()) {
+      dims.push(`${company.trim()} competitive landscape`)
+    }
     if (selectedCountry) {
       dims.push(`${selectedCountry} policy landscape`)
     }
     setDimensions(dims)
-  }, [selectedIndustry, selectedRole, selectedCountry])
+  }, [selectedIndustry, selectedRole, selectedCountry, company])
 
-  const selectionCount = [selectedIndustry, selectedRole, selectedCountry].filter(Boolean).length
+  const selectionCount = [selectedIndustry, selectedRole, selectedCountry, company.trim() || null].filter(Boolean).length
 
   return (
     <div className="hiw-onboarding">
@@ -105,6 +109,17 @@ function OnboardingDemo() {
       </div>
 
       <div className="hiw-field-group">
+        <span className="hiw-field-label">Company</span>
+        <input
+          type="text"
+          className="hiw-company-input"
+          placeholder="e.g. Tesla, Deloitte, your startup"
+          value={company}
+          onChange={(e) => setCompany(e.target.value)}
+        />
+      </div>
+
+      <div className="hiw-field-group">
         <span className="hiw-field-label">Country</span>
         <div className="hiw-chips">
           {COUNTRIES.map((c) => (
@@ -122,7 +137,7 @@ function OnboardingDemo() {
 
       {dimensions.length > 0 && (
         <div className="hiw-dimensions-preview">
-          <span className="hiw-dim-label">Your influence dimensions ({selectionCount}/3)</span>
+          <span className="hiw-dim-label">Your influence dimensions ({selectionCount}/4)</span>
           <div className="hiw-dim-chips">
             {dimensions.map((d, i) => (
               <span key={d} className="hiw-dim-chip" style={{ animationDelay: `${i * 80}ms` }}>
@@ -130,6 +145,7 @@ function OnboardingDemo() {
               </span>
             ))}
           </div>
+          <p className="hiw-privacy-note">Your answers stay private. We never sell your data — we only use it to find what&rsquo;s relevant to you.</p>
         </div>
       )}
     </div>
@@ -266,7 +282,7 @@ export default function HowItWorks() {
       <div className="site-frame">
         <div className="section-heading reveal-on-scroll">
           <span className="section-kicker">HOW IT WORKS</span>
-          <h2>Three steps. That&rsquo;s the whole product.</h2>
+          <h2>Set up in two minutes. Stay informed for life.</h2>
         </div>
 
         <div className="hiw-steps">
@@ -274,8 +290,8 @@ export default function HowItWorks() {
           <div className="hiw-step reveal-on-scroll">
             <div className="hiw-step-header">
               <span className="hiw-step-num">01</span>
-              <h3>Two minutes. Four questions.</h3>
-              <p>Your industry. Your role. Your country. That&rsquo;s all we need.</p>
+              <h3>Tell us about you. We&rsquo;ll figure out the rest.</h3>
+              <p>Your industry, your role, your company, and your country. That&rsquo;s all we need.</p>
             </div>
             <div className="hiw-step-visual">
               <OnboardingDemo />
@@ -286,8 +302,8 @@ export default function HowItWorks() {
           <div className="hiw-step reveal-on-scroll">
             <div className="hiw-step-header">
               <span className="hiw-step-num">02</span>
-              <h3>Thousands of articles. Every day. For you.</h3>
-              <p>We scan continuously and match every article against your influence dimensions.</p>
+              <h3>We read thousands of articles. You don&rsquo;t have to.</h3>
+              <p>Every day, we scan news, reports, and filings. We match each one against what matters to you — so nothing important slips through.</p>
             </div>
             <div className="hiw-step-visual">
               <IngestionAnimation />
@@ -298,8 +314,8 @@ export default function HowItWorks() {
           <div className="hiw-step reveal-on-scroll">
             <div className="hiw-step-header">
               <span className="hiw-step-num">03</span>
-              <h3>Open the app. Five minutes. Done.</h3>
-              <p>A few signals. Each one consequence-mapped. Each one actionable.</p>
+              <h3>Open the app. Five minutes. You&rsquo;re caught up.</h3>
+              <p>A handful of signals, each one showing what happened, why it matters to you, and what to do about it.</p>
             </div>
             <div className="hiw-step-visual">
               <MiniFeed />
