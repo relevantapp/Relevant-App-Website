@@ -90,9 +90,10 @@ export default function PhoneMockup() {
                       src={screen.src}
                       alt={screen.label}
                       fill
+                      sizes="375px"
                       style={{
                         objectFit: 'cover',
-                        objectPosition: 'center center',
+                        objectPosition: 'top center',
                       }}
                       priority={i === 0}
                       unoptimized

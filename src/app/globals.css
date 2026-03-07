@@ -2337,6 +2337,9 @@ button:focus-visible, input:focus-visible, a:focus-visible {
   border-radius: 46px;
   overflow: hidden;
   background: #000;
+  /* inner bezel shadow — screenshot feels flush against glass */
+  box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.08);
+  z-index: 1;
 }
 
 .phone-screen-slide {
@@ -2345,10 +2348,18 @@ button:focus-visible, input:focus-visible, a:focus-visible {
   opacity: 0;
   transition: opacity 600ms ease;
   background: #000;
+  will-change: opacity;
 }
 
 .phone-screen-slide--active {
   opacity: 1;
+}
+
+/* Lock images to full frame — no sub-pixel gaps */
+.phone-screen-slide img {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
 }
 
 .phone-home-bar {
@@ -2592,9 +2603,13 @@ button:focus-visible, input:focus-visible, a:focus-visible {
     width: 100%;
     max-width: 375px;
     height: auto;
+    min-height: 540px;
     aspect-ratio: 375 / 780;
     border-radius: 36px;
     border-width: 4px;
+  }
+  .phone-screen-container {
+    border-radius: 32px;
   }
   .phone-island { display: none; }
   .persona-grid { grid-template-columns: 1fr; }
@@ -2604,6 +2619,9 @@ button:focus-visible, input:focus-visible, a:focus-visible {
   .phone-frame-real {
     border-radius: 28px;
     border-width: 3px;
+  }
+  .phone-screen-container {
+    border-radius: 25px;
   }
   .phone-home-bar { display: none; }
   .hiw-step-visual { padding: 16px; min-height: auto; }
