@@ -188,42 +188,6 @@ function SpotifyYouTubeCard() {
   )
 }
 
-/* ─── Card 6: Listen & Watch ─── */
-
-function ListenWatchCard() {
-  return (
-    <div className="bento-listen">
-      <div className="bento-listen-items">
-        <div className="bento-listen-item">
-          <div className="bento-listen-icon bento-listen-icon--podcast">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 18v-6a9 9 0 0 1 18 0v6" />
-              <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" />
-            </svg>
-          </div>
-          <div className="bento-listen-meta">
-            <span className="bento-listen-type">PODCAST</span>
-            <span className="bento-listen-title">The rate pause explained</span>
-            <span className="bento-listen-duration">12 min · auto-matched</span>
-          </div>
-        </div>
-        <div className="bento-listen-item">
-          <div className="bento-listen-icon bento-listen-icon--video">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polygon points="5 3 19 12 5 21 5 3" />
-            </svg>
-          </div>
-          <div className="bento-listen-meta">
-            <span className="bento-listen-type">VIDEO</span>
-            <span className="bento-listen-title">AI pricing revolution</span>
-            <span className="bento-listen-duration">8 min · auto-matched</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 /* ─── Main Component ─── */
 
 interface BentoCardProps {
@@ -289,13 +253,6 @@ export default function FeatureBento() {
             description="Relevant finds podcasts and videos that explain your signals. Matched automatically."
           >
             <SpotifyYouTubeCard />
-          </BentoCard>
-
-          <BentoCard
-            label="LISTEN & WATCH"
-            description="Some signals come with a podcast or video. Found automatically — no searching."
-          >
-            <ListenWatchCard />
           </BentoCard>
         </div>
       </div>
