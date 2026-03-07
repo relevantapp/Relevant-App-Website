@@ -156,37 +156,34 @@ function DimensionsCard() {
   )
 }
 
-/* ─── Card 5: Goals ─── */
+/* ─── Card 5: Spotify & YouTube ─── */
 
-function GoalsCard() {
-  const radius = 36
-  const circumference = 2 * Math.PI * radius
-  const progress = 0.87
-  const offset = circumference * (1 - progress)
-
+function SpotifyYouTubeCard() {
   return (
-    <div className="bento-goals">
-      <div className="bento-goals-ring-wrap">
-        <svg width="88" height="88" viewBox="0 0 88 88">
-          <circle cx="44" cy="44" r={radius} fill="none" stroke="var(--border)" strokeWidth="6" />
-          <circle
-            cx="44" cy="44" r={radius} fill="none"
-            stroke="#4ADE80" strokeWidth="6" strokeLinecap="round"
-            strokeDasharray={circumference}
-            strokeDashoffset={offset}
-            transform="rotate(-90 44 44)"
-            className="bento-goals-progress"
-          />
-        </svg>
-        <span className="bento-goals-score">87</span>
+    <div className="bento-media-sources">
+      <div className="bento-media-item">
+        <div className="bento-media-icon bento-media-icon--spotify">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#1DB954">
+            <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+          </svg>
+        </div>
+        <div className="bento-media-meta">
+          <span className="bento-media-label">SPOTIFY</span>
+          <span className="bento-media-title">The rate pause explained — what it means for founders</span>
+        </div>
       </div>
-      <div className="bento-goals-info">
-        <span className="bento-goals-title">Career Growth</span>
-        <span className="bento-goals-meta">Week 4 · 🔥 4-week streak</span>
+      <div className="bento-media-item">
+        <div className="bento-media-icon bento-media-icon--youtube">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#FF0000">
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+          </svg>
+        </div>
+        <div className="bento-media-meta">
+          <span className="bento-media-label">YOUTUBE</span>
+          <span className="bento-media-title">AI pricing revolution: 3 retailers, one strategy shift</span>
+        </div>
       </div>
-      <div className="bento-goals-signal">
-        <span className="bento-goals-badge">Affects your career growth →</span>
-      </div>
+      <p className="bento-media-auto">Auto-matched from your signals. No searching.</p>
     </div>
   )
 }
@@ -288,10 +285,10 @@ export default function FeatureBento() {
           </BentoCard>
 
           <BentoCard
-            label="GOALS"
-            description="Track what you're working toward. Relevant connects signals to your progress."
+            label="SPOTIFY & YOUTUBE"
+            description="Relevant finds podcasts and videos that explain your signals. Matched automatically."
           >
-            <GoalsCard />
+            <SpotifyYouTubeCard />
           </BentoCard>
 
           <BentoCard

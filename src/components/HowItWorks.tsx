@@ -14,6 +14,11 @@ const ROLES = [
   'Founder', 'Designer', 'Student', 'Consultant', 'Operator',
 ]
 
+const COMPANIES = [
+  'Tesla', 'Deloitte', 'Shopify', 'Goldman Sachs',
+  'My Startup', 'Google', 'McKinsey', 'Stripe',
+]
+
 const COUNTRIES = [
   { flag: '🇺🇸', name: 'United States' },
   { flag: '🇨🇦', name: 'Canada' },
@@ -52,7 +57,7 @@ function OnboardingDemo() {
   const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null)
   const [selectedRole, setSelectedRole] = useState<string | null>(null)
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null)
-  const [company, setCompany] = useState('')
+  const [selectedCompany, setSelectedCompany] = useState<string | null>(null)
   const [dimensions, setDimensions] = useState<string[]>([])
 
   useEffect(() => {
@@ -63,16 +68,16 @@ function OnboardingDemo() {
     if (selectedRole && ROLE_DIMENSIONS[selectedRole]) {
       dims.push(ROLE_DIMENSIONS[selectedRole])
     }
-    if (company.trim()) {
-      dims.push(`${company.trim()} competitive landscape`)
+    if (selectedCompany) {
+      dims.push(`${selectedCompany} competitive landscape`)
     }
     if (selectedCountry) {
       dims.push(`${selectedCountry} policy landscape`)
     }
     setDimensions(dims)
-  }, [selectedIndustry, selectedRole, selectedCountry, company])
+  }, [selectedIndustry, selectedRole, selectedCountry, selectedCompany])
 
-  const selectionCount = [selectedIndustry, selectedRole, selectedCountry, company.trim() || null].filter(Boolean).length
+  const selectionCount = [selectedIndustry, selectedRole, selectedCountry, selectedCompany].filter(Boolean).length
 
   return (
     <div className="hiw-onboarding">
@@ -110,13 +115,18 @@ function OnboardingDemo() {
 
       <div className="hiw-field-group">
         <span className="hiw-field-label">Company</span>
-        <input
-          type="text"
-          className="hiw-company-input"
-          placeholder="e.g. Tesla, Deloitte, your startup"
-          value={company}
-          onChange={(e) => setCompany(e.target.value)}
-        />
+        <div className="hiw-chips">
+          {COMPANIES.map((comp) => (
+            <button
+              key={comp}
+              type="button"
+              className={`hiw-chip${selectedCompany === comp ? ' hiw-chip--active' : ''}`}
+              onClick={() => setSelectedCompany(selectedCompany === comp ? null : comp)}
+            >
+              {comp}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="hiw-field-group">

@@ -13,6 +13,11 @@ interface AppScreen {
 
 const APP_SCREENS: AppScreen[] = [
   {
+    src: '/relevant-welcome.png',
+    label: 'Onboarding',
+    description: 'Four questions. Two minutes. Your engine starts learning immediately.',
+  },
+  {
     src: '/relevant-feed-mobile.png',
     label: 'Your Feed',
     description: 'Five signals. Everything that matters today. Nothing that doesn\'t.',
@@ -21,11 +26,6 @@ const APP_SCREENS: AppScreen[] = [
     src: '/relevant-signal-detail-mobile.png',
     label: 'Signal Detail',
     description: 'What happened, why it matters to you, and what to do about it.',
-  },
-  {
-    src: '/relevant-welcome.png',
-    label: 'Welcome',
-    description: 'Four questions. Two minutes. Your engine starts learning immediately.',
   },
 ]
 
@@ -81,21 +81,27 @@ export default function PhoneMockup() {
 
             {/* Screenshot container */}
             <div className="phone-screen-container">
-              {APP_SCREENS.map((screen, i) => (
-                <div
-                  key={screen.label}
-                  className={`phone-screen-slide${activeIndex === i ? ' phone-screen-slide--active' : ''}`}
-                >
-                  <Image
-                    src={screen.src}
-                    alt={screen.label}
-                    fill
-                    style={{ objectFit: 'cover', objectPosition: 'top center' }}
-                    priority={i === 0}
-                    unoptimized
-                  />
-                </div>
-              ))}
+              {APP_SCREENS.map((screen, i) => {
+                const isLandscape = screen.src.includes('welcome')
+                return (
+                  <div
+                    key={screen.label}
+                    className={`phone-screen-slide${activeIndex === i ? ' phone-screen-slide--active' : ''}`}
+                  >
+                    <Image
+                      src={screen.src}
+                      alt={screen.label}
+                      fill
+                      style={{
+                        objectFit: isLandscape ? 'contain' : 'cover',
+                        objectPosition: isLandscape ? 'center center' : 'top center',
+                      }}
+                      priority={i === 0}
+                      unoptimized
+                    />
+                  </div>
+                )
+              })}
             </div>
 
             {/* Home indicator */}
