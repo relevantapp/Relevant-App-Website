@@ -81,9 +81,7 @@ export default function PhoneMockup() {
 
             {/* Screenshot container */}
             <div className="phone-screen-container">
-              {APP_SCREENS.map((screen, i) => {
-                const isLandscape = screen.src.includes('welcome')
-                return (
+              {APP_SCREENS.map((screen, i) => (
                   <div
                     key={screen.label}
                     className={`phone-screen-slide${activeIndex === i ? ' phone-screen-slide--active' : ''}`}
@@ -93,15 +91,14 @@ export default function PhoneMockup() {
                       alt={screen.label}
                       fill
                       style={{
-                        objectFit: isLandscape ? 'contain' : 'cover',
-                        objectPosition: isLandscape ? 'center center' : 'top center',
+                        objectFit: 'cover',
+                        objectPosition: 'center center',
                       }}
                       priority={i === 0}
                       unoptimized
                     />
                   </div>
-                )
-              })}
+              ))}
             </div>
 
             {/* Home indicator */}
