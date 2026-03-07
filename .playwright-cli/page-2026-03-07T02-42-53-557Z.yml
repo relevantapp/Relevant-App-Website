@@ -1,0 +1,85 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e4]:
+      - link "Relevant home" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e7]: Relevant
+      - generic [ref=e8]:
+        - link "Back home" [ref=e9] [cursor=pointer]:
+          - /url: /
+        - link "Terms" [ref=e10] [cursor=pointer]:
+          - /url: /terms
+    - generic [ref=e12]:
+      - generic [ref=e13]:
+        - text: Privacy
+        - heading "Privacy Policy" [level=1] [ref=e14]
+        - paragraph [ref=e15]: This policy explains what Relevant collects, what it does with that data, and the boundaries we keep in place while the system turns noise into signal.
+      - generic [ref=e16]:
+        - article [ref=e17]:
+          - generic [ref=e18]: Effective date
+          - strong [ref=e19]: January 3, 2026
+        - article [ref=e20]:
+          - generic [ref=e21]: Contact
+          - link "support@getrelevantapp.com" [ref=e22] [cursor=pointer]:
+            - /url: mailto:support@getrelevantapp.com
+        - article [ref=e23]:
+          - generic [ref=e24]: Scope
+          - strong [ref=e25]: Website, product access, and account use
+      - article [ref=e26]:
+        - generic [ref=e27]:
+          - heading "1. Overview" [level=2] [ref=e28]
+          - generic [ref=e29]: Relevant provides a personalized feed of summarized news, trends, and insights sourced from licensed APIs and public feeds.
+        - generic [ref=e30]:
+          - heading "2. Information We Collect" [level=2] [ref=e31]
+          - generic [ref=e32]: We collect account information, usage data, device information, and website cookies necessary to operate and improve the service.
+        - generic [ref=e33]:
+          - heading "3. Information We Do Not Collect" [level=2] [ref=e34]
+          - generic [ref=e35]: We do not sell personal data, store payment card information, track users across apps for advertising, or collect precise location data.
+        - generic [ref=e36]:
+          - heading "4. How We Use Information" [level=2] [ref=e37]
+          - generic [ref=e38]: Information is used to provide the service, personalize content, improve performance, maintain security, and provide support.
+        - generic [ref=e39]:
+          - heading "5. News Sources and Storage" [level=2] [ref=e40]
+          - generic [ref=e41]: We store headlines, metadata, and short summaries. Full articles are not stored unless explicitly licensed.
+        - generic [ref=e42]:
+          - heading "6. AI Usage" [level=2] [ref=e43]
+          - generic [ref=e44]: AI is used to summarize content, categorize topics, and generate relevance explanations. AI is not trained on identifiable personal data.
+        - generic [ref=e45]:
+          - heading "7. Cookies" [level=2] [ref=e46]
+          - generic [ref=e47]: Cookies are used on our website for session functionality, analytics, and performance optimization.
+        - generic [ref=e48]:
+          - heading "8. Sharing and Service Providers" [level=2] [ref=e49]
+          - generic [ref=e50]: Data is shared only with service providers for hosting, analytics, payments, and subscriptions under contractual safeguards.
+        - generic [ref=e51]:
+          - heading "9. Data Retention" [level=2] [ref=e52]
+          - generic [ref=e53]: Personal data is retained only for as long as required for active accounts, legal compliance, and security.
+        - generic [ref=e54]:
+          - heading "10. Security" [level=2] [ref=e55]
+          - generic [ref=e56]: We use reasonable administrative, technical, and organizational safeguards to protect personal information.
+        - generic [ref=e57]:
+          - heading "11. Privacy Rights" [level=2] [ref=e58]
+          - generic [ref=e59]: Users have rights under GDPR, PIPEDA, US state laws, CCPA/CPRA, Quebec Law 25, and Mexico's LFPDPPP.
+        - generic [ref=e60]:
+          - heading "12. Quebec Law 25" [level=2] [ref=e61]
+          - generic [ref=e62]: Quebec residents are provided clear notice and express consent where required, including cross-border processing disclosure.
+        - generic [ref=e63]:
+          - heading "13. International Data Transfers" [level=2] [ref=e64]
+          - generic [ref=e65]: Data may be processed in Canada, the United States, or other jurisdictions with appropriate safeguards.
+        - generic [ref=e66]:
+          - heading "14. Children's Privacy" [level=2] [ref=e67]
+          - generic [ref=e68]: Relevant is not intended for children under the age of 13 and does not knowingly collect their data.
+        - generic [ref=e69]:
+          - heading "15. Policy Updates" [level=2] [ref=e70]
+          - generic [ref=e71]: Material changes to this policy will be communicated through the app or website.
+    - generic [ref=e73]:
+      - paragraph [ref=e74]: © 2026 Relevant
+      - generic [ref=e75]:
+        - link "Home" [ref=e76] [cursor=pointer]:
+          - /url: /
+        - link "Privacy" [ref=e77] [cursor=pointer]:
+          - /url: /privacy
+        - link "Terms" [ref=e78] [cursor=pointer]:
+          - /url: /terms
+        - link "support@getrelevantapp.com" [ref=e79] [cursor=pointer]:
+          - /url: mailto:support@getrelevantapp.com
+  - alert [ref=e80]

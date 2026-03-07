@@ -1,79 +1,310 @@
-const steps = [
-  {
-    number: '01',
-    title: 'Pick Your Role & Interests',
-    description: 'Tell us what you do and what topics matter to you. Developer? Designer? Entrepreneur? We tailor your feed to your world.',
-    icon: (
-      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-      </svg>
-    ),
-  },
-  {
-    number: '02',
-    title: 'Get a Personalized Feed',
-    description: 'Your feed shows only relevant updates—no clickbait, no distractions. Each item comes with a clear summary of why it matters.',
-    icon: (
-      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-      </svg>
-    ),
-  },
-  {
-    number: '03',
-    title: 'Stay Informed Without Overload',
-    description: 'Spend minutes, not hours. Get the insight you need to stay current without falling down rabbit holes.',
-    icon: (
-      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
-  },
+'use client'
+
+import { useState, useEffect, useRef, useCallback } from 'react'
+
+/* ─── Step 1: Onboarding Lens ─── */
+
+const INDUSTRIES = [
+  'Technology', 'Finance', 'Healthcare', 'Energy', 'Manufacturing',
+  'Retail', 'Real Estate', 'Media', 'Education', 'Defense',
 ]
+
+const ROLES = [
+  'CEO', 'VP Engineering', 'Product Manager', 'Analyst',
+  'Founder', 'Designer', 'Student', 'Consultant', 'Operator',
+]
+
+const COUNTRIES = [
+  { flag: '🇺🇸', name: 'United States' },
+  { flag: '🇨🇦', name: 'Canada' },
+  { flag: '🇬🇧', name: 'United Kingdom' },
+  { flag: '🇩🇪', name: 'Germany' },
+  { flag: '🇮🇳', name: 'India' },
+  { flag: '🇦🇺', name: 'Australia' },
+]
+
+const DIMENSION_MAP: Record<string, string[]> = {
+  Technology: ['AI infrastructure spend', 'SaaS pricing trends', 'Cloud cost trajectory'],
+  Finance: ['Federal Reserve rates', 'Bond yield shifts', 'Credit market conditions'],
+  Healthcare: ['FDA pipeline approvals', 'Biotech M&A activity', 'Drug pricing regulation'],
+  Energy: ['Oil supply disruptions', 'Renewable subsidy policy', 'Grid infrastructure spend'],
+  Manufacturing: ['Supply chain risk index', 'Tariff policy shifts', 'Automation cost curves'],
+  Retail: ['Consumer spending signals', 'E-commerce margin shifts', 'Same-day delivery economics'],
+  'Real Estate': ['Mortgage rate trajectory', 'Commercial vacancy trends', 'Housing starts data'],
+  Media: ['Ad spend reallocation', 'Streaming churn metrics', 'Creator economy shifts'],
+  Education: ['Enrollment trend shifts', 'EdTech funding cycles', 'Student debt policy'],
+  Defense: ['Defense budget trajectory', 'Procurement timelines', 'Geopolitical risk signals'],
+}
+
+const ROLE_DIMENSIONS: Record<string, string> = {
+  CEO: 'Board-level strategic exposure',
+  'VP Engineering': 'Technical hiring & infra costs',
+  'Product Manager': 'Competitive feature parity',
+  Analyst: 'Research coverage accuracy',
+  Founder: 'Fundraising climate signals',
+  Designer: 'Design tool market shifts',
+  Student: 'Industry entry conditions',
+  Consultant: 'Client sector volatility',
+  Operator: 'Operational cost drivers',
+}
+
+function OnboardingDemo() {
+  const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null)
+  const [selectedRole, setSelectedRole] = useState<string | null>(null)
+  const [selectedCountry, setSelectedCountry] = useState<string | null>(null)
+  const [dimensions, setDimensions] = useState<string[]>([])
+
+  useEffect(() => {
+    const dims: string[] = []
+    if (selectedIndustry && DIMENSION_MAP[selectedIndustry]) {
+      dims.push(...DIMENSION_MAP[selectedIndustry])
+    }
+    if (selectedRole && ROLE_DIMENSIONS[selectedRole]) {
+      dims.push(ROLE_DIMENSIONS[selectedRole])
+    }
+    if (selectedCountry) {
+      dims.push(`${selectedCountry} policy landscape`)
+    }
+    setDimensions(dims)
+  }, [selectedIndustry, selectedRole, selectedCountry])
+
+  const selectionCount = [selectedIndustry, selectedRole, selectedCountry].filter(Boolean).length
+
+  return (
+    <div className="hiw-onboarding">
+      <div className="hiw-field-group">
+        <span className="hiw-field-label">Industry</span>
+        <div className="hiw-chips">
+          {INDUSTRIES.map((ind) => (
+            <button
+              key={ind}
+              type="button"
+              className={`hiw-chip${selectedIndustry === ind ? ' hiw-chip--active' : ''}`}
+              onClick={() => setSelectedIndustry(selectedIndustry === ind ? null : ind)}
+            >
+              {ind}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="hiw-field-group">
+        <span className="hiw-field-label">Role</span>
+        <div className="hiw-chips">
+          {ROLES.map((role) => (
+            <button
+              key={role}
+              type="button"
+              className={`hiw-chip${selectedRole === role ? ' hiw-chip--active' : ''}`}
+              onClick={() => setSelectedRole(selectedRole === role ? null : role)}
+            >
+              {role}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="hiw-field-group">
+        <span className="hiw-field-label">Country</span>
+        <div className="hiw-chips">
+          {COUNTRIES.map((c) => (
+            <button
+              key={c.name}
+              type="button"
+              className={`hiw-chip hiw-chip--country${selectedCountry === c.name ? ' hiw-chip--active' : ''}`}
+              onClick={() => setSelectedCountry(selectedCountry === c.name ? null : c.name)}
+            >
+              <span className="hiw-flag">{c.flag}</span> {c.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {dimensions.length > 0 && (
+        <div className="hiw-dimensions-preview">
+          <span className="hiw-dim-label">Your influence dimensions ({selectionCount}/3)</span>
+          <div className="hiw-dim-chips">
+            {dimensions.map((d, i) => (
+              <span key={d} className="hiw-dim-chip" style={{ animationDelay: `${i * 80}ms` }}>
+                {d}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+/* ─── Step 2: Ingestion Animation ─── */
+
+const SOURCES = [
+  'Reuters', 'Financial Times', 'SEC Filings', 'Industry Reports',
+  'Tech Publications', 'Government Releases', 'Market Data', 'Global Trade Data',
+]
+
+function IngestionAnimation() {
+  const [count, setCount] = useState(0)
+  const [active, setActive] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !active) setActive(true)
+      },
+      { threshold: 0.3 },
+    )
+    if (containerRef.current) observer.observe(containerRef.current)
+    return () => observer.disconnect()
+  }, [active])
+
+  useEffect(() => {
+    if (!active) return
+    const target = 2847
+    const duration = 2200
+    const start = performance.now()
+    let frame: number
+    const tick = (now: number) => {
+      const elapsed = now - start
+      const progress = Math.min(elapsed / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setCount(Math.round(eased * target))
+      if (progress < 1) frame = requestAnimationFrame(tick)
+    }
+    frame = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frame)
+  }, [active])
+
+  return (
+    <div className={`hiw-ingestion${active ? ' hiw-ingestion--active' : ''}`} ref={containerRef}>
+      <div className="hiw-source-ring">
+        {SOURCES.map((src, i) => (
+          <span
+            key={src}
+            className="hiw-source-label"
+            style={{
+              '--angle': `${(i / SOURCES.length) * 360}deg`,
+              '--delay': `${i * 150}ms`,
+            } as React.CSSProperties}
+          >
+            {src}
+          </span>
+        ))}
+      </div>
+
+      <div className="hiw-center-glow" />
+
+      <div className="hiw-counter-stack">
+        <span className="hiw-count-big">{count.toLocaleString()}</span>
+        <span className="hiw-count-label">articles scanned</span>
+        <div className="hiw-count-divider" />
+        <span className="hiw-count-match">7</span>
+        <span className="hiw-count-label">matched your dimensions</span>
+      </div>
+    </div>
+  )
+}
+
+/* ─── Step 3: Mini Feed ─── */
+
+const MINI_SIGNALS = [
+  { color: '#60A5FA', category: 'COMPETITIVE', headline: 'Fed signals rate pause through Q3', sources: '5 sources', synthesis: 'Cost of capital stays lower — your expansion timeline has more room.' },
+  { color: '#4ADE80', category: 'OPPORTUNITY', headline: 'Enterprise AI spending up 40% YoY', sources: '3 sources', synthesis: 'RAG budgets growing 3× faster. The window for early movers is 90 days.' },
+  { color: '#FBBF24', category: 'RISK', headline: 'Supply chain bill clears committee', sources: '2 sources', synthesis: 'Compliance prep should start now — implementation takes 4-6 months.' },
+  { color: '#F87171', category: 'REGULATORY', headline: 'New data privacy framework proposed', sources: '4 sources', synthesis: 'Consent architecture overhaul required for companies above 10M users.' },
+  { color: '#A78BFA', category: 'STRATEGIC', headline: 'Major retailers adopt AI pricing', sources: '4 sources', synthesis: 'Static pricing strategies will underperform within two quarters.' },
+]
+
+function MiniFeed() {
+  const [visible, setVisible] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setVisible(true)
+      },
+      { threshold: 0.2 },
+    )
+    if (containerRef.current) observer.observe(containerRef.current)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <div className="hiw-mini-feed" ref={containerRef}>
+      {MINI_SIGNALS.map((s, i) => (
+        <div
+          key={i}
+          className={`hiw-mini-card${visible ? ' hiw-mini-card--visible' : ''}`}
+          style={{ '--delay': `${i * 120}ms`, '--accent': s.color } as React.CSSProperties}
+        >
+          <div className="hiw-mini-top">
+            <span className="hiw-mini-badge" style={{ color: s.color }}>{s.category}</span>
+            <span className="hiw-mini-sources">{s.sources}</span>
+          </div>
+          <p className="hiw-mini-headline">{s.headline}</p>
+          <p className="hiw-mini-synthesis">{s.synthesis}</p>
+        </div>
+      ))}
+      <div className={`hiw-caught-up${visible ? ' hiw-caught-up--visible' : ''}`}>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="10" r="9" stroke="var(--success)" strokeWidth="2" />
+          <path d="M6 10l3 3 5-5" stroke="var(--success)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        <span>5/5 signals read · You&rsquo;re caught up</span>
+      </div>
+    </div>
+  )
+}
+
+/* ─── Main Component ─── */
 
 export default function HowItWorks() {
   return (
-    <section id="how-it-works" className="py-20 px-4 bg-gray-50">
-      <div className="max-w-5xl mx-auto">
-        {/* Section Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-            How It Works
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Getting started with Relevant takes less than a minute.
-          </p>
+    <section id="how-it-works" className="section-block section-tinted">
+      <div className="site-frame">
+        <div className="section-heading reveal-on-scroll">
+          <span className="section-kicker">HOW IT WORKS</span>
+          <h2>Three steps. That&rsquo;s the whole product.</h2>
         </div>
 
-        {/* Steps */}
-        <div className="grid md:grid-cols-3 gap-8">
-          {steps.map((step, index) => (
-            <div
-              key={step.number}
-              className="relative bg-white rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow"
-            >
-              {/* Step Number */}
-              <div className="text-blue-600 mb-4">
-                {step.icon}
-              </div>
-              
-              {/* Content */}
-              <div className="text-sm font-semibold text-blue-600 mb-2">
-                Step {step.number}
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                {step.title}
-              </h3>
-              <p className="text-gray-600">
-                {step.description}
-              </p>
-
-              {/* Connector Line (except last) */}
-              {index < steps.length - 1 && (
-                <div className="hidden md:block absolute top-1/2 -right-4 w-8 border-t-2 border-dashed border-gray-300" />
-              )}
+        <div className="hiw-steps">
+          {/* Step 1 */}
+          <div className="hiw-step reveal-on-scroll">
+            <div className="hiw-step-header">
+              <span className="hiw-step-num">01</span>
+              <h3>Two minutes. Four questions.</h3>
+              <p>Your industry. Your role. Your country. That&rsquo;s all we need.</p>
             </div>
-          ))}
+            <div className="hiw-step-visual">
+              <OnboardingDemo />
+            </div>
+          </div>
+
+          {/* Step 2 */}
+          <div className="hiw-step reveal-on-scroll">
+            <div className="hiw-step-header">
+              <span className="hiw-step-num">02</span>
+              <h3>Thousands of articles. Every day. For you.</h3>
+              <p>We scan continuously and match every article against your influence dimensions.</p>
+            </div>
+            <div className="hiw-step-visual">
+              <IngestionAnimation />
+            </div>
+          </div>
+
+          {/* Step 3 */}
+          <div className="hiw-step reveal-on-scroll">
+            <div className="hiw-step-header">
+              <span className="hiw-step-num">03</span>
+              <h3>Open the app. Five minutes. Done.</h3>
+              <p>A few signals. Each one consequence-mapped. Each one actionable.</p>
+            </div>
+            <div className="hiw-step-visual">
+              <MiniFeed />
+            </div>
+          </div>
         </div>
       </div>
     </section>

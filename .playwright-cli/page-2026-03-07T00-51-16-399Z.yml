@@ -1,0 +1,461 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link "Relevant home" [ref=e4] [cursor=pointer]:
+        - /url: "#top"
+        - generic [ref=e6]: Relevant
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - link "Features" [ref=e9] [cursor=pointer]:
+            - /url: "#features"
+          - link "Product" [ref=e10] [cursor=pointer]:
+            - /url: "#screens"
+          - link "Pricing" [ref=e11] [cursor=pointer]:
+            - /url: "#pricing"
+        - generic [ref=e12]:
+          - button "Switch to light mode" [ref=e13] [cursor=pointer]:
+            - img [ref=e14]
+            - generic [ref=e16]: Dark
+          - link "Instagram" [ref=e17] [cursor=pointer]:
+            - /url: https://www.instagram.com/relevant.app/
+            - img [ref=e18]
+            - generic [ref=e20]: Instagram
+          - link "TikTok" [ref=e21] [cursor=pointer]:
+            - /url: https://www.tiktok.com/@relevant.app
+            - img [ref=e22]
+            - generic [ref=e24]: TikTok
+          - link "Get early access" [ref=e25] [cursor=pointer]:
+            - /url: "#waitlist"
+  - main [ref=e26]:
+    - generic [ref=e28]:
+      - generic [ref=e29]:
+        - generic [ref=e30]:
+          - generic [ref=e31]: Built for signal, not scrolling
+          - generic [ref=e32]: Current app surfaces only. No stale screenshots.
+        - heading "Know what changed before it changes your quarter." [level=1] [ref=e33]
+        - paragraph [ref=e34]: "Relevant is a role-aware relevance engine. It turns ambient noise into a tighter operating picture by answering three things for every signal: what changed, why it matters to you, and what to do next."
+        - generic [ref=e35]:
+          - link "Request private beta" [ref=e36] [cursor=pointer]:
+            - /url: "#waitlist"
+          - link "See the product flow" [ref=e37] [cursor=pointer]:
+            - /url: "#screens"
+        - generic "Relevant proof points" [ref=e38]:
+          - generic [ref=e39]:
+            - text: Entry flow
+            - strong [ref=e40]: Onboarding to live feed
+          - generic [ref=e41]:
+            - text: Core loop
+            - strong [ref=e42]: Signal -> meaning -> next move
+          - generic [ref=e43]:
+            - text: Surface mix
+            - strong [ref=e44]: Brief, feed, detail, Ask AI
+      - generic [ref=e46]:
+        - generic [ref=e47]:
+          - generic [ref=e48]:
+            - generic [ref=e49]: Onboarding overflow
+            - generic [ref=e50]: The first screen already hints at what comes next
+          - img "Relevant onboarding screen explaining the three-part signal model." [ref=e52]
+        - article [ref=e53]:
+          - generic [ref=e54]:
+            - generic [ref=e55]: Signal detail
+            - generic [ref=e56]: Akshit feed · top-ranked opening
+          - generic [ref=e58]:
+            - img "Stablecoin illustration representing competition over payments infrastructure." [ref=e60]
+            - generic [ref=e61]:
+              - generic [ref=e62]:
+                - generic [ref=e63]: Payments infra
+                - generic [ref=e64]: Akshit feed · Treasury + operations
+              - heading "FinTech and Big Finance Compete to Control Evolving Stablecoin Infrastructure" [level=4] [ref=e65]
+              - generic [ref=e66]:
+                - generic [ref=e67]: What changed
+                - paragraph [ref=e68]: Banks, fintechs, and issuers are fighting to own the settlement layer beneath payroll, vendor payments, and cross-border movement.
+              - generic [ref=e69]:
+                - generic [ref=e70]: Why it matters
+                - paragraph [ref=e71]: If you depend on payouts, treasury tooling, or embedded finance, the stack is consolidating before pricing and standards settle.
+              - generic [ref=e72]:
+                - generic [ref=e73]: What to do next
+                - paragraph [ref=e74]: Map which customers, partners, or competitors gain leverage if stablecoin settlement becomes the default rail.
+        - article [ref=e75]:
+          - generic [ref=e76]:
+            - generic [ref=e77]: Ranked feed
+            - generic [ref=e78]: Akshit + Tanmay live signal mix
+          - generic [ref=e80]:
+            - generic [ref=e81]:
+              - generic [ref=e82]:
+                - strong [ref=e83]: Today
+                - generic [ref=e84]: 2 ranked signals
+              - generic [ref=e85]:
+                - generic [ref=e86]: Tune
+                - generic [ref=e87]: Filter
+            - generic [ref=e88]:
+              - article [ref=e89]:
+                - img "Stablecoin illustration representing competition over payments infrastructure." [ref=e91]
+                - generic [ref=e92]:
+                  - generic [ref=e93]:
+                    - generic [ref=e94]: "#01"
+                    - generic [ref=e95]: Akshit feed · PYMNTS
+                  - strong [ref=e96]: FinTech and Big Finance Compete to Control Evolving Stablecoin Infrastructure
+                  - paragraph [ref=e97]: Map which customers, partners, or competitors gain leverage if stablecoin settlement becomes the default rail.
+              - article [ref=e98]:
+                - img "Maritime shipping image representing surging insurance risk in Gulf freight lanes." [ref=e100]
+                - generic [ref=e101]:
+                  - generic [ref=e102]:
+                    - generic [ref=e103]: "#02"
+                    - generic [ref=e104]: Tanmay feed · Maritime Professional
+                  - strong [ref=e105]: Maritime Insurance Premiums Surge Over 1000% Amid Expanding Gulf Conflict
+                  - paragraph [ref=e106]: Flag the lanes, suppliers, and customers that break first if surcharges persist through another shipping cycle.
+        - generic [ref=e107]:
+          - text: Best first impression
+          - strong [ref=e108]: The hero should show that the product already knows how to rank what matters.
+        - generic [ref=e109]:
+          - text: Core model
+          - generic [ref=e110]:
+            - generic [ref=e111]: What changed
+            - generic [ref=e112]: Why it matters
+            - generic [ref=e113]: What to do next
+    - generic [ref=e115]:
+      - generic [ref=e116]:
+        - text: Features
+        - heading "Three answers, one tighter operating picture." [level=2] [ref=e117]
+        - paragraph [ref=e118]: The product is strongest when it behaves like a consequence engine, not a prettier news reader. The website now tells that story directly.
+      - generic [ref=e119]:
+        - article [ref=e120]:
+          - text: "01"
+          - heading "What changed" [level=3] [ref=e121]
+          - paragraph [ref=e122]: A plain-language read on the event itself, stripped of filler, hedging, and vague news voice.
+        - article [ref=e123]:
+          - text: "02"
+          - heading "Why it matters to you" [level=3] [ref=e124]
+          - paragraph [ref=e125]: Every signal is filtered through your role, market, and current priorities instead of a generic audience.
+        - article [ref=e126]:
+          - text: "03"
+          - heading "What to do next" [level=3] [ref=e127]
+          - paragraph [ref=e128]: "Relevant pushes toward action: who to call, what to monitor, and which window is actually open now."
+      - generic "Relevant product capabilities" [ref=e129]:
+        - generic [ref=e130]: Finite feed
+        - generic [ref=e131]: Role lens
+        - generic [ref=e132]: Source tabs
+        - generic [ref=e133]: Ask AI follow-up
+        - generic [ref=e134]: Score + streak
+        - generic [ref=e135]: Action-first summaries
+    - generic [ref=e137]:
+      - generic [ref=e138]:
+        - text: Actual product surfaces
+        - heading "Onboarding, then ranked signal, then decision support." [level=2] [ref=e139]
+        - paragraph [ref=e140]: "The strongest story is the product flow itself: onboarding that feels alive, a feed that shows ranked consequence, and a signal view that keeps the promise when you tap in."
+      - generic [ref=e141]:
+        - article [ref=e142]:
+          - generic [ref=e143]:
+            - generic [ref=e144]: "01"
+            - generic [ref=e145]: Onboarding overview
+          - img "Relevant onboarding screen showing a focused signal card over a faded feed background." [ref=e147]
+          - generic [ref=e148]:
+            - heading "The first impression should show the signal model, not an empty shell." [level=3] [ref=e149]
+            - paragraph [ref=e150]: Relevant opens by showing the consequence stack up front, with the next surfaces visible behind it so onboarding feels like the beginning of use, not a dead-end intro.
+        - generic [ref=e151]:
+          - article [ref=e152]:
+            - generic [ref=e153]:
+              - generic [ref=e154]: "02"
+              - generic [ref=e155]: Feed forming
+            - generic [ref=e156]:
+              - heading "Second, the feed should visibly form around your signal constellation." [level=3] [ref=e157]
+              - paragraph [ref=e158]: The constellation loader is the right bridge between setup and use because it shows the engine sorting for consequence instead of dumping you into an empty feed.
+            - generic [ref=e160]:
+              - generic [ref=e161]:
+                - generic [ref=e162]: Your feed is forming
+                - generic [ref=e163]: Signal feed is warming up
+              - generic [ref=e180]:
+                - generic [ref=e181]:
+                  - generic [ref=e182]: "01"
+                  - paragraph [ref=e183]: "Signal Forge: mapping your world"
+                - generic [ref=e184]:
+                  - generic [ref=e185]: "02"
+                  - paragraph [ref=e186]: Prioritizing what can affect you
+                - generic [ref=e187]:
+                  - generic [ref=e188]: "03"
+                  - paragraph [ref=e189]: Connecting consequence paths
+                - generic [ref=e190]:
+                  - generic [ref=e191]: "04"
+                  - paragraph [ref=e192]: Building your first brief
+          - article [ref=e193]:
+            - generic [ref=e194]:
+              - generic [ref=e195]: "03"
+              - generic [ref=e196]: Ranked feed
+            - generic [ref=e197]:
+              - heading "Then the live feed should open with distinct signals that already feel worth acting on." [level=3] [ref=e198]
+              - paragraph [ref=e199]: The first cards should be different topics, different consequence paths, and different moves, so the product feels ranked rather than recycled.
+            - generic [ref=e201]:
+              - generic [ref=e202]:
+                - generic [ref=e203]:
+                  - strong [ref=e204]: Today
+                  - generic [ref=e205]: 3 ranked signals
+                - generic [ref=e206]:
+                  - generic [ref=e207]: Tune
+                  - generic [ref=e208]: Filter
+              - generic [ref=e209]:
+                - article [ref=e210]:
+                  - img "Stablecoin illustration representing competition over payments infrastructure." [ref=e212]
+                  - generic [ref=e213]:
+                    - generic [ref=e214]:
+                      - generic [ref=e215]: "#01"
+                      - generic [ref=e216]: Akshit feed · PYMNTS
+                    - strong [ref=e217]: FinTech and Big Finance Compete to Control Evolving Stablecoin Infrastructure
+                    - paragraph [ref=e218]: Banks, fintechs, and issuers are fighting to own the settlement layer beneath payroll, vendor payments, and cross-border movement.
+                    - generic [ref=e219]:
+                      - generic [ref=e220]: Payments
+                      - generic [ref=e221]: Treasury
+                      - generic [ref=e222]: Cross-border
+                - article [ref=e223]:
+                  - img "Maritime shipping image representing surging insurance risk in Gulf freight lanes." [ref=e225]
+                  - generic [ref=e226]:
+                    - generic [ref=e227]:
+                      - generic [ref=e228]: "#02"
+                      - generic [ref=e229]: Tanmay feed · Maritime Professional
+                    - strong [ref=e230]: Maritime Insurance Premiums Surge Over 1000% Amid Expanding Gulf Conflict
+                    - paragraph [ref=e231]: War-risk insurance in the Gulf moved violently higher, which means freight economics can change before carriers formally reroute.
+                    - generic [ref=e232]:
+                      - generic [ref=e233]: Freight
+                      - generic [ref=e234]: Insurance
+                      - generic [ref=e235]: Conflict
+                - article [ref=e236]:
+                  - img "Warehouse automation system demonstrating pouch-based sorting infrastructure." [ref=e238]
+                  - generic [ref=e239]:
+                    - generic [ref=e240]:
+                      - generic [ref=e241]: "#03"
+                      - generic [ref=e242]: Tanmay feed · Logistics Business
+                    - strong [ref=e243]: Beumer Group Debuts BG Pouch System with AutoDrop Function at LogiMAT
+                    - paragraph [ref=e244]: A new pouch automation system signals fresh warehouse capex and vendor-evaluation cycles across parcel, retail, and fulfillment networks.
+                    - generic [ref=e245]:
+                      - generic [ref=e246]: Automation
+                      - generic [ref=e247]: Fulfillment
+                      - generic [ref=e248]: Capex
+      - generic [ref=e249]:
+        - generic [ref=e250]:
+          - generic [ref=e251]: Live ranked signals
+          - heading "The best signals are the ones that make you act faster." [level=3] [ref=e252]
+          - paragraph [ref=e253]: These are the strongest current examples from Akshit and Tanmay's live feeds. They are ranked top to bottom because they open a window, reprice risk, or change who should move now.
+          - generic [ref=e254]:
+            - article [ref=e255]:
+              - img "Stablecoin illustration representing competition over payments infrastructure." [ref=e257]
+              - generic [ref=e258]:
+                - generic [ref=e259]: "#01 · Payments infra"
+                - generic [ref=e260]: Akshit · Treasury + operations
+              - strong [ref=e261]: FinTech and Big Finance Compete to Control Evolving Stablecoin Infrastructure
+              - paragraph [ref=e262]: If you depend on payouts, treasury tooling, or embedded finance, the stack is consolidating before pricing and standards settle.
+              - generic [ref=e263]:
+                - generic [ref=e264]: Payments
+                - generic [ref=e265]: Treasury
+                - generic [ref=e266]: Cross-border
+              - generic [ref=e267]:
+                - text: What you do next
+                - paragraph [ref=e268]: Map which customers, partners, or competitors gain leverage if stablecoin settlement becomes the default rail.
+            - article [ref=e269]:
+              - img "Maritime shipping image representing surging insurance risk in Gulf freight lanes." [ref=e271]
+              - generic [ref=e272]:
+                - generic [ref=e273]: "#02 · Maritime risk"
+                - generic [ref=e274]: Tanmay · Supply chain + finance
+              - strong [ref=e275]: Maritime Insurance Premiums Surge Over 1000% Amid Expanding Gulf Conflict
+              - paragraph [ref=e276]: Importers, exporters, and manufacturers with Gulf exposure can get hit on margin and delivery windows immediately, not after policy catches up.
+              - generic [ref=e277]:
+                - generic [ref=e278]: Freight
+                - generic [ref=e279]: Insurance
+                - generic [ref=e280]: Conflict
+              - generic [ref=e281]:
+                - text: What you do next
+                - paragraph [ref=e282]: Flag the lanes, suppliers, and customers that break first if surcharges persist through another shipping cycle.
+            - article [ref=e283]:
+              - img "Warehouse automation system demonstrating pouch-based sorting infrastructure." [ref=e285]
+              - generic [ref=e286]:
+                - generic [ref=e287]: "#03 · Warehouse automation"
+                - generic [ref=e288]: Tanmay · Operations + commercial
+              - strong [ref=e289]: Beumer Group Debuts BG Pouch System with AutoDrop Function at LogiMAT
+              - paragraph [ref=e290]: If you sell robotics, controls, software, or integration, this is a buying-language change with clear downstream demand.
+              - generic [ref=e291]:
+                - generic [ref=e292]: Automation
+                - generic [ref=e293]: Fulfillment
+                - generic [ref=e294]: Capex
+              - generic [ref=e295]:
+                - text: What you do next
+                - paragraph [ref=e296]: Call operators already modernizing sortation before incumbent partners lock the spec and the shortlist hardens.
+            - article [ref=e297]:
+              - img "Military family image illustrating labor-market access support for frequent relocations." [ref=e299]
+              - generic [ref=e300]:
+                - generic [ref=e301]: "#04 · Labor access"
+                - generic [ref=e302]: Akshit · Hiring + workforce
+              - strong [ref=e303]: WorkBC Expedites Access for Military Spouses to Support Frequent Relocations
+              - paragraph [ref=e304]: Teams hiring in healthcare, education, retail, and support roles may see a new labor pocket open ahead of slower competitors.
+              - generic [ref=e305]:
+                - generic [ref=e306]: Workforce
+                - generic [ref=e307]: Labor supply
+                - generic [ref=e308]: Regional hiring
+              - generic [ref=e309]:
+                - text: What you do next
+                - paragraph [ref=e310]: Adjust recruiting and local-partnership plans where relocation-heavy households can change supply first.
+        - generic [ref=e311]:
+          - article [ref=e312]:
+            - generic [ref=e313]:
+              - generic [ref=e314]: Live feed
+              - generic [ref=e315]: Distinct topics. No repeated filler cards.
+            - generic [ref=e317]:
+              - generic [ref=e318]:
+                - generic [ref=e319]:
+                  - strong [ref=e320]: Today
+                  - generic [ref=e321]: 3 ranked signals
+                - generic [ref=e322]:
+                  - generic [ref=e323]: Tune
+                  - generic [ref=e324]: Filter
+              - generic [ref=e325]:
+                - article [ref=e326]:
+                  - img "Stablecoin illustration representing competition over payments infrastructure." [ref=e328]
+                  - generic [ref=e329]:
+                    - generic [ref=e330]:
+                      - generic [ref=e331]: "#01"
+                      - generic [ref=e332]: Akshit feed · PYMNTS
+                    - strong [ref=e333]: FinTech and Big Finance Compete to Control Evolving Stablecoin Infrastructure
+                    - paragraph [ref=e334]: Banks, fintechs, and issuers are fighting to own the settlement layer beneath payroll, vendor payments, and cross-border movement.
+                    - generic [ref=e335]:
+                      - generic [ref=e336]: Payments
+                      - generic [ref=e337]: Treasury
+                      - generic [ref=e338]: Cross-border
+                - article [ref=e339]:
+                  - img "Maritime shipping image representing surging insurance risk in Gulf freight lanes." [ref=e341]
+                  - generic [ref=e342]:
+                    - generic [ref=e343]:
+                      - generic [ref=e344]: "#02"
+                      - generic [ref=e345]: Tanmay feed · Maritime Professional
+                    - strong [ref=e346]: Maritime Insurance Premiums Surge Over 1000% Amid Expanding Gulf Conflict
+                    - paragraph [ref=e347]: War-risk insurance in the Gulf moved violently higher, which means freight economics can change before carriers formally reroute.
+                    - generic [ref=e348]:
+                      - generic [ref=e349]: Freight
+                      - generic [ref=e350]: Insurance
+                      - generic [ref=e351]: Conflict
+                - article [ref=e352]:
+                  - img "Warehouse automation system demonstrating pouch-based sorting infrastructure." [ref=e354]
+                  - generic [ref=e355]:
+                    - generic [ref=e356]:
+                      - generic [ref=e357]: "#03"
+                      - generic [ref=e358]: Tanmay feed · Logistics Business
+                    - strong [ref=e359]: Beumer Group Debuts BG Pouch System with AutoDrop Function at LogiMAT
+                    - paragraph [ref=e360]: A new pouch automation system signals fresh warehouse capex and vendor-evaluation cycles across parcel, retail, and fulfillment networks.
+                    - generic [ref=e361]:
+                      - generic [ref=e362]: Automation
+                      - generic [ref=e363]: Fulfillment
+                      - generic [ref=e364]: Capex
+          - generic [ref=e365]:
+            - article [ref=e366]:
+              - generic [ref=e367]: What the feed does
+              - strong [ref=e368]: Ranks the window before it closes and makes the feed feel alive immediately.
+            - article [ref=e369]:
+              - generic [ref=e370]: Why it lands
+              - strong [ref=e371]: Different topics show up side by side, so the user sees consequence instead of repetition.
+      - generic [ref=e372]:
+        - article [ref=e373]:
+          - generic [ref=e374]:
+            - generic [ref=e375]: Opened signal
+            - generic [ref=e376]: Akshit feed · PYMNTS
+          - generic [ref=e378]:
+            - img "Stablecoin illustration representing competition over payments infrastructure." [ref=e380]
+            - generic [ref=e381]:
+              - generic [ref=e382]:
+                - generic [ref=e383]: Payments infra
+                - generic [ref=e384]: Akshit feed · Treasury + operations
+              - heading "FinTech and Big Finance Compete to Control Evolving Stablecoin Infrastructure" [level=4] [ref=e385]
+              - generic [ref=e386]:
+                - generic [ref=e387]: What changed
+                - paragraph [ref=e388]: Banks, fintechs, and issuers are fighting to own the settlement layer beneath payroll, vendor payments, and cross-border movement.
+              - generic [ref=e389]:
+                - generic [ref=e390]: Why it matters
+                - paragraph [ref=e391]: If you depend on payouts, treasury tooling, or embedded finance, the stack is consolidating before pricing and standards settle.
+              - generic [ref=e392]:
+                - generic [ref=e393]: What to do next
+                - paragraph [ref=e394]: Map which customers, partners, or competitors gain leverage if stablecoin settlement becomes the default rail.
+        - generic [ref=e395]:
+          - generic [ref=e396]: Opened signal
+          - heading "One operating view. No random overflow screens." [level=3] [ref=e397]
+          - paragraph [ref=e398]: When someone opens a signal, the page should show that Relevant gets sharper, not noisier. The detail view keeps the logic intact and puts verification right beside the action.
+          - generic [ref=e399]:
+            - article [ref=e400]:
+              - generic [ref=e401]: What happened
+              - paragraph [ref=e402]: Banks, fintechs, and issuers are fighting to own the settlement layer beneath payroll, vendor payments, and cross-border movement.
+            - article [ref=e403]:
+              - generic [ref=e404]: Why it matters to you
+              - paragraph [ref=e405]: If you depend on payouts, treasury tooling, or embedded finance, the stack is consolidating before pricing and standards settle.
+            - article [ref=e406]:
+              - generic [ref=e407]: What to do next
+              - paragraph [ref=e408]: Map which customers, partners, or competitors gain leverage if stablecoin settlement becomes the default rail.
+            - article [ref=e409]:
+              - generic [ref=e410]: Ask AI + sources
+              - paragraph [ref=e411]: Open the source list, compare adjacent players, and ask AI which accounts, vendors, or cost centers get hit first.
+    - generic [ref=e413]:
+      - generic [ref=e414]:
+        - text: Operating cadence
+        - heading "From role lens to next move." [level=2] [ref=e415]
+        - paragraph [ref=e416]: "The product story now tracks a cleaner sequence: set the lens, monitor for consequence, rank the window, and act with context while it still matters."
+      - generic [ref=e417]:
+        - article [ref=e418]:
+          - generic [ref=e419]: "01"
+          - heading "Set your lens" [level=3] [ref=e420]
+          - paragraph [ref=e421]: Tell Relevant who you are, what market you operate in, and which kinds of changes should interrupt your week.
+        - article [ref=e422]:
+          - generic [ref=e423]: "02"
+          - heading "We watch for consequence" [level=3] [ref=e424]
+          - paragraph [ref=e425]: The engine filters weak matches, tracks movement, and promotes only the items with direct operational or commercial weight.
+        - article [ref=e426]:
+          - generic [ref=e427]: "03"
+          - heading "The feed ranks the window" [level=3] [ref=e428]
+          - paragraph [ref=e429]: Instead of forcing more reading, the product ranks where attention can still convert into an edge.
+        - article [ref=e430]:
+          - generic [ref=e431]: "04"
+          - heading "You move with context" [level=3] [ref=e432]
+          - paragraph [ref=e433]: Every opened signal gives you sources, context, and next actions while the opportunity is still fresh.
+    - generic [ref=e435]:
+      - generic [ref=e436]:
+        - text: Built for higher-stakes attention
+        - heading "Relevant is for people whose work moves when the world moves." [level=2] [ref=e437]
+        - paragraph [ref=e438]: This is not for passive browsing. It is for people who benefit when they spot the meaningful shift early and move while everyone else is still reading.
+      - generic [ref=e439]:
+        - generic [ref=e440]: Founders
+        - generic [ref=e441]: Operators
+        - generic [ref=e442]: Product leaders
+        - generic [ref=e443]: Market intelligence teams
+        - generic [ref=e444]: Analysts
+        - generic [ref=e445]: Logistics and supply chain
+        - generic [ref=e446]: Strategy and finance
+        - generic [ref=e447]: Revenue teams that sell into change
+    - generic [ref=e449]:
+      - generic [ref=e450]:
+        - text: Get early access
+        - heading "Get in before the public launch." [level=2] [ref=e451]
+        - paragraph [ref=e452]: "Join the list for early access, product drops, and launch timing. Pricing stays simple: a free 7-day trial at launch, then $4.99/month."
+        - generic [ref=e453]:
+          - text: Pricing
+          - strong [ref=e454]: $4.99 / month
+          - paragraph [ref=e455]: 7-day free trial. Early access users see the sharpest version first.
+      - generic [ref=e456]:
+        - generic [ref=e457]:
+          - generic [ref=e458]: Request access
+          - generic [ref=e459]: We only email product and launch updates.
+        - generic [ref=e460]:
+          - generic [ref=e461]: Email
+          - textbox "Email" [ref=e462]:
+            - /placeholder: you@company.com
+          - button "Join the waitlist" [ref=e463] [cursor=pointer]
+          - paragraph [ref=e464]: No spam. Just early access and product updates.
+  - contentinfo [ref=e465]:
+    - generic [ref=e466]:
+      - paragraph [ref=e467]: © 2026 Relevant
+      - generic [ref=e468]:
+        - link "Privacy" [ref=e469] [cursor=pointer]:
+          - /url: /privacy
+        - link "Terms" [ref=e470] [cursor=pointer]:
+          - /url: /terms
+        - link "Instagram" [ref=e471] [cursor=pointer]:
+          - /url: https://www.instagram.com/relevant.app/
+        - link "TikTok" [ref=e472] [cursor=pointer]:
+          - /url: https://www.tiktok.com/@relevant.app
+        - link "support@getrelevantapp.com" [ref=e473] [cursor=pointer]:
+          - /url: mailto:support@getrelevantapp.com
+  - generic:
+    - link "Request private beta":
+      - /url: "#waitlist"
+  - alert [ref=e474]

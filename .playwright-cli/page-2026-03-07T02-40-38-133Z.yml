@@ -1,0 +1,357 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link "Relevant home" [ref=e4] [cursor=pointer]:
+        - /url: "#top"
+        - generic [ref=e6]: Relevant
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - link "Engine" [ref=e9] [cursor=pointer]:
+            - /url: "#features"
+          - link "Product" [ref=e10] [cursor=pointer]:
+            - /url: "#screens"
+          - link "Access" [ref=e11] [cursor=pointer]:
+            - /url: "#access"
+        - generic [ref=e12]:
+          - button "Switch to light mode" [ref=e13] [cursor=pointer]:
+            - img [ref=e14]
+          - link "Instagram" [ref=e16] [cursor=pointer]:
+            - /url: https://www.instagram.com/relevant.app/
+            - img [ref=e17]
+            - generic [ref=e19]: Instagram
+          - link "TikTok" [ref=e20] [cursor=pointer]:
+            - /url: https://www.tiktok.com/@relevant.app
+            - img [ref=e21]
+            - generic [ref=e23]: TikTok
+          - link "Request access" [ref=e24] [cursor=pointer]:
+            - /url: "#access"
+  - main [ref=e25]:
+    - generic [ref=e27]:
+      - generic [ref=e28]:
+        - generic [ref=e30]: Built for signal, not scrolling
+        - heading "Know what changed before it changes your week." [level=1] [ref=e31]
+        - paragraph [ref=e32]: Relevant turns ambient information into ranked signal for your work, decisions, and next move.
+        - paragraph [ref=e33]: What happened. Why it matters to you. What to do next.
+        - generic [ref=e34]:
+          - link "Request early access" [ref=e35] [cursor=pointer]:
+            - /url: "#access"
+          - link "See how it works" [ref=e36] [cursor=pointer]:
+            - /url: "#process"
+        - generic "Relevant proof points" [ref=e37]:
+          - generic [ref=e38]:
+            - text: Signal loop
+            - strong [ref=e39]: What changed -> why it matters -> next move
+          - generic [ref=e40]:
+            - text: Engine stance
+            - strong [ref=e41]: Ranked for consequence, not clicks
+          - generic [ref=e42]:
+            - text: Surface mix
+            - strong [ref=e43]: Lens, feed, signal detail, Ask AI
+      - generic [ref=e45]:
+        - generic [ref=e46]:
+          - generic [ref=e47]:
+            - generic [ref=e48]: Onboarding
+            - generic [ref=e49]: First screen of the app
+          - img "Relevant onboarding screen explaining the three-part signal model." [ref=e51]
+        - article [ref=e52]:
+          - generic [ref=e53]:
+            - generic [ref=e54]: Signal detail
+            - generic [ref=e55]: Top-ranked signal
+          - generic [ref=e57]:
+            - img "Cargo vessels trapped near Second Narrows rail bridge during mechanical disruption." [ref=e59]
+            - generic [ref=e60]:
+              - generic [ref=e61]:
+                - generic [ref=e62]: Freight disruption
+                - generic [ref=e63]: Supply chain + operations
+              - heading "Second Narrows Rail Bridge Malfunction Traps 13 Deep-Sea Cargo Vessels" [level=4] [ref=e64]
+              - generic [ref=e65]:
+                - generic [ref=e66]: What changed
+                - paragraph [ref=e67]: CN Rail's Second Narrows Bridge locked in lowered position due to mechanical failure—13 vessels unable to transit, halting port terminal access east of the bridge.
+              - generic [ref=e68]:
+                - generic [ref=e69]: Why it matters
+                - paragraph [ref=e70]: Inbound parts delays hit within 48 hours. Production lines dependent on just-in-time inventory face stoppages, and operational costs spike before insurance adjusts.
+              - generic [ref=e71]:
+                - generic [ref=e72]: What to do next
+                - paragraph [ref=e73]: Flag every inbound shipment routed through Second Narrows. Activate backup suppliers and reroute critical loads through alternate ports before congestion compounds.
+        - article [ref=e74]:
+          - generic [ref=e75]:
+            - generic [ref=e76]: Ranked feed
+            - generic [ref=e77]: Today’s ranked signals
+          - generic [ref=e79]:
+            - generic [ref=e80]:
+              - generic [ref=e81]:
+                - strong [ref=e82]: Today
+                - generic [ref=e83]: 2 ranked signals
+              - generic [ref=e84]:
+                - generic [ref=e85]: Tune
+                - generic [ref=e86]: Filter
+            - generic [ref=e87]:
+              - article [ref=e88]:
+                - img "Cargo vessels trapped near Second Narrows rail bridge during mechanical disruption." [ref=e90]
+                - generic [ref=e91]:
+                  - generic [ref=e92]:
+                    - generic [ref=e93]: "#01"
+                    - generic [ref=e94]: Global News · Richmond News
+                  - strong [ref=e95]: Second Narrows Rail Bridge Malfunction Traps 13 Deep-Sea Cargo Vessels
+                  - paragraph [ref=e96]: Flag every inbound shipment routed through Second Narrows. Activate backup suppliers and reroute critical loads through alternate ports before congestion compounds.
+              - article [ref=e97]:
+                - img "Trade policy document representing cross-border tariff shifts and CUSMA review." [ref=e99]
+                - generic [ref=e100]:
+                  - generic [ref=e101]:
+                    - generic [ref=e102]: "#02"
+                    - generic [ref=e103]: Castanet · Western Investor
+                  - strong [ref=e104]: U.S. Tariff Shift and CUSMA Review Alter Cross-Border Logistics Economics
+                  - paragraph [ref=e105]: Audit CUSMA compliance across all active SKUs. Brief procurement teams on the verification burden before the review window opens.
+        - generic [ref=e106]:
+          - text: Product-first hero
+          - strong [ref=e107]: The product already knows how to rank what matters.
+        - generic [ref=e108]:
+          - text: Core model
+          - generic [ref=e109]:
+            - generic [ref=e110]: What changed
+            - generic [ref=e111]: Why it matters
+            - generic [ref=e112]: What to do next
+    - generic [ref=e114]:
+      - generic [ref=e115]:
+        - text: The engine
+        - heading "Noise goes in. Decision-grade signal comes out." [level=2] [ref=e116]
+        - paragraph [ref=e117]: Relevant does not summarize the world. It filters for consequence and ranks the few moves worth your attention.
+      - generic [ref=e118]:
+        - article [ref=e119]:
+          - generic [ref=e120]: "01"
+          - heading "What changed" [level=3] [ref=e121]
+          - paragraph [ref=e122]: A plain-language read on the event itself, stripped of filler, hedging, and vague news voice.
+        - article [ref=e123]:
+          - generic [ref=e124]: "02"
+          - heading "Why it matters to you" [level=3] [ref=e125]
+          - paragraph [ref=e126]: Every signal is filtered through your role, market, and current priorities instead of a generic audience.
+        - article [ref=e127]:
+          - generic [ref=e128]: "03"
+          - heading "What to do next" [level=3] [ref=e129]
+          - paragraph [ref=e130]: "Relevant pushes toward action: who to call, what to monitor, and which window is actually open now."
+      - generic "Relevant product capabilities" [ref=e131]:
+        - generic [ref=e132]: Sources
+        - generic [ref=e133]: Lens
+        - generic [ref=e134]: Consequence
+        - generic [ref=e135]: Rank
+        - generic [ref=e136]: Next move
+    - generic [ref=e138]:
+      - generic [ref=e139]:
+        - text: Inside the product
+        - heading "Four surfaces. One job." [level=2] [ref=e140]
+        - paragraph [ref=e141]: Every screen exists to shorten the distance between change and action.
+      - generic [ref=e142]:
+        - article [ref=e143]:
+          - generic [ref=e144]:
+            - generic [ref=e145]: "01"
+            - generic [ref=e146]: Onboarding
+          - img "Relevant onboarding screen showing a focused signal card over a faded feed background." [ref=e148]
+          - generic [ref=e149]:
+            - heading "Set your lens. See what the engine already knows." [level=3] [ref=e150]
+            - paragraph [ref=e151]: Relevant opens with your role, market, and goals front and center—so the first screen already feels like the product working, not a setup wall.
+        - generic [ref=e152]:
+          - article [ref=e153]:
+            - generic [ref=e154]:
+              - generic [ref=e155]: "02"
+              - generic [ref=e156]: Signal Forge
+            - generic [ref=e157]:
+              - heading "Watch your feed form in real time." [level=3] [ref=e158]
+              - paragraph [ref=e159]: The Signal Forge maps your priorities, connects consequence paths, and builds your first brief before you scroll a single card.
+            - img "Relevant app Signal Forge building a personalized feed in real time." [ref=e162]
+          - article [ref=e163]:
+            - generic [ref=e164]:
+              - generic [ref=e165]: "03"
+              - generic [ref=e166]: Ranked feed
+            - generic [ref=e167]:
+              - heading "Open to signals that are already worth acting on." [level=3] [ref=e168]
+              - paragraph [ref=e169]: Different topics, different consequence paths, different moves. The feed is ranked by what you can act on now—not recycled noise.
+            - img "Relevant app ranked feed showing real signals scored by consequence." [ref=e171]
+      - generic [ref=e172]:
+        - generic [ref=e173]:
+          - generic [ref=e174]: Live ranked signals
+          - heading "Real signals, ranked by the consequence that hits your role." [level=3] [ref=e175]
+          - paragraph [ref=e176]: Live signals from real sources, ranked because they open a window, shift cost structures, or force a move before the market adjusts.
+          - generic [ref=e177]:
+            - article [ref=e178]:
+              - generic [ref=e179]:
+                - generic [ref=e180]: "#01 · Freight disruption"
+                - generic [ref=e181]: Supply chain + operations
+              - strong [ref=e182]: Second Narrows Rail Bridge Malfunction Traps 13 Deep-Sea Cargo Vessels
+              - paragraph [ref=e183]: Inbound parts delays hit within 48 hours. Production lines dependent on just-in-time inventory face stoppages, and operational costs spike before insurance adjusts.
+              - generic [ref=e184]:
+                - generic [ref=e185]: operational · HIGH
+                - generic [ref=e187]: Within 48 hours
+              - generic [ref=e188]:
+                - generic [ref=e189]: Freight
+                - generic [ref=e190]: Rail
+                - generic [ref=e191]: Port disruption
+            - article [ref=e192]:
+              - generic [ref=e193]:
+                - generic [ref=e194]: "#02 · Trade policy shift"
+                - generic [ref=e195]: Cross-border + finance
+              - strong [ref=e196]: U.S. Tariff Shift and CUSMA Review Alter Cross-Border Logistics Economics
+              - paragraph [ref=e197]: Short-term relief on non-CUSMA parts, but every shipment now needs CUSMA eligibility verification. Customs processing complexity doubles overnight.
+              - generic [ref=e198]:
+                - generic [ref=e199]: regulatory · HIGH
+                - generic [ref=e201]: Within 30 days
+              - generic [ref=e202]:
+                - generic [ref=e203]: Tariffs
+                - generic [ref=e204]: CUSMA
+                - generic [ref=e205]: Compliance
+        - generic [ref=e206]:
+          - article [ref=e207]:
+            - generic [ref=e208]:
+              - generic [ref=e209]: Live feed
+              - generic [ref=e210]: Top-ranked signals
+            - img "Relevant app live ranked feed showing real-time signals." [ref=e212]
+          - generic [ref=e213]:
+            - article [ref=e214]:
+              - generic [ref=e215]: What the feed does
+              - strong [ref=e216]: Ranks the window before it closes and makes the feed feel alive immediately.
+            - article [ref=e217]:
+              - generic [ref=e218]: Why it lands
+              - strong [ref=e219]: Different topics show up side by side, so the user sees consequence instead of repetition.
+      - generic [ref=e220]:
+        - article [ref=e221]:
+          - generic [ref=e222]:
+            - generic [ref=e223]: Opened signal
+            - generic [ref=e224]: Signal detail view
+          - img "Relevant app signal detail showing what happened, why it matters, and what to do next." [ref=e226]
+        - generic [ref=e227]:
+          - generic [ref=e228]: Opened signal
+          - heading "One operating view. No random overflow screens." [level=3] [ref=e229]
+          - paragraph [ref=e230]: When someone opens a signal, the page should show that Relevant gets sharper, not noisier. The detail view keeps the logic intact and puts verification right beside the action.
+          - generic [ref=e231]:
+            - article [ref=e232]:
+              - generic [ref=e233]: What happened
+              - paragraph [ref=e234]: CN Rail's Second Narrows Bridge locked in lowered position due to mechanical failure—13 vessels unable to transit, halting port terminal access east of the bridge.
+            - article [ref=e235]:
+              - generic [ref=e236]: Why it matters to you
+              - paragraph [ref=e237]: Inbound parts delays hit within 48 hours. Production lines dependent on just-in-time inventory face stoppages, and operational costs spike before insurance adjusts.
+            - article [ref=e238]:
+              - generic [ref=e239]: What to do next
+              - paragraph [ref=e240]: Flag every inbound shipment routed through Second Narrows. Activate backup suppliers and reroute critical loads through alternate ports before congestion compounds.
+            - article [ref=e241]:
+              - generic [ref=e242]: Ask AI follow-up
+              - paragraph [ref=e243]: Verify sources, trace upstream causes, and ask which accounts, routes, or cost centers get hit first.
+    - generic [ref=e245]:
+      - generic [ref=e246]:
+        - text: How it works
+        - heading "Set the lens. Let the system watch." [level=2] [ref=e247]
+        - paragraph [ref=e248]: Relevant filters weak matches, scores consequence, and surfaces the move while it still matters.
+      - generic [ref=e249]:
+        - article [ref=e250]:
+          - generic [ref=e251]: "01"
+          - heading "Set your lens" [level=3] [ref=e252]
+          - paragraph [ref=e253]: Tell Relevant your role, market, and what kinds of changes should interrupt your week.
+        - article [ref=e254]:
+          - generic [ref=e255]: "02"
+          - heading "Watch for consequence" [level=3] [ref=e256]
+          - paragraph [ref=e257]: The engine filters weak matches and promotes only items with direct operational or commercial weight.
+        - article [ref=e258]:
+          - generic [ref=e259]: "03"
+          - heading "Rank the window" [level=3] [ref=e260]
+          - paragraph [ref=e261]: Instead of forcing more reading, the feed ranks where your attention can still convert into an edge.
+        - article [ref=e262]:
+          - generic [ref=e263]: "04"
+          - heading "Act with context" [level=3] [ref=e264]
+          - paragraph [ref=e265]: Every signal gives you sources, context, and next actions while the opportunity is still fresh.
+    - generic [ref=e267]:
+      - generic [ref=e268]:
+        - text: Why this exists
+        - heading "You do not need more information. You need the right interruption." [level=2] [ref=e269]
+        - paragraph [ref=e270]: Relevant exists because high-agency people should not have to dig through noise to find what already matters.
+      - generic [ref=e271]:
+        - article [ref=e272]:
+          - generic [ref=e273]: Principle
+          - heading "Finite by default" [level=3] [ref=e274]
+          - paragraph [ref=e275]: The feed ends. The signal stays. Relevant is built to shorten reading time, not trap it.
+        - article [ref=e276]:
+          - generic [ref=e277]: Principle
+          - heading "Consequence over curiosity" [level=3] [ref=e278]
+          - paragraph [ref=e279]: Items rank because they move cost, timing, risk, or opportunity, not because they are vaguely interesting.
+        - article [ref=e280]:
+          - generic [ref=e281]: Principle
+          - heading "No guilt loops" [level=3] [ref=e282]
+          - paragraph [ref=e283]: No infinite feed. No soft-pressure streaks. No engagement theater pretending to be intelligence.
+        - article [ref=e284]:
+          - generic [ref=e285]: Principle
+          - heading "Built for people who act" [level=3] [ref=e286]
+          - paragraph [ref=e287]: Relevant is for operators, founders, analysts, and teams who want the move while it still matters.
+        - article [ref=e288]:
+          - generic [ref=e289]: The Relevant test
+          - paragraph [ref=e290]: Most information makes you feel busy. Relevant is built to make you sharper.
+          - generic [ref=e291]:
+            - generic [ref=e292]: The feed ends.
+            - generic [ref=e293]: The signal stays.
+            - generic [ref=e294]: Less reading. Better timing.
+    - generic [ref=e296]:
+      - generic [ref=e297]:
+        - text: Choose your path
+        - heading "Same engine. Different stakes." [level=2] [ref=e298]
+        - paragraph [ref=e299]: Use Relevant for your own operating edge now, or bring the same logic into a team workflow later.
+      - generic [ref=e300]:
+        - article [ref=e301]:
+          - generic [ref=e302]:
+            - generic [ref=e303]: For your edge
+            - generic [ref=e304]: Personal mode
+          - generic [ref=e305]:
+            - heading "Personal signal stack" [level=3] [ref=e306]
+            - paragraph [ref=e307]: Sharper daily signal for work, learning, and the next move you need to make before the summary gets stale.
+          - generic "For your edge capabilities" [ref=e308]:
+            - generic [ref=e309]: Finite daily feed
+            - generic [ref=e310]: Role-tuned signals
+            - generic [ref=e311]: Ask AI follow-up
+          - generic [ref=e312]:
+            - link "Explore the app" [ref=e313] [cursor=pointer]:
+              - /url: "#screens"
+            - generic [ref=e314]: Built for your own operating edge right now.
+        - article [ref=e315]:
+          - generic [ref=e316]:
+            - generic [ref=e317]: For your team
+            - generic [ref=e318]: Shared mode
+          - generic [ref=e319]:
+            - heading "Shared decision surface" [level=3] [ref=e320]
+            - paragraph [ref=e321]: The same consequence engine, stretched across shared lenses, role exposure, and live context for teams that move together.
+          - generic "For your team capabilities" [ref=e322]:
+            - generic [ref=e323]: Shared lenses
+            - generic [ref=e324]: Decision queues
+            - generic [ref=e325]: Role-aware context
+          - generic [ref=e326]:
+            - link "Get on the team list" [ref=e327] [cursor=pointer]:
+              - /url: "#access"
+            - generic [ref=e328]: Same engine. Different surface area.
+    - generic [ref=e330]:
+      - generic [ref=e331]:
+        - text: Get access
+        - heading "Get in before the public launch." [level=2] [ref=e332]
+        - paragraph [ref=e333]: Join early for launch access, product drops, and the first sharp version of the system.
+        - generic [ref=e334]:
+          - text: Pricing
+          - strong [ref=e335]: $4.99 / month
+          - paragraph [ref=e336]: Free 7-day trial at launch. Then $4.99/month.
+      - generic [ref=e337]:
+        - generic [ref=e338]:
+          - generic [ref=e339]: Request access
+          - generic [ref=e340]: We only email product and launch updates.
+        - generic [ref=e341]:
+          - generic [ref=e342]: Email
+          - textbox "Email" [ref=e343]:
+            - /placeholder: you@company.com
+          - button "Request early access" [ref=e344] [cursor=pointer]
+          - paragraph [ref=e345]: No spam. Just early access and product updates.
+  - contentinfo [ref=e346]:
+    - generic [ref=e347]:
+      - paragraph [ref=e348]: © 2026 Relevant
+      - generic [ref=e349]:
+        - link "Privacy" [ref=e350] [cursor=pointer]:
+          - /url: /privacy
+        - link "Terms" [ref=e351] [cursor=pointer]:
+          - /url: /terms
+        - link "Instagram" [ref=e352] [cursor=pointer]:
+          - /url: https://www.instagram.com/relevant.app/
+        - link "TikTok" [ref=e353] [cursor=pointer]:
+          - /url: https://www.tiktok.com/@relevant.app
+        - link "support@getrelevantapp.com" [ref=e354] [cursor=pointer]:
+          - /url: mailto:support@getrelevantapp.com
+  - alert [ref=e355]

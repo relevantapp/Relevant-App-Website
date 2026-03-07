@@ -1,0 +1,34 @@
+[      49ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3002/_next/static/css/e13e19b0ad7b1b91.css:0
+[      52ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3002/_next/static/chunks/app/page-0e3671a2c5e3b8a6.js:0
+[      57ms] [ERROR] ChunkLoadError: Loading chunk 931 failed.
+(error: http://localhost:3002/_next/static/chunks/app/page-0e3671a2c5e3b8a6.js)
+    at d.f.j (http://localhost:3002/_next/static/chunks/webpack-62ccdcc3cea557be.js:1:2913)
+    at http://localhost:3002/_next/static/chunks/webpack-62ccdcc3cea557be.js:1:1385
+    at Array.reduce (<anonymous>)
+    at d.e (http://localhost:3002/_next/static/chunks/webpack-62ccdcc3cea557be.js:1:1351)
+    at http://localhost:3002/_next/static/chunks/117-9bcfe95f89d4b2e1.js:2:18889
+    at http://localhost:3002/_next/static/chunks/117-9bcfe95f89d4b2e1.js:2:19091
+    at t (http://localhost:3002/_next/static/chunks/117-9bcfe95f89d4b2e1.js:2:19294) @ http://localhost:3002/_next/static/chunks/117-9bcfe95f89d4b2e1.js:0
+[      59ms] Error: Minified React error #423; visit https://react.dev/errors/423 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at iZ (http://localhost:3002/_next/static/chunks/fd9d1056-9f91b5e418130764.js:1:118349)
+    at ia (http://localhost:3002/_next/static/chunks/fd9d1056-9f91b5e418130764.js:1:95162)
+    at http://localhost:3002/_next/static/chunks/fd9d1056-9f91b5e418130764.js:1:94984
+    at il (http://localhost:3002/_next/static/chunks/fd9d1056-9f91b5e418130764.js:1:94991)
+    at oJ (http://localhost:3002/_next/static/chunks/fd9d1056-9f91b5e418130764.js:1:92347)
+    at oZ (http://localhost:3002/_next/static/chunks/fd9d1056-9f91b5e418130764.js:1:91766)
+    at MessagePort.M (http://localhost:3002/_next/static/chunks/117-9bcfe95f89d4b2e1.js:1:84770)
+[      59ms] ChunkLoadError: Loading chunk 931 failed.
+(error: http://localhost:3002/_next/static/chunks/app/page-0e3671a2c5e3b8a6.js)
+    at d.f.j (http://localhost:3002/_next/static/chunks/webpack-62ccdcc3cea557be.js:1:2913)
+    at http://localhost:3002/_next/static/chunks/webpack-62ccdcc3cea557be.js:1:1385
+    at Array.reduce (<anonymous>)
+    at d.e (http://localhost:3002/_next/static/chunks/webpack-62ccdcc3cea557be.js:1:1351)
+    at http://localhost:3002/_next/static/chunks/117-9bcfe95f89d4b2e1.js:2:18889
+    at http://localhost:3002/_next/static/chunks/117-9bcfe95f89d4b2e1.js:2:19091
+    at t (http://localhost:3002/_next/static/chunks/117-9bcfe95f89d4b2e1.js:2:19294)
+[    3061ms] [WARNING] The resource http://localhost:3002/_next/static/media/db96af6b531dc71f-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ http://localhost:3002/:0
+[    3061ms] [WARNING] The resource http://localhost:3002/_next/static/media/26d0ba92e140f0dc-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ http://localhost:3002/:0
+[    3061ms] [WARNING] The resource http://localhost:3002/_next/static/media/d3ebbfd689654d3a-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ http://localhost:3002/:0
+[    3061ms] [WARNING] The resource http://localhost:3002/_next/static/media/37786be940ec402b-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ http://localhost:3002/:0
+[    3061ms] [WARNING] The resource http://localhost:3002/_next/static/media/98e207f02528a563-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ http://localhost:3002/:0
+[    3061ms] [WARNING] The resource http://localhost:3002/_next/static/media/36966cca54120369-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ http://localhost:3002/:0

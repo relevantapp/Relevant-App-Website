@@ -1,0 +1,22 @@
+[  461306ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[  461752ms] TypeError: __webpack_modules__[moduleId] is not a function
+    at Object.__webpack_require__ [as require] (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:33:42)
+    at require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:40:20064)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108376)
+    at ea (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108583)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:110813)
+    at Object._fromJSON (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:111370)
+    at JSON.parse (<anonymous>)
+    at ec (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:109078)
+    at eo (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:108123)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115291)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115308)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115341)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115358)
+    at t (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:115581)
+[  461818ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3001/favicon.ico:0
+[  465079ms] [WARNING] The resource http://localhost:3001/_next/static/media/37786be940ec402b-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ http://localhost:3001/:0
+[  465079ms] [WARNING] The resource http://localhost:3001/_next/static/media/98e207f02528a563-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ http://localhost:3001/:0
+[  465079ms] [WARNING] The resource http://localhost:3001/_next/static/media/d3ebbfd689654d3a-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ http://localhost:3001/:0
+[  465079ms] [WARNING] The resource http://localhost:3001/_next/static/media/26d0ba92e140f0dc-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ http://localhost:3001/:0
+[  465079ms] [WARNING] The resource http://localhost:3001/_next/static/media/36966cca54120369-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ http://localhost:3001/:0

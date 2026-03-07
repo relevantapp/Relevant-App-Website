@@ -1,0 +1,10 @@
+- main [ref=e2]:
+  - generic [ref=e3]:
+    - link "Relevant home" [ref=e5] [cursor=pointer]:
+      - /url: /
+      - text: Relevant
+    - text: Shared signal
+    - heading "Signal unavailable" [level=1] [ref=e6]
+    - paragraph [ref=e7]: This link is invalid. Request access to get the full Relevant signal flow.
+    - link "Request access" [ref=e9] [cursor=pointer]:
+      - /url: /#access

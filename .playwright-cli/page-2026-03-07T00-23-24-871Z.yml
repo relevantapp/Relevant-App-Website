@@ -1,0 +1,225 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link "Relevant home" [ref=e4] [cursor=pointer]:
+        - /url: "#top"
+        - text: Relevant
+      - generic [ref=e5]:
+        - generic [ref=e6]:
+          - link "Features" [ref=e7] [cursor=pointer]:
+            - /url: "#features"
+          - link "Product" [ref=e8] [cursor=pointer]:
+            - /url: "#screens"
+          - link "Pricing" [ref=e9] [cursor=pointer]:
+            - /url: "#pricing"
+        - generic [ref=e10]:
+          - link "Instagram" [ref=e11] [cursor=pointer]:
+            - /url: https://www.instagram.com/relevant.app/
+            - img [ref=e12]
+            - text: Instagram
+          - link "TikTok" [ref=e14] [cursor=pointer]:
+            - /url: https://www.tiktok.com/@relevant.app
+            - img [ref=e15]
+            - text: TikTok
+          - link "Get early access" [ref=e17] [cursor=pointer]:
+            - /url: "#waitlist"
+  - main [ref=e18]:
+    - generic [ref=e20]:
+      - generic [ref=e21]:
+        - generic [ref=e22]: Built for signal, not scrollingCurrent app surfaces only. No stale screenshots.
+        - heading "Know what changed before it changes your quarter." [level=1] [ref=e23]
+        - paragraph [ref=e24]: "Relevant is a role-aware relevance engine. It turns ambient noise into a tighter operating picture by answering three things for every signal: what changed, why it matters to you, and what to do next."
+        - generic [ref=e25]:
+          - link "Request private beta" [ref=e26] [cursor=pointer]:
+            - /url: "#waitlist"
+          - link "See the product flow" [ref=e27] [cursor=pointer]:
+            - /url: "#screens"
+        - generic "Relevant proof points" [ref=e28]:
+          - generic [ref=e29]:
+            - text: Entry flow
+            - strong [ref=e30]: Onboarding to live feed
+          - generic [ref=e31]:
+            - text: Core loop
+            - strong [ref=e32]: Signal -> meaning -> next move
+          - generic [ref=e33]:
+            - text: Surface mix
+            - strong [ref=e34]: Brief, feed, detail, Ask AI
+      - generic [ref=e36]:
+        - generic [ref=e40]:
+          - generic [ref=e41]: Onboarding overflowThe first screen already hints at what comes next
+          - img "Relevant onboarding screen explaining the three-part signal model." [ref=e43]
+        - article [ref=e44]:
+          - generic [ref=e45]: Signal detailMeaning, sources, next move
+          - img "Relevant signal detail screen with what happened, why it matters, and next steps." [ref=e47]
+        - article [ref=e48]:
+          - generic [ref=e49]: Ranked feedRole, urgency, and consequence
+          - img "Relevant feed screen with score, streak, and ranked signal cards." [ref=e51]
+        - generic [ref=e52]:
+          - text: Best first impression
+          - strong [ref=e53]: The hero should show that the product already knows how to rank what matters.
+        - generic [ref=e54]:
+          - text: Core model
+          - generic [ref=e55]: What changedWhy it mattersWhat to do next
+    - generic [ref=e57]:
+      - generic [ref=e58]:
+        - text: Features
+        - heading "Three answers, one tighter operating picture." [level=2] [ref=e59]
+        - paragraph [ref=e60]: The product is strongest when it behaves like a consequence engine, not a prettier news reader. The website now tells that story directly.
+      - generic [ref=e61]:
+        - article [ref=e62]:
+          - text: "01"
+          - heading "What changed" [level=3] [ref=e63]
+          - paragraph [ref=e64]: A plain-language read on the event itself, stripped of filler, hedging, and vague news voice.
+        - article [ref=e65]:
+          - text: "02"
+          - heading "Why it matters to you" [level=3] [ref=e66]
+          - paragraph [ref=e67]: Every signal is filtered through your role, market, and current priorities instead of a generic audience.
+        - article [ref=e68]:
+          - text: "03"
+          - heading "What to do next" [level=3] [ref=e69]
+          - paragraph [ref=e70]: "Relevant pushes toward action: who to call, what to monitor, and which window is actually open now."
+      - generic "Relevant product capabilities" [ref=e71]: Finite feedRole lensSource tabsAsk AI follow-upScore + streakAction-first summaries
+    - generic [ref=e73]:
+      - generic [ref=e74]:
+        - text: Actual product surfaces
+        - heading "Onboarding, then ranked signal, then decision support." [level=2] [ref=e75]
+        - paragraph [ref=e76]: "The strongest story is the product flow itself: onboarding that feels alive, a feed that shows ranked consequence, and a signal view that keeps the promise when you tap in."
+      - generic [ref=e77]:
+        - article [ref=e78]:
+          - generic [ref=e79]: 01Onboarding overview
+          - img "Relevant onboarding screen showing a focused signal card over a faded feed background." [ref=e81]
+          - generic [ref=e82]:
+            - heading "The first impression should show the signal model, not an empty shell." [level=3] [ref=e83]
+            - paragraph [ref=e84]: Relevant opens by showing the consequence stack up front, with the next surfaces visible behind it so onboarding feels like the beginning of use, not a dead-end intro.
+        - generic [ref=e85]:
+          - article [ref=e86]:
+            - generic [ref=e87]: 02Live feed
+            - img "Relevant mobile feed showing streak, score, and a ranked signal card for trade and policy news." [ref=e89]
+            - generic [ref=e90]:
+              - heading "Then the ranked feed takes over and looks alive immediately." [level=3] [ref=e91]
+              - paragraph [ref=e92]: Score, streak, tuning, and the first high-value signal are already on screen, so the product feels operational from the first minute.
+          - article [ref=e93]:
+            - generic [ref=e94]: 03Opened signal
+            - img "Relevant signal detail screen with summary, source count, and tabs for what happened, why it matters, and next steps." [ref=e96]
+            - generic [ref=e97]:
+              - heading "Open the signal and the structure stays disciplined." [level=3] [ref=e98]
+              - paragraph [ref=e99]: What changed, why it matters, what to do next, sources, and Ask AI all stay in one operating view instead of splitting into filler screens.
+      - generic [ref=e100]:
+        - generic [ref=e101]:
+          - text: Feed that earns attention
+          - heading "The best signals are the ones that make you act faster." [level=3] [ref=e102]
+          - paragraph [ref=e103]: This is the story the page should sell hard. The feed is not there to entertain. It is there to hand you openings, changes, and risks while the window is still open.
+          - generic [ref=e104]:
+            - article [ref=e105]:
+              - generic [ref=e106]: ExpansionRevenue + operations
+              - strong [ref=e107]: A grocery chain opens a new Dallas distribution center.
+              - paragraph [ref=e108]: If you sell warehouse software, robotics, or cold-chain services, this is a shortlist window, not a headline to save for later.
+              - generic [ref=e109]:
+                - text: What you do next
+                - paragraph [ref=e110]: Call before the buying process hardens around incumbent vendors.
+            - article [ref=e111]:
+              - generic [ref=e112]: Leadership moveAccount coverage
+              - strong [ref=e113]: A target account hires a new operations leader from a competitor.
+              - paragraph [ref=e114]: New operators bring new language, new bias, and often a fresh vendor review cycle. The account map changed today.
+              - generic [ref=e115]:
+                - text: What you do next
+                - paragraph [ref=e116]: Rewrite the pitch around the leader’s prior systems and known operating style.
+            - article [ref=e117]:
+              - generic [ref=e118]: Trade signalFinance + supply chain
+              - strong [ref=e119]: CUSMA review talks restart with new urgency.
+              - paragraph [ref=e120]: If your model depends on cross-border freight, cost assumptions move before the final policy does. Waiting for certainty is already late.
+              - generic [ref=e121]:
+                - text: What you do next
+                - paragraph [ref=e122]: Reprice exposure this week and flag which carriers or SKUs get fragile first.
+        - generic [ref=e123]:
+          - article [ref=e127]:
+            - generic [ref=e128]: Live FeedRanked by role, urgency, and consequence
+            - img "Relevant feed screen with score, streak, and ranked signal cards." [ref=e130]
+          - generic [ref=e131]:
+            - article [ref=e132]:
+              - text: What the feed does
+              - strong [ref=e133]: Ranks the window before it closes.
+            - article [ref=e134]:
+              - text: Why it lands
+              - strong [ref=e135]: One screen shows what changed and who should move because of it.
+      - generic [ref=e136]:
+        - article [ref=e137]:
+          - img "Relevant signal detail screen with summary, source count, and tabs for what happened, why it matters, and next steps." [ref=e139]
+        - generic [ref=e140]:
+          - text: Opened signal
+          - heading "One operating view. No random overflow screens." [level=3] [ref=e141]
+          - paragraph [ref=e142]: When someone opens a signal, the page should show that Relevant gets sharper, not noisier. The detail view keeps the logic intact and puts verification right beside the action.
+          - generic [ref=e143]:
+            - article [ref=e144]:
+              - text: What happened
+              - paragraph [ref=e145]: A short factual read first, before the product asks you to interpret anything.
+            - article [ref=e146]:
+              - text: Why it matters to you
+              - paragraph [ref=e147]: The role lens stays active, so the implication is about your work, not a generic audience.
+            - article [ref=e148]:
+              - text: What to do next
+              - paragraph [ref=e149]: The screen pushes toward movement while the window is still open instead of rewarding more reading.
+            - article [ref=e150]:
+              - text: Ask AI + sources
+              - paragraph [ref=e151]: Follow-up and verification sit beside the signal instead of forcing a separate workflow.
+    - generic [ref=e153]:
+      - generic [ref=e154]:
+        - text: Operating cadence
+        - heading "From role lens to next move." [level=2] [ref=e155]
+        - paragraph [ref=e156]: "The product story now tracks a cleaner sequence: set the lens, monitor for consequence, rank the window, and act with context while it still matters."
+      - generic [ref=e157]:
+        - article [ref=e158]:
+          - generic [ref=e159]: "01"
+          - heading "Set your lens" [level=3] [ref=e160]
+          - paragraph [ref=e161]: Tell Relevant who you are, what market you operate in, and which kinds of changes should interrupt your week.
+        - article [ref=e162]:
+          - generic [ref=e163]: "02"
+          - heading "We watch for consequence" [level=3] [ref=e164]
+          - paragraph [ref=e165]: The engine filters weak matches, tracks movement, and promotes only the items with direct operational or commercial weight.
+        - article [ref=e166]:
+          - generic [ref=e167]: "03"
+          - heading "The feed ranks the window" [level=3] [ref=e168]
+          - paragraph [ref=e169]: Instead of forcing more reading, the product ranks where attention can still convert into an edge.
+        - article [ref=e170]:
+          - generic [ref=e171]: "04"
+          - heading "You move with context" [level=3] [ref=e172]
+          - paragraph [ref=e173]: Every opened signal gives you sources, context, and next actions while the opportunity is still fresh.
+    - generic [ref=e175]:
+      - generic [ref=e176]:
+        - text: Built for higher-stakes attention
+        - heading "Relevant is for people whose work moves when the world moves." [level=2] [ref=e177]
+        - paragraph [ref=e178]: This is not for passive browsing. It is for people who benefit when they spot the meaningful shift early and move while everyone else is still reading.
+      - generic [ref=e179]: FoundersOperatorsProduct leadersMarket intelligence teamsAnalystsLogistics and supply chainStrategy and financeRevenue teams that sell into change
+    - generic [ref=e181]:
+      - generic [ref=e182]:
+        - text: Get early access
+        - heading "Get in before the public launch." [level=2] [ref=e183]
+        - paragraph [ref=e184]: "Join the list for early access, product drops, and launch timing. Pricing stays simple: a free 7-day trial at launch, then $4.99/month."
+        - generic [ref=e185]:
+          - text: Pricing
+          - strong [ref=e186]: $4.99 / month
+          - paragraph [ref=e187]: 7-day free trial. Early access users see the sharpest version first.
+      - generic [ref=e188]:
+        - generic [ref=e189]: Request accessWe only email product and launch updates.
+        - generic [ref=e190]:
+          - text: Email
+          - textbox "Email" [ref=e191]:
+            - /placeholder: you@company.com
+          - button "Join the waitlist" [ref=e192]
+          - paragraph [ref=e193]: No spam. Just early access and product updates.
+  - contentinfo [ref=e194]:
+    - generic [ref=e195]:
+      - paragraph [ref=e196]: © 2026 Relevant
+      - generic [ref=e197]:
+        - link "Privacy" [ref=e198] [cursor=pointer]:
+          - /url: /privacy
+        - link "Terms" [ref=e199] [cursor=pointer]:
+          - /url: /terms
+        - link "Instagram" [ref=e200] [cursor=pointer]:
+          - /url: https://www.instagram.com/relevant.app/
+        - link "TikTok" [ref=e201] [cursor=pointer]:
+          - /url: https://www.tiktok.com/@relevant.app
+        - link "support@getrelevantapp.com" [ref=e202] [cursor=pointer]:
+          - /url: mailto:support@getrelevantapp.com
+  - link "Request private beta" [ref=e204] [cursor=pointer]:
+    - /url: "#waitlist"
