@@ -3189,6 +3189,42 @@ button:focus-visible, input:focus-visible, a:focus-visible {
   border-radius: 999px;
 }
 
+/* ── Personalization disclaimer ── */
+.sp-disclaimer {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 24px;
+  padding: 18px 22px;
+  border-radius: 14px;
+  background: var(--sp-accent-soft);
+  border: 1px solid rgba(99, 102, 241, 0.18);
+}
+
+.sp-disclaimer svg {
+  flex-shrink: 0;
+  color: var(--sp-accent);
+  margin-top: 1px;
+}
+
+.sp-disclaimer p {
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.sp-disclaimer em {
+  font-style: italic;
+  color: var(--text-strong);
+  font-weight: 600;
+}
+
+/* ── Hero image fallback ── */
+.sp-hero:has(.sp-hero-img[src=""]),
+.sp-hero:not(:has(.sp-hero-img)) {
+  background: linear-gradient(135deg, #0c0c1a 0%, #1a1040 50%, #0c0c1a 100%);
+}
+
 /* ═══ SIGNAL PAGE RESPONSIVE ═══ */
 
 @media (max-width: 768px) {

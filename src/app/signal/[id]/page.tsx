@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import BrandMark from '@/components/BrandMark'
+import SignalHeroImage from '@/components/SignalHeroImage'
 
 type SignalSource = {
   url: string
@@ -190,8 +191,7 @@ export default async function SignalPage({ params }: PageProps) {
       {/* ── Hero ── */}
       {hasImage ? (
         <div className="sp-hero">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="sp-hero-img" src={signal.imageUrl!} alt="" />
+          <SignalHeroImage src={signal.imageUrl!} />
           <div className="sp-hero-fade" />
           <nav className="sp-nav sp-nav--over">
             <BrandMark href="/" />
@@ -252,6 +252,12 @@ export default async function SignalPage({ params }: PageProps) {
               </span>
             )}
           </div>
+        </div>
+
+        {/* ── Personalization disclaimer ── */}
+        <div className="sp-disclaimer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          <p>This signal was personalized for the person who shared it. When you get Relevant, your analysis will be tailored to <em>your</em> role, goals, and interests.</p>
         </div>
 
         {/* ── Content grid ── */}
