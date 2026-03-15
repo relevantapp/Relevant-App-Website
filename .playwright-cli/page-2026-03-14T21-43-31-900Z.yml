@@ -1,0 +1,310 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e4]:
+        - link "Relevant home" [ref=e5] [cursor=pointer]:
+          - /url: "#top"
+          - img "Relevant" [ref=e6]
+          - generic [ref=e7]: Relevant
+        - generic [ref=e8]:
+          - button "Toggle theme" [ref=e9] [cursor=pointer]:
+            - img [ref=e10]
+          - link "Join waitlist" [ref=e12] [cursor=pointer]:
+            - /url: "#access"
+    - main [ref=e13]:
+      - generic [ref=e15]:
+        - generic [ref=e16]:
+          - heading "Walk into meetings already knowing what everyone else just found out." [level=1] [ref=e17]
+          - paragraph [ref=e18]: Relevant reads the news for you and shows you the few things actually worth knowing for your job.
+          - generic [ref=e19]:
+            - button "Try Relevant early" [ref=e20] [cursor=pointer]
+            - button "See what a daily update looks like" [ref=e21] [cursor=pointer]
+          - paragraph [ref=e22]: 5 minutes a day. Zero noise. Just useful stuff.
+        - generic [ref=e23]:
+          - generic [ref=e24]: Your daily unfair advantage
+          - generic [ref=e30]:
+            - generic [ref=e32] [cursor=pointer]:
+              - generic [ref=e33]:
+                - heading "Fed rate change → Why logistics costs may change" [level=2] [ref=e34]
+                - generic [ref=e35]:
+                  - generic [ref=e38]:
+                    - img [ref=e39]
+                    - generic [ref=e43]: WSJ Logistics
+                  - img [ref=e46]
+                - paragraph [ref=e54]: "Bottom Line: Rates are dropping 50bps, meaning cheaper fleet leasing but tighter spot market rates."
+                - generic [ref=e58]: 1 SOURCE · 2H AGO
+              - generic [ref=e59]:
+                - generic [ref=e60]:
+                  - img [ref=e62]
+                  - img [ref=e65]
+                - generic [ref=e67]:
+                  - img [ref=e69]
+                  - img [ref=e72]
+            - generic [ref=e75] [cursor=pointer]:
+              - generic [ref=e78]:
+                - img [ref=e79]
+                - generic [ref=e81]: Goal Aligned
+              - generic [ref=e82]:
+                - heading "Amazon warehouse expansion → Hiring pressure coming" [level=2] [ref=e83]
+                - generic [ref=e84]:
+                  - generic [ref=e87]:
+                    - img [ref=e88]
+                    - generic [ref=e92]: Local Business Journal
+                  - img [ref=e95]
+                - paragraph [ref=e103]: "Bottom Line: Amazon is opening 3 new hubs near your region. Expect to pay 15% more for warehouse staff."
+                - generic [ref=e107]: 1 SOURCE · 4H AGO
+              - generic [ref=e108]:
+                - generic [ref=e109]:
+                  - img [ref=e111]
+                  - img [ref=e114]
+                - generic [ref=e116]:
+                  - img [ref=e118]
+                  - img [ref=e121]
+            - generic [ref=e124] [cursor=pointer]:
+              - generic [ref=e125]:
+                - heading "New labour rule → Staffing contracts affected" [level=2] [ref=e126]
+                - generic [ref=e127]:
+                  - generic [ref=e130]:
+                    - img [ref=e131]
+                    - generic [ref=e135]: Dept of Labor
+                  - img [ref=e138]
+                - paragraph [ref=e146]: "Bottom Line: Contractors must now be given 2 weeks notice for shift changes. Review Q3 contracts."
+                - generic [ref=e150]: 1 SOURCE · 6H AGO
+              - generic [ref=e151]:
+                - generic [ref=e152]:
+                  - img [ref=e154]
+                  - img [ref=e157]
+                - generic [ref=e159]:
+                  - img [ref=e161]
+                  - img [ref=e164]
+      - generic [ref=e169]:
+        - generic [ref=e170]:
+          - generic [ref=e171]:
+            - heading "Your daily cheat sheet for work" [level=2] [ref=e172]
+            - paragraph [ref=e173]: "Most people try to stay informed like this:"
+            - list [ref=e174]:
+              - listitem [ref=e175]: 27 open tabs
+              - listitem [ref=e177]: newsletters they never finish
+              - listitem [ref=e179]: random LinkedIn posts
+              - listitem [ref=e181]: finding out things late
+          - generic [ref=e183]:
+            - heading "Relevant looks like this instead:" [level=2] [ref=e184]
+            - generic [ref=e185]:
+              - generic [ref=e186]:
+                - generic [ref=e187]: "1"
+                - text: Open app
+              - generic [ref=e189]:
+                - generic [ref=e190]: "2"
+                - text: 4 useful updates
+              - generic [ref=e192]:
+                - img [ref=e194]
+                - text: done.
+        - generic [ref=e260]:
+          - generic [ref=e262] [cursor=pointer]:
+            - generic [ref=e263]:
+              - heading "OpenAI secures new compute deal" [level=2] [ref=e264]
+              - generic [ref=e265]:
+                - generic [ref=e268]:
+                  - img [ref=e269]
+                  - generic [ref=e273]: Source
+                - img [ref=e276]
+              - paragraph [ref=e284]: "Bottom Line: Costs for API access likely dropping next quarter."
+              - generic [ref=e288]: 1 SOURCE · 2H AGO
+            - generic [ref=e289]:
+              - generic [ref=e290]:
+                - img [ref=e292]
+                - img [ref=e295]
+              - generic [ref=e297]:
+                - img [ref=e299]
+                - img [ref=e302]
+          - generic [ref=e305] [cursor=pointer]:
+            - generic [ref=e308]:
+              - img [ref=e309]
+              - generic [ref=e311]: Goal Aligned
+            - generic [ref=e312]:
+              - heading "Apple to allow alternative app stores globally" [level=2] [ref=e313]
+              - generic [ref=e314]:
+                - generic [ref=e317]:
+                  - img [ref=e318]
+                  - generic [ref=e322]: Source
+                - img [ref=e325]
+              - paragraph [ref=e333]: "Bottom Line: European regulations expanding. Expect a 15% revenue bump if you migrate billing."
+              - generic [ref=e337]: 1 SOURCE · 5H AGO
+            - generic [ref=e338]:
+              - generic [ref=e339]:
+                - img [ref=e341]
+                - img [ref=e344]
+              - generic [ref=e346]:
+                - img [ref=e348]
+                - img [ref=e351]
+      - generic [ref=e354]:
+        - generic [ref=e355]:
+          - heading "Not more news. Just the parts that matter." [level=2] [ref=e356]:
+            - text: Not more news.
+            - text: Just the parts that matter.
+          - generic [ref=e357]:
+            - paragraph [ref=e358]: "Each Relevant update tells you:"
+            - list [ref=e359]:
+              - listitem [ref=e360]:
+                - generic [ref=e361]: "1"
+                - text: What happened
+              - listitem [ref=e362]:
+                - generic [ref=e363]: "2"
+                - text: Why you should care
+              - listitem [ref=e364]:
+                - generic [ref=e365]: "3"
+                - text: What might change next
+            - generic [ref=e366]: No jargon. No essays. No digging.
+        - generic [ref=e369]:
+          - generic [ref=e370]:
+            - heading "Stripe updates billing API, shifts proration logic" [level=3] [ref=e371]
+            - paragraph [ref=e372]: 2 SOURCES · 4H AGO
+          - generic [ref=e373]:
+            - generic [ref=e374]:
+              - generic [ref=e375]: WHAT HAPPENED
+              - paragraph [ref=e376]: Stripe is rolling out v3 of their billing engine, effectively removing automatic mid-cycle proration for certain enterprise tiers. All current users must explicitly opt-in via API flag.
+            - generic [ref=e378]:
+              - generic [ref=e379]: WHY CARE
+              - paragraph [ref=e381]: Your SaaS product relies heavily on Stripe for B2B billing. Without the opt-in flag, your Q3 enterprise customers might get double-charged during seat expansions.
+            - generic [ref=e383]:
+              - generic [ref=e384]: WHAT CHANGES
+              - paragraph [ref=e386]:
+                - text: Update the
+                - code [ref=e387]: subscription.update
+                - text: webhook logic before August 1st. Add
+                - code [ref=e388]: "proration_behavior: 'create_prorations'"
+                - text: to your payload.
+      - generic [ref=e390]:
+        - generic [ref=e391]:
+          - heading "Tell us what you do. We'll filter the world." [level=2] [ref=e392]
+          - generic [ref=e393]:
+            - paragraph [ref=e394]: "You tell Relevant:"
+            - list [ref=e395]:
+              - listitem [ref=e396]: your role
+              - listitem [ref=e398]: your industry
+              - listitem [ref=e400]: your company
+            - generic [ref=e402]:
+              - paragraph [ref=e403]: Relevant watches what affects you.
+              - paragraph [ref=e404]: You just open and get smarter.
+        - generic [ref=e406]:
+          - generic [ref=e407]:
+            - generic [ref=e408]: Product Manager
+            - generic [ref=e409]: B2B SaaS
+            - generic [ref=e410]: Enterprise
+          - generic [ref=e411]:
+            - generic [ref=e413]: STUFF YOU DON'T NEED
+            - img [ref=e414]
+            - generic [ref=e422]: STUFF YOU DO
+      - generic [ref=e426]:
+        - generic [ref=e427]:
+          - heading "Why people secretly love this" [level=2] [ref=e428]
+          - generic [ref=e429]:
+            - paragraph [ref=e430]: "Because it helps them:"
+            - list [ref=e431]:
+              - listitem [ref=e432]: sound smarter
+              - listitem [ref=e434]: spot changes early
+              - listitem [ref=e436]: feel prepared
+              - listitem [ref=e438]: stop feeling behind
+              - listitem [ref=e440]: stop wasting time reading junk
+            - generic [ref=e442]: "\"It feels like someone did your homework for you.\""
+        - generic [ref=e444]:
+          - generic [ref=e446]:
+            - generic [ref=e448] [cursor=pointer]:
+              - generic [ref=e449]:
+                - heading "OpenAI launches new o3 model tier" [level=2] [ref=e450]
+                - generic [ref=e451]:
+                  - generic [ref=e454]:
+                    - img [ref=e455]
+                    - generic [ref=e459]: Source
+                  - img [ref=e462]
+                - paragraph [ref=e470]: "Bottom Line: They are aggressively discounting high-volume endpoints. The 20% undercut means you can renegotiate your Anthropic contract next month."
+                - generic [ref=e474]: 1 SOURCE · 1H AGO
+              - generic [ref=e475]:
+                - generic [ref=e476]:
+                  - img [ref=e478]
+                  - img [ref=e481]
+                - generic [ref=e483]:
+                  - img [ref=e485]
+                  - img [ref=e488]
+            - generic [ref=e491] [cursor=pointer]:
+              - generic [ref=e492]:
+                - heading "Major port strike in Asia delays shipments" [level=2] [ref=e493]
+                - generic [ref=e494]:
+                  - generic [ref=e497]:
+                    - img [ref=e498]
+                    - generic [ref=e502]: Source
+                  - img [ref=e505]
+                - paragraph [ref=e513]: "Bottom Line: Your hardware supply chain will be delayed by 3 weeks. Tell your Enterprise accounts immediately to manage expectations."
+                - generic [ref=e517]: 1 SOURCE · 3H AGO
+              - generic [ref=e518]:
+                - generic [ref=e519]:
+                  - img [ref=e521]
+                  - img [ref=e524]
+                - generic [ref=e526]:
+                  - img [ref=e528]
+                  - img [ref=e531]
+          - generic [ref=e533]: Useful
+          - generic [ref=e534]: Good to know
+          - generic [ref=e535]: Watch this
+      - generic [ref=e537]:
+        - heading "Why this feels different" [level=2] [ref=e538]
+        - generic [ref=e539]:
+          - generic [ref=e540]:
+            - img [ref=e542]
+            - heading "Built for your job" [level=3] [ref=e545]
+            - paragraph [ref=e546]: Not everyone sees the same things.
+          - generic [ref=e547]:
+            - img [ref=e549]
+            - heading "No duplicates" [level=3] [ref=e551]
+            - paragraph [ref=e552]: One update instead of 12 articles.
+          - generic [ref=e553]:
+            - img [ref=e555]
+            - heading "Straight explanations" [level=3] [ref=e557]
+            - paragraph [ref=e558]: We tell you why it matters. Not just what happened.
+      - generic [ref=e560]:
+        - heading "For people who want an edge at work" [level=2] [ref=e561]
+        - generic [ref=e562]:
+          - generic [ref=e563]: Product managers
+          - generic [ref=e564]: Account managers
+          - generic [ref=e565]: Operators
+          - generic [ref=e566]: Analysts
+          - generic [ref=e567]: Founders
+        - generic [ref=e568]:
+          - paragraph [ref=e569]: Anyone tired of feeling one step behind.
+          - paragraph [ref=e570]: "\"If you like being the prepared person in the room, you'll like Relevant.\""
+      - generic [ref=e572]:
+        - heading "The problem isn't lack of information." [level=2] [ref=e573]
+        - heading "It's knowing what actually matters." [level=2] [ref=e574]
+        - generic [ref=e575]:
+          - paragraph [ref=e576]: Relevant fixes that.
+          - generic [ref=e577]:
+            - paragraph [ref=e578]: Less noise.
+            - paragraph [ref=e579]: More signal.
+            - paragraph [ref=e580]: Better decisions.
+      - generic [ref=e582]:
+        - heading "Be the person who already knows." [level=2] [ref=e583]
+        - paragraph [ref=e584]: Relevant helps you stay sharp without turning your day into a reading assignment.
+        - generic [ref=e585]:
+          - generic [ref=e586]:
+            - textbox "you@company.com" [ref=e587]
+            - button "Get early access" [ref=e588] [cursor=pointer]
+          - paragraph [ref=e589]: Your future self will thank you.
+    - contentinfo [ref=e590]:
+      - generic [ref=e591]:
+        - generic [ref=e592]:
+          - generic [ref=e593]:
+            - img "Relevant" [ref=e594]
+            - generic [ref=e595]: Relevant
+          - generic [ref=e596]: Know what matters. Skip what doesn't.
+        - generic [ref=e597]:
+          - link "Instagram" [ref=e598] [cursor=pointer]:
+            - /url: https://www.instagram.com/relevant.app/
+            - img [ref=e599]
+          - link "Privacy" [ref=e602] [cursor=pointer]:
+            - /url: /privacy
+          - link "Terms" [ref=e603] [cursor=pointer]:
+            - /url: /terms
+          - link "Contact" [ref=e604] [cursor=pointer]:
+            - /url: mailto:support@getrelevantapp.com
+      - generic [ref=e605]: © 2026 Relevant
+  - alert [ref=e606]

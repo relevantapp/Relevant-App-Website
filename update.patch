@@ -1,0 +1,64 @@
+--- /Users/akshitsama/Desktop/Website/src/components/InteractiveSignalLive.tsx
++++ /Users/akshitsama/Desktop/Website/src/components/InteractiveSignalLive.tsx
+@@ -2,2 +2,2 @@
+ 
+-import { useState, useEffect, useCallback, useRef } from 'react'
++import { useState, useEffect, useCallback, useRef, TouchEvent } from 'react'
+ import Image from 'next/image'
+@@ -34,2 +34,4 @@
+   const pausedRef = useRef(false)
++  const [touchStart, setTouchStart] = useState<number | null>(null)
++  const [touchEnd, setTouchEnd] = useState<number | null>(null)
+ 
+@@ -60,4 +62,28 @@
+ 
+-  const handleMouseEnter = () => { pausedRef.current = true }
+-  const handleMouseLeave = () => { pausedRef.current = false }
++  const restartTimer = useCallback(() => {
++    if (timerRef.current) clearInterval(timerRef.current)
++    timerRef.current = setInterval(advance, CYCLE_MS)
++  }, [advance])
++
++  const handleMouseEnter = () => {
++    pausedRef.current = true
++  }
++  const handleMouseLeave = () => {
++    pausedRef.current = false
++  }
++
++  const onTouchStart = (e: TouchEvent) => {
++    setTouchEnd(null)
++    setTouchStart(e.targetTouches[0].clientX)
++  }
++
++  const onTouchMove = (e: TouchEvent) => {
++    setTouchEnd(e.targetTouches[0].clientX)
++  }
++
++  const onTouchEnd = () => {
++    if (!touchStart || !touchEnd) return
++    const distance = touchStart - touchEnd
++    const minSwipeDistance = 50
++
++    if (distance > minSwipeDistance) {
++      goTo((activeIndex + 1) % signalCount)
++      restartTimer()
++    } else if (distance < -minSwipeDistance) {
++      goTo((activeIndex - 1 + signalCount) % signalCount)
++      restartTimer()
++    }
++  }
+ 
+@@ -65,4 +91,3 @@
+     goTo(i)
+-    if (timerRef.current) clearInterval(timerRef.current)
+-    timerRef.current = setInterval(advance, CYCLE_MS)
++    restartTimer()
+   }
+@@ -87,2 +112,5 @@
+         onMouseEnter={handleMouseEnter}
+         onMouseLeave={handleMouseLeave}
++        onTouchStart={onTouchStart}
++        onTouchMove={onTouchMove}
++        onTouchEnd={onTouchEnd}
+       >

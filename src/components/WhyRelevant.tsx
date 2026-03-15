@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 const benefits = [
   {
     title: 'No Noise',
@@ -79,6 +81,19 @@ export default function WhyRelevant() {
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
+              </div>
+              <div className="flex-1 flex justify-center items-center my-4">
+                <div className="relative w-[140px] h-[280px] rounded-[20px] overflow-hidden border border-white/10 shadow-2xl">
+                  <Image
+                    src="/screenshots/feed-alternate.png"
+                    alt="Feed view showing 115 signals delivered — your feed has a natural end"
+                    fill
+                    style={{ objectFit: 'cover', objectPosition: 'center 15%' }}
+                    unoptimized
+                  />
+                  <div className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-black/60 to-transparent z-10 pointer-events-none" />
+                  <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-black/60 to-transparent z-10 pointer-events-none" />
+                </div>
               </div>
               <div className="mt-auto">
                 <h3 className="font-display text-2xl font-bold text-white mb-4">No Doom Scrolling</h3>

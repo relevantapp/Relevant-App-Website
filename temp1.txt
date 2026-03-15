@@ -1,0 +1,8 @@
+const NOISE_DATA = [
+  "City Council zoning meeting", "Utility rate hike proposed", "Local transit delays", 
+  "Apartment complex sold", "Student loan pause ends", "Grocery chain merger",
+  "Highway 401 closed for construction", "New tax credit for renters", "Tech layoffs hit local office",
+  "Federal Reserve rate hold", "Childcare subsidies changing", "Local election results",
+  "Minimum wage increase", "Healthcare premiums rising", "School board budget cuts",
+  "New parking enforcement zones", "ISP provider raises fees", "Local property taxes up"
+];

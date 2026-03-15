@@ -1,0 +1,78 @@
+const STREAM_COUNT = 30; // Enough to create a funnel but readable
+
+const SignalPipeline = () => {
+  const streamItems = React.useMemo(() => {
+    return Array.from({ length: STREAM_COUNT }).map((_, i) => {
+      const startY = Math.random() * 100; // Start anywhere from 0% to 100% on the Y axis
+      const text = NOISE_DATA[i % NOISE_DATA.length];
+      const duration = 4 + Math.random() * 4; 
+      const delay = Math.random() * -10; 
+      
+      return { id: i, text, startY, duration, delay };
+    });
+  }, []);
+
+  const SIGNAL_CARDS = [
+    { 
+      category: "PERSONAL FINANCE",
+      color: "#FBBF24", // warning
+      impact: "DIRECT IMPACT",
+      sources: "Financial News",
+      title: "High-yield savings rates are dropping",
+      synthesis: "Following the Federal Reserve's rate cut, major online banks are lowering their savings APYs from 4.3% to 3.8% starting next week.",
+      actionLabel: "What to do next",
+      action: "If you have extra cash sitting in savings, consider locking in a 6-month CD at 4.5% today before those rates drop too."
+    },
+    { 
+      category: "LOCAL COMMUTE",
+      color: "#60A5FA", // blue
+      impact: "MEDIUM IMPACT",
+      sources: "City Transit",
+      title: "Red Line closure starts Monday",
+      synthesis: "Track maintenance will shut down the stretch between your home and office for the next 45 days. The shuttle replacement adds 20-30 minutes to travel time.",
+      actionLabel: "What to do next",
+      action: "Draft a message to your boss asking to shift your start time by 30 mins to take the express bus, or ask to WFH on Tuesdays/Thursdays."
+    },
+    {
+      category: "UTILITIES & BILLS",
+      color: "#F87171", // red
+      impact: "DIRECT IMPACT",
+      sources: "City Council",
+      title: "Winter heating rates jumping 18%",
+      synthesis: "The utility commission just approved an 18% rate hike for natural gas starting November 1st due to regional supply shortages.",
+      actionLabel: "What to do next",
+      action: "Call your provider to lock in a fixed-rate budget billing plan now, before the winter surge officially hits your account."
+    },
+    {
+      category: "STUDENT LOANS",
+      color: "#A78BFA", // purple
+      impact: "TIME SENSITIVE",
+      sources: "Dept of Ed",
+      title: "Income-driven plan requires recertification",
+      synthesis: "Due to a recent federal update, your SAVE plan will not auto-renew this year. If you miss the deadline, your monthly payment will revert to the standard $350/mo.",
+      actionLabel: "What to do next",
+      action: "Log into StudentAid.gov by Friday with your most recent tax return to maintain your current $0/mo payment."
+    },
+    {
+      category: "COST OF LIVING",
+      color: "#4ADE80", // success/green
+      impact: "HIGH IMPACT",
+      sources: "Local News",
+      title: "New state tax credit for renters",
+      synthesis: "The governor just signed a bill providing a $400 refundable tax credit for renters making under $60k. It applies to this current tax year.",
+      actionLabel: "What to do next",
+      action: "Create a reminder to ask your landlord for a 'Certificate of Rent Paid' in January so you can claim this on your state return."
+    }
+  ];
+
+  const [activeCardIndex, setActiveCardIndex] = useState(0);
+
+  useEffect(() => {
+    // Cycle the output card every 5 seconds to give time to read
+    const interval = setInterval(() => {
+      setActiveCardIndex((prev) => (prev + 1) % SIGNAL_CARDS.length);
+    }, 5500);
+    return () => clearInterval(interval);
+  }, []);
+
+  const activeCard = SIGNAL_CARDS[activeCardIndex];

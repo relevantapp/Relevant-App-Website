@@ -33,8 +33,6 @@ export default function InteractiveSignal() {
   const [fading, setFading] = useState(false)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const pausedRef = useRef(false)
-  const touchStartRef = useRef<number | null>(null)
-  const touchDeltaRef = useRef<number>(0)
 
   const signals = liveSignals.length > 0 ? liveSignals : []
   const signalCount = signals.length
@@ -73,39 +71,6 @@ export default function InteractiveSignal() {
     timerRef.current = setInterval(advance, CYCLE_MS)
   }
 
-  // Touch swipe handlers
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartRef.current = e.touches[0].clientX
-    touchDeltaRef.current = 0
-    pausedRef.current = true
-  }
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (touchStartRef.current === null) return
-    touchDeltaRef.current = e.touches[0].clientX - touchStartRef.current
-  }
-
-  const handleTouchEnd = () => {
-    const SWIPE_THRESHOLD = 50
-    if (signalCount > 0 && Math.abs(touchDeltaRef.current) > SWIPE_THRESHOLD) {
-      if (touchDeltaRef.current < 0) {
-        // Swipe left → next
-        const next = (activeIndex + 1) % signalCount
-        goTo(next)
-      } else {
-        // Swipe right → previous
-        const prev = (activeIndex - 1 + signalCount) % signalCount
-        goTo(prev)
-      }
-      // Reset timer after swipe
-      if (timerRef.current) clearInterval(timerRef.current)
-      timerRef.current = setInterval(advance, CYCLE_MS)
-    }
-    touchStartRef.current = null
-    touchDeltaRef.current = 0
-    pausedRef.current = false
-  }
-
   if (loading || signalCount === 0) {
     return (
       <div className="signal-wrapper reveal-on-scroll">
@@ -134,12 +99,9 @@ export default function InteractiveSignal() {
     <div className="signal-wrapper reveal-on-scroll">
       <div
         className={`signal-card${fading ? ' signal-card--fading' : ''}`}
-        style={{ '--signal-color': color, touchAction: 'pan-y' } as React.CSSProperties}
+        style={{ '--signal-color': color } as React.CSSProperties}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
       >
         {/* Hero image */}
         {signal.image_url && (
@@ -214,7 +176,7 @@ export default function InteractiveSignal() {
       {/* Live indicator */}
       <div className="signal-live-indicator">
         <span className="signal-live-dot" />
-        <span>Live signals — swipe or tap dots to browse</span>
+        <span>Live signals — updated every few hours</span>
       </div>
     </div>
   )

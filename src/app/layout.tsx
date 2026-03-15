@@ -23,18 +23,18 @@ const themeScript = `
 `
 
 export const metadata: Metadata = {
-  title: 'Relevant | Role-Aware Relevance Engine',
+  title: 'Relevant | Less Noise. More Clarity.',
   description:
-    'Relevant turns constant noise into signal for your role, goals, and next move with three outputs: what happened, why it matters, and what to do next.',
-  keywords: ['relevance engine', 'role-aware intelligence', 'signal feed', 'goal lens', 'what happened why it matters what to do'],
+    'Relevant is an AI app that watches the news for your work, then tells you what changed and why it matters to you.',
+  keywords: ['ai news app', 'work alerts', 'what happened why it matters', 'personalized work intelligence', 'relevant app'],
   icons: {
     icon: '/logo.svg',
     apple: '/logo.svg',
   },
   openGraph: {
-    title: 'Relevant | Role-Aware Relevance Engine',
+    title: 'Relevant | Less Noise. More Clarity.',
     description:
-      'A role-aware relevance engine that filters noise into signal for your work, goals, and next move.',
+      'An AI app that reads the news for your work and tells you what changed, why it matters, and what it means for you.',
     type: 'website',
   },
 }

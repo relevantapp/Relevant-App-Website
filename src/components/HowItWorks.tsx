@@ -292,7 +292,7 @@ export default function HowItWorks() {
       <div className="site-frame">
         <div className="section-heading reveal-on-scroll">
           <span className="section-kicker">HOW IT WORKS</span>
-          <h2>Set up in two minutes. Stay informed for life.</h2>
+          <h2>Tell us what you do. We&apos;ll filter the world.</h2>
         </div>
 
         <div className="hiw-steps">
@@ -300,8 +300,8 @@ export default function HowItWorks() {
           <div className="hiw-step reveal-on-scroll">
             <div className="hiw-step-header">
               <span className="hiw-step-num">01</span>
-              <h3>Tell us about you. We&rsquo;ll figure out the rest.</h3>
-              <p>Your industry, your role, your company, and your country. That&rsquo;s all we need.</p>
+              <h3>Tell us what you do. We&apos;ll figure out the rest.</h3>
+              <p>Your role, your industry, and your company. That&apos;s all we need.</p>
             </div>
             <div className="hiw-step-visual">
               <OnboardingDemo />
@@ -312,8 +312,8 @@ export default function HowItWorks() {
           <div className="hiw-step reveal-on-scroll">
             <div className="hiw-step-header">
               <span className="hiw-step-num">02</span>
-              <h3>We read thousands of articles. You don&rsquo;t have to.</h3>
-              <p>Every day, we scan news, reports, and filings. We match each one against what matters to you — so nothing important slips through.</p>
+              <h3>Relevant watches what affects you.</h3>
+              <p>Every day, we scan news, reports, and filings. We filter the world against what actually matters to your job.</p>
             </div>
             <div className="hiw-step-visual">
               <IngestionAnimation />
@@ -324,8 +324,8 @@ export default function HowItWorks() {
           <div className="hiw-step reveal-on-scroll">
             <div className="hiw-step-header">
               <span className="hiw-step-num">03</span>
-              <h3>Open the app. Five minutes. You&rsquo;re caught up.</h3>
-              <p>A handful of signals, each one showing what happened, why it matters to you, and what to do about it.</p>
+              <h3>You just open and get smarter.</h3>
+              <p>A handful of updates in 5 minutes. No duplicates. Just the signal.</p>
             </div>
             <div className="hiw-step-visual">
               <MiniFeed />
