@@ -83,7 +83,7 @@ const sections: LegalSection[] = [
         </p>
         <p>
           Publishers, platforms, and source providers own their original content. If you click through to an article,
-          YouTube video, Spotify episode, or another external destination, that provider\'s terms and policies apply.
+          YouTube video, Spotify episode, or another external destination, that provider&apos;s terms and policies apply.
         </p>
         <p>
           Relevant is not legal, investment, employment, medical, or tax advice. Verify important decisions independently.
@@ -150,7 +150,7 @@ const sections: LegalSection[] = [
           Third-party publishers and platforms own their own names, articles, media, and trademarks.
         </p>
         <p>
-          These terms do not give you ownership of Relevant\'s software or brand.
+          These terms do not give you ownership of Relevant&apos;s software or brand.
         </p>
       </>
     ),
@@ -161,7 +161,7 @@ const sections: LegalSection[] = [
     body: (
       <>
         <p>
-          The service is provided on an "as is" and "as available" basis. We do not promise uninterrupted access or perfectly accurate output.
+          The service is provided on an &ldquo;as is&rdquo; and &ldquo;as available&rdquo; basis. We do not promise uninterrupted access or perfectly accurate output.
         </p>
         <p>
           To the maximum extent allowed by law, Relevant is not liable for indirect, incidental, special, consequential,
