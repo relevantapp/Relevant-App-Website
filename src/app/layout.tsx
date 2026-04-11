@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { IBM_Plex_Mono, Inter, Space_Grotesk } from 'next/font/google'
 import './globals.css'
 
@@ -28,8 +28,8 @@ export const metadata: Metadata = {
     'Relevant is an AI app that watches the news for your work, then tells you what changed and why it matters to you.',
   keywords: ['ai news app', 'work alerts', 'what happened why it matters', 'personalized work intelligence', 'relevant app'],
   icons: {
-    icon: '/logo.svg',
-    apple: '/logo.svg',
+    icon: '/app-icon.png',
+    apple: '/app-icon.png',
   },
   openGraph: {
     title: 'Relevant | Less Noise. More Clarity.',
@@ -37,6 +37,13 @@ export const metadata: Metadata = {
       'An AI app that reads the news for your work and tells you what changed, why it matters, and what it means for you.',
     type: 'website',
   },
+}
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: 'cover',
 }
 
 export default function RootLayout({

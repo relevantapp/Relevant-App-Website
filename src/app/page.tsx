@@ -131,6 +131,29 @@ export default function Home() {
               <a href="#access" className="btn-primary btn-pill">Get early access</a>
               <a href="#signal" className="btn-secondary btn-pill">See how it works</a>
             </div>
+
+            {/* Mobile inline waitlist — visible only on small screens */}
+            <form onSubmit={handleWaitlist} className="hero-mobile-waitlist">
+              <div className="hero-mobile-waitlist-row">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@company.com"
+                  required
+                  disabled={waitlistStatus === 'loading'}
+                  className="waitlist-input"
+                />
+                <button type="submit" className="btn-primary waitlist-submit" disabled={waitlistStatus === 'loading'}>
+                  {waitlistStatus === 'loading' ? 'Joining...' : 'Get early access'}
+                </button>
+              </div>
+              {waitlistMessage ? (
+                <p className={`waitlist-msg ${waitlistStatus === 'success' ? 'msg-success' : 'msg-error'}`}>{waitlistMessage}</p>
+              ) : (
+                <p className="waitlist-hint" style={{ textAlign: 'center' }}>Short emails. No spam.</p>
+              )}
+            </form>
             <div className="hero-cards reveal-stagger">
               <div className="hero-info-card reveal-on-scroll">
                 <span className="hero-info-kicker">WITHOUT RELEVANT</span>
@@ -229,6 +252,11 @@ export default function Home() {
           <p className="footer-copy">&copy; {currentYear} Relevant</p>
         </div>
       </footer>
+
+      {/* Sticky mobile CTA bar */}
+      <div className="mobile-sticky-cta">
+        <a href="#access" className="mobile-sticky-cta-btn">Get early access</a>
+      </div>
     </>
   )
 }

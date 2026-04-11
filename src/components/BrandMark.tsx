@@ -12,12 +12,11 @@ export default function BrandMark({ href, ariaLabel = 'Relevant home', className
   const mark = (
     <>
       <Image
-        src="/logo.svg"
+        src="/app-icon.png"
         alt="Relevant"
         width={28}
         height={28}
         className="brand-logo"
-        unoptimized
       />
       <span className="brand-wordmark">Relevant</span>
     </>
