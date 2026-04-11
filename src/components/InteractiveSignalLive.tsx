@@ -110,10 +110,12 @@ export default function InteractiveSignal() {
     return (
       <div className="signal-wrapper reveal-on-scroll">
         <div className="signal-card signal-card--loading">
-          <div className="signal-loading-pulse" />
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textAlign: 'center' }}>
-            Loading live signals…
-          </p>
+          <div className="signal-card-inner">
+            <div className="signal-loading-pulse" />
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textAlign: 'center' }}>
+              Loading live signals…
+            </p>
+          </div>
         </div>
       </div>
     )
@@ -141,60 +143,62 @@ export default function InteractiveSignal() {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Hero image */}
-        {signal.image_url && (
-          <div className="signal-image">
-            <Image src={signal.image_url} alt="" fill style={{ objectFit: 'cover' }} unoptimized />
-            <div className="signal-image-gradient" />
+        <div className="signal-card-inner">
+          {/* Hero image */}
+          {signal.image_url && (
+            <div className="signal-image">
+              <Image src={signal.image_url} alt="" fill style={{ objectFit: 'cover' }} unoptimized />
+              <div className="signal-image-gradient" />
+            </div>
+          )}
+
+          {/* Top row: impact type + sources */}
+          <div className="signal-top">
+            <span className="signal-category">
+              <span className="signal-dot" />
+              {signal.impact_type}
+            </span>
+            <div className="signal-badges">
+              <span className="signal-badge">{signal.sources.length} source{signal.sources.length !== 1 ? 's' : ''}</span>
+              <span className="signal-badge">{signal.signal_date}</span>
+            </div>
           </div>
-        )}
 
-        {/* Top row: impact type + sources */}
-        <div className="signal-top">
-          <span className="signal-category">
-            <span className="signal-dot" />
-            {signal.impact_type}
-          </span>
-          <div className="signal-badges">
-            <span className="signal-badge">{signal.sources.length} source{signal.sources.length !== 1 ? 's' : ''}</span>
-            <span className="signal-badge">{signal.signal_date}</span>
+          {/* Headline */}
+          <h3 className="signal-headline">{signal.headline}</h3>
+
+          {/* Synthesis */}
+          {signal.synthesis && (
+            <p className="signal-synthesis">{signal.synthesis}</p>
+          )}
+
+          {/* Tabs */}
+          <div className="signal-tabs">
+            {TAB_LABELS.map(({ key, label }) => (
+              <button
+                key={key}
+                className={`signal-tab${activeTab === key ? ' signal-tab--active' : ''}`}
+                onClick={() => setActiveTab(key)}
+                type="button"
+              >
+                {label}
+              </button>
+            ))}
           </div>
-        </div>
 
-        {/* Headline */}
-        <h3 className="signal-headline">{signal.headline}</h3>
+          {/* Tab content */}
+          <div className="signal-tab-content" key={`${activeIndex}-${activeTab}`}>
+            {getTabContent(signal, activeTab).map((line, i) => (
+              <p key={i}>{line}</p>
+            ))}
+          </div>
 
-        {/* Synthesis */}
-        {signal.synthesis && (
-          <p className="signal-synthesis">{signal.synthesis}</p>
-        )}
-
-        {/* Tabs */}
-        <div className="signal-tabs">
-          {TAB_LABELS.map(({ key, label }) => (
-            <button
-              key={key}
-              className={`signal-tab${activeTab === key ? ' signal-tab--active' : ''}`}
-              onClick={() => setActiveTab(key)}
-              type="button"
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-
-        {/* Tab content */}
-        <div className="signal-tab-content" key={`${activeIndex}-${activeTab}`}>
-          {getTabContent(signal, activeTab).map((line, i) => (
-            <p key={i}>{line}</p>
-          ))}
-        </div>
-
-        {/* Source attribution */}
-        <div className="signal-sources-row">
-          {signal.sources.slice(0, 4).map((src) => (
-            <span key={src.label} className="signal-source-pill">{src.label}</span>
-          ))}
+          {/* Source attribution */}
+          <div className="signal-sources-row">
+            {signal.sources.slice(0, 4).map((src) => (
+              <span key={src.label} className="signal-source-pill">{src.label}</span>
+            ))}
+          </div>
         </div>
       </div>
 

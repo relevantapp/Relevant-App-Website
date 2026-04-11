@@ -5,14 +5,14 @@ export default function Footer() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="bg-gray-900 text-gray-300 py-16 px-4">
+    <footer style={{ background: 'var(--bg)', borderTop: '1px solid var(--border)' }} className="py-16 px-4">
       <div className="max-w-5xl mx-auto">
         {/* Email Signup Section */}
         <div className="text-center mb-12">
-          <h3 className="text-2xl font-semibold text-white mb-3">
+          <h3 className="text-2xl font-semibold mb-3" style={{ color: 'var(--text-strong)' }}>
             Stay in the Loop
           </h3>
-          <p className="text-gray-400 mb-6">
+          <p className="mb-6" style={{ color: 'var(--text-muted)' }}>
             Join the waitlist to be notified when Relevant launches.
           </p>
           <div className="flex justify-center">
@@ -21,14 +21,14 @@ export default function Footer() {
         </div>
 
         {/* Divider */}
-        <div className="border-t border-gray-800 my-12"></div>
+        <div className="my-12" style={{ borderTop: '1px solid var(--border)' }}></div>
 
         {/* Bottom Section */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           {/* Brand */}
           <div className="text-center md:text-left">
-            <div className="text-xl font-bold text-white mb-2">Relevant</div>
-            <p className="text-sm text-gray-400">
+            <div className="text-xl font-bold mb-2" style={{ color: 'var(--text-strong)' }}>Relevant</div>
+            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
               News that matters. Nothing else.
             </p>
           </div>
@@ -39,7 +39,10 @@ export default function Footer() {
               href="https://twitter.com/relevant"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-blue-400 transition-colors"
+              className="transition-colors"
+              style={{ color: 'var(--text-muted)' }}
+              onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent)')}
+              onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-muted)')}
               aria-label="Twitter"
             >
               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -50,7 +53,10 @@ export default function Footer() {
               href="https://www.instagram.com/relevant.app/"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-blue-400 transition-colors"
+              className="transition-colors"
+              style={{ color: 'var(--text-muted)' }}
+              onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent)')}
+              onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-muted)')}
               aria-label="Instagram"
             >
               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -61,7 +67,10 @@ export default function Footer() {
               href="https://linkedin.com/company/relevant"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-blue-400 transition-colors"
+              className="transition-colors"
+              style={{ color: 'var(--text-muted)' }}
+              onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent)')}
+              onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-muted)')}
               aria-label="LinkedIn"
             >
               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -71,21 +80,21 @@ export default function Footer() {
           </div>
 
           {/* Legal Links */}
-          <div className="flex items-center gap-4 text-sm">
-            <Link href="/privacy" className="hover:text-white transition-colors">
+          <div className="flex items-center gap-4 text-sm" style={{ color: 'var(--text-muted)' }}>
+            <Link href="/privacy" className="transition-colors" style={{ color: 'var(--text-muted)' }}>
               Privacy
             </Link>
-            <Link href="/terms" className="hover:text-white transition-colors">
+            <Link href="/terms" className="transition-colors" style={{ color: 'var(--text-muted)' }}>
               Terms
             </Link>
-            <a href="mailto:support@getrelevantapp.com" className="hover:text-white transition-colors">
+            <a href="mailto:support@getrelevantapp.com" className="transition-colors" style={{ color: 'var(--text-muted)' }}>
               Contact
             </a>
           </div>
         </div>
 
         {/* Copyright */}
-        <div className="text-center text-sm text-gray-500 mt-8">
+        <div className="text-center text-sm mt-8" style={{ color: 'var(--text-soft)' }}>
           © {currentYear} Relevant. All rights reserved.
         </div>
       </div>

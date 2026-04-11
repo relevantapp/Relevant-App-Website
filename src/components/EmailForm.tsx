@@ -43,19 +43,33 @@ export default function EmailForm() {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Enter your email"
           required
-          className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none text-gray-800 placeholder-gray-400"
+          className="flex-1 px-5 py-3 rounded-full text-base outline-none transition-all"
+          style={{
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
+            color: 'var(--text)',
+          }}
+          onFocus={(e) => (e.currentTarget.style.borderColor = 'var(--accent)')}
+          onBlur={(e) => (e.currentTarget.style.borderColor = 'var(--border)')}
           disabled={status === 'loading'}
         />
         <button
           type="submit"
           disabled={status === 'loading'}
-          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+          className="px-8 py-3 font-semibold rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+          style={{
+            background: 'var(--accent)',
+            color: '#FFFFFF',
+            minHeight: '48px',
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = '#4F83FF'; e.currentTarget.style.boxShadow = '0 0 20px rgba(47, 107, 255, 0.3)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--accent)'; e.currentTarget.style.boxShadow = 'none'; }}
         >
           {status === 'loading' ? 'Joining...' : 'Join Waitlist'}
         </button>
       </div>
       {message && (
-        <p className={`mt-3 text-sm ${status === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+        <p className={`mt-3 text-sm`} style={{ color: status === 'success' ? 'var(--success)' : '#F87171' }}>
           {message}
         </p>
       )}

@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
-import { IBM_Plex_Mono, Instrument_Sans, Space_Grotesk } from 'next/font/google'
+import { IBM_Plex_Mono, Inter, Space_Grotesk } from 'next/font/google'
 import './globals.css'
 
-const instrumentSans = Instrument_Sans({ subsets: ['latin'], variable: '--font-sans' })
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
 const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-display' })
 const ibmPlexMono = IBM_Plex_Mono({ weight: ['400', '500', '600', '700'], subsets: ['latin'], variable: '--font-mono' })
 
@@ -46,7 +46,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${instrumentSans.variable} ${spaceGrotesk.variable} ${ibmPlexMono.variable} antialiased`}>
+      <body className={`${inter.variable} ${spaceGrotesk.variable} ${ibmPlexMono.variable} antialiased`}>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         {children}
       </body>

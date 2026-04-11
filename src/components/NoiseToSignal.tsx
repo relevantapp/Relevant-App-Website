@@ -104,26 +104,26 @@ export default function NoiseToSignal() {
         </p>
       </article>
 
-      {/* Step 3 — Engine telemetry */}
+      {/* Step 3 — Time saved */}
       <article className="signal-flow-panel signal-flow-panel--step">
         <div className="signal-flow-step-head">
           <span className="signal-flow-step-number">3</span>
           <div>
-            <span className="signal-flow-panel-kicker">See what it processed</span>
-            <h3 className="signal-flow-step-title">Full transparency into how many articles it scanned.</h3>
+            <span className="signal-flow-panel-kicker">See the time you save</span>
+            <h3 className="signal-flow-step-title">Hours back in your week, automatically.</h3>
           </div>
         </div>
 
         <p className="signal-flow-step-copy">
-          You see the needles, not the haystack. Relevant shows you exactly how much it processed and what made the cut.
+          Relevant tracks how much reading time it saves you. No more scanning dozens of sources — just the signals that matter.
         </p>
 
         <div className="signal-flow-shot-shell">
-          <span className="signal-flow-shot-kicker">Live engine telemetry</span>
+          <span className="signal-flow-shot-kicker">Your weekly time saved</span>
           <div className="signal-flow-shot-frame">
             <Image
-              src="/screenshots/engine-telemetry.png"
-              alt="Engine Telemetry — 16.8k articles scanned, 236 matched, 139 signals delivered"
+              src="/screenshots/time-saved.png"
+              alt="Time Saved — 11 hours back in your week, 30 stories processed"
               width={500}
               height={888}
               className="signal-flow-shot-image"
@@ -131,31 +131,31 @@ export default function NoiseToSignal() {
             />
           </div>
           <p className="signal-flow-shot-note">
-            16.8k articles scanned. 236 matched. 139 signals delivered.
+            11 hours saved. 30 stories delivered. All the signal, none of the noise.
           </p>
         </div>
       </article>
 
-      {/* Step 4 — Signal notification */}
+      {/* Step 4 — Search & explore */}
       <article className="signal-flow-panel signal-flow-panel--step">
         <div className="signal-flow-step-head">
           <span className="signal-flow-step-number">4</span>
           <div>
-            <span className="signal-flow-panel-kicker">We notify you</span>
-            <h3 className="signal-flow-step-title">You get notified when something important changes.</h3>
+            <span className="signal-flow-panel-kicker">Search and explore</span>
+            <h3 className="signal-flow-step-title">Explore your signal map anytime.</h3>
           </div>
         </div>
 
         <p className="signal-flow-step-copy">
-          No searching. No checking five apps. Just one clear signal with what happened and what it means for you.
+          Search across every story Relevant has delivered. Browse your topic map, follow new companies, and dig deeper when you need to.
         </p>
 
         <div className="signal-flow-shot-shell">
-          <span className="signal-flow-shot-kicker">Actual app signal</span>
+          <span className="signal-flow-shot-kicker">Your signal map</span>
           <div className="signal-flow-shot-frame">
             <Image
-              src="/screenshots/signal-detail.png"
-              alt="Relevant app signal screenshot"
+              src="/screenshots/search-explore.png"
+              alt="Search and explore your signal map — topic cards, search bar, follow new topics"
               width={500}
               height={888}
               className="signal-flow-shot-image"
@@ -164,7 +164,7 @@ export default function NoiseToSignal() {
           </div>
 
           <p className="signal-flow-shot-note">
-            One alert, one bottom line, and the full context when you open it.
+            Every topic, every story, searchable and organized — your personal signal map.
           </p>
         </div>
       </article>

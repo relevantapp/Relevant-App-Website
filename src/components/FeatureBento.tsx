@@ -107,7 +107,7 @@ export default function FeatureBento() {
             <div className="feature-visual-screenshot">
               <div className="feature-visual-screenshot-wrap">
                 <Image
-                  src="/screenshots/search-topics.png"
+                  src="/screenshots/search-explore.png"
                   alt="Search and topic map — follow companies, people, and topics"
                   width={375}
                   height={812}

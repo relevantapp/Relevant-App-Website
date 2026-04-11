@@ -24,13 +24,34 @@ export function SignalCard({
 
   return (
     <div className="w-full mb-2 cursor-pointer font-sans group">
-      <div className="bg-white dark:bg-zinc-900 rounded-[20px] border border-zinc-200 dark:border-zinc-800 shadow-[0_4px_12px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col transition-transform duration-300 group-hover:scale-[1.01]">
+      {/* Outer plate */}
+      <div
+        className="rounded-[30px] overflow-hidden flex flex-col transition-transform duration-300 group-hover:scale-[1.01]"
+        style={{
+          background: 'var(--surface)',
+          border: '1px solid var(--border)',
+          padding: '12px',
+        }}
+      >
+        {/* Inner well */}
+        <div
+          className="rounded-[24px] flex flex-col"
+          style={{
+            background: 'var(--bg-elevated)',
+          }}
+        >
         
         {/* Card Meta (Badges) */}
         {showGoalBadge && (
           <div className="flex flex-row justify-between items-start px-4 pt-4 pb-0">
             <div className="flex flex-row gap-2 flex-wrap flex-1">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-800/30">
+              <div
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full"
+                style={{
+                  background: 'var(--accent)',
+                  color: '#FFFFFF',
+                }}
+              >
                 <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
@@ -42,12 +63,18 @@ export function SignalCard({
         
         {/* Content */}
         <div className="px-4 py-4 flex flex-col gap-3">
-          <h2 className="text-[20px] leading-[24px] font-medium text-zinc-900 dark:text-zinc-50 tracking-[-0.02em] font-serif">
+          <h2
+            className="text-[20px] leading-[24px] font-medium tracking-[-0.02em]"
+            style={{
+              fontFamily: 'var(--font-display), sans-serif',
+              color: 'var(--text-strong)',
+            }}
+          >
             {headline}
           </h2>
 
           {/* Image Container */}
-              <div className="w-full h-32 bg-zinc-100 dark:bg-zinc-800 rounded-[14px] overflow-hidden relative">
+          <div className="w-full h-32 rounded-[20px] overflow-hidden relative" style={{ background: 'var(--surface)' }}>
             {imageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -85,12 +112,12 @@ export function SignalCard({
             </div>
           </div>
 
-          {/* Synthesis Preview */}
+          {/* Synthesis Preview — Bottom Line */}
           {synthesisPreview && (
             <div className="flex flex-row gap-2.5 mt-1">
-              <div className="w-[3px] rounded-full bg-zinc-200 dark:bg-zinc-800" />
-              <p className="flex-1 text-[15px] leading-[22px] text-zinc-600 dark:text-zinc-400">
-                <span className="font-semibold text-zinc-900 dark:text-zinc-200">Bottom Line:</span>{' '}
+              <div className="w-[3px] rounded-full" style={{ background: 'var(--accent)' }} />
+              <p className="flex-1 text-[15px] leading-[22px]" style={{ color: 'var(--text-muted)' }}>
+                <span className="font-semibold" style={{ color: 'var(--text-strong)' }}>Bottom Line:</span>{' '}
                 {synthesisPreview}
               </p>
             </div>
@@ -98,9 +125,12 @@ export function SignalCard({
 
           {/* Utility Strip */}
           <div className="flex flex-col mt-2">
-            <div className="h-[1px] bg-zinc-100 dark:bg-zinc-800/60 mb-3" />
+            <div className="h-[1px] mb-3" style={{ background: 'var(--border)' }} />
             <div className="flex flex-row items-center justify-between">
-              <span className="text-[11px] font-bold text-zinc-400 dark:text-zinc-500 tracking-wider uppercase">
+              <span
+                className="text-[11px] font-bold tracking-wider uppercase"
+                style={{ color: 'var(--text-muted)' }}
+              >
                 {footerMetaText}
               </span>
             </div>
@@ -111,31 +141,51 @@ export function SignalCard({
         <div className="px-4 pb-4 flex flex-row items-center justify-between">
           {/* Feedback */}
           <div className="flex flex-row gap-2">
-            <div className="w-8 h-8 rounded-full border border-zinc-200 dark:border-zinc-800 flex items-center justify-center bg-zinc-50 dark:bg-zinc-900/50 hover:bg-zinc-100 transition-colors">
-              <svg className="w-3.5 h-3.5 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+              style={{
+                border: '1px solid var(--border)',
+                background: 'var(--surface)',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = 'var(--surface-strong)')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'var(--surface)')}
+            >
+              <svg className="w-3.5 h-3.5" style={{ color: 'var(--text-muted)' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
               </svg>
             </div>
-            <div className="w-8 h-8 rounded-full border border-zinc-200 dark:border-zinc-800 flex items-center justify-center bg-zinc-50 dark:bg-zinc-900/50 hover:bg-zinc-100 transition-colors">
-              <svg className="w-3.5 h-3.5 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+              style={{
+                border: '1px solid var(--border)',
+                background: 'var(--surface)',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = 'var(--surface-strong)')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'var(--surface)')}
+            >
+              <svg className="w-3.5 h-3.5" style={{ color: 'var(--text-muted)' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"></path>
               </svg>
             </div>
           </div>
 
           <div className="flex flex-row items-center gap-2">
-            <div className="w-8 h-8 rounded-full flex items-center justify-center text-blue-600 hover:bg-blue-50 transition-colors">
+            <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ color: 'var(--accent)' }}>
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
               </svg>
             </div>
-            <div className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center"
+              style={{ background: 'color-mix(in srgb, var(--accent) 15%, transparent)', color: 'var(--accent)' }}
+            >
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <line x1="5" y1="12" x2="19" y2="12"></line>
                 <polyline points="12 5 19 12 12 19"></polyline>
               </svg>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>
