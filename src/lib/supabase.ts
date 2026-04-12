@@ -8,8 +8,8 @@ const ssrStub = {
   auth: {
     getSession: async () => ({ data: { session: null }, error: null }),
     getUser: async () => ({ data: { user: null }, error: null }),
-    signInWithPassword: async () => ({ data: { user: null, session: null }, error: { message: 'SSR stub' } }),
-    signUp: async () => ({ data: { user: null, session: null }, error: { message: 'SSR stub' } }),
+    signInWithPassword: async () => ({ data: { user: null, session: null }, error: null }),
+    signUp: async () => ({ data: { user: null, session: null }, error: null }),
     signOut: async () => ({ error: null }),
     onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
     refreshSession: async () => ({ data: { session: null }, error: null }),
