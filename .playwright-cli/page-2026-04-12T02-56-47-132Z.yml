@@ -1,0 +1,36 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e2]
+  - generic [ref=e5]:
+    - link "Back to home" [ref=e6] [cursor=pointer]:
+      - /url: /
+      - img [ref=e7]
+      - text: Back to home
+    - generic [ref=e9]:
+      - generic [ref=e11]:
+        - img "Relevant" [ref=e12]
+        - img [ref=e13]
+      - generic [ref=e14]: Relevant
+    - generic [ref=e15]:
+      - heading "Good evening" [level=1] [ref=e16]
+      - paragraph [ref=e17]: Sign in to your Relevant feed
+    - generic [ref=e20]: Continue with email
+    - generic [ref=e22]:
+      - generic [ref=e23]:
+        - generic [ref=e24]: Email address
+        - generic [ref=e25]:
+          - img [ref=e26]
+          - textbox "you@example.com" [ref=e29]
+      - generic [ref=e30]:
+        - generic [ref=e31]: Password
+        - generic [ref=e32]:
+          - img [ref=e33]
+          - textbox "••••••••" [ref=e36]
+          - button [ref=e37] [cursor=pointer]:
+            - img [ref=e38]
+      - button "Forgot password?" [ref=e42] [cursor=pointer]
+      - button "Sign in" [ref=e43] [cursor=pointer]
+    - paragraph [ref=e44]:
+      - text: Don't have an account?
+      - link "Sign up" [ref=e45] [cursor=pointer]:
+        - /url: /signup
+    - paragraph [ref=e46]: © 2026 Relevant. All rights reserved.

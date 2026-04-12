@@ -1,0 +1,1521 @@
+[    2466ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[    2743ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[    2832ms] Error: Cannot find module './682.js'
+Require stack:
+- /Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js
+- /Users/akshitsama/Desktop/Website/.next/server/pages/_document.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/build/utils.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-server.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:55:36)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:198:28)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:162:22)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:335)
+    at Object.<anonymous> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js:109:84)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:72:65)
+    at async loadComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/next-server.js:714:36)
+[    2862ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[    3985ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/_next/static/webpack/f8b1252d3b555901.webpack.hot-update.json:0
+[    3986ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:347
+[    4062ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[    4250ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[    4261ms] Error: Cannot find module './682.js'
+Require stack:
+- /Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js
+- /Users/akshitsama/Desktop/Website/.next/server/pages/_document.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/build/utils.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-server.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:55:36)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:198:28)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:162:22)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:335)
+    at Object.<anonymous> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js:109:84)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:72:65)
+    at async loadComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/next-server.js:714:36)
+[    4258ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[    4708ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/_next/static/webpack/f8b1252d3b555901.webpack.hot-update.json:0
+[    4708ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:347
+[    4772ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[    5040ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[    5052ms] Error: Cannot find module './682.js'
+Require stack:
+- /Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js
+- /Users/akshitsama/Desktop/Website/.next/server/pages/_document.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/build/utils.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-server.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:55:36)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:198:28)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:162:22)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:335)
+    at Object.<anonymous> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js:109:84)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:72:65)
+    at async loadComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/next-server.js:714:36)
+[    5052ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[    5476ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/_next/static/webpack/f8b1252d3b555901.webpack.hot-update.json:0
+[    5477ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:347
+[    5528ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[    6071ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[    6081ms] Error: Cannot find module './682.js'
+Require stack:
+- /Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js
+- /Users/akshitsama/Desktop/Website/.next/server/pages/_document.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/build/utils.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-server.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:55:36)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:198:28)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:162:22)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:335)
+    at Object.<anonymous> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js:109:84)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:72:65)
+    at async loadComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/next-server.js:714:36)
+[    6079ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[    6535ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/_next/static/webpack/f8b1252d3b555901.webpack.hot-update.json:0
+[    6536ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:347
+[    6632ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[    6812ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[    6829ms] Error: Cannot find module './682.js'
+Require stack:
+- /Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js
+- /Users/akshitsama/Desktop/Website/.next/server/pages/_document.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/build/utils.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-server.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:55:36)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:198:28)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:162:22)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:335)
+    at Object.<anonymous> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js:109:84)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:72:65)
+    at async loadComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/next-server.js:714:36)
+[    6825ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[    7127ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/_next/static/webpack/f8b1252d3b555901.webpack.hot-update.json:0
+[    7127ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:347
+[    7197ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[    7327ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[    7331ms] Error: Cannot find module './682.js'
+Require stack:
+- /Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js
+- /Users/akshitsama/Desktop/Website/.next/server/pages/_document.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/build/utils.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-server.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:55:36)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:198:28)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:162:22)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:335)
+    at Object.<anonymous> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js:109:84)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:72:65)
+    at async loadComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/next-server.js:714:36)
+[    7332ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[    7533ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/_next/static/webpack/f8b1252d3b555901.webpack.hot-update.json:0
+[    7533ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:347
+[    7588ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[    7692ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[    7697ms] Error: Cannot find module './682.js'
+Require stack:
+- /Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js
+- /Users/akshitsama/Desktop/Website/.next/server/pages/_document.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/build/utils.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-server.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:55:36)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:198:28)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:162:22)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:335)
+    at Object.<anonymous> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js:109:84)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:72:65)
+    at async loadComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/next-server.js:714:36)
+[    7697ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[    7895ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/_next/static/webpack/f8b1252d3b555901.webpack.hot-update.json:0
+[    7895ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:347
+[    7937ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[    8024ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[    8029ms] Error: Cannot find module './682.js'
+Require stack:
+- /Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js
+- /Users/akshitsama/Desktop/Website/.next/server/pages/_document.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/build/utils.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-server.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:55:36)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:198:28)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:162:22)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:335)
+    at Object.<anonymous> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js:109:84)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:72:65)
+    at async loadComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/next-server.js:714:36)
+[    8029ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[    8217ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/_next/static/webpack/f8b1252d3b555901.webpack.hot-update.json:0
+[    8217ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:347
+[    8312ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[    8425ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[    8430ms] Error: Cannot find module './682.js'
+Require stack:
+- /Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js
+- /Users/akshitsama/Desktop/Website/.next/server/pages/_document.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/build/utils.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-server.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:55:36)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:198:28)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:162:22)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:335)
+    at Object.<anonymous> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js:109:84)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:72:65)
+    at async loadComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/next-server.js:714:36)
+[    8431ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[    8640ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/_next/static/webpack/f8b1252d3b555901.webpack.hot-update.json:0
+[    8640ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:347
+[    8691ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[    8786ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[    8795ms] Error: Cannot find module './682.js'
+Require stack:
+- /Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js
+- /Users/akshitsama/Desktop/Website/.next/server/pages/_document.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/build/utils.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-server.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:55:36)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:198:28)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:162:22)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:335)
+    at Object.<anonymous> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js:109:84)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:72:65)
+    at async loadComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/next-server.js:714:36)
+[    8793ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[    9061ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/_next/static/webpack/f8b1252d3b555901.webpack.hot-update.json:0
+[    9061ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:347
+[    9109ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[    9216ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[    9235ms] Error: Cannot find module './682.js'
+Require stack:
+- /Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js
+- /Users/akshitsama/Desktop/Website/.next/server/pages/_document.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/build/utils.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-server.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:55:36)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:198:28)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:162:22)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:335)
+    at Object.<anonymous> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js:109:84)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:72:65)
+    at async loadComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/next-server.js:714:36)
+[    9223ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[    9420ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/_next/static/webpack/f8b1252d3b555901.webpack.hot-update.json:0
+[    9420ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:347
+[    9457ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[    9541ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[    9546ms] Error: Cannot find module './682.js'
+Require stack:
+- /Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js
+- /Users/akshitsama/Desktop/Website/.next/server/pages/_document.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/build/utils.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-server.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:55:36)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:198:28)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:162:22)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:335)
+    at Object.<anonymous> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js:109:84)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:72:65)
+    at async loadComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/next-server.js:714:36)
+[    9546ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[    9777ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/_next/static/webpack/f8b1252d3b555901.webpack.hot-update.json:0
+[    9777ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:347
+[    9813ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[    9892ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[    9896ms] Error: Cannot find module './682.js'
+Require stack:
+- /Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js
+- /Users/akshitsama/Desktop/Website/.next/server/pages/_document.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/build/utils.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-server.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:55:36)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:198:28)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:162:22)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:335)
+    at Object.<anonymous> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js:109:84)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:72:65)
+    at async loadComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/next-server.js:714:36)
+[    9897ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[   10074ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/_next/static/webpack/f8b1252d3b555901.webpack.hot-update.json:0
+[   10074ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:347
+[   10140ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[   10237ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[   10241ms] Error: Cannot find module './682.js'
+Require stack:
+- /Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js
+- /Users/akshitsama/Desktop/Website/.next/server/pages/_document.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/build/utils.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-server.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:55:36)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:198:28)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:162:22)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:335)
+    at Object.<anonymous> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js:109:84)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:72:65)
+    at async loadComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/next-server.js:714:36)
+[   10241ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[   10410ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/_next/static/webpack/f8b1252d3b555901.webpack.hot-update.json:0
+[   10410ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:347
+[   10469ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[   10561ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[   10566ms] Error: Cannot find module './682.js'
+Require stack:
+- /Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js
+- /Users/akshitsama/Desktop/Website/.next/server/pages/_document.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/build/utils.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-server.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:55:36)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:198:28)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:162:22)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:335)
+    at Object.<anonymous> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js:109:84)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:72:65)
+    at async loadComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/next-server.js:714:36)
+[   10566ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[   10743ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/_next/static/webpack/f8b1252d3b555901.webpack.hot-update.json:0
+[   10743ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:347
+[   10802ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[   10892ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[   10899ms] Error: Cannot find module './682.js'
+Require stack:
+- /Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js
+- /Users/akshitsama/Desktop/Website/.next/server/pages/_document.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/build/utils.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-server.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:55:36)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:198:28)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:162:22)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:335)
+    at Object.<anonymous> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js:109:84)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:72:65)
+    at async loadComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/next-server.js:714:36)
+[   10900ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[   11078ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/_next/static/webpack/f8b1252d3b555901.webpack.hot-update.json:0
+[   11078ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:347
+[   11127ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[   11203ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[   11208ms] Error: Cannot find module './682.js'
+Require stack:
+- /Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js
+- /Users/akshitsama/Desktop/Website/.next/server/pages/_document.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/build/utils.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-server.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:55:36)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:198:28)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:162:22)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:335)
+    at Object.<anonymous> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js:109:84)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:72:65)
+    at async loadComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/next-server.js:714:36)
+[   11208ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[   11387ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/_next/static/webpack/f8b1252d3b555901.webpack.hot-update.json:0
+[   11387ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:347
+[   11431ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[   11523ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[   11528ms] Error: Cannot find module './682.js'
+Require stack:
+- /Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js
+- /Users/akshitsama/Desktop/Website/.next/server/pages/_document.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/build/utils.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-server.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:55:36)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:198:28)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:162:22)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:335)
+    at Object.<anonymous> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js:109:84)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:72:65)
+    at async loadComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/next-server.js:714:36)
+[   11528ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[   11700ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/_next/static/webpack/f8b1252d3b555901.webpack.hot-update.json:0
+[   11700ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:347
+[   11735ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[   11812ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[   11817ms] Error: Cannot find module './682.js'
+Require stack:
+- /Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js
+- /Users/akshitsama/Desktop/Website/.next/server/pages/_document.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/build/utils.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-server.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:55:36)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:198:28)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:162:22)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:335)
+    at Object.<anonymous> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js:109:84)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:72:65)
+    at async loadComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/next-server.js:714:36)
+[   11817ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[   11983ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/_next/static/webpack/f8b1252d3b555901.webpack.hot-update.json:0
+[   11983ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:347
+[   12018ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[   12096ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[   12101ms] Error: Cannot find module './682.js'
+Require stack:
+- /Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js
+- /Users/akshitsama/Desktop/Website/.next/server/pages/_document.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/build/utils.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-server.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:55:36)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:198:28)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:162:22)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:335)
+    at Object.<anonymous> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js:109:84)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:72:65)
+    at async loadComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/next-server.js:714:36)
+[   12101ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[   12273ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/_next/static/webpack/f8b1252d3b555901.webpack.hot-update.json:0
+[   12273ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:347
+[   12340ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[   12425ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[   12430ms] Error: Cannot find module './682.js'
+Require stack:
+- /Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js
+- /Users/akshitsama/Desktop/Website/.next/server/pages/_document.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/build/utils.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-server.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:55:36)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:198:28)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:162:22)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:335)
+    at Object.<anonymous> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js:109:84)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:72:65)
+    at async loadComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/next-server.js:714:36)
+[   12431ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[   12646ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/_next/static/webpack/f8b1252d3b555901.webpack.hot-update.json:0
+[   12646ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:347
+[   12698ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[   12812ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[   12820ms] Error: Cannot find module './682.js'
+Require stack:
+- /Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js
+- /Users/akshitsama/Desktop/Website/.next/server/pages/_document.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/build/utils.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-server.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:55:36)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:198:28)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:162:22)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:335)
+    at Object.<anonymous> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js:109:84)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:72:65)
+    at async loadComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/next-server.js:714:36)
+[   12817ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[   13029ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/_next/static/webpack/f8b1252d3b555901.webpack.hot-update.json:0
+[   13029ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:347
+[   13080ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[   13196ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[   13209ms] Error: Cannot find module './682.js'
+Require stack:
+- /Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js
+- /Users/akshitsama/Desktop/Website/.next/server/pages/_document.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/build/utils.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-server.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:55:36)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:198:28)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:162:22)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:335)
+    at Object.<anonymous> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js:109:84)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:72:65)
+    at async loadComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/next-server.js:714:36)
+[   13210ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[   13439ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/_next/static/webpack/f8b1252d3b555901.webpack.hot-update.json:0
+[   13439ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:347
+[   13481ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[   13582ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[   13588ms] Error: Cannot find module './682.js'
+Require stack:
+- /Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js
+- /Users/akshitsama/Desktop/Website/.next/server/pages/_document.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/build/utils.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-server.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:55:36)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:198:28)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:162:22)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:335)
+    at Object.<anonymous> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js:109:84)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:72:65)
+    at async loadComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/next-server.js:714:36)
+[   13588ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[   13786ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/_next/static/webpack/f8b1252d3b555901.webpack.hot-update.json:0
+[   13787ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:347
+[   13873ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[   13982ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[   13990ms] Error: Cannot find module './682.js'
+Require stack:
+- /Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js
+- /Users/akshitsama/Desktop/Website/.next/server/pages/_document.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/build/utils.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-server.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:55:36)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:198:28)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:162:22)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:335)
+    at Object.<anonymous> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js:109:84)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:72:65)
+    at async loadComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/next-server.js:714:36)
+[   13988ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[   14198ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/_next/static/webpack/f8b1252d3b555901.webpack.hot-update.json:0
+[   14198ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:347
+[   14268ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[   14380ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[   14386ms] Error: Cannot find module './682.js'
+Require stack:
+- /Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js
+- /Users/akshitsama/Desktop/Website/.next/server/pages/_document.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/build/utils.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-server.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:55:36)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:198:28)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:162:22)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:335)
+    at Object.<anonymous> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js:109:84)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:72:65)
+    at async loadComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/next-server.js:714:36)
+[   14387ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[   14599ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/_next/static/webpack/f8b1252d3b555901.webpack.hot-update.json:0
+[   14599ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:347
+[   14640ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[   14755ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[   14760ms] Error: Cannot find module './682.js'
+Require stack:
+- /Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js
+- /Users/akshitsama/Desktop/Website/.next/server/pages/_document.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/build/utils.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-middleware.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/dev/hot-reloader-webpack.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/router-server.js
+- /Users/akshitsama/Desktop/Website/node_modules/next/dist/server/lib/start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1383:15)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:55:36)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at __webpack_require__.f.require (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:198:28)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/akshitsama/Desktop/Website/.next/server/webpack-runtime.js:162:22)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:335)
+    at Object.<anonymous> (file:///Users/akshitsama/Desktop/Website/.next/server/pages/_document.js:1:376)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1463:12)
+    at mod.require (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:147:16)
+    at requirePage (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/require.js:109:84)
+    at <unknown> (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:72:65)
+    at async loadComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/load-components.js:71:33)
+    at async DevServer.findPageComponentsImpl (file:///Users/akshitsama/Desktop/Website/node_modules/next/dist/server/next-server.js:714:36)
+[   14760ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:63
+[   14791ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/__nextjs_original-stack-frame?isServer=true&isEdgeServer=false&isAppDirectory=false&errorMessage=Error%3A+Cannot+find+module+%27.%2F682.js%27%0ARequire+stack%3A%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fwebpack-runtime.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fpages%2F_document.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Frequire.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fload-components.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fbuild%2Futils.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fdev%2Fhot-middleware.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fdev%2Fhot-reloader-webpack.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Frouter-utils%2Fsetup-dev-bundler.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Frouter-server.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Fstart-server.js&file=file%3A%2F%2F%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Frequire-hook.js&methodName=mod.require&arguments=&lineNumber=65&column=28:0
+[   14791ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/__nextjs_original-stack-frame?isServer=true&isEdgeServer=false&isAppDirectory=false&errorMessage=Error%3A+Cannot+find+module+%27.%2F682.js%27%0ARequire+stack%3A%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fwebpack-runtime.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fpages%2F_document.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Frequire.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fload-components.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fbuild%2Futils.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fdev%2Fhot-middleware.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fdev%2Fhot-reloader-webpack.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Frouter-utils%2Fsetup-dev-bundler.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Frouter-server.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Fstart-server.js&file=file%3A%2F%2F%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fwebpack-runtime.js&methodName=__webpack_require__.f.require&arguments=&lineNumber=198&column=28:0
+[   14791ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/__nextjs_original-stack-frame?isServer=true&isEdgeServer=false&isAppDirectory=false&errorMessage=Error%3A+Cannot+find+module+%27.%2F682.js%27%0ARequire+stack%3A%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fwebpack-runtime.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fpages%2F_document.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Frequire.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fload-components.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fbuild%2Futils.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fdev%2Fhot-middleware.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fdev%2Fhot-reloader-webpack.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Frouter-utils%2Fsetup-dev-bundler.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Frouter-server.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Fstart-server.js&file=file%3A%2F%2F%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fwebpack-runtime.js&methodName=%3Cunknown%3E&arguments=&lineNumber=111&column=40:0
+[   14791ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/__nextjs_original-stack-frame?isServer=true&isEdgeServer=false&isAppDirectory=false&errorMessage=Error%3A+Cannot+find+module+%27.%2F682.js%27%0ARequire+stack%3A%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fwebpack-runtime.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fpages%2F_document.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Frequire.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fload-components.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fbuild%2Futils.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fdev%2Fhot-middleware.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fdev%2Fhot-reloader-webpack.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Frouter-utils%2Fsetup-dev-bundler.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Frouter-server.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Fstart-server.js&file=file%3A%2F%2F%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fwebpack-runtime.js&methodName=__webpack_require__.e&arguments=&lineNumber=110&column=67:0
+[   14791ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/__nextjs_original-stack-frame?isServer=true&isEdgeServer=false&isAppDirectory=false&errorMessage=Error%3A+Cannot+find+module+%27.%2F682.js%27%0ARequire+stack%3A%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fwebpack-runtime.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fpages%2F_document.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Frequire.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fload-components.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fbuild%2Futils.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fdev%2Fhot-middleware.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fdev%2Fhot-reloader-webpack.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Frouter-utils%2Fsetup-dev-bundler.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Frouter-server.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Fstart-server.js&file=file%3A%2F%2F%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fwebpack-runtime.js&methodName=__webpack_require__.X&arguments=&lineNumber=162&column=22:0
+[   14791ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/__nextjs_original-stack-frame?isServer=true&isEdgeServer=false&isAppDirectory=false&errorMessage=Error%3A+Cannot+find+module+%27.%2F682.js%27%0ARequire+stack%3A%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fwebpack-runtime.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fpages%2F_document.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Frequire.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fload-components.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fbuild%2Futils.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fdev%2Fhot-middleware.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fdev%2Fhot-reloader-webpack.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Frouter-utils%2Fsetup-dev-bundler.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Frouter-server.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Fstart-server.js&file=file%3A%2F%2F%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fpages%2F_document.js&methodName=%3Cunknown%3E&arguments=&lineNumber=1&column=335:0
+[   14791ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/__nextjs_original-stack-frame?isServer=true&isEdgeServer=false&isAppDirectory=false&errorMessage=Error%3A+Cannot+find+module+%27.%2F682.js%27%0ARequire+stack%3A%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fwebpack-runtime.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fpages%2F_document.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Frequire.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fload-components.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fbuild%2Futils.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fdev%2Fhot-middleware.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fdev%2Fhot-reloader-webpack.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Frouter-utils%2Fsetup-dev-bundler.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Frouter-server.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Fstart-server.js&file=file%3A%2F%2F%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fpages%2F_document.js&methodName=Object.%3Canonymous%3E&arguments=&lineNumber=1&column=376:0
+[   14791ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/__nextjs_original-stack-frame?isServer=true&isEdgeServer=false&isAppDirectory=false&errorMessage=Error%3A+Cannot+find+module+%27.%2F682.js%27%0ARequire+stack%3A%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fwebpack-runtime.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fpages%2F_document.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Frequire.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fload-components.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fbuild%2Futils.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fdev%2Fhot-middleware.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fdev%2Fhot-reloader-webpack.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Frouter-utils%2Fsetup-dev-bundler.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Frouter-server.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Fstart-server.js&file=file%3A%2F%2F%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Frequire.js&methodName=requirePage&arguments=&lineNumber=109&column=84:0
+[   14791ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/__nextjs_original-stack-frame?isServer=true&isEdgeServer=false&isAppDirectory=false&errorMessage=Error%3A+Cannot+find+module+%27.%2F682.js%27%0ARequire+stack%3A%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fwebpack-runtime.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fpages%2F_document.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Frequire.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fload-components.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fbuild%2Futils.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fdev%2Fhot-middleware.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fdev%2Fhot-reloader-webpack.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Frouter-utils%2Fsetup-dev-bundler.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Frouter-server.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Fstart-server.js&file=file%3A%2F%2F%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fload-components.js&methodName=%3Cunknown%3E&arguments=&lineNumber=72&column=65:0
+[   14791ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/__nextjs_original-stack-frame?isServer=true&isEdgeServer=false&isAppDirectory=false&errorMessage=Error%3A+Cannot+find+module+%27.%2F682.js%27%0ARequire+stack%3A%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fwebpack-runtime.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fpages%2F_document.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Frequire.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fload-components.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fbuild%2Futils.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fdev%2Fhot-middleware.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fdev%2Fhot-reloader-webpack.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Frouter-utils%2Fsetup-dev-bundler.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Frouter-server.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Fstart-server.js&file=file%3A%2F%2F%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fload-components.js&methodName=async+loadComponentsImpl&arguments=&lineNumber=71&column=33:0
+[   14791ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3001/__nextjs_original-stack-frame?isServer=true&isEdgeServer=false&isAppDirectory=false&errorMessage=Error%3A+Cannot+find+module+%27.%2F682.js%27%0ARequire+stack%3A%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fwebpack-runtime.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2F.next%2Fserver%2Fpages%2F_document.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Frequire.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fload-components.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fbuild%2Futils.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fdev%2Fhot-middleware.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fdev%2Fhot-reloader-webpack.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Frouter-utils%2Fsetup-dev-bundler.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Frouter-server.js%0A-+%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Flib%2Fstart-server.js&file=file%3A%2F%2F%2FUsers%2Fakshitsama%2FDesktop%2FWebsite%2Fnode_modules%2Fnext%2Fdist%2Fserver%2Fnext-server.js&methodName=async+DevServer.findPageComponentsImpl&arguments=&lineNumber=714&column=36:0
+[   15763ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:63
+[   16766ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:63
+[   17768ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:63
+[   18771ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:63
+[   19774ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:63
+[   24783ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:63
+[   29792ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:63
+[   34797ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:63
+[   39809ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:63
+[   44819ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:63
+[   49822ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:63
+[   54829ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:63
+[   59847ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:63
+[   64852ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:63
+[   69855ms] [ERROR] WebSocket connection to 'ws://localhost:3001/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:63
+[   74870ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[   74967ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:221
+[   76764ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:221
+[   78439ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:221
+[   78758ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:221
+[   80306ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:221
+[   80502ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3001/_next/static/webpack/f8b1252d3b555901.webpack.hot-update.json:0
+[   80502ms] [WARNING] [Fast Refresh] performing full reload because your application had an unrecoverable error @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:349
+[   80556ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:221
+[   80703ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:221
+[   80890ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:347
+[   81298ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:38559

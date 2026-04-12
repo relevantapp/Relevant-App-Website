@@ -1,0 +1,257 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e2]
+  - navigation [ref=e3]:
+    - generic [ref=e4]:
+      - link "Relevant home" [ref=e5] [cursor=pointer]:
+        - /url: "#top"
+        - img "Relevant" [ref=e6]
+        - generic [ref=e7]: Relevant
+      - generic [ref=e8]:
+        - generic [ref=e9]:
+          - link "Instagram" [ref=e10] [cursor=pointer]:
+            - /url: https://www.instagram.com/relevant.app/
+            - img [ref=e11]
+          - link "TikTok" [ref=e14] [cursor=pointer]:
+            - /url: https://www.tiktok.com/@relevant.app
+            - img [ref=e15]
+        - generic [ref=e17]:
+          - link "How it works" [ref=e18] [cursor=pointer]:
+            - /url: "#signal"
+          - link "Inside the app" [ref=e19] [cursor=pointer]:
+            - /url: "#features"
+        - button "Toggle theme" [ref=e20] [cursor=pointer]:
+          - img [ref=e21]
+        - link "Join waitlist" [ref=e23] [cursor=pointer]:
+          - /url: "#access"
+        - link "Sign in" [ref=e24] [cursor=pointer]:
+          - /url: /login
+  - main [ref=e25]:
+    - generic [ref=e27]:
+      - generic [ref=e28]: NEVER FEEL BEHIND AT WORK
+      - heading "You should not need to read the news just to stay sharp at work." [level=1] [ref=e29]:
+        - generic [ref=e30]: You should not need
+        - generic [ref=e31]: to read the news
+        - generic [ref=e32]: just to stay sharp
+        - generic [ref=e33]: at work.
+      - paragraph [ref=e34]: Relevant is an AI app that reads thousands of articles, spots what could help or hurt your company, industry, or role, and notifies you with a clear explanation of what changed and what it means for you.
+      - generic [ref=e35]:
+        - link "Get early access" [ref=e36] [cursor=pointer]:
+          - /url: "#access"
+        - link "See how it works" [ref=e37] [cursor=pointer]:
+          - /url: "#signal"
+      - generic [ref=e38]:
+        - generic [ref=e39]:
+          - generic [ref=e40]: WITHOUT RELEVANT
+          - text: Tabs, newsletters, random posts, and still the feeling you missed something important.
+        - generic [ref=e41]:
+          - generic [ref=e42]: WHAT RELEVANT DOES
+          - text: AI reads thousands of articles and filters them for your company, industry, and role.
+        - generic [ref=e43]:
+          - generic [ref=e44]: WHAT YOU GET
+          - text: A clear alert when something important could affect you positively or negatively.
+      - generic [ref=e46]:
+        - generic [ref=e47]:
+          - button "01 Answer 3 work questions Tell us your company, industry, and role so Relevant knows what affects your work." [ref=e48] [cursor=pointer]:
+            - generic [ref=e49]: "01"
+            - generic [ref=e50]:
+              - generic [ref=e51]: Answer 3 work questions
+              - generic [ref=e52]: Tell us your company, industry, and role so Relevant knows what affects your work.
+          - button "02 Get alerted when something changes Important signals show up when something could affect your company, industry, or role." [ref=e54] [cursor=pointer]:
+            - generic [ref=e55]: "02"
+            - generic [ref=e56]:
+              - generic [ref=e57]: Get alerted when something changes
+              - generic [ref=e58]: Important signals show up when something could affect your company, industry, or role.
+          - button "03 Understand the signal fast Open the alert to see what happened, why it matters, and what it means for you." [ref=e59] [cursor=pointer]:
+            - generic [ref=e60]: "03"
+            - generic [ref=e61]:
+              - generic [ref=e62]: Understand the signal fast
+              - generic [ref=e63]: Open the alert to see what happened, why it matters, and what it means for you.
+        - generic [ref=e66]:
+          - img "Answer 3 work questions" [ref=e68]
+          - img "Get alerted when something changes" [ref=e70]
+          - img "Understand the signal fast" [ref=e72]
+    - generic [ref=e75]:
+      - generic [ref=e76]:
+        - generic [ref=e77]: HOW IT WORKS
+        - heading "Tell us your company, industry, and role. AI handles the rest." [level=2] [ref=e78]
+        - paragraph [ref=e79]: Relevant learns your work context, reads thousands of articles from major publications, and alerts you when something could affect you positively or negatively.
+      - generic [ref=e80]:
+        - article [ref=e81]:
+          - generic [ref=e82]:
+            - generic [ref=e83]: "1"
+            - generic [ref=e84]:
+              - generic [ref=e85]: Tell us about you
+              - heading [level=3] [ref=e86]: Tell us your company, industry, and role.
+          - paragraph [ref=e87]: Those three answers are enough for Relevant to understand what could affect you at work.
+          - generic [ref=e88]:
+            - generic [ref=e89]: Actual onboarding screen
+            - img [ref=e91]
+        - article [ref=e92]:
+          - generic [ref=e93]:
+            - generic [ref=e94]: "2"
+            - generic [ref=e95]:
+              - generic [ref=e96]: We filter the noise
+              - heading [level=3] [ref=e97]: AI reads the news and keeps what affects your work.
+          - paragraph [ref=e98]: Relevant reads thousands of articles every day, figures out what could influence your work, and drops the rest.
+          - generic [ref=e99]:
+            - generic [ref=e100]: Thousands of articles scanned every day
+            - paragraph [ref=e101]: From publishers like Reuters, Bloomberg, the Financial Times, the Wall Street Journal, CNBC, BBC, and more.
+          - generic [ref=e103]:
+            - generic [ref=e104]:
+              - generic [ref=e105]:
+                - generic [ref=e108]: Reuters
+                - paragraph [ref=e109]: Rate cuts may take longer than markets hoped.
+              - generic [ref=e110]:
+                - generic [ref=e113]: Bloomberg
+                - paragraph [ref=e114]: Companies keep pushing harder on AI rollout plans.
+              - generic [ref=e115]:
+                - generic [ref=e118]: Financial Times
+                - paragraph [ref=e119]: Enterprise software buyers slow spending on new tools.
+              - generic [ref=e120]:
+                - generic [ref=e123]: The Wall Street Journal
+                - paragraph [ref=e124]: Hiring plans tighten as leadership teams cut budgets.
+              - generic [ref=e125]:
+                - generic [ref=e128]: CNBC
+                - paragraph [ref=e129]: Cloud providers race to lower prices for business customers.
+              - generic [ref=e130]:
+                - generic [ref=e133]: BBC
+                - paragraph [ref=e134]: Governments debate new rules for consumer AI products.
+              - generic [ref=e135]:
+                - generic [ref=e138]: The Verge
+                - paragraph [ref=e139]: Another wave of AI features lands across work apps.
+              - generic [ref=e140]:
+                - generic [ref=e143]: AP
+                - paragraph [ref=e144]: A major policy move could change cross-border trade costs.
+            - generic [ref=e145]:
+              - generic [ref=e146]:
+                - generic [ref=e149]: Reuters
+                - paragraph [ref=e150]: Rate cuts may take longer than markets hoped.
+              - generic [ref=e151]:
+                - generic [ref=e154]: Bloomberg
+                - paragraph [ref=e155]: Companies keep pushing harder on AI rollout plans.
+              - generic [ref=e156]:
+                - generic [ref=e159]: Financial Times
+                - paragraph [ref=e160]: Enterprise software buyers slow spending on new tools.
+              - generic [ref=e161]:
+                - generic [ref=e164]: The Wall Street Journal
+                - paragraph [ref=e165]: Hiring plans tighten as leadership teams cut budgets.
+              - generic [ref=e166]:
+                - generic [ref=e169]: CNBC
+                - paragraph [ref=e170]: Cloud providers race to lower prices for business customers.
+              - generic [ref=e171]:
+                - generic [ref=e174]: BBC
+                - paragraph [ref=e175]: Governments debate new rules for consumer AI products.
+              - generic [ref=e176]:
+                - generic [ref=e179]: The Verge
+                - paragraph [ref=e180]: Another wave of AI features lands across work apps.
+              - generic [ref=e181]:
+                - generic [ref=e184]: AP
+                - paragraph [ref=e185]: A major policy move could change cross-border trade costs.
+          - paragraph [ref=e186]: It looks for changes that could help you, hurt you, or change the decisions you need to make.
+        - article [ref=e187]:
+          - generic [ref=e188]:
+            - generic [ref=e189]: "3"
+            - generic [ref=e190]:
+              - generic [ref=e191]: See the time you save
+              - heading [level=3] [ref=e192]: Hours back in your week, automatically.
+          - paragraph [ref=e193]: Relevant tracks how much reading time it saves you. No more scanning dozens of sources — just the signals that matter.
+          - generic [ref=e194]:
+            - generic [ref=e195]: Your weekly time saved
+            - img [ref=e197]
+            - paragraph [ref=e198]: 11 hours saved. 30 stories delivered. All the signal, none of the noise.
+        - article [ref=e199]:
+          - generic [ref=e200]:
+            - generic [ref=e201]: "4"
+            - generic [ref=e202]:
+              - generic [ref=e203]: Search and explore
+              - heading [level=3] [ref=e204]: Explore your signal map anytime.
+          - paragraph [ref=e205]: Search across every story Relevant has delivered. Browse your topic map, follow new companies, and dig deeper when you need to.
+          - generic [ref=e206]:
+            - generic [ref=e207]: Your signal map
+            - img [ref=e209]
+            - paragraph [ref=e210]: Every topic, every story, searchable and organized — your personal signal map.
+    - generic [ref=e212]:
+      - generic [ref=e213]:
+        - generic [ref=e214]: INSIDE THE APP
+        - heading "The signal is just the start." [level=2] [ref=e215]
+        - paragraph [ref=e216]: Once something important shows up, you can ask a follow-up question, save a note, track companies or industries, or open a deeper explainer without leaving the app.
+      - generic [ref=e217]:
+        - article [ref=e218]:
+          - generic [ref=e220]:
+            - generic [ref=e221]: How does this affect my team?
+            - generic [ref=e222]: Hiring may stay slower for another quarter, so it's safer to plan around current headcount.
+            - generic [ref=e223]: Ask a follow-up about this signal…
+          - generic [ref=e224]:
+            - generic [ref=e225]: ASK A QUESTION
+            - heading "Ask what it means for you." [level=3] [ref=e226]
+            - paragraph [ref=e227]: Open any signal and ask how it affects your job, plans, or next move.
+        - article [ref=e228]:
+          - generic [ref=e230]:
+            - generic [ref=e231]:
+              - generic [ref=e232]: S
+              - generic [ref=e233]:
+                - strong [ref=e234]: Spotify match
+                - paragraph [ref=e235]: 15-minute explainer for your commute
+            - generic [ref=e236]:
+              - generic [ref=e237]: "Y"
+              - generic [ref=e238]:
+                - strong [ref=e239]: YouTube match
+                - paragraph [ref=e240]: Short breakdown if you want more context
+          - generic [ref=e241]:
+            - generic [ref=e242]: GO DEEPER
+            - heading "Open a podcast or video when you want more." [level=3] [ref=e243]
+            - paragraph [ref=e244]: Some signals come with a useful episode or video, so you can keep learning without searching around.
+      - generic [ref=e245]:
+        - article [ref=e246]:
+          - img "Notes tab — save signals and capture quick thoughts" [ref=e250]
+          - generic [ref=e251]:
+            - generic [ref=e252]: YOUR THINKING SPACE
+            - heading "Save signals and capture thoughts." [level=3] [ref=e253]
+            - paragraph [ref=e254]: Save a signal, record a voice note, or write freely. Notes is your private thinking space inside Relevant.
+        - article [ref=e255]:
+          - img "Search and topic map — follow companies, people, and topics" [ref=e259]
+          - generic [ref=e260]:
+            - generic [ref=e261]: FOLLOW TOPICS
+            - heading "Search and explore your signal map." [level=3] [ref=e262]
+            - paragraph [ref=e263]: Search across your delivered signals, follow new companies or topics, and explore a visual topic map of everything Relevant tracks for you.
+        - article [ref=e264]:
+          - img "Tune your feed — adjust signal strictness and see what drives your signals" [ref=e268]
+          - generic [ref=e269]:
+            - generic [ref=e270]: TUNE YOUR FEED
+            - heading "Control what shows up." [level=3] [ref=e271]
+            - paragraph [ref=e272]: Adjust signal strictness, see what topics and companies drive your signals, and fine-tune anytime.
+    - generic [ref=e274]:
+      - generic [ref=e275]:
+        - generic [ref=e276]: EARLY ACCESS
+        - heading "Get early access to Relevant." [level=2] [ref=e277]
+        - paragraph [ref=e278]: If you want AI to watch the news for your work, join the waitlist.
+      - generic [ref=e279]:
+        - generic [ref=e280]: Request access
+        - generic [ref=e281]: Email
+        - generic [ref=e282]:
+          - textbox "Email" [ref=e283]:
+            - /placeholder: you@company.com
+          - button "Get early access" [ref=e284] [cursor=pointer]
+        - paragraph [ref=e285]: Short emails. No spam.
+  - contentinfo [ref=e286]:
+    - generic [ref=e287]:
+      - generic [ref=e288]:
+        - generic [ref=e289]:
+          - img "Relevant" [ref=e290]
+          - generic [ref=e291]: Relevant
+        - generic [ref=e292]: Less noise. More clarity.
+      - generic [ref=e293]:
+        - link "Instagram" [ref=e294] [cursor=pointer]:
+          - /url: https://www.instagram.com/relevant.app/
+          - img [ref=e295]
+        - link "TikTok" [ref=e298] [cursor=pointer]:
+          - /url: https://www.tiktok.com/@relevant.app
+          - img [ref=e299]
+      - generic [ref=e301]:
+        - link "Privacy" [ref=e302] [cursor=pointer]:
+          - /url: /privacy
+        - link "Terms" [ref=e303] [cursor=pointer]:
+          - /url: /terms
+        - link "Contact" [ref=e304] [cursor=pointer]:
+          - /url: mailto:support@getrelevantapp.com
+      - paragraph [ref=e305]: © 2026 Relevant

@@ -1,4 +1,5 @@
-import { createBrowserClient, SupabaseClient } from '@supabase/ssr'
+import { createBrowserClient } from '@supabase/ssr'
+import type { SupabaseClient } from '@supabase/supabase-js'
 
 let _supabase: SupabaseClient | null = null
 
@@ -41,7 +42,7 @@ function getClient(): SupabaseClient {
 export const supabase: SupabaseClient = new Proxy({} as SupabaseClient, {
   get(_target, prop) {
     const client = getClient()
-    const value = (client as Record<string | symbol, unknown>)[prop]
+    const value = (client as unknown as Record<string | symbol, unknown>)[prop]
     if (typeof value === 'function') {
       return value.bind(client)
     }

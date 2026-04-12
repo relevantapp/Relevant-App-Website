@@ -96,6 +96,13 @@ const CATEGORY_META: Record<CategoryKey, {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
+type DimensionRow = {
+  id: string
+  category: string
+  value: string
+  normalized_value: string | null
+}
+
 type DimensionTile = {
   id: string
   category: CategoryKey
@@ -244,7 +251,7 @@ export default function SearchPage() {
           .order('created_at', { ascending: false })
           .limit(500)
 
-        const tiles: DimensionTile[] = dims.map((d) => {
+        const tiles: DimensionTile[] = (dims as DimensionRow[]).map((d) => {
           const nv = (d.normalized_value || '').toLowerCase()
           let signalCount = 0
           let imageUrl: string | null = null
@@ -320,7 +327,7 @@ export default function SearchPage() {
         return
       }
 
-      const mapped = (items || []).map((row) => mapRow(row as Record<string, unknown>))
+      const mapped = (items || []).map((row: Record<string, unknown>) => mapRow(row))
       setResults(mapped)
       setSearchState(mapped.length > 0 ? 'results' : 'empty')
 
@@ -349,11 +356,11 @@ export default function SearchPage() {
         .limit(200)
 
       const matched = (signals ?? [])
-        .filter((s) => {
-          const ws = ((s as Record<string, unknown>).why_showing as string ?? '').toLowerCase()
+        .filter((s: Record<string, unknown>) => {
+          const ws = ((s.why_showing as string) ?? '').toLowerCase()
           return ws.includes(tile.normalizedValue)
         })
-        .map((row) => mapRow(row as Record<string, unknown>))
+        .map((row: Record<string, unknown>) => mapRow(row))
 
       setCategorySignals(matched)
     } catch (e) {
@@ -437,14 +444,14 @@ export default function SearchPage() {
             .order('created_at', { ascending: false })
             .limit(500)
 
-          const tiles: DimensionTile[] = dims.map((d) => {
+          const tiles: DimensionTile[] = (dims as DimensionRow[]).map((d) => {
             const nv = (d.normalized_value || '').toLowerCase()
             let signalCount = 0
             let imageUrl: string | null = null
 
             if (signals) {
-              for (const s of signals) {
-                const ws = ((s.why_showing as string) ?? '').toLowerCase()
+              for (const s of signals as Array<{ why_showing: string | null; image_url: string | null }>) {
+                const ws = (s.why_showing ?? '').toLowerCase()
                 if (ws.includes(nv)) {
                   signalCount++
                   if (!imageUrl && s.image_url) {

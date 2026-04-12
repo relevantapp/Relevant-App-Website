@@ -1,6 +1,7 @@
 'use client'
 
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import type { AuthChangeEvent, Session } from '@supabase/supabase-js'
 import { supabase, getValidAccessToken } from '@/lib/supabase'
 import type { AuthUser, AuthNotice } from '@/types/signals'
 
@@ -170,7 +171,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     void bootstrap()
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
       const sessionUser = session?.user
       if (sessionUser) {
         if (!sessionUser.email_confirmed_at) {

@@ -30,6 +30,14 @@ export type EventUpdate = {
 
 type SignalItemRow = Record<string, unknown>
 
+type EventUpdateRow = {
+  id: string
+  created_at: string
+  article_ids: unknown
+  brief_item: unknown
+  delta_summary: unknown
+}
+
 const SIGNAL_ITEMS_SELECT =
   'event_id, headline, what_happened, why_it_matters, why_showing, synthesis, sources, consequence_steps, image_url, published_at, what_to_watch, canvas, created_at, updated_at, signal_date, source_count, update_count, story_started_at, delta_summary, source_extracts, media_links, thread_name, trajectory, is_developing'
 
@@ -281,7 +289,7 @@ export function useProBrief() {
 
       if (queryError || !data) return []
 
-      return data.map((row) => {
+      return (data as EventUpdateRow[]).map((row) => {
         const briefItem = row.brief_item as Record<string, unknown> | null
         const headline = briefItem && typeof briefItem.headline === 'string'
           ? decodeHtmlEntities(briefItem.headline) : null

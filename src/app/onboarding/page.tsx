@@ -9,6 +9,9 @@ import { supabase, getValidAccessToken } from '@/lib/supabase'
 
 /* ─── Types ─── */
 type TaxonomyOption = { id: string; name: string; slug?: string }
+type IndustryRow = { id: string; name: string; slug: string; keywords: unknown }
+type RoleRow = { id: string; name: string; slug: string; industry_id: string | null }
+type CompanyRow = { id: string; name: string; slug: string }
 
 /* ─── Constants ─── */
 const COUNTRIES = [
@@ -30,7 +33,7 @@ function useTaxonomySearch() {
   const ensureIndustries = useCallback(async () => {
     if (industryCache.current) return industryCache.current
     const { data } = await supabase.from('industries').select('id, name, slug, keywords').eq('is_active', true).order('name')
-    const opts = (data ?? []).map((r) => ({ id: r.id as string, name: r.name as string, slug: r.slug as string, keywords: (Array.isArray(r.keywords) ? r.keywords.filter((v: unknown): v is string => typeof v === 'string').map((v: string) => v.toLowerCase()) : []) }))
+    const opts = ((data ?? []) as IndustryRow[]).map((r) => ({ id: r.id, name: r.name, slug: r.slug, keywords: (Array.isArray(r.keywords) ? (r.keywords as unknown[]).filter((v): v is string => typeof v === 'string').map((v) => v.toLowerCase()) : []) }))
     industryCache.current = opts
     return opts
   }, [])
@@ -38,7 +41,7 @@ function useTaxonomySearch() {
   const ensureRoles = useCallback(async () => {
     if (roleCache.current) return roleCache.current
     const { data } = await supabase.from('roles').select('id, name, slug, industry_id').order('name')
-    const opts = (data ?? []).map((r) => ({ id: r.id as string, name: r.name as string, slug: r.slug as string, industryId: typeof r.industry_id === 'string' ? r.industry_id : null }))
+    const opts = ((data ?? []) as RoleRow[]).map((r) => ({ id: r.id, name: r.name, slug: r.slug, industryId: r.industry_id ?? null }))
     roleCache.current = opts
     return opts
   }, [])
@@ -46,7 +49,7 @@ function useTaxonomySearch() {
   const ensureCompanies = useCallback(async () => {
     if (companyCache.current) return companyCache.current
     const { data } = await supabase.from('companies').select('id, name, slug').eq('is_active', true).order('name')
-    const opts = (data ?? []).map((r) => ({ id: r.id as string, name: r.name as string, slug: r.slug as string }))
+    const opts = ((data ?? []) as CompanyRow[]).map((r) => ({ id: r.id, name: r.name, slug: r.slug }))
     companyCache.current = opts
     return opts
   }, [])
