@@ -159,11 +159,40 @@ export default function MeetingPrepPage() {
   const [query, setQuery] = useState('')
   const [entityType, setEntityType] = useState<EntityType>('company')
   const [lensKey, setLensKey] = useState<LensKey>('founder')
-  const [lookbackDays, setLookbackDays] = useState(30)
+  const [lookbackDays, setLookbackDays] = useState(90)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [dossier, setDossier] = useState<DossierResponse | null>(null)
   const [lensOpen, setLensOpen] = useState(false)
+
+  /** Auto-detect entity type from query text. */
+  const inferEntityType = useCallback((text: string): EntityType | null => {
+    const trimmed = text.trim()
+    if (!trimmed || trimmed.length < 3) return null
+    const words = trimmed.split(/\s+/)
+    // 2-3 title-case words with no common company suffixes → likely a person
+    if (
+      words.length >= 2 &&
+      words.length <= 4 &&
+      words.every((w) => /^[A-Z]/.test(w)) &&
+      !/(inc|corp|llc|ltd|co|group|labs|ai)$/i.test(words[words.length - 1])
+    ) {
+      return 'person'
+    }
+    return null
+  }, [])
+
+  const handleQueryChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value
+      setQuery(value)
+      const inferred = inferEntityType(value)
+      if (inferred && entityType !== inferred) {
+        setEntityType(inferred)
+      }
+    },
+    [entityType, inferEntityType]
+  )
 
   const fetchDossier = useCallback(
     async (forceRefresh = false) => {
@@ -298,7 +327,7 @@ export default function MeetingPrepPage() {
               <input
                 type="text"
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                onChange={handleQueryChange}
                 aria-label={`Search for a ${entityType} to research`}
                 placeholder={
                   entityType === 'company'
