@@ -4,8 +4,10 @@ import { FormEvent, useEffect, useState } from 'react'
 import BrandMark from '@/components/BrandMark'
 import FeatureBento from '@/components/FeatureBento'
 import HeroHeadline from '@/components/HeroHeadline'
-import NoiseToSignal from '@/components/NoiseToSignal'
 import PhoneMockup from '@/components/PhoneMockup'
+import InteractiveSignal from '@/components/InteractiveSignal'
+import HowItWorks from '@/components/HowItWorks'
+import WhoItsFor from '@/components/WhoItsFor'
 
 export default function Home() {
   const [email, setEmail] = useState('')
@@ -116,8 +118,10 @@ export default function Home() {
               </a>
             </div>
             <div className="site-nav-links">
-              <a href="#signal">How it works</a>
+              <a href="#signal">What you get</a>
+              <a href="#how">How it works</a>
               <a href="#features">Inside the app</a>
+              <a href="#who">Who it&apos;s for</a>
             </div>
             <button
               className="theme-toggle"
@@ -143,20 +147,19 @@ export default function Home() {
       </nav>
 
       <main id="top">
-        {/* HERO */}
+        {/* §1 — HERO: THE PROBLEM */}
         <section className="hero-section">
           <div className="site-frame hero-centered">
-            <span className="hero-badge">NEVER FEEL BEHIND AT WORK</span>
+            <span className="hero-badge">YOU ALREADY KNOW THIS</span>
             <HeroHeadline />
             <p className="hero-sub">
-              Relevant is an AI app that reads thousands of articles, spots what could help or hurt
-              your company, industry, or role, and notifies you with a clear explanation of what
-              changed and what it means for you.
+              Hundreds of articles. Hours of scrolling. Almost zero insight.
             </p>
             <div className="hero-actions">
               <a href="#access" className="btn-primary btn-pill">Get early access</a>
               <a href="#signal" className="btn-secondary btn-pill">See how it works</a>
             </div>
+            <p className="hero-pricing">7-day free trial · $4.99/month · Cancel anytime</p>
 
             {/* Mobile inline waitlist — visible only on small screens */}
             <form onSubmit={handleWaitlist} className="hero-mobile-waitlist">
@@ -179,7 +182,7 @@ export default function Home() {
               {waitlistMessage ? (
                 <p className={`waitlist-msg ${waitlistStatus === 'success' ? 'msg-success' : 'msg-error'}`}>{waitlistMessage}</p>
               ) : (
-                <p className="waitlist-hint" style={{ textAlign: 'center' }}>Short emails. No spam.</p>
+                <p className="waitlist-hint" style={{ textAlign: 'center' }}>No spam. Just your invite when it&apos;s ready.</p>
               )}
             </form>
             <div className="hero-cards reveal-stagger">
@@ -193,41 +196,70 @@ export default function Home() {
               </div>
               <div className="hero-info-card reveal-on-scroll">
                 <span className="hero-info-kicker">WHAT YOU GET</span>
-                <span className="hero-info-text">A clear alert when something important could affect you positively or negatively.</span>
+                <span className="hero-info-text">A clear signal when something important could affect you — with what happened, why it matters, and what to do.</span>
               </div>
             </div>
-            
+          </div>
+        </section>
+
+        {/* §2 — THE ANSWER: Interactive Signal Card */}
+        <section id="signal" className="section-block">
+          <div className="site-frame">
+            <div className="section-heading reveal-on-scroll">
+              <span className="section-kicker">WHAT YOU GET</span>
+              <h2>Not a headline. A signal.</h2>
+              <p>Every signal answers three questions. That&apos;s it.</p>
+            </div>
+            <InteractiveSignal />
+          </div>
+        </section>
+
+        {/* §3 — HOW IT WORKS */}
+        <section id="how" className="section-block section-tinted">
+          <div className="site-frame">
+            <div className="section-heading reveal-on-scroll">
+              <span className="section-kicker">HOW IT WORKS</span>
+              <h2>Three steps. That&apos;s the whole product.</h2>
+            </div>
+            <HowItWorks />
+          </div>
+        </section>
+
+        {/* §4 — INSIDE THE APP: Feature Bento Grid */}
+        <FeatureBento />
+
+        {/* §5 — SEE THE FEED: Phone Mockup */}
+        <section id="feed" className="section-block">
+          <div className="site-frame">
+            <div className="section-heading reveal-on-scroll">
+              <span className="section-kicker">THE FEED</span>
+              <h2>This is what it looks like.</h2>
+              <p>Real signals. Scroll through them. Tap any card.</p>
+            </div>
             <div className="hero-centered-visual">
               <PhoneMockup />
             </div>
           </div>
         </section>
 
-        {/* SIGNAL — transformation story */}
-        <section id="signal" className="section-block">
+        {/* §6 — WHO IT'S FOR */}
+        <section id="who" className="section-block section-tinted">
           <div className="site-frame">
             <div className="section-heading reveal-on-scroll">
-              <span className="section-kicker">HOW IT WORKS</span>
-              <h2>Tell us your company, industry, and role. AI handles the rest.</h2>
-              <p>
-                Relevant learns your work context, reads thousands of articles from major
-                publications, and alerts you when something could affect you positively or negatively.
-              </p>
+              <span className="section-kicker">WHO IT&apos;S FOR</span>
+              <h2>If information affects your decisions, this is for you.</h2>
             </div>
-            <NoiseToSignal />
+            <WhoItsFor />
           </div>
         </section>
 
-        {/* FEATURE BENTO GRID */}
-        <FeatureBento />
-
-        {/* ACCESS */}
+        {/* §7 — GET ACCESS */}
         <section id="access" className="section-block section-cta border-t border-[var(--border)] bg-[var(--bg-elevated)]">
           <div className="site-frame access-shell">
             <div className="access-copy reveal-on-scroll">
               <span className="section-kicker">EARLY ACCESS</span>
-              <h2>Get early access to Relevant.</h2>
-              <p>If you want AI to watch the news for your work, join the waitlist.</p>
+              <h2>Information you should read. Not information you could read.</h2>
+              <p>Relevant is in early access. Join the waitlist.</p>
             </div>
             <form onSubmit={handleWaitlist} className="waitlist-card reveal-on-scroll">
               <span className="waitlist-label">Request access</span>
@@ -250,7 +282,7 @@ export default function Home() {
               {waitlistMessage ? (
                 <p className={`waitlist-msg ${waitlistStatus === 'success' ? 'msg-success' : 'msg-error'}`}>{waitlistMessage}</p>
               ) : (
-                <p className="waitlist-hint">Short emails. No spam.</p>
+                <p className="waitlist-hint">No spam. Just your invite when it&apos;s ready.</p>
               )}
             </form>
           </div>
@@ -262,7 +294,7 @@ export default function Home() {
         <div className="site-frame footer-inner">
           <div className="footer-brand">
             <BrandMark />
-            <span>Less noise. More clarity.</span>
+            <span>The information you should read.</span>
           </div>
           <div className="footer-social">
             <a href="https://www.instagram.com/relevant.app/" target="_blank" rel="noopener noreferrer" className="footer-social-link" aria-label="Instagram">

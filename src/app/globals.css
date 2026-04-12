@@ -488,6 +488,16 @@ button:focus-visible, input:focus-visible, a:focus-visible {
   margin-bottom: 48px;
 }
 
+.hero-pricing {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  color: var(--text-soft);
+  margin-top: -32px;
+  margin-bottom: 48px;
+  text-align: center;
+}
+
 /* Hero info cards */
 .hero-cards {
   display: grid;
