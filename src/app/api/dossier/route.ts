@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+export const maxDuration = 60
+
+const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? '').replace(/^=+/, '').trim()
+const serviceRoleKey = (process.env.SUPABASE_SERVICE_ROLE_KEY ?? '').replace(/^=+/, '').trim() || undefined
 
 const VALID_ENTITY_TYPES = new Set(['company', 'person', 'topic', 'location'])
 const VALID_LENSES = new Set(['founder', 'product', 'gtm', 'strategy', 'investor'])
@@ -22,7 +24,8 @@ export async function POST(request: NextRequest) {
   }
 
   const userToken = authHeader.replace('Bearer ', '')
-  const supabase = createClient(supabaseUrl, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+  const anonKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '').replace(/^=+/, '').trim()
+  const supabase = createClient(supabaseUrl, anonKey, {
     global: { headers: { Authorization: `Bearer ${userToken}` } },
   })
   const { data: { user }, error: authError } = await supabase.auth.getUser(userToken)
@@ -51,6 +54,7 @@ export async function POST(request: NextRequest) {
   const lensKey = typeof body.lensKey === 'string' ? body.lensKey.trim().toLowerCase() : ''
   const lookbackDays = typeof body.lookbackDays === 'number' && VALID_LOOKBACK_DAYS.has(body.lookbackDays) ? body.lookbackDays : 30
   const forceRefresh = body.forceRefresh === true
+  const meetingContext = typeof body.meetingContext === 'string' ? body.meetingContext.trim().slice(0, 1000) : undefined
 
   if (!query) {
     return NextResponse.json({ error: 'query is required' }, { status: 400 })
@@ -87,7 +91,7 @@ export async function POST(request: NextRequest) {
         Authorization: `Bearer ${serviceRoleKey}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ query, entityType, lensKey, lookbackDays, forceRefresh }),
+      body: JSON.stringify({ query, entityType, lensKey, lookbackDays, forceRefresh, meetingContext }),
       signal: controller.signal,
     })
 
@@ -96,9 +100,10 @@ export async function POST(request: NextRequest) {
     const data = await edgeRes.json()
 
     if (!edgeRes.ok) {
-      console.error('[api/dossier] Edge function error:', data.error)
+      const errMsg = data.error || data.message || 'Unknown edge function error'
+      console.error(`[api/dossier] Edge function error (${edgeRes.status}):`, errMsg)
       return NextResponse.json(
-        { error: 'Dossier request failed. Please try again.' },
+        { error: `Dossier request failed (${edgeRes.status}): ${errMsg}` },
         { status: edgeRes.status }
       )
     }

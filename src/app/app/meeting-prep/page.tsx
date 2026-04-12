@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { getValidAccessToken } from '@/lib/supabase'
 import {
@@ -15,6 +15,10 @@ import {
   Loader2,
   ChevronDown,
   Briefcase,
+  Copy,
+  Check,
+  ThumbsUp,
+  ThumbsDown,
 } from 'lucide-react'
 
 /* ── Types ─────────────────────────────────────────────────────── */
@@ -173,6 +177,11 @@ export default function MeetingPrepPage() {
   const [error, setError] = useState<string | null>(null)
   const [dossier, setDossier] = useState<DossierResponse | null>(null)
   const [lensOpen, setLensOpen] = useState(false)
+  const [meetingContext, setMeetingContext] = useState('')
+  const [loadingStep, setLoadingStep] = useState(0)
+  const [copied, setCopied] = useState(false)
+  const [feedback, setFeedback] = useState<'up' | 'down' | null>(null)
+  const loadingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   /** Auto-detect entity type from query text. */
   const inferEntityType = useCallback((text: string): EntityType | null => {
@@ -209,6 +218,15 @@ export default function MeetingPrepPage() {
 
       setLoading(true)
       setError(null)
+      setFeedback(null)
+      setCopied(false)
+      setLoadingStep(0)
+
+      // Stepped loading progression
+      const timer = setInterval(() => {
+        setLoadingStep((prev) => Math.min(prev + 1, 2))
+      }, 3000)
+      loadingTimerRef.current = timer
 
       try {
         const token = await getValidAccessToken(180)
@@ -230,6 +248,7 @@ export default function MeetingPrepPage() {
             lensKey,
             lookbackDays,
             forceRefresh,
+            meetingContext: meetingContext.trim() || undefined,
           }),
         })
 
@@ -249,16 +268,72 @@ export default function MeetingPrepPage() {
           setError('Connection error. Please check your network and try again.')
         }
       } finally {
+        if (loadingTimerRef.current) clearInterval(loadingTimerRef.current)
+        loadingTimerRef.current = null
         setLoading(false)
       }
     },
-    [query, entityType, lensKey, lookbackDays]
+    [query, entityType, lensKey, lookbackDays, meetingContext]
   )
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     fetchDossier(false)
   }
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (loadingTimerRef.current) clearInterval(loadingTimerRef.current)
+    }
+  }, [])
+
+  const copyToClipboard = useCallback(() => {
+    if (!dossier) return
+    const s = dossier.synthesis
+    const lines: string[] = [
+      `# ${s.headline}`,
+      '',
+      s.dek,
+      '',
+      `## Bottom Line`,
+      s.bottomLine,
+      '',
+    ]
+    if (s.whyNow) {
+      lines.push(`## Why Now`, s.whyNow, '')
+    }
+    if (s.whyItMatters.length > 0) {
+      lines.push(`## Why It Matters`)
+      s.whyItMatters.forEach((item) => lines.push(`- ${item}`))
+      lines.push('')
+    }
+    if (s.proofPoints.length > 0) {
+      lines.push(`## Proof Points`)
+      s.proofPoints.forEach((pp, i) => lines.push(`${i + 1}. **${pp.label}** — ${pp.detail}`))
+      lines.push('')
+    }
+    if (s.whatToWatch.length > 0) {
+      lines.push(`## What to Watch`)
+      s.whatToWatch.forEach((item) => lines.push(`- ${item}`))
+      lines.push('')
+    }
+    if (s.suggestedQuestions.length > 0) {
+      lines.push(`## Questions to Ask`)
+      s.suggestedQuestions.forEach((q) => lines.push(`- "${q}"`))
+      lines.push('')
+    }
+    lines.push(`---`, `Generated ${new Date(dossier.generatedAt).toLocaleString()} · ${dossier.entity.lensKey} lens · ${dossier.entity.lookbackDays}-day lookback`)
+    navigator.clipboard.writeText(lines.join('\n'))
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }, [dossier])
+
+  const LOADING_STEPS = [
+    'Searching for relevant signals...',
+    'Analyzing coverage and context...',
+    'Synthesizing your briefing...',
+  ]
 
   if (authLoading) {
     return (
@@ -401,6 +476,23 @@ export default function MeetingPrepPage() {
               )}
             </div>
 
+            {/* Meeting context (optional) */}
+            <div>
+              <textarea
+                value={meetingContext}
+                onChange={(e) => setMeetingContext(e.target.value)}
+                placeholder="Optional: describe your meeting or what you need to know (e.g. &quot;Board meeting next week, need to understand competitive landscape and recent product moves&quot;)"
+                rows={2}
+                maxLength={1000}
+                className="w-full resize-none rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] placeholder:text-[var(--text-soft)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+              />
+              {meetingContext.length > 0 && (
+                <p className="mt-1 text-right text-xs text-[var(--text-soft)]">
+                  {meetingContext.length}/1000
+                </p>
+              )}
+            </div>
+
             {/* Submit */}
             <button
               type="submit"
@@ -415,15 +507,32 @@ export default function MeetingPrepPage() {
 
       {/* ── Loading State ─────────────────────────────────────── */}
       {loading && (
-        <div className="flex min-h-[55vh] flex-col items-center justify-center gap-4">
+        <div className="flex min-h-[55vh] flex-col items-center justify-center gap-6">
           <div className="relative">
             <div className="h-12 w-12 rounded-full border-2 border-[var(--border)]" />
             <Loader2 className="absolute inset-0 h-12 w-12 animate-spin text-[var(--accent)]" />
           </div>
-          <p className="text-base text-[var(--text-muted)]">
-            Preparing your briefing on{' '}
-            <span className="font-semibold text-[var(--text)]">{query}</span>...
-          </p>
+          <div className="flex flex-col items-center gap-3">
+            {LOADING_STEPS.map((step, i) => (
+              <div
+                key={i}
+                className={`flex items-center gap-2 text-sm transition-opacity duration-500 ${
+                  i <= loadingStep ? 'opacity-100' : 'opacity-30'
+                }`}
+              >
+                {i < loadingStep ? (
+                  <CheckCircle2 className="h-4 w-4 text-accent-teal" />
+                ) : i === loadingStep ? (
+                  <Loader2 className="h-4 w-4 animate-spin text-[var(--accent)]" />
+                ) : (
+                  <div className="h-4 w-4 rounded-full border border-[var(--border)]" />
+                )}
+                <span className={i <= loadingStep ? 'text-[var(--text)]' : 'text-[var(--text-soft)]'}>
+                  {step}
+                </span>
+              </div>
+            ))}
+          </div>
           <p className="text-xs text-[var(--text-soft)]">
             This may take 15–30 seconds for new entities
           </p>
@@ -456,15 +565,59 @@ export default function MeetingPrepPage() {
               onClick={() => {
                 setDossier(null)
                 setQuery('')
+                setMeetingContext('')
+                setFeedback(null)
               }}
               className="rounded-lg bg-[var(--surface)] px-3 py-1.5 text-sm text-[var(--text-muted)] hover:bg-[var(--surface-strong)] hover:text-[var(--text)]"
             >
               ← New Search
             </button>
-            <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--text-soft)]">
+            <div className="flex flex-wrap items-center gap-2.5 text-xs text-[var(--text-soft)]">
               {dossier.status.cache.hit && dossier.status.cache.ageMinutes != null && (
                 <span>Cached {Math.round(dossier.status.cache.ageMinutes)}m ago</span>
               )}
+              {/* Feedback buttons */}
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => setFeedback(feedback === 'up' ? null : 'up')}
+                  className={`flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-sm transition-colors ${
+                    feedback === 'up'
+                      ? 'bg-accent-teal/10 text-accent-teal'
+                      : 'bg-[var(--surface)] text-[var(--text-muted)] hover:bg-[var(--surface-strong)] hover:text-[var(--text)]'
+                  }`}
+                  title="Helpful"
+                >
+                  <ThumbsUp className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  onClick={() => setFeedback(feedback === 'down' ? null : 'down')}
+                  className={`flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-sm transition-colors ${
+                    feedback === 'down'
+                      ? 'bg-accent-coral/10 text-accent-coral'
+                      : 'bg-[var(--surface)] text-[var(--text-muted)] hover:bg-[var(--surface-strong)] hover:text-[var(--text)]'
+                  }`}
+                  title="Not helpful"
+                >
+                  <ThumbsDown className="h-3.5 w-3.5" />
+                </button>
+              </div>
+              {/* Copy button */}
+              <button
+                onClick={copyToClipboard}
+                className="flex items-center gap-1 rounded-lg bg-[var(--surface)] px-3 py-1.5 text-sm text-[var(--text-muted)] hover:bg-[var(--surface-strong)] hover:text-[var(--text)]"
+              >
+                {copied ? (
+                  <>
+                    <Check className="h-3.5 w-3.5 text-accent-teal" />
+                    Copied
+                  </>
+                ) : (
+                  <>
+                    <Copy className="h-3.5 w-3.5" />
+                    Copy
+                  </>
+                )}
+              </button>
               <button
                 onClick={() => fetchDossier(true)}
                 className="flex items-center gap-1 rounded-lg bg-[var(--surface)] px-3 py-1.5 text-sm text-[var(--text-muted)] hover:bg-[var(--surface-strong)] hover:text-[var(--text)]"
