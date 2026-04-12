@@ -1,44 +1,49 @@
 import { createBrowserClient } from '@supabase/ssr'
 import type { SupabaseClient } from '@supabase/supabase-js'
 
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+
 let _supabase: SupabaseClient | null = null
 
-// SSR-safe stub that returns null for all operations during build/SSR
-const ssrStub = {
-  auth: {
-    getSession: async () => ({ data: { session: null }, error: null }),
-    getUser: async () => ({ data: { user: null }, error: null }),
-    signInWithPassword: async () => ({ data: { user: null, session: null }, error: null }),
-    signUp: async () => ({ data: { user: null, session: null }, error: null }),
-    signOut: async () => ({ error: null }),
-    onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
-    refreshSession: async () => ({ data: { session: null }, error: null }),
-    resetPasswordForEmail: async () => ({ error: null }),
-    verifyOtp: async () => ({ data: { user: null, session: null }, error: null }),
-    updateUser: async () => ({ data: { user: null }, error: null }),
-  },
-  from: () => ({
-    select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: null, error: null }) }) }),
-    upsert: async () => ({ error: null }),
-    update: async () => ({ eq: async () => ({ error: null }) }),
-  }),
-} as unknown as SupabaseClient
-
 function getClient(): SupabaseClient {
-  if (typeof window === 'undefined') return ssrStub
+  if (_supabase) return _supabase
   
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  
-  if (!url || !key) return ssrStub
-  
-  if (!_supabase) {
-    _supabase = createBrowserClient(url, key)
+  // Only create client in browser with valid credentials
+  if (typeof window !== 'undefined' && SUPABASE_URL && SUPABASE_ANON_KEY) {
+    _supabase = createBrowserClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    return _supabase
   }
-  return _supabase
+  
+  // Return a minimal stub for SSR/build - these methods won't actually be called
+  // because auth pages are client-side only
+  return {
+    auth: {
+      getSession: async () => ({ data: { session: null }, error: null }),
+      getUser: async () => ({ data: { user: null }, error: null }),
+      signInWithPassword: async () => { throw new Error('Supabase client not initialized - check environment variables') },
+      signUp: async () => { throw new Error('Supabase client not initialized - check environment variables') },
+      signOut: async () => ({ error: null }),
+      onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+      refreshSession: async () => ({ data: { session: null }, error: null }),
+      resetPasswordForEmail: async () => ({ error: null }),
+      verifyOtp: async () => ({ data: { user: null, session: null }, error: null }),
+      updateUser: async () => ({ data: { user: null }, error: null }),
+      resend: async () => ({ error: null }),
+    },
+    from: () => ({
+      select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: null, error: null }), order: () => ({ limit: async () => ({ data: [], error: null }) }) }) }),
+      upsert: async () => ({ error: null }),
+      update: async () => ({ eq: async () => ({ error: null }) }),
+    }),
+    channel: () => ({
+      on: () => ({ subscribe: () => ({}) }),
+    }),
+    removeChannel: () => {},
+  } as unknown as SupabaseClient
 }
 
-// Export a proxy that lazily creates the client
+// Export lazy-initialized client
 export const supabase: SupabaseClient = new Proxy({} as SupabaseClient, {
   get(_target, prop) {
     const client = getClient()
