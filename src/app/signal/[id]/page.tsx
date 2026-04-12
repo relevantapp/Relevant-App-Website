@@ -26,6 +26,20 @@ type ConsequenceStep = {
   branches?: ConsequenceBranch[]
 }
 
+type MatchedDimension = {
+  id: string | null
+  label: string
+  normalized_value: string
+  category: string
+  consequence_chain: string
+  consequence_type: string
+  consequence_types: string[]
+  relationship: string | null
+  weight: number
+  query_hint: string | null
+  expires_at: string | null
+}
+
 type PublicSignal = {
   id: string
   headline: string
@@ -36,6 +50,8 @@ type PublicSignal = {
   imageUrl: string | null
   consequence_steps: ConsequenceStep[]
   what_to_watch: string[] | null
+  matched_dimensions: MatchedDimension[]
+  updated_at: string | null
 }
 
 type SignalResponse =
@@ -185,6 +201,8 @@ export default async function SignalPage({ params }: PageProps) {
   const sourceCount = signal.sources.length
   const hasConsequences = signal.consequence_steps.length > 0
   const hasWatchpoints = signal.what_to_watch && signal.what_to_watch.length > 0
+  const hasDimensions = signal.matched_dimensions && signal.matched_dimensions.length > 0
+  const synthesisText = signal.synthesis || signal.why_it_matters[0] || null
 
   return (
     <main className="sp-page">
@@ -225,11 +243,17 @@ export default async function SignalPage({ params }: PageProps) {
         <div className={`sp-card ${hasImage ? 'sp-card--overlap' : ''}`}>
           <span className="sp-eyebrow">Shared signal</span>
           <h1 className="sp-headline">{signal.headline}</h1>
-          {signal.synthesis ? (
-            <p className="sp-synthesis">{signal.synthesis}</p>
-          ) : signal.why_it_matters[0] ? (
-            <p className="sp-synthesis">{signal.why_it_matters[0]}</p>
-          ) : null}
+
+          {/* Bottom Line */}
+          {synthesisText && (
+            <div className="sp-bottom-line">
+              <div className="sp-bottom-line-header">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                <span>Bottom line</span>
+              </div>
+              <p>{synthesisText}</p>
+            </div>
+          )}
 
           {/* ── Meta row ── */}
           <div className="sp-meta-row">
@@ -249,6 +273,12 @@ export default async function SignalPage({ params }: PageProps) {
               <span className="sp-meta-chip">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                 {signal.what_to_watch!.length} watchpoint{signal.what_to_watch!.length !== 1 ? 's' : ''}
+              </span>
+            )}
+            {hasDimensions && (
+              <span className="sp-meta-chip">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                {signal.matched_dimensions.length} relevance match{signal.matched_dimensions.length !== 1 ? 'es' : ''}
               </span>
             )}
           </div>
@@ -294,6 +324,35 @@ export default async function SignalPage({ params }: PageProps) {
             </div>
           </section>
 
+          {/* Matched Dimensions - Why This Matters To You */}
+          {hasDimensions && (
+            <section className="sp-section sp-section--full">
+              <h2 className="sp-section-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Why this is relevant to you
+              </h2>
+              <div className="sp-dimensions">
+                {signal.matched_dimensions.map((dim, i) => (
+                  <div key={`dim-${i}`} className="sp-dimension-card">
+                    <div className="sp-dimension-header">
+                      <span className="sp-dimension-label">{dim.label}</span>
+                      <span className="sp-dimension-category">{dim.category}</span>
+                    </div>
+                    <p className="sp-dimension-chain">{dim.consequence_chain}</p>
+                    {dim.relationship && (
+                      <p className="sp-dimension-relationship">{dim.relationship}</p>
+                    )}
+                    <div className="sp-dimension-types">
+                      {dim.consequence_types.map((ct, ci) => (
+                        <span key={`ct-${i}-${ci}`} className="sp-dimension-type-tag">{ct}</span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
           {/* Consequence Paths */}
           {hasConsequences && (
             <section className="sp-section sp-section--full">
@@ -309,6 +368,11 @@ export default async function SignalPage({ params }: PageProps) {
                       <span className="sp-consequence-dim">{step.dimension}</span>
                     </div>
                     <p className="sp-consequence-chain">{step.articleChain || step.chain}</p>
+                    {step.weight > 0 && (
+                      <div className="sp-consequence-weight">
+                        <div className="sp-consequence-weight-fill" style={{ width: `${Math.min(step.weight * 100, 100)}%` }} />
+                      </div>
+                    )}
                     {step.branches && step.branches.length > 0 && (
                       <div className="sp-branches">
                         {step.branches.map((branch, bi) => (

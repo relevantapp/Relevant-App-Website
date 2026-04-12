@@ -11,6 +11,7 @@ export default function Home() {
   const [email, setEmail] = useState('')
   const [waitlistStatus, setWaitlistStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [waitlistMessage, setWaitlistMessage] = useState('')
+  const [showMobileCta, setShowMobileCta] = useState(false)
   const currentYear = new Date().getFullYear()
 
   const [theme, setTheme] = useState<'light' | 'dark'>('dark')
@@ -52,6 +53,30 @@ export default function Home() {
       staggerObserver.observe(container)
     })
     return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    const syncMobileCta = () => {
+      if (window.innerWidth > 880) {
+        setShowMobileCta(false)
+        return
+      }
+
+      const accessSection = document.getElementById('access')
+      const accessTop = accessSection?.getBoundingClientRect().top ?? Number.POSITIVE_INFINITY
+      const threshold = Math.min(window.innerHeight * 0.7, 560)
+
+      setShowMobileCta(window.scrollY > threshold && accessTop > window.innerHeight - 120)
+    }
+
+    syncMobileCta()
+    window.addEventListener('scroll', syncMobileCta, { passive: true })
+    window.addEventListener('resize', syncMobileCta)
+
+    return () => {
+      window.removeEventListener('scroll', syncMobileCta)
+      window.removeEventListener('resize', syncMobileCta)
+    }
   }, [])
 
   const handleWaitlist = async (event: FormEvent) => {
@@ -112,6 +137,7 @@ export default function Home() {
               )}
             </button>
             <a href="#access" className="nav-button">Join waitlist</a>
+            <a href="/login" className="nav-button" style={{ background: 'transparent', border: '1px solid var(--border-strong)', color: 'var(--text)' }}>Sign in</a>
           </div>
         </div>
       </nav>
@@ -134,8 +160,10 @@ export default function Home() {
 
             {/* Mobile inline waitlist — visible only on small screens */}
             <form onSubmit={handleWaitlist} className="hero-mobile-waitlist">
+              <label className="sr-only" htmlFor="waitlist-email-mobile">Email</label>
               <div className="hero-mobile-waitlist-row">
                 <input
+                  id="waitlist-email-mobile"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -254,7 +282,7 @@ export default function Home() {
       </footer>
 
       {/* Sticky mobile CTA bar */}
-      <div className="mobile-sticky-cta">
+      <div className={`mobile-sticky-cta${showMobileCta ? ' is-visible' : ''}`}>
         <a href="#access" className="mobile-sticky-cta-btn">Get early access</a>
       </div>
     </>

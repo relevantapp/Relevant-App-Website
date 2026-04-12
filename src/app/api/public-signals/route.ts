@@ -190,7 +190,7 @@ function getFallbackSignals(): SignalRow[] {
 
 export async function GET(): Promise<NextResponse> {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   const cacheHeaders = {
     "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",

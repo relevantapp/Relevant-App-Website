@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import Image from 'next/image'
+import ThemeLogo from './ThemeLogo'
 
 type BrandMarkProps = {
   href?: string
@@ -11,13 +11,7 @@ export default function BrandMark({ href, ariaLabel = 'Relevant home', className
   const classes = ['brand-lockup', className].filter(Boolean).join(' ')
   const mark = (
     <>
-      <Image
-        src="/app-icon.png"
-        alt="Relevant"
-        width={28}
-        height={28}
-        className="brand-logo"
-      />
+      <ThemeLogo alt="Relevant" width={28} height={28} className="brand-logo" />
       <span className="brand-wordmark">Relevant</span>
     </>
   )

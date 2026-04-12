@@ -1,0 +1,53 @@
+# Relevant
+
+> AI-powered personalized intelligence for professionals.
+
+Relevant is a role-aware relevance engine that answers three questions for every news event: What happened, why it matters to this specific user, and what they should do next.
+
+## What Relevant Does
+
+- Monitors news sources relevant to a user's role, company, and industry
+- Filters out noise — only surfaces stories with real business impact
+- Delivers structured AI briefings with: what happened, why it matters, and what to watch
+- Learns from user context (role, goals, competitors) to improve relevance over time
+- Saves professionals 11+ hours per week of news consumption time
+
+## How It Works
+
+1. Users set up their professional context — role, company, industry, competitors, and goals
+2. Relevant's AI engine continuously monitors thousands of news sources
+3. Stories are matched, ranked, and filtered based on personal relevance
+4. Each story is delivered as a structured signal with clear business impact analysis
+5. Users can tune their feed, save notes, and adjust what matters to them
+
+## Key Features
+
+- **Personalized Feed**: AI-curated news based on your specific role and work context
+- **Signal Intelligence**: Each story explains what happened, why it matters to you, and what to do next
+- **Time Saved Tracking**: See exactly how much time Relevant saves you each week
+- **Goal Coach**: Set professional goals and get news filtered through your priorities
+- **Search & Explore**: Find signals across topics relevant to your work
+- **Notes**: Save and annotate signals for future reference
+
+## Product Details
+
+- **Platform**: iOS (mobile app)
+- **Website**: https://www.getrelevantapp.com
+- **Contact**: support@getrelevantapp.com
+- **Social**: Instagram @relevant.app, TikTok @relevant.app
+
+## Who It's For
+
+- Executives and decision-makers who need to stay informed without drowning in noise
+- Product managers, strategists, and analysts tracking competitive and market signals
+- Professionals in fast-moving industries (tech, finance, healthcare, energy)
+- Anyone whose work requires staying current but who doesn't have time to read everything
+
+## What Relevant Is NOT
+
+- Not a generic news aggregator or RSS reader
+- Not a social media feed
+- Not a search engine
+- Not a newsletter platform
+
+Relevant is an intelligence layer for work — it tells you only what affects your decisions.

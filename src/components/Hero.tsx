@@ -1,5 +1,5 @@
 import EmailForm from './EmailForm'
-import Image from 'next/image'
+import ThemeLogo from './ThemeLogo'
 
 export default function Hero() {
   return (
@@ -7,14 +7,9 @@ export default function Hero() {
       <div className="max-w-3xl mx-auto text-center">
         {/* Logo */}
         <div className="flex justify-center mb-8 animate-fade-in-up">
-          <Image 
-            src="/logo.svg" 
-            alt="Relevant Logo" 
-            width={80} 
-            height={80}
-            className="rounded-2xl"
-            priority
-          />
+          <span className="inline-flex rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-1">
+            <ThemeLogo alt="Relevant Logo" width={76} height={76} className="rounded-xl" priority />
+          </span>
         </div>
 
         {/* Coming Soon Badge */}
