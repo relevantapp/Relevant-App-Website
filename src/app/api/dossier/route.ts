@@ -6,6 +6,7 @@ const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 const VALID_ENTITY_TYPES = new Set(['company', 'person', 'topic', 'location'])
 const VALID_LENSES = new Set(['founder', 'product', 'gtm', 'strategy', 'investor'])
+const VALID_LOOKBACK_DAYS = new Set([30, 60, 90])
 
 export async function POST(request: NextRequest) {
   // Verify user is authenticated via their JWT
@@ -24,7 +25,11 @@ export async function POST(request: NextRequest) {
   }
 
   if (!serviceRoleKey) {
-    return NextResponse.json({ error: 'Server configuration error' }, { status: 500 })
+    console.error('[api/dossier] Missing SUPABASE_SERVICE_ROLE_KEY environment variable')
+    return NextResponse.json(
+      { error: 'Meeting Prep is not configured. Please contact support.' },
+      { status: 500 }
+    )
   }
 
   // Parse and validate request body
@@ -38,7 +43,7 @@ export async function POST(request: NextRequest) {
   const query = typeof body.query === 'string' ? body.query.trim() : ''
   const entityType = typeof body.entityType === 'string' ? body.entityType.trim().toLowerCase() : ''
   const lensKey = typeof body.lensKey === 'string' ? body.lensKey.trim().toLowerCase() : ''
-  const lookbackDays = typeof body.lookbackDays === 'number' ? body.lookbackDays : 30
+  const lookbackDays = typeof body.lookbackDays === 'number' && VALID_LOOKBACK_DAYS.has(body.lookbackDays) ? body.lookbackDays : 30
   const forceRefresh = body.forceRefresh === true
 
   if (!query) {

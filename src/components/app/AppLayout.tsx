@@ -52,23 +52,23 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-[var(--bg)]">
       {/* Top nav */}
       <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--bg)]/80 backdrop-blur-xl">
-        <div className="mx-auto flex min-h-14 max-w-[1400px] items-center justify-between gap-3 px-4 py-2 lg:px-8">
-          <Link href="/app/feed" className="flex items-center gap-2">
-            <span className="inline-flex rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-0.5">
-              <AppLogo alt="Relevant app logo" width={30} height={30} className="rounded-lg" priority />
+        <div className="mx-auto flex min-h-14 max-w-[1400px] items-center justify-between gap-3 px-4 py-2 lg:min-h-16 lg:px-8 xl:px-12">
+          <Link href="/app/feed" className="flex items-center gap-2 lg:gap-3">
+            <span className="inline-flex rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-0.5 lg:rounded-2xl lg:p-1">
+              <AppLogo alt="Relevant app logo" width={30} height={30} className="rounded-lg lg:h-9 lg:w-9" priority />
             </span>
-            <span className="font-display text-lg font-semibold text-[var(--text)]">Relevant</span>
+            <span className="hidden font-display text-lg font-semibold text-[var(--text)] sm:inline lg:text-xl">Relevant</span>
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden items-center gap-1 md:flex">
+          <nav className="hidden items-center gap-2 md:flex lg:gap-3">
             {navItems.map((item) => {
               const active = pathname.startsWith(item.href)
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors lg:px-4 lg:py-2.5 ${
                     active
                       ? 'bg-accent-blue/10 text-accent-blue'
                       : 'text-[var(--text-muted)] hover:bg-[var(--surface)] hover:text-[var(--text)]'

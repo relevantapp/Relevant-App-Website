@@ -108,6 +108,12 @@ const ENTITY_OPTIONS: Array<{ key: EntityType; label: string }> = [
   { key: 'location', label: 'Location' },
 ]
 
+const LOOKBACK_OPTIONS: Array<{ days: number; label: string }> = [
+  { days: 30, label: '30 days' },
+  { days: 60, label: '60 days' },
+  { days: 90, label: '90 days' },
+]
+
 const LENS_OPTIONS: Array<{ key: LensKey; label: string; blurb: string }> = [
   { key: 'founder', label: 'Executive', blurb: 'Leadership priorities, decisions, what needs attention' },
   { key: 'product', label: 'Product', blurb: 'Roadmap impact, platform shifts, customer signals' },
@@ -153,6 +159,7 @@ export default function MeetingPrepPage() {
   const [query, setQuery] = useState('')
   const [entityType, setEntityType] = useState<EntityType>('company')
   const [lensKey, setLensKey] = useState<LensKey>('founder')
+  const [lookbackDays, setLookbackDays] = useState(30)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [dossier, setDossier] = useState<DossierResponse | null>(null)
@@ -183,7 +190,7 @@ export default function MeetingPrepPage() {
             query: query.trim(),
             entityType,
             lensKey,
-            lookbackDays: 30,
+            lookbackDays,
             forceRefresh,
           }),
         })
@@ -203,7 +210,7 @@ export default function MeetingPrepPage() {
         setLoading(false)
       }
     },
-    [query, entityType, lensKey]
+    [query, entityType, lensKey, lookbackDays]
   )
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -241,7 +248,7 @@ export default function MeetingPrepPage() {
               Meeting Prep
             </h1>
             <p className="mt-2 text-base text-[var(--text-muted)]">
-              Get a 30-day briefing on any company, person, or topic — in seconds.
+              Get a briefing on any company, person, or topic — in seconds.
             </p>
           </div>
 
@@ -264,6 +271,27 @@ export default function MeetingPrepPage() {
               ))}
             </div>
 
+            {/* Lookback period pills */}
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <span className="mr-2 text-xs uppercase tracking-[0.14em] text-[var(--text-soft)]">
+                Lookback
+              </span>
+              {LOOKBACK_OPTIONS.map((opt) => (
+                <button
+                  key={opt.days}
+                  type="button"
+                  onClick={() => setLookbackDays(opt.days)}
+                  className={`rounded-full px-3 py-1 text-sm font-medium transition-colors ${
+                    lookbackDays === opt.days
+                      ? 'bg-[var(--surface-strong)] text-[var(--text)]'
+                      : 'text-[var(--text-soft)] hover:bg-[var(--surface)] hover:text-[var(--text-muted)]'
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+
             {/* Search input */}
             <div className="relative">
               <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--text-muted)]" />
@@ -271,6 +299,7 @@ export default function MeetingPrepPage() {
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
+                aria-label={`Search for a ${entityType} to research`}
                 placeholder={
                   entityType === 'company'
                     ? 'e.g. Stripe, OpenAI, Figma...'

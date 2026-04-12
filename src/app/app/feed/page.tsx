@@ -425,6 +425,8 @@ export default function FeedPage() {
       setPreferences(nextPreferences)
       setSavedPreferences(nextPreferences)
       setShowTuneSheet(false)
+    } else {
+      console.error('[feed] Failed to save preferences:', error.message)
     }
 
     setSavingPreferences(false)
@@ -459,36 +461,36 @@ export default function FeedPage() {
   }
 
   return (
-    <div className="py-6">
-      <section className="mb-6 max-w-[980px] rounded-[32px] border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[0_20px_60px_rgba(0,0,0,0.16)] sm:p-5">
-        <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+    <div className="py-6 lg:py-8">
+      <section className="mb-6 max-w-[980px] rounded-[32px] border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[0_20px_60px_rgba(0,0,0,0.16)] sm:p-5 lg:mb-10 lg:max-w-[1060px] lg:p-8">
+        <div className="mb-5 flex flex-col gap-3 lg:mb-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-soft)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-soft)] lg:text-sm">
               {greeting}{firstName ? ',' : ''}
             </p>
-            <h1 className="mt-2 font-display text-2xl font-semibold tracking-[-0.04em] text-[var(--text)] lg:text-3xl xl:text-[2.75rem]">
+            <h1 className="mt-2 font-display text-2xl font-semibold tracking-[-0.04em] text-[var(--text)] lg:mt-3 lg:text-3xl xl:text-4xl 2xl:text-[3.25rem]">
               {firstName ?? 'Your feed'}
             </h1>
           </div>
 
-          <p className="hidden max-w-sm text-sm leading-6 text-[var(--text-muted)] lg:block">
+          <p className="hidden max-w-sm text-sm leading-6 text-[var(--text-muted)] lg:block xl:max-w-md xl:text-base">
             A tighter weekly readout up top, then the full story timeline below.
           </p>
         </div>
 
-        <div className="grid gap-3 lg:grid-cols-[minmax(0,1.08fr)_minmax(300px,0.92fr)]">
+        <div className="grid gap-3 lg:grid-cols-[minmax(0,1.08fr)_minmax(300px,0.92fr)] lg:gap-5 xl:gap-6">
           <button
             type="button"
             onClick={() => setShowStatsPanel(true)}
             aria-haspopup="dialog"
-            className="group flex min-h-[188px] flex-col justify-between rounded-[28px] border border-[var(--border)] bg-[var(--bg-elevated)] px-5 py-5 text-left transition-colors hover:border-[var(--border-strong)]"
+            className="group flex min-h-[188px] flex-col justify-between rounded-[28px] border border-[var(--border)] bg-[var(--bg-elevated)] px-5 py-5 text-left transition-colors hover:border-[var(--border-strong)] lg:min-h-[210px] lg:px-6 lg:py-6"
           >
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--text-soft)]">
                 Time saved · 7D
               </p>
               <div className="mt-4 flex items-end gap-2">
-                <span className="font-display text-[3.6rem] font-semibold leading-none tracking-[-0.07em] text-[var(--text)] sm:text-[4.4rem]">
+                <span className="font-display text-[3.6rem] font-semibold leading-none tracking-[-0.07em] text-[var(--text)] sm:text-[4.4rem] lg:text-[5rem] xl:text-[5.5rem]">
                   {summaryTimeSavedHours ?? '—'}
                 </span>
                 {summaryTimeSavedHours ? (
@@ -513,19 +515,19 @@ export default function FeedPage() {
             </div>
           </button>
 
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 lg:gap-4 xl:grid-cols-2">
             <button
               type="button"
               onClick={() => setShowStatsPanel(true)}
               aria-haspopup="dialog"
-              className="group flex min-h-[92px] flex-col justify-between rounded-[24px] border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-4 text-left transition-colors hover:border-[var(--border-strong)]"
+              className="group flex min-h-[92px] flex-col justify-between rounded-[24px] border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-4 text-left transition-colors hover:border-[var(--border-strong)] lg:min-h-[100px] lg:px-5 lg:py-5"
             >
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--text-soft)]">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--text-soft)] lg:text-[11px]">
                     Stories · 7D
                   </p>
-                  <p className="mt-2 font-display text-[2rem] font-semibold leading-none tracking-[-0.05em] text-[var(--text)]">
+                  <p className="mt-2 font-display text-[2rem] font-semibold leading-none tracking-[-0.05em] text-[var(--text)] lg:text-[2.25rem]">
                     {summaryStoryCount}
                   </p>
                 </div>
@@ -541,7 +543,7 @@ export default function FeedPage() {
               type="button"
               onClick={() => setShowTuneSheet(true)}
               aria-haspopup="dialog"
-              className="group flex min-h-[92px] items-center justify-between gap-4 rounded-[24px] border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-4 text-left transition-colors hover:border-[var(--border-strong)]"
+              className="group flex min-h-[92px] items-center justify-between gap-4 rounded-[24px] border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-4 text-left transition-colors hover:border-[var(--border-strong)] lg:min-h-[100px] lg:px-5 lg:py-5"
             >
               <div className="flex items-center gap-3">
                 <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[18px] bg-[var(--bg)] text-[var(--text)]">
