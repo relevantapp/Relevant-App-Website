@@ -12,13 +12,13 @@ export default function Hero() {
           </span>
         </div>
 
-        {/* Coming Soon Badge */}
+        {/* Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-8 animate-fade-in-up" style={{ background: 'rgba(47, 107, 255, 0.12)', color: 'var(--accent)' }}>
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: 'var(--accent)' }}></span>
             <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: 'var(--accent)' }}></span>
           </span>
-          Coming Soon
+          Now Live
         </div>
 
         {/* Main Headline */}
@@ -42,7 +42,7 @@ export default function Hero() {
 
         {/* Trust Text */}
         <p className="mt-6 text-sm animate-fade-in-up animation-delay-400" style={{ color: 'var(--text-soft)' }}>
-          Join the waitlist. Be the first to know when we launch.
+          Web app is live. Mobile app in early access.
         </p>
       </div>
     </section>

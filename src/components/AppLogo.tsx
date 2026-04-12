@@ -15,26 +15,15 @@ export default function AppLogo({
   className = '',
   priority = false,
 }: AppLogoProps) {
-  const classes = ['theme-logo', className].filter(Boolean).join(' ')
-
   return (
-    <span className={classes} style={{ width, height }}>
-      <Image
-        src="/logo.svg"
-        alt={alt}
-        width={width}
-        height={height}
-        className="theme-logo__image theme-logo__image--dark"
-        priority={priority}
-      />
-      <Image
-        src="/logo-light.svg"
-        alt=""
-        aria-hidden="true"
-        width={width}
-        height={height}
-        className="theme-logo__image theme-logo__image--light"
-      />
-    </span>
+    <Image
+      src="/app-icon.png"
+      alt={alt}
+      width={width}
+      height={height}
+      className={`theme-aware-logo ${className}`}
+      priority={priority}
+      style={{ borderRadius: '22%' }}
+    />
   )
 }

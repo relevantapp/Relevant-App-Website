@@ -170,7 +170,147 @@ function renderMarkdown(text: string): React.ReactNode {
   return <>{elements}</>
 }
 
-/* ── AskAIChat component ─────────────────────────────────────── */
+/* ── Shared chat body (used by both panel + sheet) ───────────── */
+
+type ChatBodyProps = {
+  signalId: string
+  headline: string
+  messages: ChatMessage[]
+  setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>
+  inputText: string
+  setInputText: React.Dispatch<React.SetStateAction<string>>
+  isLoading: boolean
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+  inputRef: React.RefObject<HTMLInputElement>
+  maxHeight?: string
+  fill?: boolean
+}
+
+function ChatBody({
+  signalId, headline, messages, setMessages,
+  inputText, setInputText, isLoading, setIsLoading,
+  inputRef, maxHeight = '480px', fill = false,
+}: ChatBodyProps) {
+  const [copiedId, setCopiedId] = useState<string | null>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const messagesContainerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const container = messagesContainerRef.current
+    if (container) container.scrollTop = container.scrollHeight
+  }, [messages, isLoading])
+
+  const handleSend = useCallback(
+    async (text?: string) => {
+      const question = (text || inputText).trim()
+      if (!question || isLoading) return
+      setInputText('')
+      const userMsg: ChatMessage = { id: `user-${Date.now()}`, role: 'user', text: question }
+      const updated = [...messages, userMsg]
+      setMessages(updated)
+      setIsLoading(true)
+      try {
+        const { reply, suggestedPrompts } = await askAboutSignal(signalId, headline, updated)
+        setMessages((prev) => [...prev, { id: `ai-${Date.now()}`, role: 'assistant', text: reply, suggestedPrompts }])
+      } catch (err) {
+        setMessages((prev) => [...prev, { id: `err-${Date.now()}`, role: 'assistant', text: err instanceof Error ? err.message : 'Something went wrong.' }])
+      } finally {
+        setIsLoading(false)
+      }
+    },
+    [inputText, isLoading, messages, signalId, headline, setInputText, setMessages, setIsLoading],
+  )
+
+  const handleCopy = useCallback(async (text: string, id: string) => {
+    await navigator.clipboard.writeText(text)
+    setCopiedId(id)
+    setTimeout(() => setCopiedId(null), 2000)
+  }, [])
+
+  const wrapClass = fill ? 'flex flex-1 flex-col min-h-0' : ''
+
+  return (
+    <div className={wrapClass}>
+      {messages.length === 0 && !isLoading ? (
+        <div className={`askai-empty ${fill ? 'flex-1 overflow-y-auto' : ''}`}>
+          <p className="askai-empty-title">Ask about this signal</p>
+          <p className="askai-empty-subtitle">
+            Deeper analysis, simpler explanations, or tailored insights.
+          </p>
+          <div className="askai-suggestions">
+            {SUGGESTIONS.map((s) => (
+              <button key={s.prompt} onClick={() => void handleSend(s.prompt)} className="askai-suggestion">
+                <span className="askai-suggestion-label">{s.label}</span>
+                <span className="askai-suggestion-text">{s.prompt}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className={`askai-messages ${fill ? 'flex-1' : ''}`} ref={messagesContainerRef} style={fill ? undefined : { maxHeight }}>
+          {messages.map((msg) => {
+            const isUser = msg.role === 'user'
+            const body = getAssistantBody(msg)
+            const followUps = getFollowUps(msg)
+            return (
+              <div key={msg.id} className={`askai-msg ${isUser ? 'askai-msg--user' : 'askai-msg--ai'}`}>
+                {!isUser && (
+                  <div className="askai-ai-avatar"><Sparkles size={12} /></div>
+                )}
+                <div className="askai-msg-content">
+                  {isUser ? (
+                    <p>{msg.text}</p>
+                  ) : (
+                    <div className="askai-md">
+                      {renderMarkdown(body)}
+                      <div className="askai-msg-actions">
+                        <button onClick={() => void handleCopy(body, msg.id)} className="askai-action-btn" title="Copy">
+                          {copiedId === msg.id ? <Check size={14} /> : <Copy size={14} />}
+                        </button>
+                      </div>
+                      {followUps.length > 0 && (
+                        <div className="askai-followups">
+                          {followUps.map((p, i) => (
+                            <button key={i} onClick={() => void handleSend(p)} className="askai-followup">{p}</button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+          {isLoading && (
+            <div className="askai-msg askai-msg--ai">
+              <div className="askai-ai-avatar"><Loader2 size={12} className="animate-spin" /></div>
+              <div className="askai-msg-content"><p className="askai-thinking">Thinking&hellip;</p></div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+      )}
+
+      <div className="askai-input-bar">
+        <input
+          ref={inputRef}
+          type="text"
+          value={inputText}
+          onChange={(e) => setInputText(e.target.value)}
+          onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); void handleSend() } }}
+          placeholder="Ask a follow-up question..."
+          className="askai-input"
+          disabled={isLoading}
+        />
+        <button onClick={() => void handleSend()} disabled={!inputText.trim() || isLoading} className="askai-send">
+          <Send size={16} />
+        </button>
+      </div>
+    </div>
+  )
+}
+
+/* ── AskAIChat — legacy accordion (kept for backwards compat) ── */
 
 type Props = {
   signalId: string
@@ -182,205 +322,108 @@ export function AskAIChat({ signalId, headline }: Props) {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [inputText, setInputText] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [copiedId, setCopiedId] = useState<string | null>(null)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
-  const messagesContainerRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-
-  useEffect(() => {
-    const container = messagesContainerRef.current
-    if (container) {
-      container.scrollTop = container.scrollHeight
-    }
-  }, [messages, isLoading])
-
-  const handleSend = useCallback(
-    async (text?: string) => {
-      const question = (text || inputText).trim()
-      if (!question || isLoading) return
-
-      setInputText('')
-      const userMsg: ChatMessage = {
-        id: `user-${Date.now()}`,
-        role: 'user',
-        text: question,
-      }
-      const updated = [...messages, userMsg]
-      setMessages(updated)
-      setIsLoading(true)
-
-      try {
-        const { reply, suggestedPrompts } = await askAboutSignal(
-          signalId,
-          headline,
-          updated,
-        )
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: `ai-${Date.now()}`,
-            role: 'assistant',
-            text: reply,
-            suggestedPrompts,
-          },
-        ])
-      } catch (err) {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: `err-${Date.now()}`,
-            role: 'assistant',
-            text:
-              err instanceof Error ? err.message : 'Something went wrong.',
-          },
-        ])
-      } finally {
-        setIsLoading(false)
-      }
-    },
-    [inputText, isLoading, messages, signalId, headline],
-  )
-
-  const handleCopy = useCallback(async (text: string, id: string) => {
-    await navigator.clipboard.writeText(text)
-    setCopiedId(id)
-    setTimeout(() => setCopiedId(null), 2000)
-  }, [])
 
   return (
     <section className="askai-section mt-8">
       <button
-        onClick={() => {
-          setExpanded((e) => !e)
-          if (!expanded) setTimeout(() => inputRef.current?.focus(), 100)
-        }}
+        onClick={() => { setExpanded((e) => !e); if (!expanded) setTimeout(() => inputRef.current?.focus(), 100) }}
         className="askai-toggle"
       >
         <div className="askai-toggle-left">
           <Sparkles size={18} />
           <span>Ask AI about this signal</span>
-          {messages.length > 0 && (
-            <span className="askai-msg-count">{messages.length}</span>
-          )}
+          {messages.length > 0 && <span className="askai-msg-count">{messages.length}</span>}
         </div>
         {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
       </button>
-
       {expanded && (
         <div className="askai-body">
-          {messages.length === 0 && !isLoading ? (
-            <div className="askai-empty">
-              <p className="askai-empty-title">Ask about this signal</p>
-              <p className="askai-empty-subtitle">
-                Deeper analysis, simpler explanations, or tailored insights.
-              </p>
-              <div className="askai-suggestions">
-                {SUGGESTIONS.map((s) => (
-                  <button
-                    key={s.prompt}
-                    onClick={() => void handleSend(s.prompt)}
-                    className="askai-suggestion"
-                  >
-                    <span className="askai-suggestion-label">{s.label}</span>
-                    <span className="askai-suggestion-text">{s.prompt}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div className="askai-messages" ref={messagesContainerRef}>
-              {messages.map((msg) => {
-                const isUser = msg.role === 'user'
-                const body = getAssistantBody(msg)
-                const followUps = getFollowUps(msg)
-                return (
-                  <div
-                    key={msg.id}
-                    className={`askai-msg ${isUser ? 'askai-msg--user' : 'askai-msg--ai'}`}
-                  >
-                    {!isUser && (
-                      <div className="askai-ai-avatar">
-                        <Sparkles size={12} />
-                      </div>
-                    )}
-                    <div className="askai-msg-content">
-                      {isUser ? (
-                        <p>{msg.text}</p>
-                      ) : (
-                        <div className="askai-md">
-                          {renderMarkdown(body)}
-                          <div className="askai-msg-actions">
-                            <button
-                              onClick={() => void handleCopy(body, msg.id)}
-                              className="askai-action-btn"
-                              title="Copy"
-                            >
-                              {copiedId === msg.id ? (
-                                <Check size={14} />
-                              ) : (
-                                <Copy size={14} />
-                              )}
-                            </button>
-                          </div>
-                          {followUps.length > 0 && (
-                            <div className="askai-followups">
-                              {followUps.map((p, i) => (
-                                <button
-                                  key={i}
-                                  onClick={() => void handleSend(p)}
-                                  className="askai-followup"
-                                >
-                                  {p}
-                                </button>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )
-              })}
-              {isLoading && (
-                <div className="askai-msg askai-msg--ai">
-                  <div className="askai-ai-avatar">
-                    <Loader2 size={12} className="animate-spin" />
-                  </div>
-                  <div className="askai-msg-content">
-                    <p className="askai-thinking">Thinking&hellip;</p>
-                  </div>
-                </div>
-              )}
-              <div ref={messagesEndRef} />
-            </div>
-          )}
-
-          <div className="askai-input-bar">
-            <input
-              ref={inputRef}
-              type="text"
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault()
-                  void handleSend()
-                }
-              }}
-              placeholder="Ask a follow-up question..."
-              className="askai-input"
-              disabled={isLoading}
-            />
-            <button
-              onClick={() => void handleSend()}
-              disabled={!inputText.trim() || isLoading}
-              className="askai-send"
-            >
-              <Send size={16} />
-            </button>
-          </div>
+          <ChatBody {...{ signalId, headline, messages, setMessages, inputText, setInputText, isLoading, setIsLoading, inputRef }} />
         </div>
       )}
     </section>
+  )
+}
+
+/* ── AskAIFab — floating action button + chat (desktop popup / mobile sheet) ── */
+
+import { X } from 'lucide-react'
+import { createPortal } from 'react-dom'
+
+export function AskAIFab({ signalId, headline }: Props) {
+  const [open, setOpen] = useState(false)
+  const [messages, setMessages] = useState<ChatMessage[]>([])
+  const [inputText, setInputText] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const [isDesktop, setIsDesktop] = useState(false)
+
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)')
+    setIsDesktop(mq.matches)
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
+
+  useEffect(() => {
+    if (open) {
+      if (!isDesktop) document.body.style.overflow = 'hidden'
+      setTimeout(() => inputRef.current?.focus(), 200)
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => { document.body.style.overflow = '' }
+  }, [open, isDesktop])
+
+  const chatContent = (
+    <>
+      <div className="askai-popup-header">
+        <div className="flex items-center gap-2">
+          <Sparkles size={16} className="text-accent-blue" />
+          <span className="font-semibold text-[var(--text)]">Ask AI</span>
+        </div>
+        <button onClick={() => setOpen(false)} className="askai-sheet-close" aria-label="Close">
+          <X size={20} />
+        </button>
+      </div>
+      <ChatBody {...{ signalId, headline, messages, setMessages, inputText, setInputText, isLoading, setIsLoading, inputRef, fill: true }} />
+    </>
+  )
+
+  return (
+    <>
+      {/* FAB */}
+      {!open && (
+        <button
+          onClick={() => setOpen(true)}
+          className="askai-fab"
+          aria-label="Ask AI about this signal"
+        >
+          <Sparkles size={22} />
+          {messages.length > 0 && <span className="askai-fab-badge">{messages.length}</span>}
+        </button>
+      )}
+
+      {/* Desktop: floating popup anchored bottom-right */}
+      {open && isDesktop && createPortal(
+        <div className="askai-popup">
+          {chatContent}
+        </div>,
+        document.body,
+      )}
+
+      {/* Mobile: bottom sheet */}
+      {open && !isDesktop && createPortal(
+        <div className="askai-sheet-overlay" onClick={() => setOpen(false)}>
+          <div className="askai-sheet" onClick={(e) => e.stopPropagation()}>
+            <div className="askai-sheet-handle-bar"><div className="askai-sheet-handle" /></div>
+            {chatContent}
+          </div>
+        </div>,
+        document.body,
+      )}
+    </>
   )
 }

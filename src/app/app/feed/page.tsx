@@ -461,8 +461,44 @@ export default function FeedPage() {
   }
 
   return (
-    <div className="py-6 lg:py-8">
-      <section className="mb-6 max-w-[980px] rounded-[32px] border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[0_20px_60px_rgba(0,0,0,0.16)] sm:p-5 lg:mb-10 lg:max-w-[1060px] lg:p-8">
+    <div className="py-4 sm:py-6 lg:py-8">
+      {/* ── Mobile compact summary bar ── */}
+      <section className="mb-4 sm:hidden">
+        <div className="mb-3 flex items-baseline gap-2">
+          <h1 className="font-display text-xl font-semibold tracking-[-0.03em] text-[var(--text)]">
+            {greeting}{firstName ? `, ${firstName}` : ''}
+          </h1>
+        </div>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => setShowStatsPanel(true)}
+            className="flex flex-1 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2.5 text-left transition-colors hover:border-[var(--border-strong)]"
+          >
+            <span className="font-display text-lg font-semibold leading-none text-[var(--text)]">{summaryTimeSavedHours ?? '—'}<span className="ml-0.5 text-[10px] font-medium uppercase text-[var(--text-soft)]">hrs</span></span>
+            <span className="text-[10px] text-[var(--text-muted)]">saved</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowStatsPanel(true)}
+            className="flex flex-1 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2.5 text-left transition-colors hover:border-[var(--border-strong)]"
+          >
+            <span className="font-display text-lg font-semibold leading-none text-[var(--text)]">{summaryStoryCount}</span>
+            <span className="text-[10px] text-[var(--text-muted)]">stories</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowTuneSheet(true)}
+            className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2.5 text-left transition-colors hover:border-[var(--border-strong)]"
+          >
+            <SlidersHorizontal size={14} className="text-[var(--text-muted)]" />
+            <span className="text-[10px] text-[var(--text-muted)]">Tune</span>
+          </button>
+        </div>
+      </section>
+
+      {/* ── Desktop / tablet summary card ── */}
+      <section className="mb-6 hidden max-w-[980px] rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3 shadow-[0_20px_60px_rgba(0,0,0,0.16)] sm:block sm:rounded-3xl sm:p-5 lg:mb-10 lg:max-w-[1060px] lg:rounded-[32px] lg:p-8">
         <div className="mb-5 flex flex-col gap-3 lg:mb-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-soft)] lg:text-sm">
@@ -483,14 +519,14 @@ export default function FeedPage() {
             type="button"
             onClick={() => setShowStatsPanel(true)}
             aria-haspopup="dialog"
-            className="group flex min-h-[188px] flex-col justify-between rounded-[28px] border border-[var(--border)] bg-[var(--bg-elevated)] px-5 py-5 text-left transition-colors hover:border-[var(--border-strong)] lg:min-h-[210px] lg:px-6 lg:py-6"
+            className="group flex min-h-[140px] flex-col justify-between rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-4 text-left transition-colors hover:border-[var(--border-strong)] sm:min-h-[188px] sm:rounded-2xl sm:px-5 sm:py-5 lg:min-h-[210px] lg:rounded-[28px] lg:px-6 lg:py-6"
           >
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--text-soft)]">
                 Time saved · 7D
               </p>
               <div className="mt-4 flex items-end gap-2">
-                <span className="font-display text-[3.6rem] font-semibold leading-none tracking-[-0.07em] text-[var(--text)] sm:text-[4.4rem] lg:text-[5rem] xl:text-[5.5rem]">
+                <span className="font-display text-[2.5rem] font-semibold leading-none tracking-[-0.07em] text-[var(--text)] sm:text-[3.6rem] md:text-[4.4rem] lg:text-[5rem] xl:text-[5.5rem]">
                   {summaryTimeSavedHours ?? '—'}
                 </span>
                 {summaryTimeSavedHours ? (
@@ -520,7 +556,7 @@ export default function FeedPage() {
               type="button"
               onClick={() => setShowStatsPanel(true)}
               aria-haspopup="dialog"
-              className="group flex min-h-[92px] flex-col justify-between rounded-[24px] border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-4 text-left transition-colors hover:border-[var(--border-strong)] lg:min-h-[100px] lg:px-5 lg:py-5"
+              className="group flex min-h-[80px] flex-col justify-between rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-3 text-left transition-colors hover:border-[var(--border-strong)] sm:min-h-[92px] sm:rounded-2xl sm:px-4 sm:py-4 lg:min-h-[100px] lg:rounded-[24px] lg:px-5 lg:py-5"
             >
               <div className="flex items-start justify-between gap-3">
                 <div>
@@ -543,7 +579,7 @@ export default function FeedPage() {
               type="button"
               onClick={() => setShowTuneSheet(true)}
               aria-haspopup="dialog"
-              className="group flex min-h-[92px] items-center justify-between gap-4 rounded-[24px] border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-4 text-left transition-colors hover:border-[var(--border-strong)] lg:min-h-[100px] lg:px-5 lg:py-5"
+              className="group flex min-h-[80px] items-center justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-3 text-left transition-colors hover:border-[var(--border-strong)] sm:min-h-[92px] sm:rounded-2xl sm:px-4 sm:py-4 lg:min-h-[100px] lg:rounded-[24px] lg:px-5 lg:py-5"
             >
               <div className="flex items-center gap-3">
                 <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[18px] bg-[var(--bg)] text-[var(--text)]">

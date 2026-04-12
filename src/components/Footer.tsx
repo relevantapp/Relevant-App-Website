@@ -13,7 +13,7 @@ export default function Footer() {
             Stay in the Loop
           </h3>
           <p className="mb-6" style={{ color: 'var(--text-muted)' }}>
-            Join the waitlist to be notified when Relevant launches.
+            Get signals built around your role, industry, and goals.
           </p>
           <div className="flex justify-center">
             <EmailForm />
@@ -29,7 +29,7 @@ export default function Footer() {
           <div className="text-center md:text-left">
             <div className="text-xl font-bold mb-2" style={{ color: 'var(--text-strong)' }}>Relevant</div>
             <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-              News that matters. Nothing else.
+              Less noise. More clarity.
             </p>
           </div>
 

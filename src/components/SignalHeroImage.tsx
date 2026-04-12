@@ -15,7 +15,7 @@ export default function SignalHeroImage({ src, alt = '' }: Props) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      className="sp-hero-img"
+      className="h-full w-full object-cover"
       src={src}
       alt={alt}
       referrerPolicy="no-referrer"

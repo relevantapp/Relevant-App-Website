@@ -13,17 +13,17 @@ interface AppScreen {
 
 const APP_SCREENS: AppScreen[] = [
   {
-    src: '/screenshots/onboarding-context.png',
-    label: 'Answer 3 work questions',
-    description: 'Tell us your company, industry, and role so Relevant knows what affects your work.',
+    src: '/screenshots/onboarding-intro.png?v=20260412c',
+    label: 'Three things about your work',
+    description: 'Give Relevant the context it needs to shape your feed.',
   },
   {
-    src: '/screenshots/feed-main.png',
+    src: '/screenshots/feed-main-new.png?v=20260412f',
     label: 'Get alerted when something changes',
     description: 'Important signals show up when something could affect your company, industry, or role.',
   },
   {
-    src: '/screenshots/signal-detail.png',
+    src: '/screenshots/signal-detail.png?v=20260412f',
     label: 'Understand the signal fast',
     description: 'Open the alert to see what happened, why it matters, and what it means for you.',
   },
@@ -66,11 +66,8 @@ export default function PhoneMockup() {
         ))}
       </div>
 
-      {/* Phone frame - right side */}
+      {/* Screenshot stage - right side */}
       <div className="phone-frame-real">
-        {/* Dynamic Island */}
-        <div className="phone-island" />
-
         {/* Screenshot container */}
         <div className="phone-screen-container">
           {APP_SCREENS.map((screen, i) => (
@@ -94,8 +91,6 @@ export default function PhoneMockup() {
           ))}
         </div>
 
-        {/* Home indicator */}
-        <div className="phone-home-bar" />
       </div>
     </div>
   )

@@ -4,10 +4,8 @@ import { FormEvent, useEffect, useState } from 'react'
 import BrandMark from '@/components/BrandMark'
 import FeatureBento from '@/components/FeatureBento'
 import HeroHeadline from '@/components/HeroHeadline'
+import NoiseToSignal from '@/components/NoiseToSignal'
 import PhoneMockup from '@/components/PhoneMockup'
-import InteractiveSignal from '@/components/InteractiveSignal'
-import HowItWorks from '@/components/HowItWorks'
-import WhoItsFor from '@/components/WhoItsFor'
 
 export default function Home() {
   const [email, setEmail] = useState('')
@@ -118,10 +116,8 @@ export default function Home() {
               </a>
             </div>
             <div className="site-nav-links">
-              <a href="#signal">What you get</a>
-              <a href="#how">How it works</a>
+              <a href="#signal">How it works</a>
               <a href="#features">Inside the app</a>
-              <a href="#who">Who it&apos;s for</a>
             </div>
             <button
               className="theme-toggle"
@@ -140,26 +136,25 @@ export default function Home() {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
               )}
             </button>
-            <a href="#access" className="nav-button">Join waitlist</a>
-            <a href="/login" className="nav-button" style={{ background: 'transparent', border: '1px solid var(--border-strong)', color: 'var(--text)' }}>Sign in</a>
+            <a href="#access" className="nav-button">Start free</a>
+            <a href="/login" className="nav-button nav-button--secondary" style={{ background: 'transparent', border: '1px solid var(--border-strong)', color: 'var(--text)' }}>Sign in</a>
           </div>
         </div>
       </nav>
 
       <main id="top">
-        {/* §1 — HERO: THE PROBLEM */}
+        {/* HERO */}
         <section className="hero-section">
           <div className="site-frame hero-centered">
-            <span className="hero-badge">YOU ALREADY KNOW THIS</span>
+            <span className="hero-badge">AI THAT READS SO YOU DON&apos;T HAVE TO</span>
             <HeroHeadline />
             <p className="hero-sub">
-              Hundreds of articles. Hours of scrolling. Almost zero insight.
+              We scan thousands of articles. You get one alert when something matters.
             </p>
             <div className="hero-actions">
-              <a href="#access" className="btn-primary btn-pill">Get early access</a>
-              <a href="#signal" className="btn-secondary btn-pill">See how it works</a>
+              <a href="/signup" className="btn-primary btn-pill">Try it free</a>
+              <a href="#signal" className="btn-secondary btn-pill">See how</a>
             </div>
-            <p className="hero-pricing">7-day free trial · $4.99/month · Cancel anytime</p>
 
             {/* Mobile inline waitlist — visible only on small screens */}
             <form onSubmit={handleWaitlist} className="hero-mobile-waitlist">
@@ -176,93 +171,63 @@ export default function Home() {
                   className="waitlist-input"
                 />
                 <button type="submit" className="btn-primary waitlist-submit" disabled={waitlistStatus === 'loading'}>
-                  {waitlistStatus === 'loading' ? 'Joining...' : 'Get early access'}
+                  {waitlistStatus === 'loading' ? 'Joining...' : 'Notify me'}
                 </button>
               </div>
               {waitlistMessage ? (
                 <p className={`waitlist-msg ${waitlistStatus === 'success' ? 'msg-success' : 'msg-error'}`}>{waitlistMessage}</p>
               ) : (
-                <p className="waitlist-hint" style={{ textAlign: 'center' }}>No spam. Just your invite when it&apos;s ready.</p>
+                <p className="waitlist-hint" style={{ textAlign: 'center' }}>Web app is live. Mobile coming soon.</p>
               )}
             </form>
             <div className="hero-cards reveal-stagger">
               <div className="hero-info-card reveal-on-scroll">
-                <span className="hero-info-kicker">WITHOUT RELEVANT</span>
-                <span className="hero-info-text">Tabs, newsletters, random posts, and still the feeling you missed something important.</span>
+                <span className="hero-info-kicker">THE OLD WAY</span>
+                <span className="hero-info-text">Tabs. Newsletters. Podcasts. Still missed something.</span>
               </div>
               <div className="hero-info-card reveal-on-scroll">
-                <span className="hero-info-kicker">WHAT RELEVANT DOES</span>
-                <span className="hero-info-text">AI reads thousands of articles and filters them for your company, industry, and role.</span>
+                <span className="hero-info-kicker">THE NEW WAY</span>
+                <span className="hero-info-text">We read it all. You read what counts.</span>
               </div>
               <div className="hero-info-card reveal-on-scroll">
-                <span className="hero-info-kicker">WHAT YOU GET</span>
-                <span className="hero-info-text">A clear signal when something important could affect you — with what happened, why it matters, and what to do.</span>
+                <span className="hero-info-kicker">THE RESULT</span>
+                <span className="hero-info-text">Know what changed before it changes your week.</span>
               </div>
             </div>
-          </div>
-        </section>
-
-        {/* §2 — THE ANSWER: Interactive Signal Card */}
-        <section id="signal" className="section-block">
-          <div className="site-frame">
-            <div className="section-heading reveal-on-scroll">
-              <span className="section-kicker">WHAT YOU GET</span>
-              <h2>Not a headline. A signal.</h2>
-              <p>Every signal answers three questions. That&apos;s it.</p>
-            </div>
-            <InteractiveSignal />
-          </div>
-        </section>
-
-        {/* §3 — HOW IT WORKS */}
-        <section id="how" className="section-block section-tinted">
-          <div className="site-frame">
-            <div className="section-heading reveal-on-scroll">
-              <span className="section-kicker">HOW IT WORKS</span>
-              <h2>Three steps. That&apos;s the whole product.</h2>
-            </div>
-            <HowItWorks />
-          </div>
-        </section>
-
-        {/* §4 — INSIDE THE APP: Feature Bento Grid */}
-        <FeatureBento />
-
-        {/* §5 — SEE THE FEED: Phone Mockup */}
-        <section id="feed" className="section-block">
-          <div className="site-frame">
-            <div className="section-heading reveal-on-scroll">
-              <span className="section-kicker">THE FEED</span>
-              <h2>This is what it looks like.</h2>
-              <p>Real signals. Scroll through them. Tap any card.</p>
-            </div>
+            
             <div className="hero-centered-visual">
               <PhoneMockup />
             </div>
           </div>
         </section>
 
-        {/* §6 — WHO IT'S FOR */}
-        <section id="who" className="section-block section-tinted">
+        {/* SIGNAL — transformation story */}
+        <section id="signal" className="section-block">
           <div className="site-frame">
             <div className="section-heading reveal-on-scroll">
-              <span className="section-kicker">WHO IT&apos;S FOR</span>
-              <h2>If information affects your decisions, this is for you.</h2>
+              <span className="section-kicker">HOW IT WORKS</span>
+              <h2>Three questions. Then we take it from here.</h2>
+              <p>
+                Company. Industry. Role. That&apos;s enough for us to know what matters to you.
+              </p>
             </div>
-            <WhoItsFor />
+            <NoiseToSignal />
           </div>
         </section>
 
-        {/* §7 — GET ACCESS */}
+        {/* FEATURE BENTO GRID */}
+        <FeatureBento />
+
+        {/* ACCESS */}
         <section id="access" className="section-block section-cta border-t border-[var(--border)] bg-[var(--bg-elevated)]">
           <div className="site-frame access-shell">
             <div className="access-copy reveal-on-scroll">
-              <span className="section-kicker">EARLY ACCESS</span>
-              <h2>Information you should read. Not information you could read.</h2>
-              <p>Relevant is in early access. Join the waitlist.</p>
+              <span className="section-kicker">GET STARTED</span>
+              <h2>You have better things to do than read the news.</h2>
+              <p>Web app is live. Mobile coming soon.</p>
             </div>
             <form onSubmit={handleWaitlist} className="waitlist-card reveal-on-scroll">
-              <span className="waitlist-label">Request access</span>
+              <span className="waitlist-label">Notify me for mobile</span>
               <label className="sr-only" htmlFor="waitlist-email">Email</label>
               <div className="waitlist-row">
                 <input
@@ -276,13 +241,13 @@ export default function Home() {
                   className="waitlist-input"
                 />
                 <button type="submit" className="btn-primary waitlist-submit" disabled={waitlistStatus === 'loading'}>
-                  {waitlistStatus === 'loading' ? 'Joining...' : 'Get early access'}
+                  {waitlistStatus === 'loading' ? 'Joining...' : 'Notify me'}
                 </button>
               </div>
               {waitlistMessage ? (
                 <p className={`waitlist-msg ${waitlistStatus === 'success' ? 'msg-success' : 'msg-error'}`}>{waitlistMessage}</p>
               ) : (
-                <p className="waitlist-hint">No spam. Just your invite when it&apos;s ready.</p>
+                <p className="waitlist-hint">Web app is live. No spam.</p>
               )}
             </form>
           </div>
@@ -294,7 +259,7 @@ export default function Home() {
         <div className="site-frame footer-inner">
           <div className="footer-brand">
             <BrandMark />
-            <span>The information you should read.</span>
+            <span>Less noise. More clarity.</span>
           </div>
           <div className="footer-social">
             <a href="https://www.instagram.com/relevant.app/" target="_blank" rel="noopener noreferrer" className="footer-social-link" aria-label="Instagram">
@@ -315,7 +280,7 @@ export default function Home() {
 
       {/* Sticky mobile CTA bar */}
       <div className={`mobile-sticky-cta${showMobileCta ? ' is-visible' : ''}`}>
-        <a href="#access" className="mobile-sticky-cta-btn">Get early access</a>
+        <a href="/signup" className="mobile-sticky-cta-btn">Start free</a>
       </div>
     </>
   )

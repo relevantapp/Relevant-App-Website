@@ -3,38 +3,37 @@
 
 export const siteConfig = {
   name: 'Relevant',
-  tagline: 'Know what matters.',
-  description: 'A personalized relevance engine that filters endless updates into signal for your work, goals, and next role.',
+  tagline: "You shouldn't need to read the news just to stay sharp at work.",
+  description: 'We scan thousands of articles. You get one alert when something matters.',
   email: 'support@getrelevantapp.com',
 }
 
 export const heroContent = {
-  headline: 'Know what matters.',
-  subheadline: 'Relevant is a personalized relevance engine that filters endless updates into signal for your work, goals, and next role.',
-  cta: 'Get early access',
-  microcopy: 'Early access. No spam.',
+  headline: "You shouldn't need to read the news just to stay sharp at work.",
+  subheadline: 'We scan thousands of articles. You get one alert when something matters.',
+  cta: 'Try it free',
+  microcopy: 'Web app is live. Mobile coming soon.',
 }
 
 export const problemContent = {
-  title: 'Too much information. Not enough signal.',
+  title: "The old way doesn't work.",
   bullets: [
-    'Endless news and updates',
-    'Hard to know what actually matters',
-    'Always feeling behind at work',
+    'Tabs. Newsletters. Podcasts.',
+    'Still missed something.',
   ],
-  closing: 'Relevant fixes this by making relevance the default.',
-  clarityLine: 'Relevant helps you decide what to pay attention to.',
+  closing: 'The new way: We read. You know.',
+  clarityLine: 'Know what changed before it changes your week.',
 }
 
 export const whatIsContent = {
   title: 'What is Relevant?',
-  intro: 'Most apps show you everything.\nRelevant shows you what\'s worth knowing.',
+  intro: 'We read it all.\\nYou read what counts.',
   focusPoints: [
-    'what you should\'ve known',
+    'what changed',
     'why it matters',
-    'and what you can ignore',
+    'what to do',
   ],
-  closing: 'This changes how you stay informed.',
+  closing: "That's it.",
 }
 
 export const howItWorksContent = {
@@ -42,79 +41,76 @@ export const howItWorksContent = {
   steps: [
     {
       number: '1',
-      title: 'Tell us about you',
-      description: 'Your role, interests, and goals.',
+      title: 'Answer three questions',
+      description: 'Company. Industry. Role. Done.',
     },
     {
       number: '2',
-      title: 'We learn your priorities',
-      description: 'So your feed gets sharper over time.',
+      title: 'We read',
+      description: "Thousands of articles. You don't.",
     },
     {
       number: '3',
-      title: 'You get relevant updates',
-      description: 'Through your feed and daily brief.',
+      title: 'You gain',
+      description: 'Hours back. Every week.',
     },
     {
       number: '4',
-      title: 'We explain why it matters',
-      description: 'In one clear sentence you can use in real life.',
+      title: 'Go deeper',
+      description: 'Search. Follow. Explore.',
     },
   ],
 }
 
 export const featuresContent = {
-  title: 'Features',
+  title: 'Inside the app',
   features: [
     {
-      title: 'Relevance Engine',
-      description: 'Learns what matters to you and filters the rest.',
+      title: 'Ask',
+      description: 'What does this mean for my team?',
     },
     {
-      title: 'Daily Brief',
-      description: 'A quick, personalized start to your day.',
+      title: 'Learn',
+      description: 'Podcast. Video. One tap.',
     },
     {
-      title: 'Why It Matters',
-      description: 'One-line context so you understand the impact.',
+      title: 'Save',
+      description: 'Capture the thought. Move on.',
     },
     {
-      title: 'Goals',
-      description: 'Tie what you see to where you\'re going next.',
+      title: 'Tune',
+      description: 'More signal. Less noise. Your call.',
     },
   ],
 }
 
 export const whoItsForContent = {
-  title: 'Built for people who want signal, not noise',
+  title: 'For people who act on what they know',
   audiences: [
     'Founders',
+    'PMs',
     'Engineers',
-    'Product Managers',
-    'Designers',
     'Sales',
-    'Marketing',
     'Finance',
-    'Consultants',
     'Investors',
-    'and many more',
   ],
 }
 
 export const waitlistContent = {
-  title: 'Get early access',
-  subtext: 'Be among the first to use Relevant.',
-  cta: 'Join the waitlist',
-  microcopy: 'We\'ll only email product updates and early access.',
+  title: 'You have better things to do than read the news.',
+  subtext: 'Web app is live. Mobile coming soon.',
+  cta: 'Notify me',
+  mobileNote: 'Mobile in early access.',
+  microcopy: 'No spam.',
 }
 
 export const pricingContent = {
   title: 'Pricing',
-  disclaimer: 'Joining the waitlist is free. Pricing applies at launch.',
-  earlyAccessNote: "You won't be charged during early access.",
-  trial: 'Free 7-day trial',
+  disclaimer: 'Free to try. Pricing at launch.',
+  earlyAccessNote: 'No charge during early access.',
+  trial: '7-day free trial',
   price: 'Then $4.99/month',
-  value: 'Less than a coffee. More useful than most apps you scroll.',
+  value: 'Less than a coffee. More useful than most apps.',
 }
 
 export const navLinks = [

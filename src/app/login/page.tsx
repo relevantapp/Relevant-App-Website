@@ -173,7 +173,7 @@ export default function LoginPage() {
                 </div>
                 {resetError && <p className="text-sm text-semantic-error">{resetError}</p>}
                 {resetSuccess && <p className="text-sm text-semantic-success">{resetSuccess}</p>}
-                <button type="submit" disabled={resetLoading} className="flex h-12 items-center justify-center gap-2 rounded-xl bg-white text-sm font-semibold text-black transition-opacity hover:opacity-90 disabled:opacity-50">
+                <button type="submit" disabled={resetLoading} className="flex h-12 items-center justify-center gap-2 rounded-xl bg-[var(--accent)] text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50">
                   {resetLoading ? <Loader2 size={18} className="animate-spin" /> : 'Send reset code'}
                 </button>
               </form>
@@ -207,7 +207,7 @@ export default function LoginPage() {
                 </div>
                 {resetError && <p className="text-sm text-semantic-error">{resetError}</p>}
                 {resetSuccess && <p className="text-sm text-semantic-success">{resetSuccess}</p>}
-                <button type="submit" disabled={resetLoading} className="flex h-12 items-center justify-center gap-2 rounded-xl bg-white text-sm font-semibold text-black transition-opacity hover:opacity-90 disabled:opacity-50">
+                <button type="submit" disabled={resetLoading} className="flex h-12 items-center justify-center gap-2 rounded-xl bg-[var(--accent)] text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50">
                   {resetLoading ? <Loader2 size={18} className="animate-spin" /> : 'Update password'}
                 </button>
               </form>
@@ -281,7 +281,7 @@ export default function LoginPage() {
               </motion.p>
             )}
 
-            <button type="submit" disabled={loading} className="flex h-12 items-center justify-center gap-2 rounded-xl bg-white text-sm font-semibold text-black transition-opacity hover:opacity-90 disabled:opacity-50">
+            <button type="submit" disabled={loading} className="flex h-12 items-center justify-center gap-2 rounded-xl bg-[var(--accent)] text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50">
               {loading ? <Loader2 size={18} className="animate-spin" /> : 'Sign in'}
             </button>
           </form>

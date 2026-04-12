@@ -25,24 +25,23 @@ export default function NoiseToSignal() {
         <div className="signal-flow-step-head">
           <span className="signal-flow-step-number">1</span>
           <div>
-            <span className="signal-flow-panel-kicker">Tell us about you</span>
-            <h3 className="signal-flow-step-title">Tell us your company, industry, and role.</h3>
+            <h3 className="signal-flow-step-title">Tell us about your work.</h3>
           </div>
         </div>
 
         <p className="signal-flow-step-copy">
-          Those three answers are enough for Relevant to understand what could affect you at work.
+          Industry. Role. Company. Country. That&apos;s it.
         </p>
 
         <div className="signal-flow-shot-shell">
-          <span className="signal-flow-shot-kicker">Actual onboarding screen</span>
           <div className="signal-flow-shot-frame">
             <Image
-              src="/screenshots/onboarding-form.png"
+              src="/screenshots/onboarding-intro.png?v=20260412e"
               alt="Relevant app onboarding — set your industry, role, company, and country"
               width={500}
               height={888}
               className="signal-flow-shot-image"
+              priority
               unoptimized
             />
           </div>
@@ -54,23 +53,13 @@ export default function NoiseToSignal() {
         <div className="signal-flow-step-head">
           <span className="signal-flow-step-number">2</span>
           <div>
-            <span className="signal-flow-panel-kicker">We filter the noise</span>
-            <h3 className="signal-flow-step-title">AI reads the news and keeps what affects your work.</h3>
+            <h3 className="signal-flow-step-title">We filter thousands of articles.</h3>
           </div>
         </div>
 
         <p className="signal-flow-step-copy">
-          Relevant reads thousands of articles every day, figures out what could influence your work,
-          and drops the rest.
+          One question: could this change a decision you&apos;re about to make?
         </p>
-
-        <div className="signal-flow-stream-meta">
-          <span className="signal-flow-stream-stat">Thousands of articles scanned every day</span>
-          <p className="signal-flow-stream-copy">
-            From publishers like Reuters, Bloomberg, the Financial Times, the Wall Street Journal,
-            CNBC, BBC, and more.
-          </p>
-        </div>
 
         <div className="signal-flow-stream-window">
           <div className="signal-flow-stream-track">
@@ -98,10 +87,6 @@ export default function NoiseToSignal() {
             ))}
           </div>
         </div>
-
-        <p className="signal-flow-filter-note">
-          It looks for changes that could help you, hurt you, or change the decisions you need to make.
-        </p>
       </article>
 
       {/* Step 3 — Time saved */}
@@ -109,30 +94,26 @@ export default function NoiseToSignal() {
         <div className="signal-flow-step-head">
           <span className="signal-flow-step-number">3</span>
           <div>
-            <span className="signal-flow-panel-kicker">See the time you save</span>
-            <h3 className="signal-flow-step-title">Hours back in your week, automatically.</h3>
+            <h3 className="signal-flow-step-title">You get hours back. Every week.</h3>
           </div>
         </div>
 
         <p className="signal-flow-step-copy">
-          Relevant tracks how much reading time it saves you. No more scanning dozens of sources — just the signals that matter.
+          We track how much reading time you skip — so you can see the value.
         </p>
 
         <div className="signal-flow-shot-shell">
-          <span className="signal-flow-shot-kicker">Your weekly time saved</span>
           <div className="signal-flow-shot-frame">
             <Image
-              src="/screenshots/time-saved.png"
-              alt="Time Saved — 11 hours back in your week, 30 stories processed"
+              src="/screenshots/hours-saved.png?v=20260412e"
+              alt="Your Relevance Summary — 13.4 hours saved in the last 7 days"
               width={500}
               height={888}
               className="signal-flow-shot-image"
+              priority
               unoptimized
             />
           </div>
-          <p className="signal-flow-shot-note">
-            11 hours saved. 30 stories delivered. All the signal, none of the noise.
-          </p>
         </div>
       </article>
 
@@ -141,31 +122,26 @@ export default function NoiseToSignal() {
         <div className="signal-flow-step-head">
           <span className="signal-flow-step-number">4</span>
           <div>
-            <span className="signal-flow-panel-kicker">Search and explore</span>
-            <h3 className="signal-flow-step-title">Explore your signal map anytime.</h3>
+            <h3 className="signal-flow-step-title">Search. Follow. Explore.</h3>
           </div>
         </div>
 
         <p className="signal-flow-step-copy">
-          Search across every story Relevant has delivered. Browse your topic map, follow new companies, and dig deeper when you need to.
+          Everything we&apos;ve shown you, searchable. Your signals, your map.
         </p>
 
         <div className="signal-flow-shot-shell">
-          <span className="signal-flow-shot-kicker">Your signal map</span>
           <div className="signal-flow-shot-frame">
             <Image
-              src="/screenshots/search-explore.png"
+              src="/screenshots/search-explore.png?v=20260412f"
               alt="Search and explore your signal map — topic cards, search bar, follow new topics"
               width={500}
               height={888}
               className="signal-flow-shot-image"
+              priority
               unoptimized
             />
           </div>
-
-          <p className="signal-flow-shot-note">
-            Every topic, every story, searchable and organized — your personal signal map.
-          </p>
         </div>
       </article>
     </div>

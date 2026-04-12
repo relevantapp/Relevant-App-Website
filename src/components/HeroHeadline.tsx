@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 const PHRASES = [
-  'You should not need',
+  "You shouldn't need",
   'to read the news',
   'just to stay sharp',
   'at work.',

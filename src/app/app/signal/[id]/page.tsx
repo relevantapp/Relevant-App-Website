@@ -10,7 +10,7 @@ import {
   ArrowLeft, Clock, Layers, TrendingUp, ExternalLink, Radio,
   Eye, Zap, Binoculars, Link2, Play, MessageCircle, History,
 } from 'lucide-react'
-import { AskAIChat } from '@/components/app/AskAIChat'
+import { AskAIFab } from '@/components/app/AskAIChat'
 
 /* ── constants ───────────────────────────────────────────────── */
 
@@ -23,12 +23,29 @@ const TAB_ICONS: Record<TabKey, React.ElementType> = {
 }
 
 const TYPE_COLORS: Record<string, { bg: string; text: string; bar: string }> = {
-  competitive: { bg: 'bg-accent-coral/15', text: 'text-accent-coral', bar: 'bg-accent-coral' },
-  opportunity: { bg: 'bg-accent-teal/15', text: 'text-accent-teal', bar: 'bg-accent-teal' },
-  risk:        { bg: 'bg-accent-amber/15', text: 'text-accent-amber', bar: 'bg-accent-amber' },
-  strategic:   { bg: 'bg-accent-violet/15', text: 'text-accent-violet', bar: 'bg-accent-violet' },
+  competitive: { bg: 'bg-[#8CABC8]/8', text: 'text-[#8CABC8]', bar: 'bg-[#8CABC8]' },
+  opportunity: { bg: 'bg-[#7AB0A0]/8', text: 'text-[#7AB0A0]', bar: 'bg-[#7AB0A0]' },
+  risk:        { bg: 'bg-[#C4A87A]/8', text: 'text-[#C4A87A]', bar: 'bg-[#C4A87A]' },
+  strategic:   { bg: 'bg-[#A090C0]/8', text: 'text-[#A090C0]', bar: 'bg-[#A090C0]' },
+  financial:   { bg: 'bg-[#C4A87A]/8', text: 'text-[#C4A87A]', bar: 'bg-[#C4A87A]' },
+  operational: { bg: 'bg-[#7AB0A0]/8', text: 'text-[#7AB0A0]', bar: 'bg-[#7AB0A0]' },
+  regulatory:  { bg: 'bg-[#C09474]/8', text: 'text-[#C09474]', bar: 'bg-[#C09474]' },
+  career:      { bg: 'bg-[#78A88A]/8', text: 'text-[#78A88A]', bar: 'bg-[#78A88A]' },
+  personal:    { bg: 'bg-[#B090BC]/8', text: 'text-[#B090BC]', bar: 'bg-[#B090BC]' },
 }
 const DEFAULT_TYPE_COLOR = { bg: 'bg-[var(--surface)]', text: 'text-[var(--text-muted)]', bar: 'bg-[var(--text-soft)]' }
+
+const TYPE_ICON_NAMES: Record<string, string> = {
+  competitive: 'crosshair',
+  opportunity: 'eye',
+  risk:        'alert-triangle',
+  strategic:   'check-circle',
+  financial:   'dollar-sign',
+  operational: 'settings',
+  regulatory:  'shield',
+  career:      'briefcase',
+  personal:    'heart',
+}
 
 const TRAJECTORY_BADGE: Record<string, string> = {
   ESCALATING: 'bg-accent-coral text-white',
@@ -80,82 +97,116 @@ function likelihoodStyle(lh: string): { text: string; bg: string } {
 }
 
 function ConsequenceChain({ steps }: { steps: ConsequenceStep[] }) {
+  const [expandedBranches, setExpandedBranches] = useState<Record<number, boolean>>({})
   if (steps.length === 0) return null
+
+  const toggleBranch = (idx: number) => setExpandedBranches(prev => ({ ...prev, [idx]: !prev[idx] }))
+
+  const iconFor = (name: string) => {
+    const icons: Record<string, () => React.JSX.Element> = {
+      crosshair: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="1"/></svg>,
+      eye: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>,
+      'alert-triangle': () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
+      'check-circle': () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>,
+      'dollar-sign': () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>,
+      settings: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>,
+      shield: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
+      briefcase: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>,
+      heart: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>,
+      zap: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>,
+    }
+    const Icon = icons[name] || icons.zap
+    return <Icon />
+  }
+
   return (
     <section className="mt-8">
-      <h3 className="mb-4 font-display text-lg font-bold text-[var(--text)]">Impact Analysis</h3>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <h3 className="mb-4 font-display text-lg font-bold text-[var(--text)]">Why this matters to you</h3>
+
+      {/* Mobile: horizontal snap-scroll | Desktop: 2-col grid */}
+      <div className="scrollbar-hide flex gap-3 overflow-x-auto snap-x snap-mandatory pb-3 -mx-6 px-6 md:mx-0 md:px-0 md:grid md:grid-cols-2 md:overflow-visible md:pb-0">
         {steps.map((step, i) => {
           const typeKey = step.type?.toLowerCase() || ''
           const color = TYPE_COLORS[typeKey] || DEFAULT_TYPE_COLOR
           const typeLabel = step.consequence_types?.[0] ?? step.type ?? 'impact'
+          const iconName = TYPE_ICON_NAMES[typeKey] || 'zap'
+          const hasBranches = step.branches && step.branches.length > 0
+          const branchOpen = expandedBranches[i]
+
           return (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.06, duration: 0.25 }}
-              className={`rounded-2xl border border-[var(--border)] ${color.bg} p-5`}
+              className="snap-start shrink-0 w-[280px] rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4 md:w-auto md:shrink"
             >
-              {/* Header: type badge */}
-              <div className="mb-3 flex flex-wrap items-center gap-2">
-                <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest ${color.bg} ${color.text}`}>
-                  {typeLabel}
-                </span>
-                {step.confidence && (
-                  <span className="rounded-full bg-[var(--surface)] px-2 py-0.5 text-[10px] text-[var(--text-muted)]">
-                    {step.confidence === 'grounded' ? 'Grounded' : 'Partially grounded'}
-                  </span>
+              <div>
+                {/* Type + weight row */}
+                <div className="mb-1.5 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className={color.text}>{iconFor(iconName)}</span>
+                    <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[var(--text-soft)]">
+                      {typeLabel}
+                    </span>
+                  </div>
+                  {step.weight > 0 && (
+                    <span className="font-mono text-[10px] text-[var(--text-soft)]">{Math.round(step.weight * 100)}%</span>
+                  )}
+                </div>
+
+                {/* Dimension title */}
+                <h4 className="mb-1 text-[14px] font-bold leading-snug text-[var(--text)]">
+                  {step.dimension}
+                </h4>
+
+                {/* Description */}
+                <p className="text-[12px] leading-relaxed text-[var(--text-muted)] line-clamp-3">
+                  {step.articleChain || step.chain}
+                </p>
+
+                {/* Scenarios (animated toggle) */}
+                {hasBranches && (
+                  <div className="mt-2.5">
+                    <button
+                      onClick={() => toggleBranch(i)}
+                      className="flex items-center gap-1 text-[11px] font-medium text-[var(--text-muted)]"
+                    >
+                      <svg
+                        width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                        className={`transition-transform ${branchOpen ? 'rotate-90' : ''}`}
+                      >
+                        <polyline points="9 18 15 12 9 6" />
+                      </svg>
+                      {step.branches!.length} scenario{step.branches!.length !== 1 ? 's' : ''}
+                    </button>
+                    <AnimatePresence>
+                      {branchOpen && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="overflow-hidden"
+                        >
+                          <div className="mt-2 flex flex-col gap-1.5">
+                            {step.branches!.map((b, bi) => (
+                              <div key={bi} className="rounded-lg bg-[var(--surface)] px-3 py-2">
+                                <span className={`text-[10px] font-bold uppercase tracking-wider ${likelihoodStyle(b.likelihood).text}`}>
+                                  {b.likelihood.replace(/_/g, ' ')}
+                                </span>
+                                <p className="mt-0.5 text-[11px] font-medium leading-snug text-[var(--text)]">{b.scenario}</p>
+                                <p className="mt-0.5 text-[11px] leading-relaxed text-[var(--text-muted)]">{b.detail}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 )}
               </div>
-
-              {/* Dimension headline */}
-              <h4 className="mb-2 font-display text-base font-bold text-[var(--text)]">
-                {step.dimension}
-              </h4>
-
-              {/* Chain description */}
-              <p className="text-sm leading-relaxed text-[var(--text-muted)]">
-                {step.articleChain || step.chain}
-              </p>
-
-              {/* Weight bar */}
-              {step.weight > 0 && (
-                <div className="mt-3 h-1 w-full overflow-hidden rounded-full bg-[var(--surface)]">
-                  <div
-                    className={`h-full rounded-full ${color.bar}`}
-                    style={{ width: `${Math.min(step.weight * 100, 100)}%` }}
-                  />
-                </div>
-              )}
-
-              {/* Key assumption */}
-              {step.keyAssumption && (
-                <div className="mt-3 rounded-lg bg-[var(--surface)] p-3">
-                  <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-[var(--text-soft)]">Assumes</p>
-                  <p className="text-xs leading-relaxed text-[var(--text-muted)]">{step.keyAssumption}</p>
-                </div>
-              )}
-
-              {/* Branches */}
-              {step.branches && step.branches.length > 0 && (
-                <div className="mt-4 flex flex-col gap-2 border-t border-[var(--border)] pt-3">
-                  {step.branches.map((b, bi) => {
-                    const lh = likelihoodStyle(b.likelihood)
-                    return (
-                      <div key={bi} className="rounded-lg bg-[var(--surface)] p-3">
-                        <div className="mb-1 flex items-center gap-2">
-                          <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${lh.text} ${lh.bg}`}>
-                            {b.likelihood.replace(/_/g, ' ')}
-                          </span>
-                        </div>
-                        <p className="mb-1 text-sm font-semibold text-[var(--text)]">{b.scenario}</p>
-                        <p className="text-xs leading-relaxed text-[var(--text-muted)]">{b.detail}</p>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
             </motion.div>
           )
         })}
@@ -580,7 +631,7 @@ export default function SignalDetailPage() {
                   }`}
                 >
                   <Icon size={14} />
-                  <span className="hidden sm:inline">{tab}</span>
+                  <span className="text-[11px] sm:text-sm">{tab}</span>
                 </button>
               )
             })}
@@ -616,9 +667,6 @@ export default function SignalDetailPage() {
               <MediaSection mediaLinks={signal.mediaLinks} />
             )}
 
-            {/* Ask AI */}
-            <AskAIChat signalId={signal.id} headline={signal.headline} />
-
             {/* Why showing */}
             {signal.why_showing && (
               <section className="mt-5 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5">
@@ -632,6 +680,9 @@ export default function SignalDetailPage() {
           </div>
         </aside>
       </div>
+
+      {/* Floating Ask AI FAB */}
+      <AskAIFab signalId={signal.id} headline={signal.headline} />
     </div>
   )
 }

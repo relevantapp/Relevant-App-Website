@@ -1,21 +1,42 @@
 import Image from 'next/image'
 
-type FeatureCardProps = {
+type BentoCardProps = {
   kicker: string
   title: string
-  description: string
-  children: React.ReactNode
-  className?: string
+  imgSrc: string
+  imgAlt: string
+  imgWidth: number
+  imgHeight: number
+  imgClass?: string
+  cardClass?: string
 }
 
-function FeatureCard({ kicker, title, description, children, className }: FeatureCardProps) {
+function BentoCard({
+  kicker,
+  title,
+  imgSrc,
+  imgAlt,
+  imgWidth,
+  imgHeight,
+  imgClass,
+  cardClass,
+}: BentoCardProps) {
   return (
-    <article className={`feature-spotlight-card reveal-on-scroll${className ? ` ${className}` : ''}`}>
-      <div className="feature-spotlight-visual">{children}</div>
-      <div className="feature-spotlight-copy">
-        <span className="feature-spotlight-kicker">{kicker}</span>
+    <article className={`fbu-card reveal-on-scroll${cardClass ? ` ${cardClass}` : ''}`}>
+      <div className="fbu-img">
+        <Image
+          src={imgSrc}
+          alt={imgAlt}
+          width={imgWidth}
+          height={imgHeight}
+          className={`fbu-screenshot${imgClass ? ` ${imgClass}` : ''}`}
+          priority
+          unoptimized
+        />
+      </div>
+      <div className="fbu-text">
+        <span className="fbu-kicker">{kicker}</span>
         <h3>{title}</h3>
-        <p>{description}</p>
       </div>
     </article>
   )
@@ -26,119 +47,79 @@ export default function FeatureBento() {
     <section id="features" className="section-block">
       <div className="site-frame">
         <div className="section-heading reveal-on-scroll">
-          <span className="section-kicker">INSIDE THE APP</span>
+          <span className="section-kicker">USE IT FOR MORE</span>
           <h2>The signal is just the start.</h2>
           <p>
-            Once something important shows up, you can ask a follow-up question, save a note,
-            track companies or industries, or open a deeper explainer without leaving the app.
+            Ask questions. Watch and listen. Share what matters. Capture thoughts. All without leaving.
           </p>
         </div>
 
-        {/* Row 1: two compact non-screenshot cards */}
-        <div className="feature-spotlight-row-half">
-          <FeatureCard
-            kicker="ASK A QUESTION"
-            title="Ask what it means for you."
-            description="Open any signal and ask how it affects your job, plans, or next move."
-          >
-            <div className="feature-visual-chat">
-              <div className="feature-visual-chat-bubble feature-visual-chat-bubble--user">
-                How does this affect my team?
-              </div>
-              <div className="feature-visual-chat-bubble feature-visual-chat-bubble--ai">
-                Hiring may stay slower for another quarter, so it&apos;s safer to plan around current headcount.
-              </div>
-              <div className="feature-visual-chat-input">Ask a follow-up about this signal…</div>
-            </div>
-          </FeatureCard>
+        <div className="fbu-grid reveal-stagger">
+          {/* Watch & Listen — focused crop showing the media section, 1 col */}
+          <BentoCard
+            kicker="WATCH & LISTEN"
+            title="Go deeper without leaving."
+            imgSrc="/screenshots/watch-listen.png?v=20260412e"
+            imgAlt="Watch videos and listen to podcasts tied to this signal"
+            imgWidth={1206}
+            imgHeight={1200}
+            imgClass="fbu-screenshot--media"
+          />
 
-          <FeatureCard
-            kicker="GO DEEPER"
-            title="Open a podcast or video when you want more."
-            description="Some signals come with a useful episode or video, so you can keep learning without searching around."
-          >
-            <div className="feature-visual-media">
-              <div className="feature-visual-media-row">
-                <span className="feature-visual-media-icon feature-visual-media-icon--spotify">S</span>
-                <div>
-                  <strong>Spotify match</strong>
-                  <p>15-minute explainer for your commute</p>
-                </div>
-              </div>
-              <div className="feature-visual-media-row">
-                <span className="feature-visual-media-icon feature-visual-media-icon--youtube">Y</span>
-                <div>
-                  <strong>YouTube match</strong>
-                  <p>Short breakdown if you want more context</p>
-                </div>
-              </div>
-            </div>
-          </FeatureCard>
-        </div>
+          {/* Ask AI — 2 cols wide */}
+          <BentoCard
+            kicker="ASK AI"
+            title="Ask anything about a signal."
+            imgSrc="/screenshots/ask-ai.png?v=20260412e"
+            imgAlt="Ask AI — deeper analysis, simpler explanations, tailored insights"
+            imgWidth={1206}
+            imgHeight={1300}
+            cardClass="fbu-card--wide"
+          />
 
-        {/* Row 2: three screenshot cards — equal height */}
-        <div className="feature-spotlight-row-screenshots">
-          <FeatureCard
-            kicker="YOUR THINKING SPACE"
-            title="Save signals and capture thoughts."
-            description="Save a signal, record a voice note, or write freely. Notes is your private thinking space inside Relevant."
-            className="feature-spotlight-card--screenshot"
-          >
-            <div className="feature-visual-screenshot">
-              <div className="feature-visual-screenshot-wrap">
-                <Image
-                  src="/screenshots/notes-space.png"
-                  alt="Notes tab — save signals and capture quick thoughts"
-                  width={375}
-                  height={812}
-                  className="feature-visual-screenshot-img"
-                  unoptimized
-                />
-              </div>
-            </div>
-          </FeatureCard>
+          {/* Share */}
+          <BentoCard
+            kicker="SHARE"
+            title="Become a voice."
+            imgSrc="/screenshots/share-curate.png?v=20260412e"
+            imgAlt="Share — draft a cleaner post with AI, then share to your network"
+            imgWidth={1206}
+            imgHeight={1400}
+          />
 
-          <FeatureCard
-            kicker="FOLLOW TOPICS"
-            title="Search and explore your signal map."
-            description="Search across your delivered signals, follow new companies or topics, and explore a visual topic map of everything Relevant tracks for you."
-            className="feature-spotlight-card--screenshot"
-          >
-            <div className="feature-visual-screenshot">
-              <div className="feature-visual-screenshot-wrap">
-                <Image
-                  src="/screenshots/search-explore.png"
-                  alt="Search and topic map — follow companies, people, and topics"
-                  width={375}
-                  height={812}
-                  className="feature-visual-screenshot-img"
-                  unoptimized
-                />
-              </div>
-            </div>
-          </FeatureCard>
+          {/* Find */}
+          <BentoCard
+            kicker="FIND"
+            title="Follow anything."
+            imgSrc="/screenshots/search-explore-bento.png?v=20260412f"
+            imgAlt="Search and explore — follow companies, people, and topics"
+            imgWidth={1206}
+            imgHeight={1400}
+          />
 
-          <FeatureCard
-            kicker="TUNE YOUR FEED"
-            title="Control what shows up."
-            description="Adjust signal strictness, see what topics and companies drive your signals, and fine-tune anytime."
-            className="feature-spotlight-card--screenshot"
-          >
-            <div className="feature-visual-screenshot">
-              <div className="feature-visual-screenshot-wrap">
-                <Image
-                  src="/screenshots/tune-feed.png"
-                  alt="Tune your feed — adjust signal strictness and see what drives your signals"
-                  width={375}
-                  height={812}
-                  className="feature-visual-screenshot-img"
-                  unoptimized
-                />
-              </div>
-            </div>
-          </FeatureCard>
+          {/* Save */}
+          <BentoCard
+            kicker="SAVE"
+            title="Capture the thought."
+            imgSrc="/screenshots/notes-space.png?v=20260412e"
+            imgAlt="Notes — save signals and capture quick thoughts"
+            imgWidth={1206}
+            imgHeight={1400}
+          />
+
+          {/* Tune — full width */}
+          <BentoCard
+            kicker="TUNE"
+            title="More signal. Less noise. Your call."
+            imgSrc="/screenshots/tune-settings.png?v=20260412f"
+            imgAlt="Make Relevant yours — choose what it follows and how it writes"
+            imgWidth={1206}
+            imgHeight={900}
+            cardClass="fbu-card--full"
+          />
         </div>
       </div>
     </section>
   )
 }
+
