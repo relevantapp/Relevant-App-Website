@@ -151,6 +151,15 @@ function domainFromUrl(url: string): string {
   }
 }
 
+function safeUrl(url: string): string | null {
+  try {
+    const parsed = new URL(url)
+    return parsed.protocol === 'https:' || parsed.protocol === 'http:' ? parsed.href : null
+  } catch {
+    return null
+  }
+}
+
 /* ── Component ─────────────────────────────────────────────────── */
 
 export default function MeetingPrepPage() {
@@ -234,7 +243,11 @@ export default function MeetingPrepPage() {
 
         setDossier(data.dossier ?? data)
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Network error')
+        if (err instanceof Error && err.name === 'AbortError') {
+          setError('Request timed out. Try a shorter time range.')
+        } else {
+          setError('Connection error. Please check your network and try again.')
+        }
       } finally {
         setLoading(false)
       }
@@ -703,6 +716,7 @@ export default function MeetingPrepPage() {
                     <h3 className="mb-3 text-sm font-semibold text-[var(--text)]">Sources</h3>
                     <div className="space-y-2">
                       {Object.values(dossier.proofSources)
+                        .filter((source) => safeUrl(source.url))
                         .sort(
                           (a, b) =>
                             new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
@@ -711,7 +725,7 @@ export default function MeetingPrepPage() {
                         .map((source) => (
                           <a
                             key={source.articleId}
-                            href={source.url}
+                            href={safeUrl(source.url)!}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="group flex items-start gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5 transition-colors hover:border-[var(--accent)]/30"

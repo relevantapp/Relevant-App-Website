@@ -8,6 +8,12 @@ const VALID_ENTITY_TYPES = new Set(['company', 'person', 'topic', 'location'])
 const VALID_LENSES = new Set(['founder', 'product', 'gtm', 'strategy', 'investor'])
 const VALID_LOOKBACK_DAYS = new Set([30, 60, 90])
 
+const EDGE_TIMEOUT_MS = 90_000
+const RATE_LIMIT_WINDOW_MS = 60_000
+const RATE_LIMIT_MAX = 10
+
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
+
 export async function POST(request: NextRequest) {
   // Verify user is authenticated via their JWT
   const authHeader = request.headers.get('authorization')
@@ -56,7 +62,25 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid lensKey' }, { status: 400 })
   }
 
+  // Rate limit per user
+  const now = Date.now()
+  const bucket = rateLimitMap.get(user.id)
+  if (bucket && now < bucket.resetAt) {
+    if (bucket.count >= RATE_LIMIT_MAX) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please wait a minute before trying again.' },
+        { status: 429 }
+      )
+    }
+    bucket.count++
+  } else {
+    rateLimitMap.set(user.id, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS })
+  }
+
   try {
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), EDGE_TIMEOUT_MS)
+
     const edgeRes = await fetch(`${supabaseUrl}/functions/v1/pro-entity-dossier`, {
       method: 'POST',
       headers: {
@@ -64,13 +88,17 @@ export async function POST(request: NextRequest) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ query, entityType, lensKey, lookbackDays, forceRefresh }),
+      signal: controller.signal,
     })
+
+    clearTimeout(timeout)
 
     const data = await edgeRes.json()
 
     if (!edgeRes.ok) {
+      console.error('[api/dossier] Edge function error:', data.error)
       return NextResponse.json(
-        { error: data.error || 'Dossier request failed' },
+        { error: 'Dossier request failed. Please try again.' },
         { status: edgeRes.status }
       )
     }
@@ -78,6 +106,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(data)
   } catch (err) {
     console.error('[api/dossier] Edge function call failed:', err)
+    if (err instanceof Error && err.name === 'AbortError') {
+      return NextResponse.json({ error: 'Request timed out. Please try a shorter time range or different query.' }, { status: 504 })
+    }
     return NextResponse.json({ error: 'Failed to reach dossier service' }, { status: 502 })
   }
 }
