@@ -1,9 +1,53 @@
-import { createBrowserClient } from '@supabase/ssr'
+import { createBrowserClient, SupabaseClient } from '@supabase/ssr'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+let _supabase: SupabaseClient | null = null
 
-export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey)
+// SSR-safe stub that returns null for all operations during build/SSR
+const ssrStub = {
+  auth: {
+    getSession: async () => ({ data: { session: null }, error: null }),
+    getUser: async () => ({ data: { user: null }, error: null }),
+    signInWithPassword: async () => ({ data: { user: null, session: null }, error: { message: 'SSR stub' } }),
+    signUp: async () => ({ data: { user: null, session: null }, error: { message: 'SSR stub' } }),
+    signOut: async () => ({ error: null }),
+    onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+    refreshSession: async () => ({ data: { session: null }, error: null }),
+    resetPasswordForEmail: async () => ({ error: null }),
+    verifyOtp: async () => ({ data: { user: null, session: null }, error: null }),
+    updateUser: async () => ({ data: { user: null }, error: null }),
+  },
+  from: () => ({
+    select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: null, error: null }) }) }),
+    upsert: async () => ({ error: null }),
+    update: async () => ({ eq: async () => ({ error: null }) }),
+  }),
+} as unknown as SupabaseClient
+
+function getClient(): SupabaseClient {
+  if (typeof window === 'undefined') return ssrStub
+  
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  
+  if (!url || !key) return ssrStub
+  
+  if (!_supabase) {
+    _supabase = createBrowserClient(url, key)
+  }
+  return _supabase
+}
+
+// Export a proxy that lazily creates the client
+export const supabase: SupabaseClient = new Proxy({} as SupabaseClient, {
+  get(_target, prop) {
+    const client = getClient()
+    const value = (client as Record<string | symbol, unknown>)[prop]
+    if (typeof value === 'function') {
+      return value.bind(client)
+    }
+    return value
+  },
+})
 
 export async function getValidAccessToken(bufferSeconds = 60): Promise<string | null> {
   const { data: sessionData } = await supabase.auth.getSession()
