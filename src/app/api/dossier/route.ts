@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
   if (!serviceRoleKey) {
     console.error('[api/dossier] Missing SUPABASE_SERVICE_ROLE_KEY environment variable')
     return NextResponse.json(
-      { error: 'Meeting Prep is not configured. Please contact support.' },
+      { error: 'Research is not configured. Please contact support.' },
       { status: 500 }
     )
   }

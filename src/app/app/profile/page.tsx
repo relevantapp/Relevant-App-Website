@@ -38,7 +38,7 @@ export default function ProfilePage() {
 
   // Load theme from localStorage
   useEffect(() => {
-    const stored = localStorage.getItem('relevant_theme') as 'dark' | 'light' | null
+    const stored = localStorage.getItem('relevant-site-theme') as 'dark' | 'light' | null
     const current = stored || (document.documentElement.getAttribute('data-theme') as 'dark' | 'light') || 'dark'
     setTheme(current)
   }, [])
@@ -84,7 +84,7 @@ export default function ProfilePage() {
     const next = theme === 'dark' ? 'light' : 'dark'
     setTheme(next)
     document.documentElement.setAttribute('data-theme', next)
-    localStorage.setItem('relevant_theme', next)
+    localStorage.setItem('relevant-site-theme', next)
   }, [theme])
 
   const handleSave = async () => {

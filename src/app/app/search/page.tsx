@@ -115,7 +115,7 @@ type DimensionTile = {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function sanitize(input: string): string {
-  return input.replace(/[<>"'&]/g, '').trim()
+  return input.replace(/[<>"']/g, '').trim()
 }
 
 function getRecentSearches(): string[] {

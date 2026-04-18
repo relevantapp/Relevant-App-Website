@@ -14,12 +14,10 @@ import {
 import {
   EntityType,
   LensKey,
-  ResearchPurpose,
   DossierResponse,
   ENTITY_OPTIONS,
   LOOKBACK_OPTIONS,
   LENS_OPTIONS,
-  PURPOSE_OPTIONS,
   SUGGESTED_QUERIES,
 } from './types'
 import DossierResults from './DossierResults'
@@ -42,7 +40,6 @@ export default function ResearchPage() {
   const [dossier, setDossier] = useState<DossierResponse | null>(null)
   const [lensOpen, setLensOpen] = useState(false)
   const [meetingContext, setMeetingContext] = useState('')
-  const [purpose, setPurpose] = useState<ResearchPurpose>('meeting')
   const [loadingStep, setLoadingStep] = useState(0)
   const loadingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -103,10 +100,7 @@ export default function ResearchPage() {
             lensKey,
             lookbackDays,
             forceRefresh,
-            meetingContext: [
-              `Purpose: ${purpose}`,
-              meetingContext.trim(),
-            ].filter(Boolean).join('. ') || undefined,
+            meetingContext: meetingContext.trim() || undefined,
           }),
         })
 
@@ -137,13 +131,15 @@ export default function ResearchPage() {
     fetchDossier(false)
   }
 
-  const handleSuggestionClick = useCallback(
-    (label: string, type: EntityType) => {
+  const handleSuggestionClick = (label: string, type: EntityType) => {
+    setQuery(label)
+    setEntityType(type)
+    // Trigger search after state updates
+    setTimeout(() => {
       setQuery(label)
       setEntityType(type)
-    },
-    []
-  )
+    }, 0)
+  }
 
   const handleRelatedSearch = useCallback(
     (relatedQuery: string, relatedType: EntityType) => {
@@ -151,8 +147,11 @@ export default function ResearchPage() {
       setEntityType(relatedType)
       setDossier(null)
       setMeetingContext('')
+      // Scroll to top, then fetch
       window.scrollTo({ top: 0, behavior: 'smooth' })
-      setTimeout(() => fetchDossier(false), 100)
+      setTimeout(() => {
+        fetchDossier(false)
+      }, 100)
     },
     [fetchDossier]
   )
@@ -185,15 +184,20 @@ export default function ResearchPage() {
 
   return (
     <div className="mx-auto max-w-[1200px] pb-16">
+      {/* Search Form */}
       {!dossier && !loading && (
         <div className="flex min-h-[55vh] flex-col items-center justify-center gap-8">
           <div className="text-center">
-            <h1 className="font-display text-3xl font-bold text-[var(--text)] sm:text-4xl">Research</h1>
+            <h1 className="font-display text-3xl font-bold text-[var(--text)] sm:text-4xl">
+              Research
+            </h1>
             <p className="mt-2 text-base text-[var(--text-muted)]">
-              Prepare for any meeting, deal, or decision with evidence-backed briefings.
+              Get a deep briefing on any company, person, or topic — powered by your signals.
             </p>
           </div>
+
           <form onSubmit={handleSubmit} className="flex w-full max-w-xl flex-col gap-4">
+            {/* Entity type pills */}
             <div className="flex flex-wrap items-center justify-center gap-2">
               {ENTITY_OPTIONS.map((opt) => (
                 <button
@@ -211,6 +215,7 @@ export default function ResearchPage() {
               ))}
             </div>
 
+            {/* Lookback period pills */}
             <div className="flex flex-wrap items-center justify-center gap-2">
               <span className="mr-2 text-xs uppercase tracking-[0.14em] text-[var(--text-soft)]">
                 Lookback
@@ -231,6 +236,7 @@ export default function ResearchPage() {
               ))}
             </div>
 
+            {/* Search input */}
             <div className="relative">
               <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--text-muted)]" />
               <input
@@ -251,6 +257,7 @@ export default function ResearchPage() {
               />
             </div>
 
+            {/* Suggested queries — only when input is empty */}
             {!query && (
               <div className="flex flex-wrap items-center justify-center gap-2">
                 <span className="text-xs text-[var(--text-soft)]">Try:</span>
@@ -267,6 +274,7 @@ export default function ResearchPage() {
               </div>
             )}
 
+            {/* Lens selector */}
             <div className="relative">
               <button
                 type="button"
@@ -312,29 +320,12 @@ export default function ResearchPage() {
               )}
             </div>
 
-            {/* Purpose selector */}
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              {PURPOSE_OPTIONS.map((opt) => (
-                <button
-                  key={opt.key}
-                  type="button"
-                  onClick={() => setPurpose(opt.key)}
-                  className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
-                    purpose === opt.key
-                      ? 'bg-[var(--surface-strong)] text-[var(--text)]'
-                      : 'text-[var(--text-soft)] hover:bg-[var(--surface)] hover:text-[var(--text-muted)]'
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-
+            {/* Meeting context */}
             <div>
               <textarea
                 value={meetingContext}
                 onChange={(e) => setMeetingContext(e.target.value)}
-                placeholder={PURPOSE_OPTIONS.find((p) => p.key === purpose)?.placeholder}
+                placeholder="Optional: describe your meeting or what you need to know"
                 rows={2}
                 maxLength={1000}
                 className="w-full resize-none rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] placeholder:text-[var(--text-soft)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
@@ -346,6 +337,7 @@ export default function ResearchPage() {
               )}
             </div>
 
+            {/* Submit */}
             <button
               type="submit"
               disabled={!query.trim()}
@@ -357,6 +349,7 @@ export default function ResearchPage() {
         </div>
       )}
 
+      {/* Loading State */}
       {loading && (
         <div className="flex min-h-[55vh] flex-col items-center justify-center gap-6">
           <div className="relative">
@@ -390,6 +383,7 @@ export default function ResearchPage() {
         </div>
       )}
 
+      {/* Error State */}
       {error && !loading && (
         <div className="flex min-h-[40vh] flex-col items-center justify-center gap-4 text-center">
           <AlertCircle className="h-10 w-10 text-accent-coral" />
@@ -406,6 +400,7 @@ export default function ResearchPage() {
         </div>
       )}
 
+      {/* Results */}
       {dossier && !loading && !error && (
         <DossierResults
           dossier={dossier}

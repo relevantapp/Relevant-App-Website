@@ -498,7 +498,7 @@ button:focus-visible, input:focus-visible, a:focus-visible {
 .hero-actions {
   display: flex;
   gap: 12px;
-  margin-bottom: 48px;
+  margin-bottom: 20px;
 }
 
 /* Hero info cards */
@@ -2350,73 +2350,195 @@ button:focus-visible, input:focus-visible, a:focus-visible {
    HERO MOBILE INLINE WAITLIST
    ═══════════════════════════════════════════════════════════════════ */
 
-.hero-mobile-waitlist {
-  display: none;
+.hero-waitlist-inline {
   width: 100%;
-  max-width: 400px;
-  margin-top: 24px;
-}
-
-.hero-mobile-waitlist-row {
+  max-width: 460px;
+  margin-top: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  align-items: center;
+  gap: 8px;
 }
 
-/* Sticky mobile CTA bar */
-.mobile-sticky-cta {
+.hero-waitlist-label {
+  font-size: 0.78rem;
+  color: var(--text-soft);
+  text-align: center;
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+.hero-waitlist-row {
+  display: flex;
+  gap: 0;
+  width: 100%;
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  overflow: hidden;
+  transition: border-color var(--motion-fast) var(--ease-out), box-shadow var(--motion-fast) var(--ease-out);
+}
+
+.hero-waitlist-row:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(47, 107, 255, 0.08);
+}
+
+.hero-waitlist-row .waitlist-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  border-radius: 0;
+  min-height: 42px;
+  padding: 0 0 0 18px;
+  font-size: 0.88rem;
+  color: var(--text);
+}
+
+.hero-waitlist-row .waitlist-input:focus {
+  border-color: transparent;
+  outline: none;
+  box-shadow: none;
+}
+
+.hero-waitlist-row .waitlist-submit {
+  flex-shrink: 0;
+  white-space: nowrap;
+  border-radius: 9999px;
+  min-height: 34px;
+  margin: 4px 4px 4px 0;
+  padding: 0 18px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background var(--motion-fast) var(--ease-out);
+}
+
+.hero-waitlist-row .waitlist-submit:hover {
+  background: #4F83FF;
+}
+
+.hero-waitlist-inline .waitlist-msg {
+  margin-top: 4px;
+  font-size: 0.78rem;
+}
+
+/* Nav waitlist button */
+.nav-button--waitlist {
+  background: transparent !important;
+  border: 1px solid var(--border-strong) !important;
+  color: var(--text-muted) !important;
+  font-weight: 500 !important;
+  font-size: 0.82rem !important;
+  padding: 7px 14px !important;
+  border-radius: 9999px !important;
+  transition: border-color var(--motion-fast) var(--ease-out), color var(--motion-fast) var(--ease-out);
+}
+.nav-button--waitlist:hover {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+
+/* Floating mobile island */
+.mobile-floating-island {
   display: none;
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(calc(100% + 40px));
   z-index: 99;
-  padding: 12px 16px;
-  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-  background: rgba(32, 33, 36, 0.92);
+  padding: 6px;
+  background: rgba(32, 33, 36, 0.94);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border-top: 1px solid var(--border);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
   opacity: 0;
   pointer-events: none;
-  transform: translateY(calc(100% + env(safe-area-inset-bottom, 0px)));
   transition: opacity var(--motion-standard) var(--ease-out), transform var(--motion-standard) var(--ease-out);
+  flex-direction: row;
+  align-items: center;
+  gap: 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-[data-theme="light"] .mobile-sticky-cta {
-  background: rgba(255, 255, 255, 0.92);
+[data-theme="light"] .mobile-floating-island {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-.mobile-sticky-cta.is-visible {
+.mobile-floating-island.is-visible {
   opacity: 1;
   pointer-events: auto;
-  transform: translateY(0);
+  transform: translateX(-50%) translateY(0);
 }
 
-.mobile-sticky-cta-btn {
+.mobile-island-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  min-height: 48px;
-  border-radius: 9999px;
-  background: var(--accent);
-  color: #FFFFFF;
+  padding: 12px 20px;
+  border-radius: 14px;
   font-family: var(--font-sans), sans-serif;
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   font-weight: 600;
   letter-spacing: -0.01em;
+  white-space: nowrap;
+  transition: background var(--motion-fast) var(--ease-out), transform var(--motion-fast) var(--ease-out);
 }
 
-.mobile-sticky-cta-btn:active {
+.mobile-island-btn--primary {
+  background: var(--accent);
+  color: #FFFFFF;
+}
+
+.mobile-island-btn--primary:active {
   background: #4F83FF;
-  transform: scale(0.98);
+  transform: scale(0.97);
+}
+
+.mobile-island-btn--secondary {
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.mobile-island-btn--secondary:active {
+  color: var(--text);
+}
+
+[data-theme="light"] .mobile-island-btn--secondary {
+  color: var(--text-soft);
+}
+
+.mobile-island-divider {
+  width: 1px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.12);
+  flex-shrink: 0;
+}
+
+[data-theme="light"] .mobile-island-divider {
+  background: rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 880px) {
-  /* Hero: show CTA buttons, hide waitlist form (CTA section has the form) */
-  .hero-mobile-waitlist {
-    display: none;
+  .mobile-floating-island {
+    display: flex;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (max-width: 880px) {
+  /* Hero: show CTA buttons */
+  .hero-waitlist-inline {
+    max-width: 100%;
+    margin-top: 8px;
   }
   .hero-actions {
     display: flex;
@@ -2432,8 +2554,8 @@ button:focus-visible, input:focus-visible, a:focus-visible {
   .hero-cards {
     display: none;
   }
-  .mobile-sticky-cta {
-    display: block;
+  .nav-button--waitlist {
+    display: none;
   }
   .site-nav-inner {
     height: auto;
@@ -2550,8 +2672,8 @@ button:focus-visible, input:focus-visible, a:focus-visible {
   .access-copy { margin-bottom: 24px; }
   .access-copy h2 { font-size: 1.35rem; }
   .waitlist-card { padding: 18px; border-radius: 14px; }
-  .waitlist-input { min-height: 48px; font-size: 1rem; padding: 0 16px; }
-  .waitlist-submit { min-height: 48px; font-size: 0.92rem; }
+  .waitlist-card .waitlist-input { min-height: 48px; font-size: 1rem; padding: 0 16px; }
+  .waitlist-card .waitlist-submit { min-height: 48px; font-size: 0.92rem; }
   .section-cta { padding: 48px 0; }
   .site-nav-inner { gap: 6px; }
   .site-nav-right { gap: 6px; }

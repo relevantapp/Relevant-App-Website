@@ -37,6 +37,7 @@ export default function Home() {
     )
     document.querySelectorAll('.reveal-on-scroll').forEach((el) => observer.observe(el))
     // Also observe stagger containers to trigger child reveals
+    const staggerObservers: IntersectionObserver[] = []
     document.querySelectorAll('.reveal-stagger').forEach((container) => {
       const staggerObserver = new IntersectionObserver(
         (entries) => {
@@ -51,8 +52,12 @@ export default function Home() {
         { threshold: 0.1 }
       )
       staggerObserver.observe(container)
+      staggerObservers.push(staggerObserver)
     })
-    return () => observer.disconnect()
+    return () => {
+      observer.disconnect()
+      staggerObservers.forEach((o) => o.disconnect())
+    }
   }, [])
 
   useEffect(() => {
@@ -136,8 +141,9 @@ export default function Home() {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
               )}
             </button>
-            <a href="#access" className="nav-button">Start free</a>
-            <a href="/login" className="nav-button nav-button--secondary" style={{ background: 'transparent', border: '1px solid var(--border-strong)', color: 'var(--text)' }}>Sign in</a>
+            <a href="#access" className="nav-button nav-button--waitlist">Get the app</a>
+            <a href="/login" className="nav-button nav-button--secondary" style={{ background: 'var(--surface)', border: '1px solid var(--border-strong)', color: 'var(--text)', fontWeight: 600 }}>Sign in</a>
+            <a href="/signup" className="nav-button">Try the web app</a>
           </div>
         </div>
       </nav>
@@ -152,16 +158,15 @@ export default function Home() {
               We scan thousands of articles. You get one alert when something matters.
             </p>
             <div className="hero-actions">
-              <a href="/signup" className="btn-primary btn-pill">Try it free</a>
+              <a href="/signup" className="btn-primary btn-pill">Try the web app</a>
               <a href="#signal" className="btn-secondary btn-pill">See how</a>
             </div>
 
-            {/* Mobile inline waitlist — visible only on small screens */}
-            <form onSubmit={handleWaitlist} className="hero-mobile-waitlist">
-              <label className="sr-only" htmlFor="waitlist-email-mobile">Email</label>
-              <div className="hero-mobile-waitlist-row">
+            {/* Inline waitlist — always visible */}
+            <form onSubmit={handleWaitlist} className="hero-waitlist-inline">
+              <p className="hero-waitlist-label">Want the mobile app? Get notified when it launches.</p>
+              <div className="hero-waitlist-row">
                 <input
-                  id="waitlist-email-mobile"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -169,17 +174,17 @@ export default function Home() {
                   required
                   disabled={waitlistStatus === 'loading'}
                   className="waitlist-input"
+                  aria-label="Email for mobile app waitlist"
                 />
-                <button type="submit" className="btn-primary waitlist-submit" disabled={waitlistStatus === 'loading'}>
+                <button type="submit" className="waitlist-submit" disabled={waitlistStatus === 'loading'}>
                   {waitlistStatus === 'loading' ? 'Joining...' : 'Notify me'}
                 </button>
               </div>
-              {waitlistMessage ? (
+              {waitlistMessage && (
                 <p className={`waitlist-msg ${waitlistStatus === 'success' ? 'msg-success' : 'msg-error'}`}>{waitlistMessage}</p>
-              ) : (
-                <p className="waitlist-hint" style={{ textAlign: 'center' }}>Web app is live. Mobile coming soon.</p>
               )}
             </form>
+
             <div className="hero-cards reveal-stagger">
               <div className="hero-info-card reveal-on-scroll">
                 <span className="hero-info-kicker">THE OLD WAY</span>
@@ -278,9 +283,11 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* Sticky mobile CTA bar */}
-      <div className={`mobile-sticky-cta${showMobileCta ? ' is-visible' : ''}`}>
-        <a href="/signup" className="mobile-sticky-cta-btn">Start free</a>
+      {/* Floating mobile island */}
+      <div className={`mobile-floating-island${showMobileCta ? ' is-visible' : ''}`}>
+        <a href="/signup" className="mobile-island-btn mobile-island-btn--primary">Try the web app</a>
+        <div className="mobile-island-divider" />
+        <a href="#access" className="mobile-island-btn mobile-island-btn--secondary">Get the app</a>
       </div>
     </>
   )

@@ -16,8 +16,25 @@ type CompanyRow = { id: string; name: string; slug: string }
 /* ─── Constants ─── */
 const COUNTRIES = [
   { code: 'US', name: 'United States' },
+  { code: 'GB', name: 'United Kingdom' },
   { code: 'CA', name: 'Canada' },
+  { code: 'AU', name: 'Australia' },
+  { code: 'DE', name: 'Germany' },
+  { code: 'FR', name: 'France' },
   { code: 'IN', name: 'India' },
+  { code: 'SG', name: 'Singapore' },
+  { code: 'AE', name: 'United Arab Emirates' },
+  { code: 'JP', name: 'Japan' },
+  { code: 'BR', name: 'Brazil' },
+  { code: 'NL', name: 'Netherlands' },
+  { code: 'IL', name: 'Israel' },
+  { code: 'SE', name: 'Sweden' },
+  { code: 'CH', name: 'Switzerland' },
+  { code: 'KR', name: 'South Korea' },
+  { code: 'ES', name: 'Spain' },
+  { code: 'IT', name: 'Italy' },
+  { code: 'MX', name: 'Mexico' },
+  { code: 'IE', name: 'Ireland' },
 ]
 
 const TOTAL_STEPS = 5
@@ -299,12 +316,18 @@ export default function OnboardingPage() {
 
       if (!res.ok) {
         // Fallback to non-streaming
-        const fallbackRes = await supabase.functions.invoke('pro-passage-preview', {
-          headers: { Authorization: `Bearer ${token}` },
-          body,
-        })
-        if (fallbackRes.data?.passage) {
-          setAiPassage(fallbackRes.data.passage)
+        try {
+          const fallbackRes = await supabase.functions.invoke('pro-passage-preview', {
+            headers: { Authorization: `Bearer ${token}` },
+            body,
+          })
+          if (fallbackRes.data?.passage) {
+            setAiPassage(fallbackRes.data.passage)
+          } else {
+            setPassageStatus('Preview unavailable — you can finish setup and your feed will be ready shortly.')
+          }
+        } catch {
+          setPassageStatus('Preview unavailable — you can finish setup and your feed will be ready shortly.')
         }
         setPassageLoading(false)
         return
@@ -337,7 +360,9 @@ export default function OnboardingPage() {
         }
       }
     } catch {
-      // Silently fail — user can still proceed
+      // Edge function unavailable — show a helpful fallback so user can still proceed
+      setAiPassage('')
+      setPassageStatus('Preview unavailable right now — you can finish setup and your feed will be ready shortly.')
     } finally {
       if (!controller.signal.aborted) setPassageLoading(false)
     }

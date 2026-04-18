@@ -346,12 +346,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const token = await getValidAccessToken(180)
     if (!token) throw new Error('Authentication required to update profile.')
 
-    const { data, error: invokeError } = await supabase.functions.invoke('pro-profile-update', {
-      body: { preferences },
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    let data: Record<string, unknown> | null = null
+    let invokeError: Error | null = null
 
-    if (invokeError) throw new Error(invokeError.message || 'Could not update profile.')
+    try {
+      const result = await supabase.functions.invoke('pro-profile-update', {
+        body: { preferences },
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      data = result.data
+      invokeError = result.error
+    } catch (networkErr) {
+      throw new Error("Couldn't reach Relevant. Check your connection and try again.")
+    }
+
+    if (invokeError) {
+      const msg = (invokeError.message || '').toLowerCase()
+      if (msg.includes('fetch') || msg.includes('network') || msg.includes('failed to send'))
+        throw new Error("Couldn't reach Relevant. Check your connection and try again.")
+      if (msg.includes('rate limit') || msg.includes('too many'))
+        throw new Error('Too many updates. Please wait a few minutes and try again.')
+      if (msg.includes('non-2xx') || msg.includes('edge function') || msg.includes('boot') || msg.includes('worker'))
+        throw new Error("We're having a temporary issue saving your profile. Please try again in a moment.")
+      throw new Error('Could not update profile. Please try again.')
+    }
 
     const typed = data as { success?: boolean; message?: string; profile_refresh?: { status?: string } | null } | null
     if (typed?.success === false) throw new Error(typed.message || 'Could not update profile.')
