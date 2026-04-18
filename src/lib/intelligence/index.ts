@@ -42,6 +42,8 @@ export async function generateIntelligenceBrief(
   request: IntelligenceRequest
 ): Promise<IntelligenceBrief> {
   const startTime = Date.now()
+
+  try {
   resetSourceCounter()
 
   const plan = buildResearchPlan(request)
@@ -235,6 +237,44 @@ export async function generateIntelligenceBrief(
       totalMs,
       sourceCount: dedupedSources.length,
       cached: false,
+      synthesisModel: synthesis.synthesisModel,
     },
+  }
+
+  } catch (err) {
+    console.error('[intelligence] Orchestrator crash:', err)
+    const totalMs = Date.now() - startTime
+    return {
+      id: generateId(),
+      mode: 'prep',
+      generatedAt: new Date().toISOString(),
+      request,
+      snapshot: null,
+      attendeeProfiles: [],
+      summary: {
+        headline: 'Unable to generate full analysis',
+        bottomLine: 'Something went wrong during research. Try again — intermittent provider issues usually resolve quickly.',
+        confidence: 'low',
+      },
+      sections: {
+        whatJustHappened: [],
+        talkingPoints: [],
+        landmines: [],
+        questionsToAsk: [],
+        competitorContext: [],
+      },
+      sources: [],
+      status: {
+        degraded: true,
+        reasons: [String(err instanceof Error ? err.message : err)],
+        exaSearchMs: 0,
+        tavilySearchMs: 0,
+        synthesisMs: 0,
+        totalMs,
+        sourceCount: 0,
+        cached: false,
+        synthesisModel: null,
+      },
+    }
   }
 }

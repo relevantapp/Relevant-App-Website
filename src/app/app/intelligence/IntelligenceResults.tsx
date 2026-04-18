@@ -1,3 +1,4 @@
+/* NEW INTELLIGENCE RESULTS — PHASE 4 REDESIGN */
 'use client'
 
 import { useState, useCallback } from 'react'
@@ -8,13 +9,12 @@ import {
   MessageSquare,
   HelpCircle,
   Swords,
-  Clock,
-  ChevronDown,
   Copy,
   Check,
   Shield,
   ShieldAlert,
   ShieldCheck,
+  Newspaper,
 } from 'lucide-react'
 import type { IntelligenceBrief, BriefBullet, CompanySnapshot, AttendeeProfile } from './types'
 import IntelligenceSources from './IntelligenceSources'
@@ -24,91 +24,65 @@ interface IntelligenceResultsProps {
   onNewSearch: () => void
 }
 
-/* ── Collapsible Section ─────────────────────────────────────── */
+/* ── Bento Section Card ──────────────────────────────────────── */
 
-function Section({
+type SectionVariant = 'news' | 'talking' | 'landmines' | 'questions' | 'competitors'
+
+const VARIANT_BORDER: Record<SectionVariant, string> = {
+  news: 'border-[var(--surface-strong)]',
+  talking: 'border-[var(--accent-teal)]/20',
+  landmines: 'border-[var(--accent-coral)]/20',
+  questions: 'border-[var(--accent-violet)]/20',
+  competitors: 'border-[var(--accent-amber)]/20',
+}
+
+function BentoSection({
   title,
   icon,
-  children,
-  defaultOpen = true,
-  count,
+  bullets,
+  variant,
+  onSourceClick,
 }: {
   title: string
   icon: React.ReactNode
-  children: React.ReactNode
-  defaultOpen?: boolean
-  count?: number
-}) {
-  const [open, setOpen] = useState(defaultOpen)
-  if (count === 0) return null
-
-  return (
-    <div className="border-b border-[var(--surface-strong)] pb-4">
-      <button
-        onClick={() => setOpen(!open)}
-        className="mb-2 flex w-full items-center gap-2 text-left text-sm font-semibold text-[var(--text)]"
-      >
-        {icon}
-        {title}
-        {count !== undefined && (
-          <span className="rounded-full bg-[var(--surface-strong)] px-1.5 py-0.5 text-xs text-[var(--text-muted)]">
-            {count}
-          </span>
-        )}
-        <ChevronDown
-          className={`ml-auto h-4 w-4 text-[var(--text-soft)] transition-transform ${
-            !open ? '-rotate-90' : ''
-          }`}
-        />
-      </button>
-      {open && <div className="space-y-2">{children}</div>}
-    </div>
-  )
-}
-
-/* ── Bullet Item ─────────────────────────────────────────────── */
-
-function BulletItem({
-  bullet,
-  onSourceClick,
-  variant = 'default',
-}: {
-  bullet: BriefBullet
+  bullets: BriefBullet[]
+  variant: SectionVariant
   onSourceClick: (id: string) => void
-  variant?: 'default' | 'warning' | 'quote'
 }) {
-  const borderColor =
-    variant === 'warning'
-      ? 'border-l-[var(--accent-coral)]'
-      : variant === 'quote'
-        ? 'border-l-[var(--accent-teal)]'
-        : 'border-l-[var(--accent)]/40'
+  if (bullets.length === 0) return null
 
   return (
-    <div className={`border-l-2 ${borderColor} pl-3 py-1`}>
-      <p className="text-sm text-[var(--text)]">
-        {variant === 'quote' ? `"${bullet.text}"` : bullet.text}
-      </p>
-      <div className="mt-1 flex items-center gap-2">
-        <span
-          className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${
-            bullet.tag === 'fact'
-              ? 'bg-[var(--accent-teal)]/15 text-[var(--accent-teal)]'
-              : 'bg-[var(--accent-violet)]/15 text-[var(--accent-violet)]'
-          }`}
-        >
-          {bullet.tag}
-        </span>
-        {bullet.sourceIds.map((id) => (
-          <button
-            key={id}
-            onClick={() => onSourceClick(id)}
-            className="rounded bg-[var(--surface-strong)] px-1.5 py-0.5 text-[10px] text-[var(--text-muted)] hover:text-[var(--accent)]"
-          >
-            [{id}]
-          </button>
+    <div className={`rounded-xl border ${VARIANT_BORDER[variant]} bg-[var(--surface)] p-5`}>
+      <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-[var(--text)]">
+        {icon} {title}
+      </h3>
+      <ul className="space-y-3">
+        {bullets.map((bullet, i) => (
+          <li key={i} className="text-sm text-[var(--text)]">
+            <p>{bullet.text}</p>
+            <div className="mt-1 flex flex-wrap items-center gap-1.5">
+              {bullet.sourceIds.map((id) => (
+                <button
+                  key={id}
+                  onClick={() => onSourceClick(id)}
+                  className="rounded bg-[var(--surface-strong)] px-1.5 py-0.5 text-[10px] text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors"
+                >
+                  [{id}]
+                </button>
+              ))}
+              <span
+                className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${
+                  bullet.tag === 'fact'
+                    ? 'bg-[var(--accent-teal)]/15 text-[var(--accent-teal)]'
+                    : 'bg-[var(--accent-violet)]/15 text-[var(--accent-violet)]'
+                }`}
+              >
+                {bullet.tag}
+              </span>
+            </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   )
 }
@@ -117,83 +91,70 @@ function BulletItem({
 
 function SnapshotCard({ snapshot }: { snapshot: CompanySnapshot }) {
   const facts = [
-    snapshot.industry && { label: 'Industry', value: snapshot.industry },
-    snapshot.headquarters && { label: 'HQ', value: snapshot.headquarters },
-    snapshot.employeeCount && { label: 'Employees', value: snapshot.employeeCount },
-    snapshot.fundingStage && { label: 'Funding', value: snapshot.fundingStage },
-    snapshot.lastFundingAmount && { label: 'Last Round', value: snapshot.lastFundingAmount },
-    snapshot.ceo && { label: 'CEO', value: snapshot.ceo },
-  ].filter(Boolean) as Array<{ label: string; value: string }>
+    snapshot.industry && ['Industry', snapshot.industry],
+    snapshot.headquarters && ['HQ', snapshot.headquarters],
+    snapshot.employeeCount && ['Size', snapshot.employeeCount],
+    snapshot.fundingStage && ['Funding', snapshot.fundingStage],
+    snapshot.lastFundingAmount && ['Last Round', snapshot.lastFundingAmount],
+    snapshot.ceo && ['CEO', snapshot.ceo],
+  ].filter(Boolean) as Array<[string, string]>
 
   return (
-    <div className="rounded-xl border border-[var(--surface-strong)] bg-[var(--surface)] p-4">
-      <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--accent)]/15 text-[var(--accent)]">
-          <Building2 className="h-5 w-5" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <h3 className="font-semibold text-[var(--text)]">{snapshot.name}</h3>
-          <p className="mt-0.5 text-sm text-[var(--text-muted)]">{snapshot.description}</p>
-        </div>
+    <div className="rounded-xl border border-[var(--surface-strong)] bg-[var(--surface)] p-5">
+      <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-[var(--text)]">
+        <Building2 className="h-4 w-4" /> Company Snapshot
+      </h3>
+      <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+        {facts.map(([label, value]) => (
+          <div key={label}>
+            <span className="text-xs text-[var(--text-soft)]">{label}</span>
+            <p className="text-sm font-medium text-[var(--text)]">{value}</p>
+          </div>
+        ))}
       </div>
-      {facts.length > 0 && (
-        <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5 sm:grid-cols-3">
-          {facts.map((f) => (
-            <div key={f.label}>
-              <span className="text-xs text-[var(--text-soft)]">{f.label}</span>
-              <p className="text-sm font-medium text-[var(--text)]">{f.value}</p>
-            </div>
-          ))}
-        </div>
-      )}
       {snapshot.recentMilestone && (
-        <p className="mt-3 rounded-lg bg-[var(--accent-amber)]/10 px-3 py-2 text-sm text-[var(--accent-amber)]">
-          🏆 {snapshot.recentMilestone}
-        </p>
+        <div className="mt-3 rounded-lg bg-[var(--accent-amber)]/10 px-3 py-2 text-sm text-[var(--accent-amber)]">
+          <span className="text-xs font-medium opacity-70">Recent</span>
+          <p>{snapshot.recentMilestone}</p>
+        </div>
       )}
     </div>
   )
 }
 
-/* ── Attendee Chips ──────────────────────────────────────────── */
+/* ── People Card ─────────────────────────────────────────────── */
 
-function AttendeeList({ profiles }: { profiles: AttendeeProfile[] }) {
-  const [expanded, setExpanded] = useState<string | null>(null)
+function PeopleCard({ profiles }: { profiles: AttendeeProfile[] }) {
   if (!profiles.length) return null
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-center gap-2 text-sm font-semibold text-[var(--text)]">
-        <Users className="h-4 w-4" /> Attendees
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {profiles.map((p) => (
-          <div key={p.name}>
-            <button
-              onClick={() => setExpanded(expanded === p.name ? null : p.name)}
-              className={`rounded-full px-3 py-1.5 text-sm transition-colors ${
-                expanded === p.name
-                  ? 'bg-[var(--accent)] text-white'
-                  : 'bg-[var(--surface)] text-[var(--text-muted)] hover:bg-[var(--surface-strong)]'
-              }`}
-            >
-              {p.name}
-              {p.title && <span className="ml-1 opacity-70">· {p.title}</span>}
-            </button>
-            {expanded === p.name && p.background && (
-              <div className="mt-1 rounded-lg bg-[var(--surface)] p-3 text-sm text-[var(--text-muted)]">
-                {p.background}
-                {p.linkedinUrl && (
-                  <a
-                    href={p.linkedinUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="ml-2 text-[var(--accent)] hover:underline"
-                  >
-                    LinkedIn →
-                  </a>
-                )}
+    <div className="rounded-xl border border-[var(--surface-strong)] bg-[var(--surface)] p-5">
+      <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-[var(--text)]">
+        <Users className="h-4 w-4" /> Key People
+      </h3>
+      <div className="space-y-3">
+        {profiles.map((person) => (
+          <div key={person.name} className="rounded-lg border border-[var(--surface-strong)] p-3">
+            <div className="font-medium text-sm text-[var(--text)]">{person.name}</div>
+            {(person.title || person.company) && (
+              <div className="text-xs text-[var(--text-muted)]">
+                {[person.title, person.company].filter(Boolean).join(' · ')}
               </div>
+            )}
+            {person.background && (
+              <p className="mt-1 text-xs text-[var(--text-soft)] line-clamp-2">
+                {person.background}
+              </p>
+            )}
+            {person.linkedinUrl && (
+              <a
+                href={person.linkedinUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-1 inline-block text-xs text-[var(--accent)] hover:underline"
+              >
+                LinkedIn ↗
+              </a>
             )}
           </div>
         ))}
@@ -219,48 +180,73 @@ function ConfidenceBadge({ level }: { level: 'high' | 'medium' | 'low' }) {
   )
 }
 
+/* ── Copy brief as markdown ──────────────────────────────────── */
+
+function copyBriefAsMarkdown(brief: IntelligenceBrief): Promise<void> {
+  const lines: string[] = []
+  lines.push(`# ${brief.summary.headline}`)
+  lines.push('')
+  lines.push(`> ${brief.summary.bottomLine}`)
+  lines.push('')
+
+  if (brief.snapshot) {
+    lines.push('## Company Snapshot')
+    if (brief.snapshot.industry) lines.push(`- **Industry:** ${brief.snapshot.industry}`)
+    if (brief.snapshot.headquarters) lines.push(`- **HQ:** ${brief.snapshot.headquarters}`)
+    if (brief.snapshot.employeeCount) lines.push(`- **Size:** ${brief.snapshot.employeeCount}`)
+    if (brief.snapshot.fundingStage) lines.push(`- **Funding:** ${brief.snapshot.fundingStage}`)
+    if (brief.snapshot.ceo) lines.push(`- **CEO:** ${brief.snapshot.ceo}`)
+    lines.push('')
+  }
+
+  const sectionMap = [
+    ['What Just Happened', brief.sections.whatJustHappened],
+    ['Talking Points', brief.sections.talkingPoints],
+    ['Landmines', brief.sections.landmines],
+    ['Questions to Ask', brief.sections.questionsToAsk],
+    ['Competitor Context', brief.sections.competitorContext],
+  ] as const
+
+  for (const [title, bullets] of sectionMap) {
+    if (bullets.length === 0) continue
+    lines.push(`## ${title}`)
+    for (const b of bullets) {
+      lines.push(`- ${b.text} [${b.sourceIds.join(', ')}] (${b.tag})`)
+    }
+    lines.push('')
+  }
+
+  lines.push('## Sources')
+  for (const s of brief.sources) {
+    lines.push(`- [${s.id}] ${s.title} — ${s.domain} (${s.url})`)
+  }
+
+  return navigator.clipboard.writeText(lines.join('\n'))
+}
+
 /* ── Main Results Component ──────────────────────────────────── */
 
 export default function IntelligenceResults({ brief, onNewSearch }: IntelligenceResultsProps) {
   const [copied, setCopied] = useState(false)
-  const [highlightSource, setHighlightSource] = useState<string | null>(null)
 
   const scrollToSource = useCallback((id: string) => {
-    setHighlightSource(id)
     const el = document.getElementById(`source-${id}`)
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    setTimeout(() => setHighlightSource(null), 3000)
+    if (!el) return
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
+    el.classList.add('intel-source-highlighted')
+    setTimeout(() => el.classList.remove('intel-source-highlighted'), 2000)
   }, [])
 
-  const copyBrief = useCallback(() => {
-    const s = brief.summary
-    const lines: string[] = [
-      `# ${s.headline}`,
-      '',
-      s.bottomLine,
-      '',
-    ]
-
-    const addSection = (title: string, bullets: BriefBullet[]) => {
-      if (!bullets.length) return
-      lines.push(`## ${title}`)
-      bullets.forEach((b) => lines.push(`- ${b.text}`))
-      lines.push('')
-    }
-
-    addSection('What Just Happened', brief.sections.whatJustHappened)
-    addSection('Talking Points', brief.sections.talkingPoints)
-    addSection('Landmines', brief.sections.landmines)
-    addSection('Questions to Ask', brief.sections.questionsToAsk)
-    addSection('Competitor Context', brief.sections.competitorContext)
-
-    lines.push('---', `*Generated by Relevant Intelligence · ${new Date(brief.generatedAt).toLocaleDateString()}*`)
-    navigator.clipboard.writeText(lines.join('\n'))
+  const handleCopy = useCallback(() => {
+    copyBriefAsMarkdown(brief)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }, [brief])
 
   const { sections } = brief
+  const hasSnapshot = !!brief.snapshot
+  const hasPeople = brief.attendeeProfiles.length > 0
+  const hasRow1 = hasSnapshot || hasPeople
 
   return (
     <div className="mx-auto w-full max-w-4xl">
@@ -275,7 +261,7 @@ export default function IntelligenceResults({ brief, onNewSearch }: Intelligence
         <div className="flex items-center gap-2">
           <ConfidenceBadge level={brief.summary.confidence} />
           <button
-            onClick={copyBrief}
+            onClick={handleCopy}
             className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--surface)] px-3 py-1.5 text-sm text-[var(--text-muted)] hover:bg-[var(--surface-strong)]"
           >
             {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
@@ -284,89 +270,90 @@ export default function IntelligenceResults({ brief, onNewSearch }: Intelligence
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
-        {/* Main column */}
-        <div className="space-y-5">
-          {/* Snapshot */}
-          {brief.snapshot && <SnapshotCard snapshot={brief.snapshot} />}
+      {/* Hero: Headline + Bottom Line */}
+      <div className="rounded-xl border border-[var(--accent)]/15 bg-gradient-to-br from-[var(--accent)]/[0.08] to-[var(--accent-teal)]/[0.06] p-6">
+        <h2 className="text-lg font-bold text-[var(--text)]">{brief.summary.headline}</h2>
+        <p className="mt-2 text-sm text-[var(--text-muted)] leading-relaxed">{brief.summary.bottomLine}</p>
+      </div>
 
-          {/* Attendees */}
-          <AttendeeList profiles={brief.attendeeProfiles} />
+      {/* Bento Grid */}
+      <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+        {/* Row 1: Snapshot + People */}
+        {hasSnapshot && <SnapshotCard snapshot={brief.snapshot!} />}
+        {hasPeople && <PeopleCard profiles={brief.attendeeProfiles} />}
+        {/* If only one of snapshot/people exists, it naturally takes one column */}
 
-          {/* Bottom line */}
-          <div className="rounded-xl border border-[var(--accent)]/30 bg-[var(--accent)]/5 p-4">
-            <h2 className="text-base font-semibold text-[var(--text)]">{brief.summary.headline}</h2>
-            <p className="mt-1.5 text-sm text-[var(--text-muted)]">{brief.summary.bottomLine}</p>
-          </div>
+        {/* Row 2: What Happened + Talking Points */}
+        <BentoSection
+          title="What Just Happened"
+          icon={<Newspaper className="h-4 w-4 text-[var(--accent-teal)]" />}
+          bullets={sections.whatJustHappened}
+          variant="news"
+          onSourceClick={scrollToSource}
+        />
+        <BentoSection
+          title="Talking Points"
+          icon={<MessageSquare className="h-4 w-4 text-[var(--accent-teal)]" />}
+          bullets={sections.talkingPoints}
+          variant="talking"
+          onSourceClick={scrollToSource}
+        />
 
-          {/* Sections */}
-          <Section
-            title="What Just Happened"
-            icon={<Clock className="h-4 w-4 text-[var(--accent-teal)]" />}
-            count={sections.whatJustHappened.length}
-          >
-            {sections.whatJustHappened.map((b, i) => (
-              <BulletItem key={i} bullet={b} onSourceClick={scrollToSource} />
-            ))}
-          </Section>
+        {/* Row 3: Landmines + Questions */}
+        <BentoSection
+          title="Landmines"
+          icon={<AlertTriangle className="h-4 w-4 text-[var(--accent-coral)]" />}
+          bullets={sections.landmines}
+          variant="landmines"
+          onSourceClick={scrollToSource}
+        />
+        <BentoSection
+          title="Questions to Ask"
+          icon={<HelpCircle className="h-4 w-4 text-[var(--accent-violet)]" />}
+          bullets={sections.questionsToAsk}
+          variant="questions"
+          onSourceClick={scrollToSource}
+        />
+      </div>
 
-          <Section
-            title="Talking Points"
-            icon={<MessageSquare className="h-4 w-4 text-[var(--accent)]" />}
-            count={sections.talkingPoints.length}
-          >
-            {sections.talkingPoints.map((b, i) => (
-              <BulletItem key={i} bullet={b} onSourceClick={scrollToSource} />
-            ))}
-          </Section>
-
-          <Section
-            title="Landmines"
-            icon={<AlertTriangle className="h-4 w-4 text-[var(--accent-coral)]" />}
-            count={sections.landmines.length}
-          >
-            {sections.landmines.map((b, i) => (
-              <BulletItem key={i} bullet={b} onSourceClick={scrollToSource} variant="warning" />
-            ))}
-          </Section>
-
-          <Section
-            title="Questions to Ask"
-            icon={<HelpCircle className="h-4 w-4 text-[var(--accent-teal)]" />}
-            count={sections.questionsToAsk.length}
-          >
-            {sections.questionsToAsk.map((b, i) => (
-              <BulletItem key={i} bullet={b} onSourceClick={scrollToSource} variant="quote" />
-            ))}
-          </Section>
-
-          {sections.competitorContext.length > 0 && (
-            <Section
-              title="Competitor Context"
-              icon={<Swords className="h-4 w-4 text-[var(--accent-amber)]" />}
-              count={sections.competitorContext.length}
-            >
-              {sections.competitorContext.map((b, i) => (
-                <BulletItem key={i} bullet={b} onSourceClick={scrollToSource} />
-              ))}
-            </Section>
-          )}
+      {/* Competitors — full width */}
+      {sections.competitorContext.length > 0 && (
+        <div className="mt-4">
+          <BentoSection
+            title="Competitor Context"
+            icon={<Swords className="h-4 w-4 text-[var(--accent-amber)]" />}
+            bullets={sections.competitorContext}
+            variant="competitors"
+            onSourceClick={scrollToSource}
+          />
         </div>
+      )}
 
-        {/* Sidebar — Sources */}
-        <div className="lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
-          <IntelligenceSources sources={brief.sources} highlightId={highlightSource} />
-          {/* Timing */}
-          <div className="mt-4 space-y-1 text-xs text-[var(--text-soft)]">
-            <p>Generated in {(brief.status.totalMs / 1000).toFixed(1)}s</p>
-            <p>{brief.status.sourceCount} sources</p>
-            {brief.status.degraded && (
-              <p className="text-[var(--accent-coral)]">
-                ⚠ {brief.status.reasons.join(', ')}
-              </p>
-            )}
-          </div>
-        </div>
+      {/* Sources — horizontal strip */}
+      <div className="mt-6">
+        <IntelligenceSources sources={brief.sources} />
+      </div>
+
+      {/* Status bar */}
+      <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-[var(--text-soft)]">
+        <span>⏱ {(brief.status.totalMs / 1000).toFixed(1)}s</span>
+        <span>·</span>
+        <span>{brief.status.sourceCount} sources</span>
+        <span>·</span>
+        <span className={brief.status.exaSearchMs > 0 ? 'text-[var(--accent-teal)]' : 'text-[var(--accent-coral)]'}>
+          Exa {brief.status.exaSearchMs > 0 ? '✓' : '✗'}
+        </span>
+        <span className={brief.status.tavilySearchMs > 0 ? 'text-[var(--accent-teal)]' : 'text-[var(--accent-coral)]'}>
+          Tavily {brief.status.tavilySearchMs > 0 ? '✓' : '✗'}
+        </span>
+        <span className={!brief.status.degraded ? 'text-[var(--accent-teal)]' : 'text-[var(--accent-coral)]'}>
+          AI {!brief.status.degraded ? '✓' : '✗'}
+        </span>
+        {brief.status.synthesisModel && (
+          <span className="rounded bg-[var(--surface-strong)] px-1.5 py-0.5 text-[10px]">
+            {brief.status.synthesisModel}
+          </span>
+        )}
       </div>
     </div>
   )

@@ -1,3 +1,29 @@
+/* ── Intelligence skeleton shimmer ──────────────────────────── */
+.intel-skeleton {
+  background: linear-gradient(90deg, var(--surface) 25%, var(--bg) 50%, var(--surface) 75%);
+  background-size: 200% 100%;
+  animation: intel-shimmer 1.5s infinite;
+}
+
+@keyframes intel-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+/* ── Intelligence source highlight ──────────────────────────── */
+.intel-source-card.intel-source-highlighted {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 1px var(--accent);
+}
+/* ── Research type selector responsive grid ────────────────── */
+@media (max-width: 640px) {
+  .research-type-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+.research-type-card:hover {
+  border-color: var(--accent) !important;
+  transform: translateY(-2px);
+}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -2353,20 +2379,22 @@ button:focus-visible, input:focus-visible, a:focus-visible {
 .hero-waitlist-inline {
   width: 100%;
   max-width: 460px;
-  margin-top: 0;
+  margin-top: 12px;
   margin-bottom: 32px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 .hero-waitlist-label {
-  font-size: 0.78rem;
-  color: var(--text-soft);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text);
   text-align: center;
   margin: 0;
-  letter-spacing: 0.01em;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
 }
 
 .hero-waitlist-row {
@@ -3967,6 +3995,8 @@ button:focus-visible, input:focus-visible, a:focus-visible {
     order: 1;
     max-width: 340px;
     max-height: 580px;
+    position: relative;
+    top: auto;
     position: relative;
     top: auto;
   }

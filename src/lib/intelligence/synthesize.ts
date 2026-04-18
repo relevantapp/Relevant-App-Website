@@ -8,9 +8,28 @@ import type {
   BriefBullet,
 } from './types'
 
+const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models'
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions'
-const SYNTHESIS_MODEL = 'anthropic/claude-sonnet-4'
-const SYNTHESIS_TIMEOUT = 30_000
+const SYNTHESIS_TIMEOUT = 45_000
+
+// Gemini primary, OpenRouter fallback — mirrors Relevant app ai-config.ts
+type ModelCandidate = {
+  provider: 'gemini' | 'openrouter'
+  model: string
+}
+
+function getModelCandidates(): ModelCandidate[] {
+  const candidates: ModelCandidate[] = []
+  if (process.env.GEMINI_API_KEY) {
+    candidates.push({ provider: 'gemini', model: 'gemini-2.0-flash' })
+    candidates.push({ provider: 'gemini', model: 'gemini-1.5-flash' })
+  }
+  if (process.env.OPENROUTER_API_KEY) {
+    candidates.push({ provider: 'openrouter', model: 'google/gemini-2.5-flash-lite' })
+    candidates.push({ provider: 'openrouter', model: 'google/gemini-2.0-flash-001' })
+  }
+  return candidates
+}
 
 interface SynthesisInput {
   request: IntelligenceRequest
@@ -28,6 +47,7 @@ interface SynthesisOutput {
   landmines: BriefBullet[]
   questionsToAsk: BriefBullet[]
   competitorContext: BriefBullet[]
+  synthesisModel: string | null
 }
 
 const SYSTEM_PROMPT = `You are a meeting intelligence analyst for a professional preparing for a business meeting.
@@ -113,72 +133,115 @@ function parseBullets(raw: unknown): BriefBullet[] {
 export async function synthesizeBrief(
   input: SynthesisInput
 ): Promise<SynthesisOutput> {
-  const apiKey = process.env.OPENROUTER_API_KEY
-  if (!apiKey) throw new Error('OPENROUTER_API_KEY not configured')
+  const candidates = getModelCandidates()
+  if (candidates.length === 0) throw new Error('No AI provider configured (set GEMINI_API_KEY or OPENROUTER_API_KEY)')
 
-  const controller = new AbortController()
-  const timeout = setTimeout(() => controller.abort(), SYNTHESIS_TIMEOUT)
+  const userPrompt = buildUserPrompt(input)
 
-  try {
-    const res = await fetch(OPENROUTER_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-        'HTTP-Referer': 'https://www.getrelevantapp.com',
-        'X-Title': 'Relevant Intelligence',
-      },
-      body: JSON.stringify({
-        model: SYNTHESIS_MODEL,
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: buildUserPrompt(input) },
-        ],
-        temperature: 0.3,
-        max_tokens: 4000,
-        response_format: { type: 'json_object' },
-      }),
-      signal: controller.signal,
-    })
+  for (const { provider, model } of candidates) {
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), SYNTHESIS_TIMEOUT)
+    try {
+      let content: string | undefined
 
-    clearTimeout(timeout)
+      if (provider === 'gemini') {
+        const res = await fetch(`${GEMINI_URL}/${model}:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: `${SYSTEM_PROMPT}\n\n${userPrompt}` }] }],
+            generationConfig: {
+              temperature: 0.3,
+              maxOutputTokens: 4000,
+              responseMimeType: 'application/json',
+            },
+          }),
+          signal: controller.signal,
+        })
+        clearTimeout(timeout)
+        if (!res.ok) {
+          const errText = await res.text()
+          console.error(`[synthesize] Gemini error: ${res.status}`, errText, 'model:', model)
+          if (res.status === 401 || res.status === 403) continue // bad key, try next
+          continue
+        }
+        const data = await res.json()
+        content = data.candidates?.[0]?.content?.parts?.[0]?.text
+      } else {
+        const res = await fetch(OPENROUTER_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+            'HTTP-Referer': 'https://www.getrelevantapp.com',
+            'X-Title': 'Relevant Intelligence',
+          },
+          body: JSON.stringify({
+            model,
+            messages: [
+              { role: 'system', content: SYSTEM_PROMPT },
+              { role: 'user', content: userPrompt },
+            ],
+            temperature: 0.3,
+            max_tokens: 4000,
+            response_format: { type: 'json_object' },
+          }),
+          signal: controller.signal,
+        })
+        clearTimeout(timeout)
+        if (!res.ok) {
+          const errText = await res.text()
+          console.error(`[synthesize] OpenRouter error: ${res.status}`, errText, 'model:', model)
+          continue // try next candidate
+        }
+        const data = await res.json()
+        content = data.choices?.[0]?.message?.content
+      }
 
-    if (!res.ok) {
-      const errText = await res.text()
-      console.error('[synthesize] OpenRouter error:', res.status, errText)
-      throw new Error(`Synthesis failed (${res.status})`)
+      if (!content) {
+        console.error('[synthesize] Empty response from', provider, model)
+        continue
+      }
+
+      // Strip markdown fences
+      let cleanContent = content.trim()
+      if (cleanContent.startsWith('```')) {
+        cleanContent = cleanContent.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '')
+      }
+
+      const parsed = JSON.parse(cleanContent)
+
+      return {
+        headline: typeof parsed.headline === 'string' ? parsed.headline : 'Meeting intelligence brief',
+        bottomLine: typeof parsed.bottomLine === 'string' ? parsed.bottomLine : '',
+        confidence: ['high', 'medium', 'low'].includes(parsed.confidence) ? parsed.confidence : 'medium',
+        whatJustHappened: parseBullets(parsed.whatJustHappened),
+        talkingPoints: parseBullets(parsed.talkingPoints),
+        landmines: parseBullets(parsed.landmines),
+        questionsToAsk: parseBullets(parsed.questionsToAsk),
+        competitorContext: parseBullets(parsed.competitorContext),
+        synthesisModel: `${provider}/${model}`,
+      }
+    } catch (err) {
+      clearTimeout(timeout)
+      if (typeof err === 'object' && err && 'name' in err && (err as any).name === 'AbortError') {
+        console.error('[synthesize] timeout for', provider, model)
+        continue
+      }
+      console.error('[synthesize] failed:', err, provider, model)
+      continue
     }
-
-    const data = await res.json()
-    const content = data.choices?.[0]?.message?.content
-    if (!content) throw new Error('Empty synthesis response')
-
-    const parsed = JSON.parse(content)
-
-    return {
-      headline: typeof parsed.headline === 'string' ? parsed.headline : 'Meeting intelligence brief',
-      bottomLine: typeof parsed.bottomLine === 'string' ? parsed.bottomLine : '',
-      confidence: ['high', 'medium', 'low'].includes(parsed.confidence) ? parsed.confidence : 'medium',
-      whatJustHappened: parseBullets(parsed.whatJustHappened),
-      talkingPoints: parseBullets(parsed.talkingPoints),
-      landmines: parseBullets(parsed.landmines),
-      questionsToAsk: parseBullets(parsed.questionsToAsk),
-      competitorContext: parseBullets(parsed.competitorContext),
-    }
-  } catch (err) {
-    clearTimeout(timeout)
-    console.error('[synthesize] failed:', err)
-
-    // Return degraded result instead of crashing
-    return {
-      headline: 'Unable to generate full analysis',
-      bottomLine: 'The AI synthesis step failed. The raw evidence is still available below.',
-      confidence: 'low',
-      whatJustHappened: [],
-      talkingPoints: [],
-      landmines: [],
-      questionsToAsk: [],
-      competitorContext: [],
-    }
+  }
+  // All models failed, return degraded fallback
+  return {
+    headline: 'Unable to generate full analysis',
+    bottomLine: 'The AI synthesis step failed. The raw evidence is still available below.',
+    confidence: 'low',
+    whatJustHappened: [],
+    talkingPoints: [],
+    landmines: [],
+    questionsToAsk: [],
+    competitorContext: [],
+    synthesisModel: null,
   }
 }

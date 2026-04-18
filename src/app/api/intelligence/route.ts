@@ -1,8 +1,11 @@
-/* ── Intelligence V2 API Route ──────────────────────────────── */
+/* ── Intelligence API Route — V2 + V3 ──────────────────────── */
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { generateIntelligenceBrief } from '@/lib/intelligence'
+import { generateCompetitiveAnalysisBrief } from '@/lib/intelligence/types/competitive-analysis'
+import { generateBusinessCaseBrief } from '@/lib/intelligence/types/business-case'
+import { generateMarketResearchBrief } from '@/lib/intelligence/types/market-research'
 import type { IntelligenceRequest, MeetingType } from '@/lib/intelligence/types'
 
 export const maxDuration = 60
@@ -79,6 +82,33 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
   }
 
+  const researchType = sanitizeString(body.researchType, 30) || 'meeting_prep'
+
+  // ── Branch by research type ──
+  try {
+    if (researchType === 'competitive_analysis') {
+      return await handleCompetitiveAnalysis(body)
+    }
+    if (researchType === 'business_case') {
+      return await handleBusinessCase(body)
+    }
+    if (researchType === 'market_research') {
+      return await handleMarketResearch(body)
+    }
+    // Default: meeting_prep (V2 compat)
+    return await handleMeetingPrep(body)
+  } catch (err) {
+    console.error(`[api/intelligence] ${researchType} generation failed:`, err)
+    return NextResponse.json(
+      { error: 'Failed to generate intelligence brief. Please try again.' },
+      { status: 500 }
+    )
+  }
+}
+
+/* ── Meeting Prep (V2 compat) ────────────────────────────────── */
+
+async function handleMeetingPrep(body: Record<string, unknown>) {
   const accountName = sanitizeString(body.accountName, 200)
   if (!accountName) {
     return NextResponse.json({ error: 'accountName is required' }, { status: 400 })
@@ -102,7 +132,6 @@ export async function POST(request: NextRequest) {
     ? Math.min(Math.max(body.lookbackDays, 7), 90)
     : 30
 
-  // Validate website URL scheme to prevent SSRF
   if (website && !isValidHttpUrl(website)) {
     return NextResponse.json({ error: 'Invalid website URL' }, { status: 400 })
   }
@@ -118,15 +147,79 @@ export async function POST(request: NextRequest) {
     lookbackDays,
   }
 
-  // ── Generate brief ──
-  try {
-    const brief = await generateIntelligenceBrief(intelligenceRequest)
-    return NextResponse.json(brief)
-  } catch (err) {
-    console.error('[api/intelligence] Generation failed:', err)
-    return NextResponse.json(
-      { error: 'Failed to generate intelligence brief. Please try again.' },
-      { status: 500 }
-    )
+  const brief = await generateIntelligenceBrief(intelligenceRequest)
+  return NextResponse.json(brief)
+}
+
+/* ── Competitive Analysis ────────────────────────────────────── */
+
+async function handleCompetitiveAnalysis(body: Record<string, unknown>) {
+  const competitors = sanitizeStringArray(body.competitors, 200, 3)
+  if (competitors.length === 0) {
+    return NextResponse.json({ error: 'At least one competitor is required' }, { status: 400 })
   }
+
+  const yourCompany = sanitizeString(body.yourCompany, 200) || undefined
+  const focusArea = sanitizeString(body.focusArea, 50) || 'overall'
+  const specificQuestions = sanitizeString(body.specificQuestions, 1000) || undefined
+
+  const brief = await generateCompetitiveAnalysisBrief({
+    competitors,
+    yourCompany,
+    focusArea,
+    specificQuestions,
+  })
+  return NextResponse.json(brief)
+}
+
+/* ── Business Case ───────────────────────────────────────────── */
+
+async function handleBusinessCase(body: Record<string, unknown>) {
+  const initiativeName = sanitizeString(body.initiativeName, 200)
+  if (!initiativeName) {
+    return NextResponse.json({ error: 'initiativeName is required' }, { status: 400 })
+  }
+
+  const hypothesis = sanitizeString(body.hypothesis, 500)
+  if (!hypothesis) {
+    return NextResponse.json({ error: 'hypothesis is required' }, { status: 400 })
+  }
+
+  const targetMarket = sanitizeString(body.targetMarket, 200) || undefined
+  const successMetrics = sanitizeStringArray(body.successMetrics, 200, 5)
+  const keyQuestions = sanitizeString(body.keyQuestions, 1000) || undefined
+  const comparableCompanies = sanitizeStringArray(body.comparableCompanies, 200, 3)
+
+  const brief = await generateBusinessCaseBrief({
+    initiativeName,
+    hypothesis,
+    targetMarket,
+    successMetrics: successMetrics.length ? successMetrics : undefined,
+    keyQuestions,
+    comparableCompanies: comparableCompanies.length ? comparableCompanies : undefined,
+  })
+  return NextResponse.json(brief)
+}
+
+/* ── Market Research ─────────────────────────────────────────── */
+
+async function handleMarketResearch(body: Record<string, unknown>) {
+  const marketOrTrend = sanitizeString(body.marketOrTrend, 300)
+  if (!marketOrTrend) {
+    return NextResponse.json({ error: 'marketOrTrend is required' }, { status: 400 })
+  }
+
+  const scope = sanitizeString(body.scope, 50) || 'global'
+  const keyQuestions = sanitizeString(body.keyQuestions, 1000) || undefined
+  const knownPlayers = sanitizeStringArray(body.knownPlayers, 200, 5)
+  const timeHorizon = sanitizeString(body.timeHorizon, 10) || '90d'
+
+  const brief = await generateMarketResearchBrief({
+    marketOrTrend,
+    scope,
+    keyQuestions,
+    knownPlayers: knownPlayers.length ? knownPlayers : undefined,
+    timeHorizon,
+  })
+  return NextResponse.json(brief)
 }

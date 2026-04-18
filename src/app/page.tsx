@@ -164,7 +164,7 @@ export default function Home() {
 
             {/* Inline waitlist — always visible */}
             <form onSubmit={handleWaitlist} className="hero-waitlist-inline">
-              <p className="hero-waitlist-label">The mobile app is coming. Be first in line.</p>
+              <p className="hero-waitlist-label">📱 The mobile app is coming — get early access.</p>
               <div className="hero-waitlist-row">
                 <input
                   type="email"

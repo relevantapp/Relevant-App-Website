@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react'
 import { Search, X, Plus, Loader2 } from 'lucide-react'
 import type { MeetingType } from '@/lib/intelligence/types'
-import { MEETING_TYPE_OPTIONS } from './types'
+import { MEETING_TYPE_OPTIONS, GOAL_PLACEHOLDERS, MEETING_TYPE_DETAILS } from './types'
 
 interface IntelligenceFormProps {
   onSubmit: (data: FormData) => void
@@ -74,6 +74,9 @@ export default function IntelligenceForm({ onSubmit, loading }: IntelligenceForm
         <label className="mb-1.5 block text-sm font-medium text-[var(--text)]">
           Who are you meeting with?
         </label>
+        <p className="mt-1 text-xs text-[var(--text-soft)] opacity-70 leading-relaxed">
+          We&apos;ll pull their company profile, recent news, and key people
+        </p>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-soft)]" />
           <input
@@ -88,11 +91,34 @@ export default function IntelligenceForm({ onSubmit, loading }: IntelligenceForm
         </div>
       </div>
 
-      {/* Meeting Type Chips */}
+
+      {/* Goal (moved up) */}
+      <div>
+        <label className="mb-1.5 block text-sm font-medium text-[var(--text)]">
+          What&apos;s your goal?
+        </label>
+        <p className="mt-1 text-xs text-[var(--text-soft)] opacity-70 leading-relaxed">
+          This shapes which insights we prioritize for you
+        </p>
+        <input
+          type="text"
+          value={goal}
+          onChange={(e) => setGoal(e.target.value)}
+          placeholder={GOAL_PLACEHOLDERS[meetingType]}
+          className="w-full rounded-lg border border-[var(--surface-strong)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--text)] placeholder:text-[var(--text-soft)] focus:border-[var(--accent)] focus:outline-none"
+          required
+          maxLength={500}
+        />
+      </div>
+
+      {/* Meeting Type Chips (moved down) */}
       <div>
         <label className="mb-2 block text-sm font-medium text-[var(--text)]">
           Meeting type
         </label>
+        <p className="mt-1 text-xs text-[var(--text-soft)] opacity-70 leading-relaxed">
+          Adjusts the analysis lens — sales focuses on objections & leverage, investor on traction & metrics
+        </p>
         <div className="flex flex-wrap gap-2">
           {MEETING_TYPE_OPTIONS.map((opt) => (
             <button
@@ -109,22 +135,9 @@ export default function IntelligenceForm({ onSubmit, loading }: IntelligenceForm
             </button>
           ))}
         </div>
-      </div>
-
-      {/* Goal */}
-      <div>
-        <label className="mb-1.5 block text-sm font-medium text-[var(--text)]">
-          What&apos;s your goal?
-        </label>
-        <input
-          type="text"
-          value={goal}
-          onChange={(e) => setGoal(e.target.value)}
-          placeholder="Close the deal / Explore partnership / Raise Series A"
-          className="w-full rounded-lg border border-[var(--surface-strong)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--text)] placeholder:text-[var(--text-soft)] focus:border-[var(--accent)] focus:outline-none"
-          required
-          maxLength={500}
-        />
+        <p className="mt-1.5 text-xs text-[var(--accent)] bg-[var(--accent)]/[0.06] rounded-md px-2.5 py-1.5 leading-relaxed">
+          {MEETING_TYPE_DETAILS[meetingType]}
+        </p>
       </div>
 
       {/* Website */}
@@ -132,6 +145,9 @@ export default function IntelligenceForm({ onSubmit, loading }: IntelligenceForm
         <label className="mb-1.5 block text-sm font-medium text-[var(--text)]">
           Website <span className="text-[var(--text-soft)]">(optional)</span>
         </label>
+        <p className="mt-1 text-xs text-[var(--text-soft)] opacity-70 leading-relaxed">
+          We&apos;ll extract recent content directly from their site
+        </p>
         <input
           type="url"
           value={website}
@@ -147,6 +163,9 @@ export default function IntelligenceForm({ onSubmit, loading }: IntelligenceForm
         <label className="mb-1.5 block text-sm font-medium text-[var(--text)]">
           Attendees <span className="text-[var(--text-soft)]">(optional, up to 5)</span>
         </label>
+        <p className="mt-1 text-xs text-[var(--text-soft)] opacity-70 leading-relaxed">
+          We search LinkedIn and public profiles for background on each person
+        </p>
         <div className="flex gap-2">
           <input
             type="text"
@@ -199,6 +218,9 @@ export default function IntelligenceForm({ onSubmit, loading }: IntelligenceForm
             <label className="mb-1.5 block text-sm font-medium text-[var(--text)]">
               Context / Notes <span className="text-[var(--text-soft)]">(optional)</span>
             </label>
+            <p className="mt-1 text-xs text-[var(--text-soft)] opacity-70 leading-relaxed">
+              Context you already have — we&apos;ll factor this into the analysis
+            </p>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
@@ -214,6 +236,9 @@ export default function IntelligenceForm({ onSubmit, loading }: IntelligenceForm
             <label className="mb-1.5 block text-sm font-medium text-[var(--text)]">
               Competitors <span className="text-[var(--text-soft)]">(optional, up to 3)</span>
             </label>
+            <p className="mt-1 text-xs text-[var(--text-soft)] opacity-70 leading-relaxed">
+              We&apos;ll pull comparison data and competitive positioning
+            </p>
             <div className="flex gap-2">
               <input
                 type="text"
