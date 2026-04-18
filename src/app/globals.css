@@ -3956,7 +3956,7 @@ button:focus-visible, input:focus-visible, a:focus-visible {
   .persona-grid { grid-template-columns: repeat(2, 1fr); }
   .phone-showcase {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: 28px;
     max-width: 420px;
   }
   .phone-picker {
@@ -3965,6 +3965,10 @@ button:focus-visible, input:focus-visible, a:focus-visible {
   .phone-frame-real {
     margin: 0 auto;
     order: 1;
+    max-width: 340px;
+    max-height: 580px;
+    position: relative;
+    top: auto;
   }
 }
 
@@ -4007,26 +4011,27 @@ button:focus-visible, input:focus-visible, a:focus-visible {
   }
   .phone-showcase {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 20px;
     max-width: 400px;
   }
   .phone-picker {
     padding-top: 0;
     gap: 8px;
     order: 2;
+    padding-bottom: 72px; /* clear floating island */
   }
   .phone-picker-item { padding: 14px; }
   .phone-frame-real {
     width: 100%;
-    max-width: 320px;
-    height: auto;
-    min-height: 520px;
-    aspect-ratio: 1206 / 2432;
+    max-width: 300px;
+    height: 480px;
+    aspect-ratio: auto;
     border-radius: 28px;
     border-width: 1px;
     margin: 0 auto;
     order: 1;
     position: relative;
+    top: auto;
   }
   .phone-screen-container {
     border-radius: 28px;
@@ -4039,10 +4044,9 @@ button:focus-visible, input:focus-visible, a:focus-visible {
   .phone-frame-real {
     border-radius: 24px;
     border-width: 1px;
-    max-width: 280px;
-    height: auto;
-    min-height: 450px;
-    aspect-ratio: 1206 / 2432;
+    max-width: 260px;
+    height: 420px;
+    aspect-ratio: auto;
     margin: 0 auto;
   }
   .phone-screen-container {
@@ -4051,12 +4055,13 @@ button:focus-visible, input:focus-visible, a:focus-visible {
   .phone-home-bar { display: none; }
   .phone-island { display: none; }
   .phone-showcase {
-    gap: 16px;
+    gap: 14px;
     max-width: 100%;
   }
   .phone-picker {
     padding-top: 0;
     gap: 6px;
+    padding-bottom: 72px; /* clear floating island */
   }
   .hiw-step-visual { padding: 16px; min-height: auto; }
   .phone-picker-item {
