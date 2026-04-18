@@ -1,0 +1,53 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e2]
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "Relevant app logo Intelligence" [ref=e79] [cursor=pointer]:
+          - /url: /app/feed
+          - img "Relevant app logo" [ref=e8]
+          - generic [ref=e9]: Intelligence
+        - button "Toggle theme" [ref=e31] [cursor=pointer]:
+          - img [ref=e32]
+    - main [ref=e40]:
+      - generic [ref=e166]:
+        - heading "What would you like to prepare for?" [level=2] [ref=e167]
+        - generic [ref=e168]:
+          - button "Meeting Prep Prepare for a sales, client, or partner conversation" [ref=e169] [cursor=pointer]:
+            - img [ref=e171]
+            - generic [ref=e174]: Meeting Prep
+            - generic [ref=e175]: Prepare for a sales, client, or partner conversation
+          - button "Business Case Build proof points for an initiative or proposal" [ref=e176] [cursor=pointer]:
+            - img [ref=e178]
+            - generic [ref=e180]: Business Case
+            - generic [ref=e181]: Build proof points for an initiative or proposal
+          - button "Competitive Intel Analyze a competitor's latest moves and positioning" [ref=e182] [cursor=pointer]:
+            - img [ref=e184]
+            - generic [ref=e193]: Competitive Intel
+            - generic [ref=e194]: Analyze a competitor's latest moves and positioning
+          - button "Market Research Explore a market trend, space, or opportunity" [ref=e195] [cursor=pointer]:
+            - img [ref=e197]
+            - generic [ref=e200]: Market Research
+            - generic [ref=e201]: Explore a market trend, space, or opportunity
+    - navigation [ref=e80]:
+      - generic [ref=e81]:
+        - link "Feed" [ref=e82] [cursor=pointer]:
+          - /url: /app/feed
+          - img [ref=e83]
+          - generic [ref=e86]: Feed
+        - link "Search" [ref=e87] [cursor=pointer]:
+          - /url: /app/search
+          - img [ref=e88]
+          - generic [ref=e91]: Search
+        - link "Intelligence" [ref=e92] [cursor=pointer]:
+          - /url: /app/intelligence
+          - img [ref=e93]
+          - generic [ref=e96]: Intel
+        - link "Journal" [ref=e97] [cursor=pointer]:
+          - /url: /app/journal
+          - img [ref=e98]
+          - generic [ref=e100]: Journal
+        - link "You" [ref=e101] [cursor=pointer]:
+          - /url: /app/profile
+          - img [ref=e102]
+          - generic [ref=e105]: You

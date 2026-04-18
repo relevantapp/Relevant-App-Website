@@ -1,0 +1,79 @@
+- generic [ref=e1]:
+  - alert [ref=e2]
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "Relevant app logo Relevant" [ref=e6] [cursor=pointer]:
+          - /url: /app/feed
+          - img "Relevant app logo" [ref=e8]
+          - generic [ref=e9]: Relevant
+        - navigation [ref=e10]:
+          - link "Feed" [ref=e11] [cursor=pointer]:
+            - /url: /app/feed
+            - img [ref=e12]
+            - text: Feed
+          - link "Search" [ref=e15] [cursor=pointer]:
+            - /url: /app/search
+            - img [ref=e16]
+            - text: Search
+          - link "Intelligence" [ref=e19] [cursor=pointer]:
+            - /url: /app/intelligence
+            - img [ref=e20]
+            - text: Intelligence
+          - link "Journal" [ref=e23] [cursor=pointer]:
+            - /url: /app/journal
+            - img [ref=e24]
+            - text: Journal
+          - link "You" [ref=e26] [cursor=pointer]:
+            - /url: /app/profile
+            - img [ref=e27]
+            - text: You
+        - generic [ref=e30]:
+          - button "Toggle theme" [ref=e31] [cursor=pointer]:
+            - img [ref=e32]
+          - generic [ref=e34]:
+            - generic [ref=e35]: Tanmay Gupta
+            - button "Sign out" [ref=e36] [cursor=pointer]:
+              - img [ref=e37]
+    - main [ref=e40]:
+      - generic [ref=e79]:
+        - button "Back" [ref=e80] [cursor=pointer]:
+          - img [ref=e81]
+          - text: Back
+        - generic [ref=e83]:
+          - generic [ref=e84]:
+            - generic [ref=e85]: Competitor(s)*
+            - textbox "Type a competitor and press Enter" [ref=e87]
+            - paragraph [ref=e88]: Use Enter, comma, or click outside the field to add each competitor.
+          - generic [ref=e89]:
+            - generic [ref=e90]: Your company / product*
+            - textbox "Your company name" [active] [ref=e91]
+          - generic [ref=e92]:
+            - generic [ref=e93]: Focus area*
+            - generic [ref=e94]:
+              - button "Product" [ref=e95] [cursor=pointer]
+              - button "Pricing" [ref=e96] [cursor=pointer]
+              - button "Go-to-Market" [ref=e97] [cursor=pointer]
+              - button "Technology" [ref=e98] [cursor=pointer]
+              - button "Talent" [ref=e99] [cursor=pointer]
+              - button "Overall" [ref=e100] [cursor=pointer]
+          - generic [ref=e101]:
+            - generic [ref=e102]: Use case
+            - generic [ref=e103]:
+              - button "Sales Battlecard" [ref=e104] [cursor=pointer]
+              - button "Product Strategy" [ref=e105] [cursor=pointer]
+              - button "Pricing Review" [ref=e106] [cursor=pointer]
+              - button "Board Update" [ref=e107] [cursor=pointer]
+          - generic [ref=e108]:
+            - generic [ref=e109]: Market segment
+            - textbox "e.g., Enterprise SaaS, SMB fintech" [ref=e110]
+          - generic [ref=e111]:
+            - generic [ref=e112]: Geography
+            - textbox "e.g., North America, EMEA" [ref=e113]
+          - generic [ref=e114]:
+            - generic [ref=e115]: Customer type
+            - textbox "e.g., Mid-market, Fortune 500" [ref=e116]
+          - generic [ref=e117]:
+            - generic [ref=e118]: Specific questions
+            - textbox "What do you want to know?" [ref=e119]
+          - button "Generate Intelligence" [disabled] [ref=e120]

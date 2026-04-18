@@ -1,0 +1,567 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e2]: Relevant — Less Noise. More Clarity.
+  - generic [ref=e88]:
+    - banner [ref=e89]:
+      - generic [ref=e90]:
+        - link "Relevant app logo Relevant" [ref=e91] [cursor=pointer]:
+          - /url: /app/feed
+          - img "Relevant app logo" [ref=e93]
+          - generic [ref=e94]: Relevant
+        - navigation [ref=e95]:
+          - link "Feed" [ref=e96] [cursor=pointer]:
+            - /url: /app/feed
+            - img [ref=e97]
+            - text: Feed
+          - link "Search" [ref=e100] [cursor=pointer]:
+            - /url: /app/search
+            - img [ref=e101]
+            - text: Search
+          - link "Intelligence" [ref=e104] [cursor=pointer]:
+            - /url: /app/intelligence
+            - img [ref=e105]
+            - text: Intelligence
+          - link "Journal" [ref=e108] [cursor=pointer]:
+            - /url: /app/journal
+            - img [ref=e109]
+            - text: Journal
+          - link "You" [ref=e111] [cursor=pointer]:
+            - /url: /app/profile
+            - img [ref=e112]
+            - text: You
+        - generic [ref=e115]:
+          - button "Toggle theme" [ref=e116] [cursor=pointer]:
+            - img [ref=e117]
+          - generic [ref=e119]:
+            - generic [ref=e120]: Tanmay Gupta
+            - button "Sign out" [ref=e121] [cursor=pointer]:
+              - img [ref=e122]
+    - main [ref=e125]:
+      - generic [ref=e126]:
+        - generic [ref=e127]:
+          - heading "Good afternoon, Tanmay" [level=1] [ref=e129]
+          - generic [ref=e130]:
+            - button "5hrs saved this week" [ref=e131] [cursor=pointer]:
+              - generic [ref=e132]: 5hrs
+              - generic [ref=e133]: saved this week
+              - img [ref=e134]
+            - button "30 stories · 64 sources" [ref=e137] [cursor=pointer]:
+              - generic [ref=e138]: "30"
+              - generic [ref=e139]: stories · 64 sources
+              - img [ref=e140]
+            - button "More · Analyst" [ref=e143] [cursor=pointer]:
+              - img [ref=e144]
+              - generic [ref=e145]: More · Analyst
+              - img [ref=e146]
+        - generic [ref=e149]:
+          - button "All" [ref=e150] [cursor=pointer]:
+            - img [ref=e151]
+            - text: All
+          - button "Escalating 1" [ref=e152] [cursor=pointer]:
+            - img [ref=e153]
+            - text: Escalating
+            - generic [ref=e156]: "1"
+          - button "Developing 0" [ref=e157] [cursor=pointer]:
+            - img [ref=e158]
+            - text: Developing
+            - generic [ref=e164]: "0"
+          - button "Opportunity 0" [ref=e165] [cursor=pointer]:
+            - img [ref=e166]
+            - text: Opportunity
+            - generic [ref=e168]: "0"
+          - button "Risk 0" [ref=e169] [cursor=pointer]:
+            - img [ref=e170]
+            - text: Risk
+            - generic [ref=e172]: "0"
+          - button "Competitive 24" [ref=e173] [cursor=pointer]:
+            - img [ref=e174]
+            - text: Competitive
+            - generic [ref=e183]: "24"
+        - generic [ref=e184]:
+          - generic [ref=e185]:
+            - heading "Apr 16" [level=2] [ref=e186]
+            - generic [ref=e187]:
+              - button "Canadian Retail Faces Strategic Shifts and Market Polarization Canadian retail is undergoing significant transformation driven by expansion, real estate, and evolving consumer behavior, directly influencing parcel delivery volumes and fulfillment strategies. Yesterday 1 source strategic competitive" [ref=e188] [cursor=pointer]:
+                - button "Share" [ref=e191]:
+                  - img [ref=e192]
+                - generic [ref=e198]:
+                  - heading "Canadian Retail Faces Strategic Shifts and Market Polarization" [level=3] [ref=e199]
+                  - paragraph [ref=e200]: Canadian retail is undergoing significant transformation driven by expansion, real estate, and evolving consumer behavior, directly influencing parcel delivery volumes and fulfillment strategies.
+                  - generic [ref=e201]:
+                    - generic [ref=e202]:
+                      - img [ref=e203]
+                      - text: Yesterday
+                    - generic [ref=e206]:
+                      - img [ref=e207]
+                      - text: 1 source
+                    - generic [ref=e211]:
+                      - generic "strategic" [ref=e212]
+                      - generic "competitive" [ref=e213]
+              - button "US launches portal for $127B in tariff refunds US importers can now claim $127 billion in invalidated tariff refunds via a new portal, potentially affecting cross-border logistics costs and competitive dynamics. Yesterday 1 source competitive strategic" [ref=e214] [cursor=pointer]:
+                - button "Share" [ref=e217]:
+                  - img [ref=e218]
+                - generic [ref=e224]:
+                  - heading "US launches portal for $127B in tariff refunds" [level=3] [ref=e225]
+                  - paragraph [ref=e226]: US importers can now claim $127 billion in invalidated tariff refunds via a new portal, potentially affecting cross-border logistics costs and competitive dynamics.
+                  - generic [ref=e227]:
+                    - generic [ref=e228]:
+                      - img [ref=e229]
+                      - text: Yesterday
+                    - generic [ref=e232]:
+                      - img [ref=e233]
+                      - text: 1 source
+                    - generic [ref=e237]:
+                      - generic "competitive" [ref=e238]
+                      - generic "strategic" [ref=e239]
+              - button "Peterbilt Showcases Canadian Fleet at Truck World 2026 Peterbilt is highlighting its Canadian manufacturing capabilities and diverse 2026 fleet lineup, including alternative powertrains, for the Canadian market. Yesterday 1 source strategic" [ref=e240] [cursor=pointer]:
+                - button "Share" [ref=e243]:
+                  - img [ref=e244]
+                - generic [ref=e250]:
+                  - heading "Peterbilt Showcases Canadian Fleet at Truck World 2026" [level=3] [ref=e251]
+                  - paragraph [ref=e252]: Peterbilt is highlighting its Canadian manufacturing capabilities and diverse 2026 fleet lineup, including alternative powertrains, for the Canadian market.
+                  - generic [ref=e253]:
+                    - generic [ref=e254]:
+                      - img [ref=e255]
+                      - text: Yesterday
+                    - generic [ref=e258]:
+                      - img [ref=e259]
+                      - text: 1 source
+                    - generic "strategic" [ref=e264]
+              - button "Emerging Canada consults on labor relations The Canadian federal government is initiating consultations to enhance labor relations, potentially impacting operational frameworks and workforce dynamics across industries. Yesterday 9 sources" [ref=e265] [cursor=pointer]:
+                - button "Share" [ref=e268]:
+                  - img [ref=e269]
+                - generic [ref=e275]:
+                  - generic [ref=e277]:
+                    - img [ref=e278]
+                    - text: Emerging
+                  - heading "Canada consults on labor relations" [level=3] [ref=e281]
+                  - paragraph [ref=e282]: The Canadian federal government is initiating consultations to enhance labor relations, potentially impacting operational frameworks and workforce dynamics across industries.
+                  - generic [ref=e283]:
+                    - generic [ref=e284]:
+                      - img [ref=e285]
+                      - text: Yesterday
+                    - generic [ref=e288]:
+                      - img [ref=e289]
+                      - text: 9 sources
+              - button "Escalating Canada Post mailbox conversion to take 5 years Canada Post is accelerating its transition to community mailboxes over five years, aiming for significant cost savings, which will alter last-mile delivery dynamics in the Canadian logistics sector. Yesterday 3 sources competitive strategic" [ref=e293] [cursor=pointer]:
+                - button "Share" [ref=e296]:
+                  - img [ref=e297]
+                - generic [ref=e303]:
+                  - generic [ref=e305]:
+                    - img [ref=e306]
+                    - text: Escalating
+                  - heading "Canada Post mailbox conversion to take 5 years" [level=3] [ref=e309]
+                  - paragraph [ref=e310]: Canada Post is accelerating its transition to community mailboxes over five years, aiming for significant cost savings, which will alter last-mile delivery dynamics in the Canadian logistics sector.
+                  - generic [ref=e311]:
+                    - generic [ref=e312]:
+                      - img [ref=e313]
+                      - text: Yesterday
+                    - generic [ref=e316]:
+                      - img [ref=e317]
+                      - text: 3 sources
+                    - generic [ref=e321]:
+                      - generic "competitive" [ref=e322]
+                      - generic "strategic" [ref=e323]
+              - button "Shopify stock valuation leaves little margin for error Shopify's current stock valuation assumes strong future execution, presenting a high-risk, high-reward scenario for investors and potentially influencing its strategic partnerships and service offerings. Yesterday 1 source strategic competitive" [ref=e324] [cursor=pointer]:
+                - button "Share" [ref=e327]:
+                  - img [ref=e328]
+                - generic [ref=e334]:
+                  - heading "Shopify stock valuation leaves little margin for error" [level=3] [ref=e335]
+                  - paragraph [ref=e336]: Shopify's current stock valuation assumes strong future execution, presenting a high-risk, high-reward scenario for investors and potentially influencing its strategic partnerships and service offerings.
+                  - generic [ref=e337]:
+                    - generic [ref=e338]:
+                      - img [ref=e339]
+                      - text: Yesterday
+                    - generic [ref=e342]:
+                      - img [ref=e343]
+                      - text: 1 source
+                    - generic [ref=e347]:
+                      - generic "strategic" [ref=e348]
+                      - generic "competitive" [ref=e349]
+              - button "RBC, Scotiabank pull back on climate goals New or stricter regulations on greenhouse gas emissions for the transportation sector will require Purolator to invest in cleaner technologies, adapt operations, and enhance reporting, impacting costs and compliance. Yesterday" [ref=e350] [cursor=pointer]:
+                - button "Share" [ref=e353]:
+                  - img [ref=e354]
+                - generic [ref=e360]:
+                  - heading "RBC, Scotiabank pull back on climate goals" [level=3] [ref=e361]
+                  - paragraph [ref=e362]: New or stricter regulations on greenhouse gas emissions for the transportation sector will require Purolator to invest in cleaner technologies, adapt operations, and enhance reporting, impacting costs and compliance.
+                  - generic [ref=e364]:
+                    - img [ref=e365]
+                    - text: Yesterday
+              - button "Emerging Canadian Dollar Gains on Middle East Peace Talks Optimism The Canadian dollar is strengthening due to Middle East peace talks and falling oil prices, potentially affecting your operational costs and strategic financial planning. Yesterday 1 source competitive" [ref=e368] [cursor=pointer]:
+                - button "Share" [ref=e371]:
+                  - img [ref=e372]
+                - generic [ref=e378]:
+                  - generic [ref=e380]:
+                    - img [ref=e381]
+                    - text: Emerging
+                  - heading "Canadian Dollar Gains on Middle East Peace Talks Optimism" [level=3] [ref=e384]
+                  - paragraph [ref=e385]: The Canadian dollar is strengthening due to Middle East peace talks and falling oil prices, potentially affecting your operational costs and strategic financial planning.
+                  - generic [ref=e386]:
+                    - generic [ref=e387]:
+                      - img [ref=e388]
+                      - text: Yesterday
+                    - generic [ref=e391]:
+                      - img [ref=e392]
+                      - text: 1 source
+                    - generic "competitive" [ref=e397]
+              - button "B.C. ZEV sales surge 36 per cent in February as federal rebates return The push for fleet electrification impacts Purolator's procurement, charging infrastructure investments, and operational planning, driven by environmental goals and government incentives. Yesterday" [ref=e398] [cursor=pointer]:
+                - button "Share" [ref=e401]:
+                  - img [ref=e402]
+                - generic [ref=e408]:
+                  - heading "B.C. ZEV sales surge 36 per cent in February as federal rebates return" [level=3] [ref=e409]
+                  - paragraph [ref=e410]: The push for fleet electrification impacts Purolator's procurement, charging infrastructure investments, and operational planning, driven by environmental goals and government incentives.
+                  - generic [ref=e412]:
+                    - img [ref=e413]
+                    - text: Yesterday
+          - generic [ref=e416]:
+            - heading "Yesterday" [level=2] [ref=e417]
+            - generic [ref=e418]:
+              - button "Emerging Canada inflation rises on gas prices Canadian headline inflation is projected to increase to 2.5% in March, driven by a 21% surge in gasoline prices, impacting energy inflation and core inflation. 21h ago 2 sources strategic competitive" [ref=e419] [cursor=pointer]:
+                - button "Share" [ref=e422]:
+                  - img [ref=e423]
+                - generic [ref=e429]:
+                  - generic [ref=e431]:
+                    - img [ref=e432]
+                    - text: Emerging
+                  - heading "Canada inflation rises on gas prices" [level=3] [ref=e435]
+                  - paragraph [ref=e436]: Canadian headline inflation is projected to increase to 2.5% in March, driven by a 21% surge in gasoline prices, impacting energy inflation and core inflation.
+                  - generic [ref=e437]:
+                    - generic [ref=e438]:
+                      - img [ref=e439]
+                      - text: 21h ago
+                    - generic [ref=e442]:
+                      - img [ref=e443]
+                      - text: 2 sources
+                    - generic [ref=e447]:
+                      - generic "strategic" [ref=e448]
+                      - generic "competitive" [ref=e449]
+              - button "Emerging Canada's 2024 emissions reductions nearly stalled Canada's 2024 emissions reductions nearly stalled due to increases in oil/gas and agriculture, potentially jeopardizing national targets and impacting transportation sector regulations. 21h ago 6 sources strategic competitive" [ref=e450] [cursor=pointer]:
+                - button "Share" [ref=e453]:
+                  - img [ref=e454]
+                - generic [ref=e460]:
+                  - generic [ref=e462]:
+                    - img [ref=e463]
+                    - text: Emerging
+                  - heading "Canada's 2024 emissions reductions nearly stalled" [level=3] [ref=e466]
+                  - paragraph [ref=e467]: Canada's 2024 emissions reductions nearly stalled due to increases in oil/gas and agriculture, potentially jeopardizing national targets and impacting transportation sector regulations.
+                  - generic [ref=e468]:
+                    - generic [ref=e469]:
+                      - img [ref=e470]
+                      - text: 21h ago
+                    - generic [ref=e473]:
+                      - img [ref=e474]
+                      - text: 6 sources
+                    - generic [ref=e478]:
+                      - generic "strategic" [ref=e479]
+                      - generic "competitive" [ref=e480]
+              - button "Stabilizing Air Canada Cuts More Flights Due to Jet Fuel Crisis Air Canada is cutting flights due to doubled jet fuel prices, impacting 1% of its capacity and potentially rerouting freight and passenger demand within Canada's logistics network. 21h ago 6 sources competitive strategic" [ref=e481] [cursor=pointer]:
+                - button "Share" [ref=e484]:
+                  - img [ref=e485]
+                - generic [ref=e491]:
+                  - generic [ref=e493]:
+                    - img [ref=e494]
+                    - text: Stabilizing
+                  - heading "Air Canada Cuts More Flights Due to Jet Fuel Crisis" [level=3] [ref=e497]
+                  - paragraph [ref=e498]: Air Canada is cutting flights due to doubled jet fuel prices, impacting 1% of its capacity and potentially rerouting freight and passenger demand within Canada's logistics network.
+                  - generic [ref=e499]:
+                    - generic [ref=e500]:
+                      - img [ref=e501]
+                      - text: 21h ago
+                    - generic [ref=e504]:
+                      - img [ref=e505]
+                      - text: 6 sources
+                    - generic [ref=e509]:
+                      - generic "competitive" [ref=e510]
+                      - generic "strategic" [ref=e511]
+              - button "Emerging March inflation to jump due to Iran oil shock March inflation is forecast to rise to 2.5% due to oil price shocks, with April potentially exceeding 3%, impacting operational budgets and pricing. 21h ago 3 sources strategic" [ref=e512] [cursor=pointer]:
+                - button "Share" [ref=e515]:
+                  - img [ref=e516]
+                - generic [ref=e522]:
+                  - generic [ref=e524]:
+                    - img [ref=e525]
+                    - text: Emerging
+                  - heading "March inflation to jump due to Iran oil shock" [level=3] [ref=e528]
+                  - paragraph [ref=e529]: March inflation is forecast to rise to 2.5% due to oil price shocks, with April potentially exceeding 3%, impacting operational budgets and pricing.
+                  - generic [ref=e530]:
+                    - generic [ref=e531]:
+                      - img [ref=e532]
+                      - text: 21h ago
+                    - generic [ref=e535]:
+                      - img [ref=e536]
+                      - text: 3 sources
+                    - generic "strategic" [ref=e541]
+              - button "David's Bridal integrates AI shopping on ChatGPT, Copilot David's Bridal is leveraging Shopify's agentic storefronts to enable direct purchasing within AI chat interfaces, signaling a shift in consumer discovery and purchase behavior. 21h ago 2 sources competitive strategic" [ref=e542] [cursor=pointer]:
+                - button "Share" [ref=e545]:
+                  - img [ref=e546]
+                - generic [ref=e552]:
+                  - heading "David's Bridal integrates AI shopping on ChatGPT, Copilot" [level=3] [ref=e553]
+                  - paragraph [ref=e554]: David's Bridal is leveraging Shopify's agentic storefronts to enable direct purchasing within AI chat interfaces, signaling a shift in consumer discovery and purchase behavior.
+                  - generic [ref=e555]:
+                    - generic [ref=e556]:
+                      - img [ref=e557]
+                      - text: 21h ago
+                    - generic [ref=e560]:
+                      - img [ref=e561]
+                      - text: 2 sources
+                    - generic [ref=e565]:
+                      - generic "competitive" [ref=e566]
+                      - generic "strategic" [ref=e567]
+          - generic [ref=e568]:
+            - heading "Apr 15" [level=2] [ref=e569]
+            - generic [ref=e570]:
+              - button "Emerging AI Enhances Trucking Efficiency and Safety AI adoption in trucking aims to reduce waste and boost efficiency by improving decision-making for drivers and dispatchers. 2d ago 3 sources strategic competitive" [ref=e571] [cursor=pointer]:
+                - button "Share" [ref=e574]:
+                  - img [ref=e575]
+                - generic [ref=e581]:
+                  - generic [ref=e583]:
+                    - img [ref=e584]
+                    - text: Emerging
+                  - heading "AI Enhances Trucking Efficiency and Safety" [level=3] [ref=e587]
+                  - paragraph [ref=e588]: AI adoption in trucking aims to reduce waste and boost efficiency by improving decision-making for drivers and dispatchers.
+                  - generic [ref=e589]:
+                    - generic [ref=e590]:
+                      - img [ref=e591]
+                      - text: 2d ago
+                    - generic [ref=e594]:
+                      - img [ref=e595]
+                      - text: 3 sources
+                    - generic [ref=e599]:
+                      - generic "strategic" [ref=e600]
+                      - generic "competitive" [ref=e601]
+              - button "Ontario Gig Worker Rules May Affect Delivery Costs Ontario's proposed gig worker pilot could redefine contractor status and impact delivery cost structures. 2d ago competitive" [ref=e602] [cursor=pointer]:
+                - generic [ref=e603]:
+                  - img [ref=e605]
+                  - button "Share" [ref=e609]:
+                    - img [ref=e610]
+                - generic [ref=e616]:
+                  - heading "Ontario Gig Worker Rules May Affect Delivery Costs" [level=3] [ref=e617]
+                  - paragraph [ref=e618]: Ontario's proposed gig worker pilot could redefine contractor status and impact delivery cost structures.
+                  - generic [ref=e619]:
+                    - generic [ref=e620]:
+                      - img [ref=e621]
+                      - text: 2d ago
+                    - generic "competitive" [ref=e625]
+              - 'button "CAD Weakness Expected Amidst Bullish USD Trend Bottom Line: Monitor the CAD/USD exchange rate closely as short-term weakness could increase your operational costs. 2d ago strategic competitive" [ref=e626] [cursor=pointer]':
+                - generic [ref=e627]:
+                  - img [ref=e629]
+                  - button "Share" [ref=e633]:
+                    - img [ref=e634]
+                - generic [ref=e640]:
+                  - heading "CAD Weakness Expected Amidst Bullish USD Trend" [level=3] [ref=e641]
+                  - paragraph [ref=e642]: "Bottom Line: Monitor the CAD/USD exchange rate closely as short-term weakness could increase your operational costs."
+                  - generic [ref=e643]:
+                    - generic [ref=e644]:
+                      - img [ref=e645]
+                      - text: 2d ago
+                    - generic [ref=e648]:
+                      - generic "strategic" [ref=e649]
+                      - generic "competitive" [ref=e650]
+              - button "Real-time visibility drives fleet profitability Leveraging real-time visibility can enhance operational efficiency and shipper relationships for carriers. 2d ago strategic competitive" [ref=e651] [cursor=pointer]:
+                - button "Share" [ref=e654]:
+                  - img [ref=e655]
+                - generic [ref=e661]:
+                  - heading "Real-time visibility drives fleet profitability" [level=3] [ref=e662]
+                  - paragraph [ref=e663]: Leveraging real-time visibility can enhance operational efficiency and shipper relationships for carriers.
+                  - generic [ref=e664]:
+                    - generic [ref=e665]:
+                      - img [ref=e666]
+                      - text: 2d ago
+                    - generic [ref=e669]:
+                      - generic "strategic" [ref=e670]
+                      - generic "competitive" [ref=e671]
+              - button "Electric Vehicles Boost Urban Logistics Efficiency Electric vehicles offer lower operational costs and reduced maintenance, making them a valuable solution for modern urban logistics. 2d ago 1 source strategic competitive" [ref=e672] [cursor=pointer]:
+                - button "Share" [ref=e675]:
+                  - img [ref=e676]
+                - generic [ref=e682]:
+                  - heading "Electric Vehicles Boost Urban Logistics Efficiency" [level=3] [ref=e683]
+                  - paragraph [ref=e684]: Electric vehicles offer lower operational costs and reduced maintenance, making them a valuable solution for modern urban logistics.
+                  - generic [ref=e685]:
+                    - generic [ref=e686]:
+                      - img [ref=e687]
+                      - text: 2d ago
+                    - generic [ref=e690]:
+                      - img [ref=e691]
+                      - text: 1 source
+                    - generic [ref=e695]:
+                      - generic "strategic" [ref=e696]
+                      - generic "competitive" [ref=e697]
+              - button "GLS Canada Deploys Electric Yard Trucks GLS Canada integrated electric yard trucks into its Montreal, Toronto, and Winnipeg operations to advance decarbonization goals. 2d ago 2 sources competitive strategic" [ref=e698] [cursor=pointer]:
+                - button "Share" [ref=e701]:
+                  - img [ref=e702]
+                - generic [ref=e708]:
+                  - heading "GLS Canada Deploys Electric Yard Trucks" [level=3] [ref=e709]
+                  - paragraph [ref=e710]: GLS Canada integrated electric yard trucks into its Montreal, Toronto, and Winnipeg operations to advance decarbonization goals.
+                  - generic [ref=e711]:
+                    - generic [ref=e712]:
+                      - img [ref=e713]
+                      - text: 2d ago
+                    - generic [ref=e716]:
+                      - img [ref=e717]
+                      - text: 2 sources
+                    - generic [ref=e721]:
+                      - generic "competitive" [ref=e722]
+                      - generic "strategic" [ref=e723]
+              - button "Skild AI Acquires Fetch Robotics Assets from Zebra Skild AI acquired Fetch Robotics assets to integrate its AI with warehouse robots, aiming for unified autonomous fulfillment. 2d ago 4 sources strategic competitive" [ref=e724] [cursor=pointer]:
+                - button "Share" [ref=e727]:
+                  - img [ref=e728]
+                - generic [ref=e734]:
+                  - heading "Skild AI Acquires Fetch Robotics Assets from Zebra" [level=3] [ref=e735]
+                  - paragraph [ref=e736]: Skild AI acquired Fetch Robotics assets to integrate its AI with warehouse robots, aiming for unified autonomous fulfillment.
+                  - generic [ref=e737]:
+                    - generic [ref=e738]:
+                      - img [ref=e739]
+                      - text: 2d ago
+                    - generic [ref=e742]:
+                      - img [ref=e743]
+                      - text: 4 sources
+                    - generic [ref=e747]:
+                      - generic "strategic" [ref=e748]
+                      - generic "competitive" [ref=e749]
+              - button "Amazon CEO touts AI chip growth, challenges Nvidia Amazon's CEO reported strong performance in custom AI chips, signaling increased competition for Nvidia. 2d ago 1 source competitive strategic" [ref=e750] [cursor=pointer]:
+                - generic [ref=e751]:
+                  - img [ref=e753]
+                  - button "Share" [ref=e757]:
+                    - img [ref=e758]
+                - generic [ref=e764]:
+                  - heading "Amazon CEO touts AI chip growth, challenges Nvidia" [level=3] [ref=e765]
+                  - paragraph [ref=e766]: Amazon's CEO reported strong performance in custom AI chips, signaling increased competition for Nvidia.
+                  - generic [ref=e767]:
+                    - generic [ref=e768]:
+                      - img [ref=e769]
+                      - text: 2d ago
+                    - generic [ref=e772]:
+                      - img [ref=e773]
+                      - text: 1 source
+                    - generic [ref=e777]:
+                      - generic "competitive" [ref=e778]
+                      - generic "strategic" [ref=e779]
+              - button "Montreal Port Expansion Construction Begins Construction begins on the 40-year-old Montreal port expansion, fast-tracked as a nation-building project despite environmental concerns. 2d ago 3 sources competitive strategic" [ref=e780] [cursor=pointer]:
+                - button "Share" [ref=e783]:
+                  - img [ref=e784]
+                - generic [ref=e790]:
+                  - heading "Montreal Port Expansion Construction Begins" [level=3] [ref=e791]
+                  - paragraph [ref=e792]: Construction begins on the 40-year-old Montreal port expansion, fast-tracked as a nation-building project despite environmental concerns.
+                  - generic [ref=e793]:
+                    - generic [ref=e794]:
+                      - img [ref=e795]
+                      - text: 2d ago
+                    - generic [ref=e798]:
+                      - img [ref=e799]
+                      - text: 3 sources
+                    - generic [ref=e803]:
+                      - generic "competitive" [ref=e804]
+                      - generic "strategic" [ref=e805]
+              - button "Autonomous Trucking Market Splits Into Multiple Entry Models Autonomous trucking is diversifying into varied market entry models, each with unique timelines and risk profiles for commercialization. 2d ago 1 source strategic competitive" [ref=e806] [cursor=pointer]:
+                - generic [ref=e807]:
+                  - img [ref=e809]
+                  - button "Share" [ref=e813]:
+                    - img [ref=e814]
+                - generic [ref=e820]:
+                  - heading "Autonomous Trucking Market Splits Into Multiple Entry Models" [level=3] [ref=e821]
+                  - paragraph [ref=e822]: Autonomous trucking is diversifying into varied market entry models, each with unique timelines and risk profiles for commercialization.
+                  - generic [ref=e823]:
+                    - generic [ref=e824]:
+                      - img [ref=e825]
+                      - text: 2d ago
+                    - generic [ref=e828]:
+                      - img [ref=e829]
+                      - text: 1 source
+                    - generic [ref=e833]:
+                      - generic "strategic" [ref=e834]
+                      - generic "competitive" [ref=e835]
+              - button "Amazon to Acquire Globalstar for Satellite Network Expansion Amazon's acquisition of Globalstar aims to expand its satellite network, enhancing global connectivity for consumers and businesses. 2d ago 1 source competitive strategic" [ref=e836] [cursor=pointer]:
+                - button "Share" [ref=e839]:
+                  - img [ref=e840]
+                - generic [ref=e846]:
+                  - heading "Amazon to Acquire Globalstar for Satellite Network Expansion" [level=3] [ref=e847]
+                  - paragraph [ref=e848]: Amazon's acquisition of Globalstar aims to expand its satellite network, enhancing global connectivity for consumers and businesses.
+                  - generic [ref=e849]:
+                    - generic [ref=e850]:
+                      - img [ref=e851]
+                      - text: 2d ago
+                    - generic [ref=e854]:
+                      - img [ref=e855]
+                      - text: 1 source
+                    - generic [ref=e859]:
+                      - generic "competitive" [ref=e860]
+                      - generic "strategic" [ref=e861]
+              - button "Ontario Proposes Ban on Worker Uniform Costs Ontario proposes to ban employers from making workers pay for mandatory, employer-specific uniforms, with consultations on small business exemptions. 2d ago 1 source strategic competitive" [ref=e862] [cursor=pointer]:
+                - button "Share" [ref=e865]:
+                  - img [ref=e866]
+                - generic [ref=e872]:
+                  - heading "Ontario Proposes Ban on Worker Uniform Costs" [level=3] [ref=e873]
+                  - paragraph [ref=e874]: Ontario proposes to ban employers from making workers pay for mandatory, employer-specific uniforms, with consultations on small business exemptions.
+                  - generic [ref=e875]:
+                    - generic [ref=e876]:
+                      - img [ref=e877]
+                      - text: 2d ago
+                    - generic [ref=e880]:
+                      - img [ref=e881]
+                      - text: 1 source
+                    - generic [ref=e885]:
+                      - generic "strategic" [ref=e886]
+                      - generic "competitive" [ref=e887]
+              - button "Logistics Adapts to Post-Pandemic Cross-Border Chemical Transport Logistics firms adopted new technologies like IoT and AI to enhance safety and adaptability in cross-border chemical transport post-pandemic. 2d ago 1 source strategic competitive" [ref=e888] [cursor=pointer]:
+                - generic [ref=e889]:
+                  - img [ref=e891]
+                  - button "Share" [ref=e895]:
+                    - img [ref=e896]
+                - generic [ref=e902]:
+                  - heading "Logistics Adapts to Post-Pandemic Cross-Border Chemical Transport" [level=3] [ref=e903]
+                  - paragraph [ref=e904]: Logistics firms adopted new technologies like IoT and AI to enhance safety and adaptability in cross-border chemical transport post-pandemic.
+                  - generic [ref=e905]:
+                    - generic [ref=e906]:
+                      - img [ref=e907]
+                      - text: 2d ago
+                    - generic [ref=e910]:
+                      - img [ref=e911]
+                      - text: 1 source
+                    - generic [ref=e915]:
+                      - generic "strategic" [ref=e916]
+                      - generic "competitive" [ref=e917]
+              - button "Amazon Sellers Boycott Ads Over New Payout, Fee Policies Amazon sellers staged an ad boycott to protest changes in payout timing, ad fee deductions, and a new fuel surcharge. 2d ago 1 source strategic" [ref=e918] [cursor=pointer]:
+                - button "Share" [ref=e921]:
+                  - img [ref=e922]
+                - generic [ref=e928]:
+                  - heading "Amazon Sellers Boycott Ads Over New Payout, Fee Policies" [level=3] [ref=e929]
+                  - paragraph [ref=e930]: Amazon sellers staged an ad boycott to protest changes in payout timing, ad fee deductions, and a new fuel surcharge.
+                  - generic [ref=e931]:
+                    - generic [ref=e932]:
+                      - img [ref=e933]
+                      - text: 2d ago
+                    - generic [ref=e936]:
+                      - img [ref=e937]
+                      - text: 1 source
+                    - generic "strategic" [ref=e942]
+              - button "Canada's weather agency adopts AI for improved forecasts Canada's national weather agency will use AI to enhance forecast accuracy and public safety, launching the model this spring. 2d ago 3 sources competitive" [ref=e943] [cursor=pointer]:
+                - button "Share" [ref=e946]:
+                  - img [ref=e947]
+                - generic [ref=e953]:
+                  - heading "Canada's weather agency adopts AI for improved forecasts" [level=3] [ref=e954]
+                  - paragraph [ref=e955]: Canada's national weather agency will use AI to enhance forecast accuracy and public safety, launching the model this spring.
+                  - generic [ref=e956]:
+                    - generic [ref=e957]:
+                      - img [ref=e958]
+                      - text: 2d ago
+                    - generic [ref=e961]:
+                      - img [ref=e962]
+                      - text: 3 sources
+                    - generic "competitive" [ref=e967]
+          - generic [ref=e968]:
+            - heading "Apr 14" [level=2] [ref=e969]
+            - button "US Trucking Rates Rise Amid Fuel Costs and Capacity US trucking rates are broadly increasing due to higher fuel costs and reduced capacity, impacting multiple transport modes. 3d ago 1 source competitive strategic" [ref=e971] [cursor=pointer]:
+              - button "Share" [ref=e974]:
+                - img [ref=e975]
+              - generic [ref=e981]:
+                - heading "US Trucking Rates Rise Amid Fuel Costs and Capacity" [level=3] [ref=e982]
+                - paragraph [ref=e983]: US trucking rates are broadly increasing due to higher fuel costs and reduced capacity, impacting multiple transport modes.
+                - generic [ref=e984]:
+                  - generic [ref=e985]:
+                    - img [ref=e986]
+                    - text: 3d ago
+                  - generic [ref=e989]:
+                    - img [ref=e990]
+                    - text: 1 source
+                  - generic [ref=e994]:
+                    - generic "competitive" [ref=e995]
+                    - generic "strategic" [ref=e996]
+          - button "Load more stories" [ref=e998] [cursor=pointer]

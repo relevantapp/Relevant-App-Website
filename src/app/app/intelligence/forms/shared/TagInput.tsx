@@ -9,9 +9,17 @@ interface TagInputProps {
   max: number
   placeholder?: string
   disabled?: boolean
+  onPendingChange?: (value: string) => void
 }
 
-export default function TagInput({ value, onChange, max, placeholder, disabled }: TagInputProps) {
+export default function TagInput({
+  value,
+  onChange,
+  max,
+  placeholder,
+  disabled,
+  onPendingChange,
+}: TagInputProps) {
   const [inputValue, setInputValue] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -21,7 +29,8 @@ export default function TagInput({ value, onChange, max, placeholder, disabled }
     if (value.some((t) => t.toLowerCase() === tag.toLowerCase())) return
     onChange([...value, tag])
     setInputValue('')
-  }, [value, max, onChange])
+    onPendingChange?.('')
+  }, [value, max, onChange, onPendingChange])
 
   const removeTag = useCallback((index: number) => {
     onChange(value.filter((_, i) => i !== index))
@@ -77,9 +86,18 @@ export default function TagInput({ value, onChange, max, placeholder, disabled }
           ref={inputRef}
           type="text"
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          onChange={(e) => {
+            setInputValue(e.target.value)
+            onPendingChange?.(e.target.value)
+          }}
           onKeyDown={handleKeyDown}
-          onBlur={() => { if (inputValue.trim()) addTag(inputValue) }}
+          onBlur={() => {
+            if (inputValue.trim()) {
+              addTag(inputValue)
+              return
+            }
+            onPendingChange?.('')
+          }}
           placeholder={value.length === 0 ? placeholder : undefined}
           disabled={disabled}
           style={{

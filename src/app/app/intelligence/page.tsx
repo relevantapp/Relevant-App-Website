@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { useAuth } from '@/context/AuthContext'
-import { getValidAccessToken } from '@/lib/supabase'
 import { Loader2, Briefcase, AlertCircle, ArrowLeft } from 'lucide-react'
 import ResearchTypeSelector from './ResearchTypeSelector'
 import MeetingPrepForm from './forms/MeetingPrepForm'
@@ -13,13 +12,15 @@ import IntelligenceResults from './IntelligenceResults'
 import CompetitiveResults from './results/CompetitiveResults'
 import BusinessCaseResults from './results/BusinessCaseResults'
 import MarketResearchResults from './results/MarketResearchResults'
-import type { IntelligenceBrief } from './types'
+import FollowUpChat from './results/shared/FollowUpChat'
+import ActivityRail from './ActivityRail'
+import { useIntelligenceStream } from '@/hooks/useIntelligenceStream'
 import type {
+  MeetingPrepBrief,
   CompetitiveAnalysisBrief,
   BusinessCaseBrief,
   MarketResearchBrief,
-  IntelligenceBriefV3,
-} from './types'
+} from '@/lib/intelligence/contracts'
 import type {
   ResearchType,
   IntelligenceInput,
@@ -47,113 +48,107 @@ export default function IntelligencePage() {
   const { isAuthenticated, isLoading: authLoading } = useAuth()
   const [selectedType, setSelectedType] = useState<ResearchType | null>(null)
   const [formStates, setFormStates] = useState<FormStates>({ ...INITIAL_FORM_STATES })
-  const [brief, setBrief] = useState<IntelligenceBrief | null>(null)
-  const [v3Brief, setV3Brief] = useState<IntelligenceBriefV3 | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const loadingCancelledRef = useRef(false)
+  const { state: streamState, generate, abort, reset } = useIntelligenceStream()
+  const [savedBriefId, setSavedBriefId] = useState<string | null>(null)
+  const savingRef = useRef(false)
+
+  const brief = streamState.brief
+  const loading = streamState.isStreaming
+  const error = streamState.error
+
+  // Auto-save brief when ready
+  useEffect(() => {
+    if (!brief || savingRef.current || savedBriefId) return
+    savingRef.current = true
+    import('@/lib/supabase').then(({ getValidAccessToken }) =>
+      getValidAccessToken(180).then((token) =>
+        fetch('/api/intelligence/briefs', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ action: 'save', researchType: brief.researchType, requestPayload: {}, brief }),
+        })
+          .then((r) => r.json())
+          .then((d) => { if (d.id) setSavedBriefId(d.id) })
+          .catch(() => {})
+          .finally(() => { savingRef.current = false }),
+      ),
+    )
+  }, [brief, savedBriefId])
 
   const handleSubmit = useCallback(async (input: IntelligenceInput) => {
-    setLoading(true)
-    setError(null)
-    setBrief(null)
-    setV3Brief(null)
-    loadingCancelledRef.current = false
+    // Build request body based on research type
+    let apiBody: Record<string, unknown>
 
-    try {
-      const token = await getValidAccessToken(180)
-      if (!token) {
-        setError('Please sign in to use Intelligence.')
-        setLoading(false)
-        return
+    if (input.researchType === 'meeting_prep') {
+      apiBody = {
+        researchType: 'meeting_prep',
+        accountName: input.accountName,
+        website: input.website || undefined,
+        attendees: input.attendees?.map((a) => a.name) || undefined,
+        meetingType: mapMeetingType(input.meetingType),
+        goal: input.goal,
+        notes: input.context || undefined,
+        competitors: input.competitors?.length ? input.competitors : undefined,
+        relationshipStage: input.relationshipStage || undefined,
+        whatYoureSelling: input.whatYoureSelling || undefined,
+        desiredNextStep: input.desiredNextStep || undefined,
+        painPoints: input.painPoints?.length ? input.painPoints : undefined,
       }
-
-      // Build request body based on research type
-      let apiBody: Record<string, unknown>
-
-      if (input.researchType === 'meeting_prep') {
-        apiBody = {
-          researchType: 'meeting_prep',
-          accountName: input.accountName,
-          website: input.website || undefined,
-          attendees: input.attendees?.map((a) => a.name) || undefined,
-          meetingType: mapMeetingType(input.meetingType),
-          goal: input.goal,
-          notes: input.context || undefined,
-          competitors: input.competitors?.length ? input.competitors : undefined,
-        }
-      } else if (input.researchType === 'competitive_analysis') {
-        apiBody = {
-          researchType: 'competitive_analysis',
-          competitors: input.competitors,
-          yourCompany: input.yourCompany || undefined,
-          focusArea: input.focusArea,
-          specificQuestions: input.specificQuestions || undefined,
-        }
-      } else if (input.researchType === 'business_case') {
-        apiBody = {
-          researchType: 'business_case',
-          initiativeName: input.initiativeName,
-          hypothesis: input.hypothesis,
-          targetMarket: input.targetMarket || undefined,
-          successMetrics: input.successMetrics?.length ? input.successMetrics : undefined,
-          keyQuestions: input.keyQuestions || undefined,
-          comparableCompanies: input.comparableCompanies?.length ? input.comparableCompanies : undefined,
-        }
-      } else {
-        apiBody = {
-          researchType: 'market_research',
-          marketOrTrend: input.marketOrTrend,
-          scope: input.scope,
-          keyQuestions: input.keyQuestions || undefined,
-          knownPlayers: input.knownPlayers?.length ? input.knownPlayers : undefined,
-          timeHorizon: input.timeHorizon || '90d',
-        }
+    } else if (input.researchType === 'competitive_analysis') {
+      apiBody = {
+        researchType: 'competitive_analysis',
+        competitors: input.competitors,
+        yourCompany: input.yourCompany,
+        focusArea: input.focusArea,
+        specificQuestions: input.specificQuestions || undefined,
+        marketSegment: input.marketSegment || undefined,
+        geography: input.geography || undefined,
+        customerType: input.customerType || undefined,
+        useCasePreset: input.useCasePreset || undefined,
       }
-
-      const res = await fetch('/api/intelligence', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(apiBody),
-      })
-
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({ error: 'Request failed' }))
-        setError(errData.error || `Request failed (${res.status})`)
-        setLoading(false)
-        return
+    } else if (input.researchType === 'business_case') {
+      apiBody = {
+        researchType: 'business_case',
+        initiativeName: input.initiativeName,
+        hypothesis: input.hypothesis,
+        targetMarket: input.targetMarket || undefined,
+        successMetrics: input.successMetrics?.length ? input.successMetrics : undefined,
+        keyQuestions: input.keyQuestions || undefined,
+        comparableCompanies: input.comparableCompanies?.length ? input.comparableCompanies : undefined,
+        decisionType: input.decisionType || undefined,
+        decisionAudience: input.decisionAudience || undefined,
+        timeHorizon: input.timeHorizon || undefined,
+        investmentLevel: input.investmentLevel || undefined,
+        roiFrame: input.roiFrame?.length ? input.roiFrame : undefined,
       }
-
-      const briefData = await res.json()
-
-      // Meeting prep returns V2 format, others return V3
-      if (input.researchType === 'meeting_prep') {
-        setBrief(briefData as IntelligenceBrief)
-      } else {
-        setV3Brief(briefData as IntelligenceBriefV3)
+    } else {
+      apiBody = {
+        researchType: 'market_research',
+        marketOrTrend: input.marketOrTrend,
+        scope: input.scope,
+        keyQuestions: input.keyQuestions || undefined,
+        knownPlayers: input.knownPlayers?.length ? input.knownPlayers : undefined,
+        timeHorizon: input.timeHorizon || '90d',
+        objective: input.objective || undefined,
+        region: input.region || undefined,
+        customerSegment: input.customerSegment || undefined,
+        useCase: input.useCase || undefined,
+        depth: input.depth || undefined,
       }
-    } catch (err) {
-      console.error('[intelligence] fetch failed:', err)
-      setError('Failed to generate brief. Please try again.')
-    } finally {
-      setLoading(false)
-      loadingCancelledRef.current = true
     }
-  }, [])
+
+    await generate(apiBody)
+  }, [generate])
 
   const handleNewSearch = useCallback(() => {
-    setBrief(null)
-    setV3Brief(null)
-    setError(null)
-  }, [])
+    reset()
+    setSavedBriefId(null)
+  }, [reset])
 
   const handleBack = useCallback(() => {
     setSelectedType(null)
-    setError(null)
-  }, [])
+    reset()
+  }, [reset])
 
   if (authLoading) {
     return (
@@ -173,10 +168,11 @@ export default function IntelligencePage() {
   }
 
   // Show results if we have a brief
-  if (brief || v3Brief) {
+  if (brief) {
+    const researchType = brief.researchType
     return (
       <div className="px-4 py-6 sm:px-6">
-        {(brief?.status?.degraded || v3Brief?.status?.degraded) && (
+        {brief.status?.degraded && (
           <div className="mx-auto mb-4 max-w-4xl rounded-xl border border-[var(--accent-coral)]/30 bg-[var(--accent-coral)]/10 p-4">
             <div className="flex items-center gap-2 text-sm text-[var(--accent-coral)]">
               <AlertCircle className="h-4 w-4 shrink-0" />
@@ -184,22 +180,25 @@ export default function IntelligencePage() {
             </div>
           </div>
         )}
-        {brief && <IntelligenceResults brief={brief} onNewSearch={handleNewSearch} />}
-        {v3Brief?.researchType === 'competitive_analysis' && (
-          <CompetitiveResults brief={v3Brief as CompetitiveAnalysisBrief} onNewSearch={handleNewSearch} />
+        {researchType === 'meeting_prep' && (
+          <IntelligenceResults brief={brief as MeetingPrepBrief} onNewSearch={handleNewSearch} />
         )}
-        {v3Brief?.researchType === 'business_case' && (
-          <BusinessCaseResults brief={v3Brief as BusinessCaseBrief} onNewSearch={handleNewSearch} />
+        {researchType === 'competitive_analysis' && (
+          <CompetitiveResults brief={brief as CompetitiveAnalysisBrief} onNewSearch={handleNewSearch} />
         )}
-        {v3Brief?.researchType === 'market_research' && (
-          <MarketResearchResults brief={v3Brief as MarketResearchBrief} onNewSearch={handleNewSearch} />
+        {researchType === 'business_case' && (
+          <BusinessCaseResults brief={brief as BusinessCaseBrief} onNewSearch={handleNewSearch} />
         )}
+        {researchType === 'market_research' && (
+          <MarketResearchResults brief={brief as MarketResearchBrief} onNewSearch={handleNewSearch} />
+        )}
+        <FollowUpChat briefId={savedBriefId} />
       </div>
     )
   }
 
   return (
-    <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 py-12">
+    <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 py-8 sm:py-12">
       <div className="w-full max-w-2xl">
         {/* Error */}
         {error && (
@@ -211,21 +210,18 @@ export default function IntelligencePage() {
           </div>
         )}
 
-        {/* Loading skeleton */}
+        {/* Streaming activity rail */}
         {loading && (
           <div className="mb-6">
-            <div className="mb-4 text-center">
-              <Loader2 className="mx-auto mb-2 h-5 w-5 animate-spin text-[var(--accent)]" />
-              <p className="text-sm text-[var(--text-muted)]">Researching...</p>
-            </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              {[120, 120, 180, 180].map((h, i) => (
-                <div
-                  key={i}
-                  className="rounded-xl border border-[var(--surface-strong)] bg-[var(--surface)] intel-skeleton"
-                  style={{ height: h }}
-                />
-              ))}
+            <ActivityRail state={streamState} />
+            <div className="mt-4 text-center">
+              <button
+                type="button"
+                onClick={abort}
+                className="rounded-lg border border-[var(--surface-strong)] bg-[var(--surface)] px-4 py-2 text-xs text-[var(--text-muted)] transition-colors hover:border-[var(--accent-coral)] hover:text-[var(--accent-coral)]"
+              >
+                Cancel
+              </button>
             </div>
           </div>
         )}
@@ -239,18 +235,8 @@ export default function IntelligencePage() {
             <button
               type="button"
               onClick={handleBack}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 6,
-                background: 'none',
-                border: 'none',
-                fontSize: 13,
-                color: 'var(--text-muted)',
-                cursor: 'pointer',
-                marginBottom: 24,
-                padding: 0,
-              }}
+              className="mb-5 inline-flex items-center gap-1.5 bg-transparent p-0 text-[13px] text-[var(--text-muted)] hover:text-[var(--text)] sm:mb-6"
+              style={{ border: 'none', cursor: 'pointer' }}
             >
               <ArrowLeft size={14} />
               Back

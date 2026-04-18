@@ -1,6 +1,6 @@
 'use client'
 
-import type { BriefStatus } from '@/lib/intelligence/types'
+import type { BriefStatus } from '@/lib/intelligence/contracts'
 
 interface StatusBarProps {
   status: BriefStatus

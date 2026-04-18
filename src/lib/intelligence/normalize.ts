@@ -1,6 +1,6 @@
 /* ── Normalize — Merge Exa + Tavily results into unified evidence ── */
 
-import type { BriefSource, NormalizedEvidence } from './types'
+import type { BriefSource, NormalizedEvidence } from './contracts'
 import type { ExaSearchResult, ExaSnapshotResult } from './providers/exa'
 import type { TavilySearchResult } from './providers/tavily'
 

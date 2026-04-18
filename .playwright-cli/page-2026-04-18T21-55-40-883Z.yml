@@ -1,0 +1,449 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e2]: Relevant — Less Noise. More Clarity.
+  - generic [ref=e88]:
+    - banner [ref=e89]:
+      - generic [ref=e90]:
+        - link "Relevant app logo Relevant" [ref=e91] [cursor=pointer]:
+          - /url: /app/feed
+          - img "Relevant app logo" [ref=e93]
+          - generic [ref=e94]: Relevant
+        - navigation [ref=e95]:
+          - link "Feed" [ref=e96] [cursor=pointer]:
+            - /url: /app/feed
+            - img [ref=e97]
+            - text: Feed
+          - link "Search" [ref=e100] [cursor=pointer]:
+            - /url: /app/search
+            - img [ref=e101]
+            - text: Search
+          - link "Intelligence" [ref=e104] [cursor=pointer]:
+            - /url: /app/intelligence
+            - img [ref=e105]
+            - text: Intelligence
+          - link "Journal" [ref=e108] [cursor=pointer]:
+            - /url: /app/journal
+            - img [ref=e109]
+            - text: Journal
+          - link "You" [ref=e111] [cursor=pointer]:
+            - /url: /app/profile
+            - img [ref=e112]
+            - text: You
+        - generic [ref=e115]:
+          - button "Toggle theme" [ref=e116] [cursor=pointer]:
+            - img [ref=e117]
+          - generic [ref=e119]:
+            - generic [ref=e120]: Tanmay Gupta
+            - button "Sign out" [ref=e121] [cursor=pointer]:
+              - img [ref=e122]
+    - main [ref=e125]:
+      - generic [ref=e999]:
+        - generic [ref=e1166]:
+          - generic [ref=e1167]:
+            - button "← New Search" [ref=e1168] [cursor=pointer]
+            - button "Copy as…" [ref=e1170] [cursor=pointer]:
+              - img [ref=e1171]
+              - text: Copy as…
+              - img [ref=e1174]
+          - generic [ref=e1176]:
+            - generic [ref=e1178]:
+              - generic [ref=e1179]:
+                - heading "Microsoft is aggressively expanding its AI capabilities, focusing on cost-efficiency and production-readiness for image generation and developer tools, while positioning Azure as a key AI infrastructure provider against Google." [level=2] [ref=e1180]
+                - paragraph [ref=e1181]: Microsoft is prioritizing enterprise AI adoption through cost-effective, high-performance models like MAI-Image-2-Efficient and integrated developer tools like the Visual Studio Debugger Agent. Their strategy emphasizes a two-tier approach for AI models and a strong Azure cloud offering, aiming to empower organizations to achieve more with AI. We can position our pilot to leverage these advancements for faster market and account intelligence.
+              - generic [ref=e1182]:
+                - img [ref=e1183]
+                - text: High confidence
+            - generic [ref=e1186]:
+              - heading "Company Snapshot" [level=3] [ref=e1188]:
+                - img [ref=e1189]
+                - text: Company Snapshot
+              - generic [ref=e1193]:
+                - heading "Key People" [level=3] [ref=e1194]:
+                  - img [ref=e1195]
+                  - text: Key People
+                - generic [ref=e1201]:
+                  - generic [ref=e1202]: Satya Nadella
+                  - generic [ref=e1203]: Microsoft
+                  - paragraph [ref=e1204]: "Satya Nadella - Chairman and CEO at Microsoft | LinkedIn # Satya Nadella ## Chairman and CEO at Microsoft ### Redmond, Washington, United States Contact Info 12M followers 500+ connections #### See your mutual connections Join to view profile Message Microsoft The University of Chicago Booth School of Business Company Website - Report this profile ## About As chairman and CEO of Microsoft, I define my mission and that of my company as empowering every person and every organization on the planet to achieve more. ## Courses by Satya 32m ### Satya Nadella and Rishi Sunak on What Comes Next for AI #### By: Satya Nadella 2,803 viewers ## Articles by Satya Nov 15, 2025 ### A Positive-Sum Future ... 523 Comments Oct 21, 2025 ### My annual letter: Thinking in decades, executing in quarters ... 294 Comments Oct 12, 2025 ### Meet 5 Copilot agents from our partners changing how work gets done We've been hard at work advancing M365 Copilot, and so have our many partners who are building agents that integrate… ... Supercharged past few weeks as we push the bounds of model-forward innovation across Microsoft 365. A few highlights:… ... 172 Comments Nov 16, 2023 ### The age of copilots ... 107 Comments Oct 19, 2023 ### My annual letter: Leading in a new era ... ### Think of datacenter networking like water moving through pipes. Traditional optical cables move data through a ... ### Last one from my West Coast trip 😉 It was great catching up with Satya Nadella and his team at Microsoft in ... ### \"I'm not saying Copilot diagnosed me. I'm saying it helped me ask for the right test. A test no doctor had ordered ... #### Liked by Satya Nadella Join now to see all activity ## Experience ### Chairman and CEO #### Microsoft Feb 2014 - Present 12 years 2 months Greater Seattle Area ### Member Board Of Trustees #### University of Chicago 2018 - Present 8 years ### Board Member #### Starbucks 2017 - 2024 7 years ### Chairman #### The Business Council U.S. 2021 - 2023 2 years ### Board Member #### Fred Hutch 2016 - 2022 6 years ## Education ### The University of Chicago Booth School of Business #### - 1994 - 1996 ... ### At NVIDIA GTC today, three announcements I'm excited about: 1. Microsoft Foundry Agent Service is GA: with ... ### This is a great example of why we do what we do. We’ve trained a multimodal AI model to turn routine pathology ... ### We’re the first cloud to bring up an NVIDIA Vera Rubin NVL72 system for validation, another big step in building ... ### We're approaching the dawn of medical superintelligence - the moment when affordable, world-class medical knowledge ... ### Today, we announced the public preview of Fireworks AI on Microsoft Foundry — bringing high‑performance open‑model ... ### Great conversation with TBPN live yesterday on AI, agents, and where work is headed. Enjoyed sharing how our latest ... ### Copilot has been great at helping us find answers and draft content. The next step is just as important: turning ... ### Announcing Copilot Cowork, a new way to complete tasks and get work done in M365. When you hand off a task to ... ### New AI models are joining the chat. GPT-5.3 Instant and GPT-5.4 Thinking are now available in Microsoft Copilot ... ### Excited to bring GPT 5.4 to Microsoft Foundry! Designed to improve agent workflows, GPT5.4 continues to push the ... ### Healthcare has never moved faster or asked more of clinicians. At HIMSS, we’re rolling out big updates to Dragon ... #### Shared by Satya Nadella ## View Satya’s full profile - Contact Satya directly - Get introduced - See who you know in common"
+                  - link "LinkedIn ↗" [ref=e1205] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/today/author/satyanadella
+              - generic [ref=e1206]:
+                - heading "What Just Happened" [level=3] [ref=e1207]:
+                  - img [ref=e1208]
+                  - text: What Just Happened
+                - list [ref=e1211]:
+                  - listitem [ref=e1212]:
+                    - paragraph [ref=e1213]: Microsoft launched MAI-Image-2-Efficient, a faster and 41% cheaper variant of its MAI-Image-2 model, designed for high-volume, cost-sensitive production workloads like product photography and marketing assets.
+                    - generic [ref=e1214]:
+                      - button "[s11]" [ref=e1215] [cursor=pointer]
+                      - button "[s3]" [ref=e1216] [cursor=pointer]
+                      - generic [ref=e1217]: fact
+                  - listitem [ref=e1218]:
+                    - paragraph [ref=e1219]: MAI-Image-2-Efficient offers 22% faster performance and 4x greater GPU throughput compared to MAI-Image-2, and outperforms Gemini/Gemini-Image benchmarks by ~40% on latency.
+                    - generic [ref=e1220]:
+                      - button "[s11]" [ref=e1221] [cursor=pointer]
+                      - button "[s3]" [ref=e1222] [cursor=pointer]
+                      - generic [ref=e1223]: fact
+                  - listitem [ref=e1224]:
+                    - paragraph [ref=e1225]: Microsoft is integrating AI across its security posture, with the Security Response Center (MSRC) using AI for vulnerability discovery and response.
+                    - generic [ref=e1226]:
+                      - button "[s6]" [ref=e1227] [cursor=pointer]
+                      - generic [ref=e1228]: fact
+                  - listitem [ref=e1229]:
+                    - paragraph [ref=e1230]: Visual Studio introduced a new Debugger Agent workflow that integrates with Copilot Chat to automate bug fixing, reducing developer effort.
+                    - generic [ref=e1231]:
+                      - button "[s9]" [ref=e1232] [cursor=pointer]
+                      - generic [ref=e1233]: fact
+                  - listitem [ref=e1234]:
+                    - paragraph [ref=e1235]: Microsoft is positioning Azure as a key player in the AI race, holding ~21% of the global cloud market share with a revenue run rate of ~$131bn for Intelligent Cloud as of Feb 2026.
+                    - generic [ref=e1236]:
+                      - button "[s25]" [ref=e1237] [cursor=pointer]
+                      - button "[s26]" [ref=e1238] [cursor=pointer]
+                      - generic [ref=e1239]: fact
+              - generic [ref=e1240]:
+                - heading "Talking Points" [level=3] [ref=e1241]:
+                  - img [ref=e1242]
+                  - text: Talking Points
+                - list [ref=e1244]:
+                  - listitem [ref=e1245]:
+                    - paragraph [ref=e1246]: Highlight Microsoft's commitment to making AI more accessible and cost-effective with the launch of MAI-Image-2-Efficient, which is significantly cheaper and faster for production use cases.
+                    - generic [ref=e1247]:
+                      - button "[s11]" [ref=e1248] [cursor=pointer]
+                      - button "[s3]" [ref=e1249] [cursor=pointer]
+                      - generic [ref=e1250]: fact
+                  - listitem [ref=e1251]:
+                    - paragraph [ref=e1252]: Mention the strategic two-tier approach to AI models (Efficient vs. highest fidelity) as a way to cater to diverse production needs and budgets.
+                    - generic [ref=e1253]:
+                      - button "[s11]" [ref=e1254] [cursor=pointer]
+                      - button "[s3]" [ref=e1255] [cursor=pointer]
+                      - generic [ref=e1256]: fact
+                  - listitem [ref=e1257]:
+                    - paragraph [ref=e1258]: Reference Satya Nadella's mission to empower every person and organization, and how recent AI advancements like Copilot and the new debugger agent directly support this.
+                    - generic [ref=e1259]:
+                      - button "[s22]" [ref=e1260] [cursor=pointer]
+                      - generic [ref=e1261]: fact
+                  - listitem [ref=e1262]:
+                    - paragraph [ref=e1263]: Point out Microsoft's proactive integration of AI into critical areas like security (MSRC) to enhance global defense and response capabilities.
+                    - generic [ref=e1264]:
+                      - button "[s6]" [ref=e1265] [cursor=pointer]
+                      - generic [ref=e1266]: fact
+                  - listitem [ref=e1267]:
+                    - paragraph [ref=e1268]: Discuss how Microsoft's continuous innovation in developer tools, such as the Visual Studio Debugger Agent, aims to boost productivity and streamline workflows.
+                    - generic [ref=e1269]:
+                      - button "[s9]" [ref=e1270] [cursor=pointer]
+                      - generic [ref=e1271]: fact
+              - generic [ref=e1272]:
+                - heading "Landmines" [level=3] [ref=e1273]:
+                  - img [ref=e1274]
+                  - text: Landmines
+                - list [ref=e1276]:
+                  - listitem [ref=e1277]:
+                    - paragraph [ref=e1278]: Be aware that while Microsoft is investing heavily in AI, Google is also a formidable competitor with its own AI strategy and strong cloud growth, potentially leading to a highly competitive landscape.
+                    - generic [ref=e1279]:
+                      - button "[s25]" [ref=e1280] [cursor=pointer]
+                      - button "[s26]" [ref=e1281] [cursor=pointer]
+                      - generic [ref=e1282]: fact
+                  - listitem [ref=e1283]:
+                    - paragraph [ref=e1284]: Avoid focusing solely on image generation; Microsoft's broader AI strategy encompasses productivity, security, and enterprise solutions, so ensure the conversation reflects this breadth.
+                    - generic [ref=e1285]:
+                      - button "[s2]" [ref=e1286] [cursor=pointer]
+                      - button "[s6]" [ref=e1287] [cursor=pointer]
+                      - button "[s9]" [ref=e1288] [cursor=pointer]
+                      - generic [ref=e1289]: inference
+                  - listitem [ref=e1290]:
+                    - paragraph [ref=e1291]: While MAI-Image-2-Efficient is cost-effective, ensure the discussion doesn't imply a compromise on quality for all use cases, as MAI-Image-2 is still positioned for highest fidelity.
+                    - generic [ref=e1292]:
+                      - button "[s3]" [ref=e1293] [cursor=pointer]
+                      - generic [ref=e1294]: inference
+                  - listitem [ref=e1295]:
+                    - paragraph [ref=e1296]: Nadella's focus on 'thinking in decades, executing in quarters' suggests a long-term vision; ensure our pilot proposal aligns with this strategic outlook.
+                    - generic [ref=e1297]:
+                      - button "[s22]" [ref=e1298] [cursor=pointer]
+                      - generic [ref=e1299]: inference
+              - generic [ref=e1300]:
+                - heading "Questions to Ask" [level=3] [ref=e1301]:
+                  - img [ref=e1302]
+                  - text: Questions to Ask
+                - list [ref=e1305]:
+                  - listitem [ref=e1306]:
+                    - paragraph [ref=e1307]: How is Microsoft prioritizing the integration of its latest AI models, like MAI-Image-2-Efficient, into broader enterprise solutions to drive go-to-market intelligence?
+                    - generic [ref=e1308]:
+                      - button "[s11]" [ref=e1309] [cursor=pointer]
+                      - button "[s3]" [ref=e1310] [cursor=pointer]
+                      - generic [ref=e1311]: inference
+                  - listitem [ref=e1312]:
+                    - paragraph [ref=e1313]: Given the focus on cost-efficiency and speed, what are Microsoft's key considerations for enabling customers to rapidly turn AI-driven insights into actionable market intelligence?
+                    - generic [ref=e1314]:
+                      - button "[s11]" [ref=e1315] [cursor=pointer]
+                      - button "[s3]" [ref=e1316] [cursor=pointer]
+                      - generic [ref=e1317]: inference
+                  - listitem [ref=e1318]:
+                    - paragraph [ref=e1319]: Beyond developer productivity, how does Microsoft envision AI, such as Copilot agents, transforming sales and account management workflows to better anticipate market changes?
+                    - generic [ref=e1320]:
+                      - button "[s9]" [ref=e1321] [cursor=pointer]
+                      - button "[s22]" [ref=e1322] [cursor=pointer]
+                      - generic [ref=e1323]: inference
+                  - listitem [ref=e1324]:
+                    - paragraph [ref=e1325]: What are Microsoft's strategic priorities for Azure in supporting enterprise-scale AI adoption, particularly for generating and acting upon real-time market intelligence?
+                    - generic [ref=e1326]:
+                      - button "[s25]" [ref=e1327] [cursor=pointer]
+                      - button "[s26]" [ref=e1328] [cursor=pointer]
+                      - generic [ref=e1329]: inference
+                  - listitem [ref=e1330]:
+                    - paragraph [ref=e1331]: How does Microsoft balance the 'Inference' phase of AI with the need for continuous model development and deployment to maintain a competitive edge against rivals like Google?
+                    - generic [ref=e1332]:
+                      - button "[s25]" [ref=e1333] [cursor=pointer]
+                      - button "[s26]" [ref=e1334] [cursor=pointer]
+                      - generic [ref=e1335]: inference
+            - generic [ref=e1337]:
+              - heading "Competitor Context" [level=3] [ref=e1338]:
+                - img [ref=e1339]
+                - text: Competitor Context
+              - list [ref=e1348]:
+                - listitem [ref=e1349]:
+                  - paragraph [ref=e1350]: Microsoft and Google are in an 'all-out battle for cloud computing and AI,' with similar valuation multiples but different strategic approaches.
+                  - generic [ref=e1351]:
+                    - button "[s25]" [ref=e1352] [cursor=pointer]
+                    - button "[s26]" [ref=e1353] [cursor=pointer]
+                    - generic [ref=e1354]: fact
+                - listitem [ref=e1355]:
+                  - paragraph [ref=e1356]: As of Feb 2026, Azure holds ~21% of the global cloud market share, while Google Cloud Platform (GCP) holds ~14%, with GCP showing faster revenue growth (48% YoY vs. Azure's 39% YoY).
+                  - generic [ref=e1357]:
+                    - button "[s25]" [ref=e1358] [cursor=pointer]
+                    - button "[s26]" [ref=e1359] [cursor=pointer]
+                    - generic [ref=e1360]: fact
+                - listitem [ref=e1361]:
+                  - paragraph [ref=e1362]: Microsoft's AI strategy involves partnering with companies like OpenAI, whereas Google builds its own models and integrates them across its products, offering a different cost structure advantage.
+                  - generic [ref=e1363]:
+                    - button "[s25]" [ref=e1364] [cursor=pointer]
+                    - button "[s26]" [ref=e1365] [cursor=pointer]
+                    - generic [ref=e1366]: fact
+                - listitem [ref=e1367]:
+                  - paragraph [ref=e1368]: Microsoft's Intelligent Cloud revenue run rate is ~$131bn, significantly higher than GCP's ~$71bn, indicating Microsoft's current dominance in cloud revenue.
+                  - generic [ref=e1369]:
+                    - button "[s25]" [ref=e1370] [cursor=pointer]
+                    - button "[s26]" [ref=e1371] [cursor=pointer]
+                    - generic [ref=e1372]: fact
+                - listitem [ref=e1373]:
+                  - paragraph [ref=e1374]: For the first time in a decade, Microsoft is trading at a discount relative to Google, suggesting a shift in market perception or valuation dynamics.
+                  - generic [ref=e1375]:
+                    - button "[s25]" [ref=e1376] [cursor=pointer]
+                    - button "[s26]" [ref=e1377] [cursor=pointer]
+                    - generic [ref=e1378]: fact
+          - generic [ref=e1380]:
+            - heading "📚 Sources (30)" [level=3] [ref=e1381]
+            - generic [ref=e1382]:
+              - link "s1 Microsoft microsoft.com exa" [ref=e1383] [cursor=pointer]:
+                - /url: http://www.microsoft.com/
+                - generic [ref=e1384]: s1
+                - generic [ref=e1385]: Microsoft
+                - generic [ref=e1386]: microsoft.com
+                - generic [ref=e1387]: exa
+              - link "s2 Microsoft rolls out a more efficient text‑to‑image model | Microsoft Signal Blog | Microsoft news.microsoft.com Apr 14 exa" [ref=e1388] [cursor=pointer]:
+                - /url: https://news.microsoft.com/signal/articles/microsoft-rolls-out-a-more-efficient-text-to-image-model/
+                - generic [ref=e1389]: s2
+                - generic [ref=e1390]: Microsoft rolls out a more efficient text‑to‑image model | Microsoft Signal Blog | Microsoft
+                - generic [ref=e1391]: news.microsoft.com
+                - generic [ref=e1392]: Apr 14
+                - generic [ref=e1393]: exa
+              - 'link "s3 MAI-Image-2-Efficient: Flagship Quality, 41% Lower Cost | Microsoft AI microsoft.ai Apr 14 exa" [ref=e1394] [cursor=pointer]':
+                - /url: https://microsoft.ai/news/mai-image-2-efficient/
+                - generic [ref=e1395]: s3
+                - generic [ref=e1396]: "MAI-Image-2-Efficient: Flagship Quality, 41% Lower Cost | Microsoft AI"
+                - generic [ref=e1397]: microsoft.ai
+                - generic [ref=e1398]: Apr 14
+                - generic [ref=e1399]: exa
+              - link "s4 Microsoft and Publicis Groupe expand their strategic partnership to power the future of agentic marketing for businesses worldwide - Source news.microsoft.com Apr 8 exa" [ref=e1400] [cursor=pointer]:
+                - /url: https://news.microsoft.com/source/2026/04/08/microsoft-and-publicis-groupe-expand-their-strategic-partnership-to-power-the-future-of-agentic-marketing-for-businesses-worldwide/
+                - generic [ref=e1401]: s4
+                - generic [ref=e1402]: Microsoft and Publicis Groupe expand their strategic partnership to power the future of agentic marketing for businesses worldwide - Source
+                - generic [ref=e1403]: news.microsoft.com
+                - generic [ref=e1404]: Apr 8
+                - generic [ref=e1405]: exa
+              - 'link "s5 Introducing the Agent Governance Toolkit: Open-source runtime security for AI agents | Microsoft Open Source Blog opensource.microsoft.com Apr 2 exa" [ref=e1406] [cursor=pointer]':
+                - /url: https://opensource.microsoft.com/blog/2026/04/02/introducing-the-agent-governance-toolkit-open-source-runtime-security-for-ai-agents/
+                - generic [ref=e1407]: s5
+                - generic [ref=e1408]: "Introducing the Agent Governance Toolkit: Open-source runtime security for AI agents | Microsoft Open Source Blog"
+                - generic [ref=e1409]: opensource.microsoft.com
+                - generic [ref=e1410]: Apr 2
+                - generic [ref=e1411]: exa
+              - 'link "s6 Strengthening secure software at global scale: How MSRC is evolving with AI microsoft.com Mar 31 exa" [ref=e1412] [cursor=pointer]':
+                - /url: https://www.microsoft.com/en-us/msrc/blog/2026/04/strengthening-secure-software-global-scale-how-msrc-is-evolving-with-ai
+                - generic [ref=e1413]: s6
+                - generic [ref=e1414]: "Strengthening secure software at global scale: How MSRC is evolving with AI"
+                - generic [ref=e1415]: microsoft.com
+                - generic [ref=e1416]: Mar 31
+                - generic [ref=e1417]: exa
+              - link "s7 Microsoft to invest $10 billion in Japan, focused on AI, security and skills | Microsoft Signal Blog | Microsoft news.microsoft.com Apr 6 exa" [ref=e1418] [cursor=pointer]:
+                - /url: https://news.microsoft.com/signal/articles/microsoft-to-invest-10-billion-in-japan-focused-on-ai-security-and-skills/
+                - generic [ref=e1419]: s7
+                - generic [ref=e1420]: Microsoft to invest $10 billion in Japan, focused on AI, security and skills | Microsoft Signal Blog | Microsoft
+                - generic [ref=e1421]: news.microsoft.com
+                - generic [ref=e1422]: Apr 6
+                - generic [ref=e1423]: exa
+              - link "s8 Microsoft launches 3 new AI models in direct shot at OpenAI and Google | VentureBeat venturebeat.com Apr 3 exa" [ref=e1424] [cursor=pointer]:
+                - /url: https://venturebeat.com/ai/microsoft-launches-3-new-ai-models-in-direct-shot-at-openai-and-google/
+                - generic [ref=e1425]: s8
+                - generic [ref=e1426]: Microsoft launches 3 new AI models in direct shot at OpenAI and Google | VentureBeat
+                - generic [ref=e1427]: venturebeat.com
+                - generic [ref=e1428]: Apr 3
+                - generic [ref=e1429]: exa
+              - 'link "s9 Stop Hunting Bugs: Meet the New Visual Studio Debugger Agent Workflow - Visual Studio Blog devblogs.microsoft.com Apr 15 exa" [ref=e1430] [cursor=pointer]':
+                - /url: https://devblogs.microsoft.com/visualstudio/stop-hunting-bugs-meet-the-new-visual-studio-debugger-agent/
+                - generic [ref=e1431]: s9
+                - generic [ref=e1432]: "Stop Hunting Bugs: Meet the New Visual Studio Debugger Agent Workflow - Visual Studio Blog"
+                - generic [ref=e1433]: devblogs.microsoft.com
+                - generic [ref=e1434]: Apr 15
+                - generic [ref=e1435]: exa
+              - 'link "s10 New tools and guidance: Announcing Zero Trust for AI | Microsoft Security Blog microsoft.com Mar 19 exa" [ref=e1436] [cursor=pointer]':
+                - /url: https://www.microsoft.com/en-us/security/blog/2026/03/19/new-tools-and-guidance-announcing-zero-trust-for-ai/
+                - generic [ref=e1437]: s10
+                - generic [ref=e1438]: "New tools and guidance: Announcing Zero Trust for AI | Microsoft Security Blog"
+                - generic [ref=e1439]: microsoft.com
+                - generic [ref=e1440]: Mar 19
+                - generic [ref=e1441]: exa
+              - link "s11 Microsoft launches MAI-Image-2-Efficient, a cheaper and faster AI image model | VentureBeat venturebeat.com Apr 14 exa" [ref=e1442] [cursor=pointer]:
+                - /url: https://venturebeat.com/technology/microsoft-launches-mai-image-2-efficient-a-cheaper-and-faster-ai-image-model
+                - generic [ref=e1443]: s11
+                - generic [ref=e1444]: Microsoft launches MAI-Image-2-Efficient, a cheaper and faster AI image model | VentureBeat
+                - generic [ref=e1445]: venturebeat.com
+                - generic [ref=e1446]: Apr 14
+                - generic [ref=e1447]: exa
+              - link "s12 Microsoft news - Today's latest updates cbsnews.com tavily" [ref=e1448] [cursor=pointer]:
+                - /url: https://www.cbsnews.com/tag/microsoft/
+                - generic [ref=e1449]: s12
+                - generic [ref=e1450]: Microsoft news - Today's latest updates
+                - generic [ref=e1451]: cbsnews.com
+                - generic [ref=e1452]: tavily
+              - link "s13 Recent News - Stories - Microsoft Source news.microsoft.com tavily" [ref=e1453] [cursor=pointer]:
+                - /url: https://news.microsoft.com/recent-news/
+                - generic [ref=e1454]: s13
+                - generic [ref=e1455]: Recent News - Stories - Microsoft Source
+                - generic [ref=e1456]: news.microsoft.com
+                - generic [ref=e1457]: tavily
+              - link "s14 Monthly news - April 2026 | Microsoft Community Hub techcommunity.microsoft.com tavily" [ref=e1458] [cursor=pointer]:
+                - /url: https://techcommunity.microsoft.com/blog/microsoftthreatprotectionblog/monthly-news---april-2026/4508050
+                - generic [ref=e1459]: s14
+                - generic [ref=e1460]: Monthly news - April 2026 | Microsoft Community Hub
+                - generic [ref=e1461]: techcommunity.microsoft.com
+                - generic [ref=e1462]: tavily
+              - link "s15 Microsoft has just released the April 2026 update as of now ... - Reddit reddit.com tavily" [ref=e1463] [cursor=pointer]:
+                - /url: https://www.reddit.com/r/FuckMicrosoft/comments/1slfzny/microsoft_has_just_released_the_april_2026_update/
+                - generic [ref=e1464]: s15
+                - generic [ref=e1465]: Microsoft has just released the April 2026 update as of now ... - Reddit
+                - generic [ref=e1466]: reddit.com
+                - generic [ref=e1467]: tavily
+              - link "s16 Microsoft (MSFT) News – GeekWire geekwire.com tavily" [ref=e1468] [cursor=pointer]:
+                - /url: https://www.geekwire.com/microsoft/
+                - generic [ref=e1469]: s16
+                - generic [ref=e1470]: Microsoft (MSFT) News – GeekWire
+                - generic [ref=e1471]: geekwire.com
+                - generic [ref=e1472]: tavily
+              - link "s17 Latest news - Source news.microsoft.com tavily" [ref=e1473] [cursor=pointer]:
+                - /url: https://news.microsoft.com/source/view-all/
+                - generic [ref=e1474]: s17
+                - generic [ref=e1475]: Latest news - Source
+                - generic [ref=e1476]: news.microsoft.com
+                - generic [ref=e1477]: tavily
+              - link "s18 April 2026 announcements - Partner Center announcements | Microsoft Learn learn.microsoft.com tavily" [ref=e1478] [cursor=pointer]:
+                - /url: https://learn.microsoft.com/en-us/partner-center/announcements/2026-april
+                - generic [ref=e1479]: s18
+                - generic [ref=e1480]: April 2026 announcements - Partner Center announcements | Microsoft Learn
+                - generic [ref=e1481]: learn.microsoft.com
+                - generic [ref=e1482]: tavily
+              - link "s19 Microsoft Source news.microsoft.com tavily" [ref=e1483] [cursor=pointer]:
+                - /url: https://news.microsoft.com/source/
+                - generic [ref=e1484]: s19
+                - generic [ref=e1485]: Microsoft Source
+                - generic [ref=e1486]: news.microsoft.com
+                - generic [ref=e1487]: tavily
+              - link "s20 The Official Microsoft Blog blogs.microsoft.com tavily" [ref=e1488] [cursor=pointer]:
+                - /url: https://blogs.microsoft.com/
+                - generic [ref=e1489]: s20
+                - generic [ref=e1490]: The Official Microsoft Blog
+                - generic [ref=e1491]: blogs.microsoft.com
+                - generic [ref=e1492]: tavily
+              - link "s21 What's new support.microsoft.com tavily" [ref=e1493] [cursor=pointer]:
+                - /url: https://support.microsoft.com/en-us/whats-new
+                - generic [ref=e1494]: s21
+                - generic [ref=e1495]: What's new
+                - generic [ref=e1496]: support.microsoft.com
+                - generic [ref=e1497]: tavily
+              - link "s_site Microsoft website microsoft.com internal" [ref=e1498] [cursor=pointer]:
+                - /url: https://www.microsoft.com
+                - generic [ref=e1499]: s_site
+                - generic [ref=e1500]: Microsoft website
+                - generic [ref=e1501]: microsoft.com
+                - generic [ref=e1502]: internal
+              - link "s22 Satya Nadella - Chairman and CEO at Microsoft | LinkedIn linkedin.com Mar 5 exa" [ref=e1503] [cursor=pointer]:
+                - /url: https://www.linkedin.com/today/author/satyanadella
+                - generic [ref=e1504]: s22
+                - generic [ref=e1505]: Satya Nadella - Chairman and CEO at Microsoft | LinkedIn
+                - generic [ref=e1506]: linkedin.com
+                - generic [ref=e1507]: Mar 5
+                - generic [ref=e1508]: exa
+              - link "s23 Satya Nadella - Source microsoft.com Dec 7 exa" [ref=e1509] [cursor=pointer]:
+                - /url: https://www.microsoft.com/ceo
+                - generic [ref=e1510]: s23
+                - generic [ref=e1511]: Satya Nadella - Source
+                - generic [ref=e1512]: microsoft.com
+                - generic [ref=e1513]: Dec 7
+                - generic [ref=e1514]: exa
+              - link "s24 Satya Nadella en.wikipedia.org exa" [ref=e1515] [cursor=pointer]:
+                - /url: https://en.wikipedia.org/wiki/Satya_nadella
+                - generic [ref=e1516]: s24
+                - generic [ref=e1517]: Satya Nadella
+                - generic [ref=e1518]: en.wikipedia.org
+                - generic [ref=e1519]: exa
+              - 'link "s25 Microsoft vs Google Stock: Cloud Computing Battle 2026 testnet.bitmex.com Apr 14 exa" [ref=e1520] [cursor=pointer]':
+                - /url: https://testnet.bitmex.com/blog/microsoft-google-comparison
+                - generic [ref=e1521]: s25
+                - generic [ref=e1522]: "Microsoft vs Google Stock: Cloud Computing Battle 2026"
+                - generic [ref=e1523]: testnet.bitmex.com
+                - generic [ref=e1524]: Apr 14
+                - generic [ref=e1525]: exa
+              - 'link "s26 Microsoft vs Google Stock: Cloud Computing Battle 2026 bitmex.com Apr 14 exa" [ref=e1526] [cursor=pointer]':
+                - /url: https://www.bitmex.com/blog/microsoft-google-comparison
+                - generic [ref=e1527]: s26
+                - generic [ref=e1528]: "Microsoft vs Google Stock: Cloud Computing Battle 2026"
+                - generic [ref=e1529]: bitmex.com
+                - generic [ref=e1530]: Apr 14
+                - generic [ref=e1531]: exa
+              - 'link "s27 Google vs Microsoft: Complete Comparison (2026) | Comparison | A Versus B aversusb.net May 31 exa" [ref=e1532] [cursor=pointer]':
+                - /url: https://www.aversusb.net/compare/google-vs-microsoft
+                - generic [ref=e1533]: s27
+                - generic [ref=e1534]: "Google vs Microsoft: Complete Comparison (2026) | Comparison | A Versus B"
+                - generic [ref=e1535]: aversusb.net
+                - generic [ref=e1536]: May 31
+                - generic [ref=e1537]: exa
+              - link "s28 Google vs Microsoft 2026 | Gartner Peer Insights gartner.com exa" [ref=e1538] [cursor=pointer]:
+                - /url: https://www.gartner.com/reviews/market/workplace-social-software/compare/google-vs-microsoft
+                - generic [ref=e1539]: s28
+                - generic [ref=e1540]: Google vs Microsoft 2026 | Gartner Peer Insights
+                - generic [ref=e1541]: gartner.com
+                - generic [ref=e1542]: exa
+              - 'link "s29 Microsoft vs Google Tools: The Ultimate Productivity Suite Comparison for Remote Teams techtimes.com Jan 21 exa" [ref=e1543] [cursor=pointer]':
+                - /url: https://www.techtimes.com/articles/314189/20260121/microsoft-vs-google-tools-ultimate-productivity-suite-comparison-remote-teams.htm
+                - generic [ref=e1544]: s29
+                - generic [ref=e1545]: "Microsoft vs Google Tools: The Ultimate Productivity Suite Comparison for Remote Teams"
+                - generic [ref=e1546]: techtimes.com
+                - generic [ref=e1547]: Jan 21
+                - generic [ref=e1548]: exa
+          - generic [ref=e1549]:
+            - generic [ref=e1550]: ⏱ 19.9s
+            - generic [ref=e1551]: ·
+            - generic [ref=e1552]: 30 sources
+            - generic [ref=e1553]: ·
+            - generic [ref=e1554]: Exa ✓
+            - generic [ref=e1555]: Tavily ✗
+            - generic [ref=e1556]: AI ✓
+            - generic [ref=e1557]: openrouter/google/gemini-2.5-flash-lite
+        - generic [ref=e1561]:
+          - generic [ref=e1562]:
+            - generic [ref=e1563]: Follow-up Q&A
+            - button [ref=e1564] [cursor=pointer]:
+              - img [ref=e1565]
+          - paragraph [ref=e1569]: Ask anything about this brief — I'll answer using the research data.
+          - generic [ref=e1571]:
+            - textbox "Ask a follow-up…" [ref=e1572]
+            - button [disabled] [ref=e1573]:
+              - img [ref=e1574]

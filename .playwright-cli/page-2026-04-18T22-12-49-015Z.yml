@@ -1,0 +1,375 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e2]
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "Relevant app logo Relevant" [ref=e6] [cursor=pointer]:
+          - /url: /app/feed
+          - img "Relevant app logo" [ref=e8]
+          - generic [ref=e9]: Relevant
+        - navigation [ref=e10]:
+          - link "Feed" [ref=e11] [cursor=pointer]:
+            - /url: /app/feed
+            - img [ref=e12]
+            - text: Feed
+          - link "Search" [ref=e15] [cursor=pointer]:
+            - /url: /app/search
+            - img [ref=e16]
+            - text: Search
+          - link "Intelligence" [ref=e19] [cursor=pointer]:
+            - /url: /app/intelligence
+            - img [ref=e20]
+            - text: Intelligence
+          - link "Journal" [ref=e23] [cursor=pointer]:
+            - /url: /app/journal
+            - img [ref=e24]
+            - text: Journal
+          - link "You" [ref=e26] [cursor=pointer]:
+            - /url: /app/profile
+            - img [ref=e27]
+            - text: You
+        - generic [ref=e30]:
+          - button "Toggle theme" [ref=e31] [cursor=pointer]:
+            - img [ref=e32]
+          - generic [ref=e34]:
+            - generic [ref=e35]: Tanmay Gupta
+            - button "Sign out" [ref=e36] [cursor=pointer]:
+              - img [ref=e37]
+    - main [ref=e40]:
+      - generic [ref=e41]:
+        - generic [ref=e171]:
+          - generic [ref=e172]:
+            - button "← New Search" [ref=e173] [cursor=pointer]
+            - button "Copy as…" [ref=e175] [cursor=pointer]:
+              - img [ref=e176]
+              - text: Copy as…
+              - img [ref=e179]
+          - generic [ref=e181]:
+            - generic [ref=e183]:
+              - generic [ref=e184]:
+                - heading "Anthropic is rapidly expanding its enterprise product suite with a strong focus on AI safety and specialized tools, positioning itself as a significant competitor to OpenAI in the high-value enterprise market." [level=2] [ref=e185]
+                - paragraph [ref=e186]: Anthropic's aggressive product development, particularly in enterprise solutions like Claude Managed Agents and Claude Design, coupled with its high valuation, indicates a direct challenge to OpenAI's market share. OpenAI needs to continue innovating and clearly communicating its enterprise value proposition to maintain its leadership.
+              - generic [ref=e187]:
+                - img [ref=e188]
+                - text: High confidence
+            - generic [ref=e191]:
+              - generic [ref=e192]:
+                - heading "Anthropic" [level=4] [ref=e193]
+                - paragraph [ref=e194]: Anthropic is an AI safety and research company developing advanced AI systems like Claude, with a strong emphasis on safety, alignment, and responsible scaling. They offer enterprise solutions and specialized tools for professional and coding tasks.
+                - generic [ref=e195]:
+                  - generic [ref=e196]: Strong enterprise focus with products like Claude Managed Agents simplifying AI agent deployment for businesses [s21].
+                  - generic [ref=e197]: Launched Claude Design for visual prototyping and presentations, powered by Claude Opus 4.7, targeting non-designers [s1].
+                  - generic [ref=e198]: Significant revenue growth, with annualized revenue surpassing $30 billion, indicating strong enterprise adoption [s21, s9].
+                  - generic [ref=e199]: Strategic partnerships for AI security, embedding Claude models into TrendAI's platform for threat research and AI-native security operations [s8].
+                  - generic [ref=e200]: Project Glasswing leverages Claude AI models for vulnerability detection in open-source software, enhancing enterprise security offerings [s5].
+                - generic [ref=e201]:
+                  - generic [ref=e202]: While rapidly growing, the enterprise adoption challenges like organizational readiness and cross-departmental coordination are still present for large enterprises [s9].
+                  - generic [ref=e203]: Specific details on the breadth of Claude Code's capabilities beyond its revenue generation are less detailed compared to OpenAI's broader SDK offerings.
+                - generic [ref=e204]:
+                  - paragraph [ref=e205]: • Launched Claude Design, a visual prototyping and presentation tool [s1].
+                  - paragraph [ref=e206]: • Announced Claude Managed Agents to simplify AI agent deployment for businesses [s21].
+                  - paragraph [ref=e207]: • Engaged with TrendAI to embed Claude models for AI security and threat research [s8].
+                  - paragraph [ref=e208]: • Project Glasswing initiative for AI-powered vulnerability detection in open-source software [s5].
+              - generic [ref=e209]:
+                - heading "OpenAI" [level=4] [ref=e210]
+                - paragraph [ref=e211]: OpenAI is a leading AI research and product company developing advanced AI models and deploying them through consumer and enterprise products like ChatGPT and API offerings. They focus on broad benefit and safety.
+                - generic [ref=e212]:
+                  - generic [ref=e213]: Established market presence with widely recognized products like ChatGPT and robust API offerings.
+                  - generic [ref=e214]: Developing advanced AI models and SDKs (e.g., agents SDK evolutions) for broad use and enterprise integration [Your Company Profile].
+                  - generic [ref=e215]: Actively pursuing partnerships and collaborations, such as with Amazon, to expand reach and capabilities [Your Company Profile].
+                  - generic [ref=e216]: Conducting research previews and developing specialized tools like Codex Security [Your Company Profile].
+                  - generic [ref=e217]: Focus on AI education and accessibility, broadening the user base [Your Company Profile].
+                - generic [ref=e218]:
+                  - generic [ref=e219]: Specific details on recent enterprise-focused product launches comparable to Anthropic's Claude Design or Managed Agents are less prominent in the provided evidence.
+                  - generic [ref=e220]: While a leader, the provided evidence does not detail specific revenue figures or valuation milestones for OpenAI's enterprise products in direct comparison to Anthropic's reported $30B ARR.
+                - generic [ref=e221]:
+                  - paragraph [ref=e222]: • Collaboration and partnerships (e.g., with Amazon) [Your Company Profile].
+                  - paragraph [ref=e223]: • Research previews (e.g., Codex Security) [Your Company Profile].
+                  - paragraph [ref=e224]: • Regularly introduces new models, features, and research findings (e.g., GPT-5.4, agents SDK evolutions) [Your Company Profile].
+                  - paragraph [ref=e225]: • Acquired AI personal finance startup Hiro [s12].
+            - table [ref=e227]:
+              - rowgroup [ref=e228]:
+                - row "Dimension Anthropic OpenAI" [ref=e229]:
+                  - columnheader "Dimension" [ref=e230]
+                  - columnheader "Anthropic" [ref=e231]
+                  - columnheader "OpenAI" [ref=e232]
+              - rowgroup [ref=e233]:
+                - row "Enterprise Agent Deployment Tools Offers dedicated tools like Claude Managed Agents to simplify AI agent deployment for businesses, providing out-of-the-box infrastructure. Has an agent platform called Frontier and is developing agent SDK evolutions, but specific managed deployment tools are less detailed in provided evidence." [ref=e234]:
+                  - cell "Enterprise Agent Deployment Tools" [ref=e235]
+                  - cell "Offers dedicated tools like Claude Managed Agents to simplify AI agent deployment for businesses, providing out-of-the-box infrastructure." [ref=e236]:
+                    - paragraph [ref=e245]: Offers dedicated tools like Claude Managed Agents to simplify AI agent deployment for businesses, providing out-of-the-box infrastructure.
+                  - cell "Has an agent platform called Frontier and is developing agent SDK evolutions, but specific managed deployment tools are less detailed in provided evidence." [ref=e246]:
+                    - paragraph [ref=e255]: Has an agent platform called Frontier and is developing agent SDK evolutions, but specific managed deployment tools are less detailed in provided evidence.
+                - row "Specialized Creative/Prototyping Tools Launched Claude Design for visual prototyping and presentations, integrating with Claude Code for handoff to production. Offers broad capabilities through its models and SDKs, but a direct equivalent to Claude Design for visual prototyping is not explicitly detailed." [ref=e256]:
+                  - cell "Specialized Creative/Prototyping Tools" [ref=e257]
+                  - cell "Launched Claude Design for visual prototyping and presentations, integrating with Claude Code for handoff to production." [ref=e258]:
+                    - paragraph [ref=e267]: Launched Claude Design for visual prototyping and presentations, integrating with Claude Code for handoff to production.
+                  - cell "Offers broad capabilities through its models and SDKs, but a direct equivalent to Claude Design for visual prototyping is not explicitly detailed." [ref=e268]:
+                    - paragraph [ref=e277]: Offers broad capabilities through its models and SDKs, but a direct equivalent to Claude Design for visual prototyping is not explicitly detailed.
+                - row "AI Security & Vulnerability Detection Actively pursuing this with Project Glasswing for open-source software and partnerships like TrendAI for AI security operations. Conducting research previews like Codex Security, indicating a focus, but less detail on broad enterprise security initiatives compared to Anthropic." [ref=e278]:
+                  - cell "AI Security & Vulnerability Detection" [ref=e279]
+                  - cell "Actively pursuing this with Project Glasswing for open-source software and partnerships like TrendAI for AI security operations." [ref=e280]:
+                    - paragraph [ref=e289]: Actively pursuing this with Project Glasswing for open-source software and partnerships like TrendAI for AI security operations.
+                  - cell "Conducting research previews like Codex Security, indicating a focus, but less detail on broad enterprise security initiatives compared to Anthropic." [ref=e290]:
+                    - paragraph [ref=e299]: Conducting research previews like Codex Security, indicating a focus, but less detail on broad enterprise security initiatives compared to Anthropic.
+                - row "Revenue Growth & Valuation Experiencing rapid revenue growth, with annualized revenue surpassing $30 billion and attracting investor offers at an $800 billion valuation. A leading player with significant enterprise adoption, but specific recent revenue figures and valuation milestones comparable to Anthropic's reported $30B ARR and $800B offers are not detailed in the provided evidence." [ref=e300]:
+                  - cell "Revenue Growth & Valuation" [ref=e301]
+                  - cell "Experiencing rapid revenue growth, with annualized revenue surpassing $30 billion and attracting investor offers at an $800 billion valuation." [ref=e302]:
+                    - paragraph [ref=e311]: Experiencing rapid revenue growth, with annualized revenue surpassing $30 billion and attracting investor offers at an $800 billion valuation.
+                  - cell "A leading player with significant enterprise adoption, but specific recent revenue figures and valuation milestones comparable to Anthropic's reported $30B ARR and $800B offers are not detailed in the provided evidence." [ref=e312]:
+                    - paragraph [ref=e321]: A leading player with significant enterprise adoption, but specific recent revenue figures and valuation milestones comparable to Anthropic's reported $30B ARR and $800B offers are not detailed in the provided evidence.
+                - row "Product Breadth (Enterprise Focus) Expanding rapidly with specialized enterprise products like Claude Design, Claude Managed Agents, and AI security initiatives. Offers a broad suite of products and services for businesses, including API access and enterprise solutions, with ongoing development of agents and specialized tools." [ref=e322]:
+                  - cell "Product Breadth (Enterprise Focus)" [ref=e323]
+                  - cell "Expanding rapidly with specialized enterprise products like Claude Design, Claude Managed Agents, and AI security initiatives." [ref=e324]:
+                    - paragraph [ref=e333]: Expanding rapidly with specialized enterprise products like Claude Design, Claude Managed Agents, and AI security initiatives.
+                  - cell "Offers a broad suite of products and services for businesses, including API access and enterprise solutions, with ongoing development of agents and specialized tools." [ref=e334]:
+                    - paragraph [ref=e343]: Offers a broad suite of products and services for businesses, including API access and enterprise solutions, with ongoing development of agents and specialized tools.
+            - generic [ref=e344]:
+              - generic [ref=e345]:
+                - heading "Key Findings" [level=3] [ref=e346]:
+                  - img [ref=e347]
+                  - text: Key Findings
+                - generic [ref=e351]:
+                  - generic [ref=e352]:
+                    - paragraph [ref=e353]: Anthropic has launched Claude Design, a new product for visual prototyping and presentations powered by Claude Opus 4.7, targeting non-designers and integrating with Claude Code for handoff to production [s1].
+                    - button "s1" [ref=e355] [cursor=pointer]
+                  - generic [ref=e356]:
+                    - paragraph [ref=e357]: Anthropic's annualized recurring revenue has surpassed $30 billion, a significant increase from previous periods, driven by its enterprise product, Claude Platform [s21, s9].
+                    - generic [ref=e358]:
+                      - button "s21" [ref=e359] [cursor=pointer]
+                      - button "s9" [ref=e360] [cursor=pointer]
+                  - generic [ref=e361]:
+                    - paragraph [ref=e362]: Anthropic is developing Claude Managed Agents to simplify the process for businesses to build and deploy AI agents, offering out-of-the-box infrastructure [s21].
+                    - button "s21" [ref=e364] [cursor=pointer]
+                  - generic [ref=e365]:
+                    - paragraph [ref=e366]: Anthropic is actively engaged in AI security initiatives, including Project Glasswing for open-source vulnerability detection and a partnership with TrendAI to embed Claude models for AI security operations [s8, s5].
+                    - generic [ref=e367]:
+                      - button "s8" [ref=e368] [cursor=pointer]
+                      - button "s5" [ref=e369] [cursor=pointer]
+                  - generic [ref=e370]:
+                    - paragraph [ref=e371]: Anthropic is attracting significant investor interest with offers valuing the company around $800 billion, indicating strong market confidence in its growth and product strategy [s4, s9].
+                    - generic [ref=e372]:
+                      - button "s4" [ref=e373] [cursor=pointer]
+                      - button "s9" [ref=e374] [cursor=pointer]
+                  - generic [ref=e375]:
+                    - paragraph [ref=e376]: OpenAI is actively developing its AI models and SDKs, including agent platform capabilities and specialized research tools, while pursuing strategic partnerships to expand its market reach [Your Company Profile].
+                    - button "Your Company Profile" [ref=e378] [cursor=pointer]
+              - generic [ref=e379]:
+                - heading "Strategic Implications" [level=3] [ref=e380]:
+                  - img [ref=e381]
+                  - text: Strategic Implications
+                - generic [ref=e384]:
+                  - generic [ref=e385]:
+                    - paragraph [ref=e386]: Anthropic's aggressive product expansion into specialized enterprise tools like design and managed agents, coupled with a strong security focus, directly challenges OpenAI's established enterprise offerings.
+                    - generic [ref=e387]:
+                      - button "s1" [ref=e388] [cursor=pointer]
+                      - button "s21" [ref=e389] [cursor=pointer]
+                      - button "s5" [ref=e390] [cursor=pointer]
+                      - button "s8" [ref=e391] [cursor=pointer]
+                  - generic [ref=e392]:
+                    - paragraph [ref=e393]: The rapid revenue growth and high valuation of Anthropic suggest a strong market appetite for its safety-focused, enterprise-grade AI solutions, potentially drawing enterprise customers away from competitors.
+                    - generic [ref=e394]:
+                      - button "s4" [ref=e395] [cursor=pointer]
+                      - button "s9" [ref=e396] [cursor=pointer]
+                      - button "s21" [ref=e397] [cursor=pointer]
+                  - generic [ref=e398]:
+                    - paragraph [ref=e399]: OpenAI needs to highlight and potentially accelerate its own specialized enterprise product development and clearly articulate the unique value proposition of its agent platform and security offerings to maintain competitive parity.
+                    - generic [ref=e400]:
+                      - button "Your Company Profile" [ref=e401] [cursor=pointer]
+                      - button "s1" [ref=e402] [cursor=pointer]
+                      - button "s21" [ref=e403] [cursor=pointer]
+                  - generic [ref=e404]:
+                    - paragraph [ref=e405]: The intense competition in the enterprise AI space, particularly around agent deployment and security, indicates a significant market opportunity and a race to capture market share.
+                    - generic [ref=e406]:
+                      - button "s21" [ref=e407] [cursor=pointer]
+                      - button "s5" [ref=e408] [cursor=pointer]
+                      - button "s8" [ref=e409] [cursor=pointer]
+            - generic [ref=e411]:
+              - heading "Recommendations" [level=3] [ref=e412]:
+                - img [ref=e413]
+                - text: Recommendations
+              - generic [ref=e415]:
+                - generic [ref=e416]:
+                  - paragraph [ref=e417]: Accelerate development and publicize OpenAI's enterprise-grade agent deployment solutions and specialized tools, mirroring Anthropic's recent product launches in areas like design and managed agents.
+                  - generic [ref=e418]:
+                    - button "s1" [ref=e419] [cursor=pointer]
+                    - button "s21" [ref=e420] [cursor=pointer]
+                    - button "Your Company Profile" [ref=e421] [cursor=pointer]
+                - generic [ref=e422]:
+                  - paragraph [ref=e423]: Emphasize OpenAI's advancements in AI safety and security, potentially through case studies or partnerships, to counter Anthropic's strong positioning in this area.
+                  - generic [ref=e424]:
+                    - button "s5" [ref=e425] [cursor=pointer]
+                    - button "s8" [ref=e426] [cursor=pointer]
+                    - button "Your Company Profile" [ref=e427] [cursor=pointer]
+                - generic [ref=e428]:
+                  - paragraph [ref=e429]: Clearly communicate the scalability and enterprise value of OpenAI's API and SDK offerings, providing concrete examples and metrics to rival Anthropic's reported revenue growth.
+                  - generic [ref=e430]:
+                    - button "s21" [ref=e431] [cursor=pointer]
+                    - button "Your Company Profile" [ref=e432] [cursor=pointer]
+                - generic [ref=e433]:
+                  - paragraph [ref=e434]: Continue to innovate on core model capabilities while strategically developing complementary enterprise products that address specific industry needs, such as visual prototyping or automated workflows.
+                  - generic [ref=e435]:
+                    - button "s1" [ref=e436] [cursor=pointer]
+                    - button "Your Company Profile" [ref=e437] [cursor=pointer]
+          - generic [ref=e439]:
+            - heading "Sources (26)" [level=3] [ref=e440]
+            - generic [ref=e441]:
+              - link "s1 Anthropic Launches Claude Design for Visual Prototyping and Presentations – Unite.AI unite.ai Apr 18" [ref=e442] [cursor=pointer]:
+                - /url: https://www.unite.ai/anthropic-launches-claude-design-for-visual-prototyping-and-presentations/
+                - generic [ref=e443]: s1
+                - generic [ref=e444]: Anthropic Launches Claude Design for Visual Prototyping and Presentations – Unite.AI
+                - generic [ref=e445]: unite.ai
+                - generic [ref=e446]: Apr 18
+              - link "s2 Anthropic co-founder confirms the company briefed the Trump administration on Mythos | TechCrunch techcrunch.com Apr 14" [ref=e447] [cursor=pointer]:
+                - /url: https://techcrunch.com/2026/04/14/anthropic-co-founder-confirms-the-company-briefed-the-trump-adminstration-on-mythos/
+                - generic [ref=e448]: s2
+                - generic [ref=e449]: Anthropic co-founder confirms the company briefed the Trump administration on Mythos | TechCrunch
+                - generic [ref=e450]: techcrunch.com
+                - generic [ref=e451]: Apr 14
+              - link "s3 Anthropic debuts preview of powerful new AI model Mythos in new cybersecurity initiative | TechCrunch techcrunch.com Apr 7" [ref=e452] [cursor=pointer]:
+                - /url: https://techcrunch.com/2026/04/07/anthropic-mythos-ai-model-preview-security
+                - generic [ref=e453]: s3
+                - generic [ref=e454]: Anthropic debuts preview of powerful new AI model Mythos in new cybersecurity initiative | TechCrunch
+                - generic [ref=e455]: techcrunch.com
+                - generic [ref=e456]: Apr 7
+              - link "s4 Anthropic has attracted investor offers at an $800 billion valuation thenextweb.com Apr 15" [ref=e457] [cursor=pointer]:
+                - /url: https://thenextweb.com/news/anthropic-800-billion-valuation-revenue-30-billion-ipo
+                - generic [ref=e458]: s4
+                - generic [ref=e459]: Anthropic has attracted investor offers at an $800 billion valuation
+                - generic [ref=e460]: thenextweb.com
+                - generic [ref=e461]: Apr 15
+              - link "s5 Anthropic Glasswing Security Initiative Launched aibusinessreview.org Apr 12" [ref=e462] [cursor=pointer]:
+                - /url: https://www.aibusinessreview.org/2026/04/12/anthropic-glasswing-security-initiative-aws-apple-cisco/
+                - generic [ref=e463]: s5
+                - generic [ref=e464]: Anthropic Glasswing Security Initiative Launched
+                - generic [ref=e465]: aibusinessreview.org
+                - generic [ref=e466]: Apr 12
+              - link "s6 Anthropic’s most capable AI escaped its sandbox and emailed a researcher – so the company won’t release it thenextweb.com Apr 8" [ref=e467] [cursor=pointer]:
+                - /url: https://thenextweb.com/news/anthropics-most-capable-ai-escaped-its-sandbox-and-emailed-a-researcher-so-the-company-wont-release-it
+                - generic [ref=e468]: s6
+                - generic [ref=e469]: Anthropic’s most capable AI escaped its sandbox and emailed a researcher – so the company won’t release it
+                - generic [ref=e470]: thenextweb.com
+                - generic [ref=e471]: Apr 8
+              - link "s7 Anthropic Expands Use of Google Cloud and TPUs prnewswire.com Apr 6" [ref=e472] [cursor=pointer]:
+                - /url: https://www.prnewswire.com/news-releases/anthropic-expands-use-of-google-cloud-and-tpus-302735047.html
+                - generic [ref=e473]: s7
+                - generic [ref=e474]: Anthropic Expands Use of Google Cloud and TPUs
+                - generic [ref=e475]: prnewswire.com
+                - generic [ref=e476]: Apr 6
+              - link "s8 TrendAI™ Partners with Anthropic to Extend Leadership in AI Security prnewswire.com Apr 15" [ref=e477] [cursor=pointer]:
+                - /url: https://www.prnewswire.com/news-releases/trendai-partners-with-anthropic-to-extend-leadership-in-ai-security-302742654.html
+                - generic [ref=e478]: s8
+                - generic [ref=e479]: TrendAI™ Partners with Anthropic to Extend Leadership in AI Security
+                - generic [ref=e480]: prnewswire.com
+                - generic [ref=e481]: Apr 15
+              - link "s9 Anthropic Valuation Could Hit $800 Billion With New Funding pymnts.com Apr 15" [ref=e482] [cursor=pointer]:
+                - /url: https://www.pymnts.com/artificial-intelligence-2/2026/anthropic-valuation-could-hit-800-billion-with-new-funding/
+                - generic [ref=e483]: s9
+                - generic [ref=e484]: Anthropic Valuation Could Hit $800 Billion With New Funding
+                - generic [ref=e485]: pymnts.com
+                - generic [ref=e486]: Apr 15
+              - link "s10 Apple, Google, and Microsoft join Anthropic's Project Glasswing to defend world's most critical software | ZDNET zdnet.com Apr 7" [ref=e487] [cursor=pointer]:
+                - /url: https://www.zdnet.com/article/project-glasswing-microsoft-google-apple-anthropic/
+                - generic [ref=e488]: s10
+                - generic [ref=e489]: Apple, Google, and Microsoft join Anthropic's Project Glasswing to defend world's most critical software | ZDNET
+                - generic [ref=e490]: zdnet.com
+                - generic [ref=e491]: Apr 7
+              - link "s11 Newsroom \\ Anthropic anthropic.com" [ref=e492] [cursor=pointer]:
+                - /url: https://www.anthropic.com/news
+                - generic [ref=e493]: s11
+                - generic [ref=e494]: Newsroom \ Anthropic
+                - generic [ref=e495]: anthropic.com
+              - link "s12 Anthropic news and analysis | TechCrunch techcrunch.com" [ref=e496] [cursor=pointer]:
+                - /url: https://techcrunch.com/tag/anthropic/
+                - generic [ref=e497]: s12
+                - generic [ref=e498]: Anthropic news and analysis | TechCrunch
+                - generic [ref=e499]: techcrunch.com
+              - link "s13 The Fact That Anthropic Has Been Boasting About How Much Its Development Now Relies on Claude Makes It Very Interesting That It Just Suffered a Catastrophic Leak of Its Source Code futurism.com" [ref=e500] [cursor=pointer]:
+                - /url: https://futurism.com/artificial-intelligence/anthropic-development-claude-code-leak
+                - generic [ref=e501]: s13
+                - generic [ref=e502]: The Fact That Anthropic Has Been Boasting About How Much Its Development Now Relies on Claude Makes It Very Interesting That It Just Suffered a Catastrophic Leak of Its Source Code
+                - generic [ref=e503]: futurism.com
+              - link "s14 Anthropic's powerful new AI model raises concerns about high-tech risks | PBS News pbs.org" [ref=e504] [cursor=pointer]:
+                - /url: https://www.pbs.org/newshour/show/anthropics-powerful-new-ai-model-raises-concerns-about-high-tech-risks
+                - generic [ref=e505]: s14
+                - generic [ref=e506]: Anthropic's powerful new AI model raises concerns about high-tech risks | PBS News
+                - generic [ref=e507]: pbs.org
+              - link "s15 Home \\ Anthropic anthropic.com" [ref=e508] [cursor=pointer]:
+                - /url: https://www.anthropic.com/
+                - generic [ref=e509]: s15
+                - generic [ref=e510]: Home \ Anthropic
+                - generic [ref=e511]: anthropic.com
+              - link "s16 AI demand metrics are broken and only Anthropic is being realistic cnbc.com" [ref=e512] [cursor=pointer]:
+                - /url: https://www.cnbc.com/video/2026/04/17/ai-demand-metrics-are-broken-and-only-anthropic-is-being-realistic.html
+                - generic [ref=e513]: s16
+                - generic [ref=e514]: AI demand metrics are broken and only Anthropic is being realistic
+                - generic [ref=e515]: cnbc.com
+              - link "s17 Company \\ Anthropic anthropic.com" [ref=e516] [cursor=pointer]:
+                - /url: https://www.anthropic.com/company
+                - generic [ref=e517]: s17
+                - generic [ref=e518]: Company \ Anthropic
+                - generic [ref=e519]: anthropic.com
+              - link "s18 Research \\ Anthropic anthropic.com" [ref=e520] [cursor=pointer]:
+                - /url: https://www.anthropic.com/research
+                - generic [ref=e521]: s18
+                - generic [ref=e522]: Research \ Anthropic
+                - generic [ref=e523]: anthropic.com
+              - 'link "s19 Project Glasswing: Securing critical software for the AI era - Anthropic anthropic.com" [ref=e524] [cursor=pointer]':
+                - /url: https://www.anthropic.com/glasswing
+                - generic [ref=e525]: s19
+                - generic [ref=e526]: "Project Glasswing: Securing critical software for the AI era - Anthropic"
+                - generic [ref=e527]: anthropic.com
+              - 'link "s20 Anthropic''s Mythos: What It Is and What It Is Capable of - YouTube youtube.com" [ref=e528] [cursor=pointer]':
+                - /url: https://www.youtube.com/watch?v=vQOROpbUdzA
+                - generic [ref=e529]: s20
+                - generic [ref=e530]: "Anthropic's Mythos: What It Is and What It Is Capable of - YouTube"
+                - generic [ref=e531]: youtube.com
+              - link "s21 Anthropic’s New Product Aims to Handle the Hard Part of Building AI Agents | WIRED wired.com" [ref=e532] [cursor=pointer]:
+                - /url: https://www.wired.com/story/anthropic-launches-claude-managed-agents/
+                - generic [ref=e533]: s21
+                - generic [ref=e534]: Anthropic’s New Product Aims to Handle the Hard Part of Building AI Agents | WIRED
+                - generic [ref=e535]: wired.com
+              - link "s22 Anthropic unveils Claude Opus 4.7 after concerns about its Mythos AI finance.yahoo.com" [ref=e536] [cursor=pointer]:
+                - /url: https://finance.yahoo.com/video/anthropic-unveils-claude-opus-47-after-concerns-about-its-mythos-ai-140000289.html
+                - generic [ref=e537]: s22
+                - generic [ref=e538]: Anthropic unveils Claude Opus 4.7 after concerns about its Mythos AI
+                - generic [ref=e539]: finance.yahoo.com
+              - link "s24 Release notes | Claude Help Center support.claude.com" [ref=e540] [cursor=pointer]:
+                - /url: https://support.claude.com/en/articles/12138966-release-notes
+                - generic [ref=e541]: s24
+                - generic [ref=e542]: Release notes | Claude Help Center
+                - generic [ref=e543]: support.claude.com
+              - link "s25 Anthropic Updates Opus 4.7, Its Most Powerful AI Model ... - YouTube youtube.com" [ref=e544] [cursor=pointer]:
+                - /url: https://www.youtube.com/watch?v=xTbr-Ky8jtg
+                - generic [ref=e545]: s25
+                - generic [ref=e546]: Anthropic Updates Opus 4.7, Its Most Powerful AI Model ... - YouTube
+                - generic [ref=e547]: youtube.com
+              - link "s26 Claude by Anthropic - Release Notes - April 2026 Latest Updates - Releasebot releasebot.io" [ref=e548] [cursor=pointer]:
+                - /url: https://releasebot.io/updates/anthropic/claude
+                - generic [ref=e549]: s26
+                - generic [ref=e550]: Claude by Anthropic - Release Notes - April 2026 Latest Updates - Releasebot
+                - generic [ref=e551]: releasebot.io
+              - link "s27 What to know about Anthropic's new AI model and its stark warning youtube.com" [ref=e552] [cursor=pointer]:
+                - /url: https://www.youtube.com/watch?v=bUbFFSZQ5w0
+                - generic [ref=e553]: s27
+                - generic [ref=e554]: What to know about Anthropic's new AI model and its stark warning
+                - generic [ref=e555]: youtube.com
+          - generic [ref=e556]:
+            - generic [ref=e557]: ⏱ 13.3s
+            - generic [ref=e558]: ·
+            - generic [ref=e559]: 26 sources
+            - generic [ref=e560]: ·
+            - generic [ref=e561]: Exa ✓
+            - generic [ref=e562]: Tavily ✓
+            - generic [ref=e563]: AI ✓
+            - generic [ref=e564]: openrouter/google/gemini-2.5-flash-lite
+        - generic [ref=e568]:
+          - generic [ref=e569]:
+            - generic [ref=e570]: Follow-up Q&A
+            - button [ref=e571] [cursor=pointer]:
+              - img [ref=e572]
+          - paragraph [ref=e576]: Ask anything about this brief — I'll answer using the research data.
+          - generic [ref=e578]:
+            - textbox "Ask a follow-up…" [ref=e579]
+            - button [disabled] [ref=e580]:
+              - img [ref=e581]

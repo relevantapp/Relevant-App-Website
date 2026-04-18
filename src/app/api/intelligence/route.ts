@@ -1,12 +1,16 @@
-/* ── Intelligence API Route — V2 + V3 ──────────────────────── */
+/* ── Intelligence API Route — SSE Streaming ────────────────── */
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { generateIntelligenceBrief } from '@/lib/intelligence'
-import { generateCompetitiveAnalysisBrief } from '@/lib/intelligence/types/competitive-analysis'
-import { generateBusinessCaseBrief } from '@/lib/intelligence/types/business-case'
-import { generateMarketResearchBrief } from '@/lib/intelligence/types/market-research'
-import type { IntelligenceRequest, MeetingType } from '@/lib/intelligence/types'
+import {
+  generateMeetingPrepBrief,
+  generateCompetitiveAnalysisBrief,
+  generateBusinessCaseBrief,
+  generateMarketResearchBrief,
+} from '@/lib/intelligence'
+import type { MeetingType } from '@/lib/intelligence/contracts'
+import { createSSEEmitter } from '@/lib/intelligence/sse-emitter'
+import type { PipelineContext } from '@/lib/intelligence/pipeline'
 
 export const maxDuration = 60
 
@@ -64,9 +68,10 @@ export async function POST(request: NextRequest) {
   const bucket = rateLimitMap.get(user.id)
   if (bucket && now < bucket.resetAt) {
     if (bucket.count >= RATE_LIMIT_MAX) {
+      const retryAfterSec = Math.ceil((bucket.resetAt - now) / 1000)
       return NextResponse.json(
         { error: 'Too many requests. Please wait a minute.' },
-        { status: 429 }
+        { status: 429, headers: { 'Retry-After': String(retryAfterSec) } }
       )
     }
     bucket.count++
@@ -84,7 +89,14 @@ export async function POST(request: NextRequest) {
 
   const researchType = sanitizeString(body.researchType, 30) || 'meeting_prep'
 
-  // ── Branch by research type ──
+  // ── Check if client wants SSE streaming ──
+  const wantsStream = request.headers.get('accept')?.includes('text/event-stream')
+
+  if (wantsStream) {
+    return handleStreaming(body, researchType)
+  }
+
+  // ── Branch by research type (JSON fallback) ──
   try {
     if (researchType === 'competitive_analysis') {
       return await handleCompetitiveAnalysis(body)
@@ -95,7 +107,6 @@ export async function POST(request: NextRequest) {
     if (researchType === 'market_research') {
       return await handleMarketResearch(body)
     }
-    // Default: meeting_prep (V2 compat)
     return await handleMeetingPrep(body)
   } catch (err) {
     console.error(`[api/intelligence] ${researchType} generation failed:`, err)
@@ -106,7 +117,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-/* ── Meeting Prep (V2 compat) ────────────────────────────────── */
+/* ── Meeting Prep ────────────────────────────────────────────── */
 
 async function handleMeetingPrep(body: Record<string, unknown>) {
   const accountName = sanitizeString(body.accountName, 200)
@@ -136,18 +147,16 @@ async function handleMeetingPrep(body: Record<string, unknown>) {
     return NextResponse.json({ error: 'Invalid website URL' }, { status: 400 })
   }
 
-  const intelligenceRequest: IntelligenceRequest = {
+  const brief = await generateMeetingPrepBrief({
     accountName,
     meetingType,
     goal,
     ...(website && { website }),
     ...(attendees.length && { attendees }),
-    ...(notes && { notes }),
+    ...(notes && { notes: notes }),
     ...(competitors.length && { competitors }),
     lookbackDays,
-  }
-
-  const brief = await generateIntelligenceBrief(intelligenceRequest)
+  })
   return NextResponse.json(brief)
 }
 
@@ -222,4 +231,104 @@ async function handleMarketResearch(body: Record<string, unknown>) {
     timeHorizon,
   })
   return NextResponse.json(brief)
+}
+
+/* ── SSE Streaming Handler ───────────────────────────────────── */
+
+function handleStreaming(
+  body: Record<string, unknown>,
+  researchType: string,
+): Response {
+  const emitter = createSSEEmitter()
+  const ctx: PipelineContext = { emitter, signal: emitter.signal }
+
+  // Run generation in background, stream events
+  const generateAsync = async () => {
+    try {
+      let brief: unknown
+
+      if (researchType === 'competitive_analysis') {
+        const competitors = sanitizeStringArray(body.competitors, 200, 3)
+        if (competitors.length === 0) {
+          emitter.send({ type: 'stream_error', error: 'At least one competitor is required' })
+          emitter.close()
+          return
+        }
+        brief = await generateCompetitiveAnalysisBrief({
+          competitors,
+          yourCompany: sanitizeString(body.yourCompany, 200) || undefined,
+          focusArea: sanitizeString(body.focusArea, 50) || 'overall',
+          specificQuestions: sanitizeString(body.specificQuestions, 1000) || undefined,
+        }, ctx)
+      } else if (researchType === 'business_case') {
+        const initiativeName = sanitizeString(body.initiativeName, 200)
+        const hypothesis = sanitizeString(body.hypothesis, 500)
+        if (!initiativeName || !hypothesis) {
+          emitter.send({ type: 'stream_error', error: 'initiativeName and hypothesis are required' })
+          emitter.close()
+          return
+        }
+        brief = await generateBusinessCaseBrief({
+          initiativeName,
+          hypothesis,
+          targetMarket: sanitizeString(body.targetMarket, 200) || undefined,
+          successMetrics: sanitizeStringArray(body.successMetrics, 200, 5).length ? sanitizeStringArray(body.successMetrics, 200, 5) : undefined,
+          keyQuestions: sanitizeString(body.keyQuestions, 1000) || undefined,
+          comparableCompanies: sanitizeStringArray(body.comparableCompanies, 200, 3).length ? sanitizeStringArray(body.comparableCompanies, 200, 3) : undefined,
+        }, ctx)
+      } else if (researchType === 'market_research') {
+        const marketOrTrend = sanitizeString(body.marketOrTrend, 300)
+        if (!marketOrTrend) {
+          emitter.send({ type: 'stream_error', error: 'marketOrTrend is required' })
+          emitter.close()
+          return
+        }
+        brief = await generateMarketResearchBrief({
+          marketOrTrend,
+          scope: sanitizeString(body.scope, 50) || 'global',
+          keyQuestions: sanitizeString(body.keyQuestions, 1000) || undefined,
+          knownPlayers: sanitizeStringArray(body.knownPlayers, 200, 5).length ? sanitizeStringArray(body.knownPlayers, 200, 5) : undefined,
+          timeHorizon: sanitizeString(body.timeHorizon, 10) || '90d',
+        }, ctx)
+      } else {
+        const accountName = sanitizeString(body.accountName, 200)
+        const meetingType = sanitizeString(body.meetingType, 20) as MeetingType
+        const goal = sanitizeString(body.goal, 500)
+        if (!accountName || !goal) {
+          emitter.send({ type: 'stream_error', error: 'accountName and goal are required' })
+          emitter.close()
+          return
+        }
+        const website = sanitizeString(body.website, 500)
+        brief = await generateMeetingPrepBrief({
+          accountName,
+          meetingType: VALID_MEETING_TYPES.has(meetingType) ? meetingType : 'general',
+          goal,
+          ...(website && isValidHttpUrl(website) && { website }),
+          ...(sanitizeStringArray(body.attendees, 100, 5).length && { attendees: sanitizeStringArray(body.attendees, 100, 5) }),
+          ...(sanitizeString(body.notes, 2000) && { notes: sanitizeString(body.notes, 2000) }),
+          ...(sanitizeStringArray(body.competitors, 100, 3).length && { competitors: sanitizeStringArray(body.competitors, 100, 3) }),
+          lookbackDays: typeof body.lookbackDays === 'number' ? Math.min(Math.max(body.lookbackDays, 7), 90) : 30,
+        }, ctx)
+      }
+
+      const typedBrief = brief as import('@/lib/intelligence/contracts').IntelligenceBrief
+      emitter.send({ type: 'brief_ready', brief: typedBrief })
+    } catch (err) {
+      console.error(`[api/intelligence] SSE ${researchType} failed:`, err)
+      emitter.send({ type: 'stream_error', error: 'Failed to generate brief. Please try again.' })
+    } finally {
+      emitter.close()
+    }
+  }
+
+  generateAsync()
+
+  return new Response(emitter.stream, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache, no-transform',
+      Connection: 'keep-alive',
+    },
+  })
 }

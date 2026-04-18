@@ -1,0 +1,103 @@
+- generic [ref=e1]:
+  - alert [ref=e2]: Relevant — Less Noise. More Clarity.
+  - generic [ref=e88]:
+    - banner [ref=e89]:
+      - generic [ref=e90]:
+        - link "Relevant app logo Relevant" [ref=e91] [cursor=pointer]:
+          - /url: /app/feed
+          - img "Relevant app logo" [ref=e93]
+          - generic [ref=e94]: Relevant
+        - navigation [ref=e95]:
+          - link "Feed" [ref=e96] [cursor=pointer]:
+            - /url: /app/feed
+            - img [ref=e97]
+            - text: Feed
+          - link "Search" [ref=e100] [cursor=pointer]:
+            - /url: /app/search
+            - img [ref=e101]
+            - text: Search
+          - link "Intelligence" [ref=e104] [cursor=pointer]:
+            - /url: /app/intelligence
+            - img [ref=e105]
+            - text: Intelligence
+          - link "Journal" [ref=e108] [cursor=pointer]:
+            - /url: /app/journal
+            - img [ref=e109]
+            - text: Journal
+          - link "You" [ref=e111] [cursor=pointer]:
+            - /url: /app/profile
+            - img [ref=e112]
+            - text: You
+        - generic [ref=e115]:
+          - button "Toggle theme" [ref=e116] [cursor=pointer]:
+            - img [ref=e117]
+          - generic [ref=e119]:
+            - generic [ref=e120]: Tanmay Gupta
+            - button "Sign out" [ref=e121] [cursor=pointer]:
+              - img [ref=e122]
+    - main [ref=e125]:
+      - generic [ref=e1037]:
+        - button "Back" [ref=e1038] [cursor=pointer]:
+          - img [ref=e1039]
+          - text: Back
+        - generic [ref=e1041]:
+          - generic [ref=e1042]:
+            - generic [ref=e1043]: Who are you meeting?*
+            - textbox "Company or person name" [ref=e1044]: Microsoft
+          - generic [ref=e1045]:
+            - generic [ref=e1046]: Meeting type*
+            - generic [ref=e1047]:
+              - button "Customer" [ref=e1048] [cursor=pointer]
+              - button "Partner" [ref=e1049] [cursor=pointer]
+              - button "Reseller" [ref=e1050] [cursor=pointer]
+              - button "Investor" [ref=e1051] [cursor=pointer]
+              - button "Board" [ref=e1052] [cursor=pointer]
+              - button "Internal" [ref=e1053] [cursor=pointer]
+              - button "Other" [ref=e1054] [cursor=pointer]
+          - generic [ref=e1055]:
+            - generic [ref=e1056]: Relationship stage
+            - generic [ref=e1057]:
+              - button "First Meeting" [ref=e1058] [cursor=pointer]
+              - button "Active Deal" [ref=e1059] [cursor=pointer]
+              - button "Renewal" [ref=e1060] [cursor=pointer]
+              - button "Exec Review" [ref=e1061] [cursor=pointer]
+              - button "Rescue" [ref=e1062] [cursor=pointer]
+              - button "Partner" [ref=e1063] [cursor=pointer]
+          - generic [ref=e1064]:
+            - generic [ref=e1065]: What are you selling?
+            - textbox "e.g., Enterprise SaaS platform, consulting retainer" [ref=e1066]: AI workflow and decision support software
+          - generic [ref=e1067]:
+            - generic [ref=e1068]: Desired next step
+            - textbox "e.g., Schedule a pilot, get budget approval" [ref=e1069]: Secure agreement for a pilot
+          - generic [ref=e1070]:
+            - generic [ref=e1071]: What's your goal?*
+            - textbox "Close the deal on our enterprise plan" [ref=e1097]
+            - button "Refine" [disabled] [ref=e1074]:
+              - img [ref=e1075]
+              - text: Refine
+          - generic [ref=e1078]:
+            - generic [ref=e1079]: Their website
+            - textbox "https://..." [ref=e1080]: https://www.microsoft.com
+          - generic [ref=e1081]:
+            - generic [ref=e1082]: Attendees
+            - generic [ref=e1083]:
+              - generic [ref=e1098]:
+                - text: Satya Nadella
+                - button "Remove Satya Nadella" [ref=e1099] [cursor=pointer]:
+                  - img [ref=e1100]
+              - textbox [ref=e1103]
+          - generic [ref=e1085]:
+            - generic [ref=e1086]: Key topics / context
+            - textbox "Anything else we should know?" [ref=e1087]: Focus on enterprise AI adoption, sales productivity, and how teams turn external change into action.
+          - generic [ref=e1088]:
+            - generic [ref=e1089]: Pain points to explore
+            - generic [ref=e1090]:
+              - generic [ref=e1104]:
+                - text: Too much noise across news and competitor updates
+                - button "Remove Too much noise across news and competitor updates" [ref=e1105] [cursor=pointer]:
+                  - img [ref=e1106]
+              - textbox [active] [ref=e1109]
+          - generic [ref=e1092]:
+            - generic [ref=e1093]: Competitors to watch
+            - textbox "Type a competitor name" [ref=e1095]
+          - button "Generate Intelligence" [disabled] [ref=e1096]

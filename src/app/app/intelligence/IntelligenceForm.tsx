@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { Search, X, Plus, Loader2 } from 'lucide-react'
-import type { MeetingType } from '@/lib/intelligence/types'
+import type { MeetingType } from '@/lib/intelligence/contracts'
 import { MEETING_TYPE_OPTIONS, GOAL_PLACEHOLDERS, MEETING_TYPE_DETAILS } from './types'
 
 interface IntelligenceFormProps {

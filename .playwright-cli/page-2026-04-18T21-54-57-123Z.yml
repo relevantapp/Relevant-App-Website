@@ -1,0 +1,54 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e2]: Relevant — Less Noise. More Clarity.
+  - generic [ref=e88]:
+    - banner [ref=e89]:
+      - generic [ref=e90]:
+        - link "Relevant app logo Relevant" [ref=e91] [cursor=pointer]:
+          - /url: /app/feed
+          - img "Relevant app logo" [ref=e93]
+          - generic [ref=e94]: Relevant
+        - navigation [ref=e95]:
+          - link "Feed" [ref=e96] [cursor=pointer]:
+            - /url: /app/feed
+            - img [ref=e97]
+            - text: Feed
+          - link "Search" [ref=e100] [cursor=pointer]:
+            - /url: /app/search
+            - img [ref=e101]
+            - text: Search
+          - link "Intelligence" [ref=e104] [cursor=pointer]:
+            - /url: /app/intelligence
+            - img [ref=e105]
+            - text: Intelligence
+          - link "Journal" [ref=e108] [cursor=pointer]:
+            - /url: /app/journal
+            - img [ref=e109]
+            - text: Journal
+          - link "You" [ref=e111] [cursor=pointer]:
+            - /url: /app/profile
+            - img [ref=e112]
+            - text: You
+        - generic [ref=e115]:
+          - button "Toggle theme" [ref=e116] [cursor=pointer]:
+            - img [ref=e117]
+          - generic [ref=e119]:
+            - generic [ref=e120]: Tanmay Gupta
+            - button "Sign out" [ref=e121] [cursor=pointer]:
+              - img [ref=e122]
+    - main [ref=e125]:
+      - generic [ref=e1116]:
+        - generic [ref=e1118]:
+          - heading "Research Progress" [level=3] [ref=e1119]
+          - generic [ref=e1120]:
+            - generic [ref=e1121]:
+              - img [ref=e1125]
+              - generic [ref=e1128]:
+                - paragraph [ref=e1129]: Identifying company
+                - paragraph [ref=e1130]: Completed in 5.4s
+            - generic [ref=e1131]:
+              - img [ref=e1133]
+              - paragraph [ref=e1136]: Gathering evidence
+          - paragraph [ref=e1139]:
+            - generic [ref=e1140]: entity
+            - text: Found Microsoft
+        - button "Cancel" [ref=e1142] [cursor=pointer]

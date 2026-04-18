@@ -5,7 +5,26 @@ import FormSection from './shared/FormSection'
 import ChipSelector from './shared/ChipSelector'
 import TagInput from './shared/TagInput'
 import { SCOPE_OPTIONS, TIME_HORIZON_OPTIONS } from '../constants'
-import type { MarketResearchInput, MarketScope, TimeHorizon } from '../types'
+import type {
+  MarketResearchInput,
+  MarketScope,
+  TimeHorizon,
+  MarketObjective,
+  MarketDepth,
+} from '../types'
+
+const OBJECTIVE_OPTIONS: Array<{ value: MarketObjective; label: string }> = [
+  { value: 'market-size', label: 'Market Size' },
+  { value: 'trend-scan', label: 'Trend Scan' },
+  { value: 'player-map', label: 'Player Map' },
+  { value: 'whitespace', label: 'Whitespace' },
+  { value: 'investment-view', label: 'Investment View' },
+]
+
+const DEPTH_OPTIONS: Array<{ value: MarketDepth; label: string }> = [
+  { value: 'fast-scan', label: 'Fast Scan' },
+  { value: 'deep-dive', label: 'Deep Dive' },
+]
 
 interface MarketResearchFormProps {
   value: Partial<MarketResearchInput>
@@ -42,6 +61,9 @@ export default function MarketResearchForm({ value, onChange, onSubmit, loading 
     if (!value.scope) {
       errs.scope = 'Select a scope'
     }
+    if (value.scope === 'specific_region' && !value.region?.trim()) {
+      errs.region = 'Region is required when scope is Specific Region'
+    }
     setErrors(errs)
     return Object.keys(errs).length === 0
   }
@@ -55,6 +77,11 @@ export default function MarketResearchForm({ value, onChange, onSubmit, loading 
       keyQuestions: value.keyQuestions?.trim() || undefined,
       knownPlayers: (value.knownPlayers ?? []).length > 0 ? value.knownPlayers : undefined,
       timeHorizon: value.timeHorizon ?? undefined,
+      objective: value.objective || undefined,
+      region: value.scope === 'specific_region' ? value.region?.trim() : undefined,
+      customerSegment: value.customerSegment?.trim() || undefined,
+      useCase: value.useCase?.trim() || undefined,
+      depth: value.depth || undefined,
     })
   }
 
@@ -65,6 +92,15 @@ export default function MarketResearchForm({ value, onChange, onSubmit, loading 
 
   return (
     <div>
+      <FormSection label="Objective">
+        <ChipSelector
+          options={OBJECTIVE_OPTIONS}
+          value={value.objective ?? null}
+          onChange={(v: MarketObjective) => onChange({ ...value, objective: v })}
+          disabled={loading}
+        />
+      </FormSection>
+
       <FormSection label="Market or trend" required error={errors.marketOrTrend}>
         <input
           type="text"
@@ -83,6 +119,53 @@ export default function MarketResearchForm({ value, onChange, onSubmit, loading 
           value={value.scope ?? null}
           onChange={(v: MarketScope) => onChange({ ...value, scope: v })}
           disabled={loading}
+        />
+      </FormSection>
+
+      {value.scope === 'specific_region' && (
+        <FormSection label="Region" required error={errors.region}>
+          <input
+            type="text"
+            value={value.region ?? ''}
+            onChange={(e) => onChange({ ...value, region: e.target.value })}
+            placeholder="e.g., Southeast Asia, DACH, Nordics"
+            maxLength={100}
+            disabled={loading}
+            style={inputStyle}
+          />
+        </FormSection>
+      )}
+
+      <FormSection label="Research depth">
+        <ChipSelector
+          options={DEPTH_OPTIONS}
+          value={value.depth ?? null}
+          onChange={(v: MarketDepth) => onChange({ ...value, depth: v })}
+          disabled={loading}
+        />
+      </FormSection>
+
+      <FormSection label="Customer segment">
+        <input
+          type="text"
+          value={value.customerSegment ?? ''}
+          onChange={(e) => onChange({ ...value, customerSegment: e.target.value })}
+          placeholder="e.g., Enterprise CFOs, SMB retailers"
+          maxLength={200}
+          disabled={loading}
+          style={inputStyle}
+        />
+      </FormSection>
+
+      <FormSection label="Use case">
+        <input
+          type="text"
+          value={value.useCase ?? ''}
+          onChange={(e) => onChange({ ...value, useCase: e.target.value })}
+          placeholder="e.g., Demand forecasting, last-mile delivery"
+          maxLength={200}
+          disabled={loading}
+          style={inputStyle}
         />
       </FormSection>
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback } from 'react'
+import { useCallback, useRef } from 'react'
 import { Target, TrendingUp, Lightbulb } from 'lucide-react'
 import type { CompetitiveAnalysisBrief } from '../types'
 import ResultsHero from './shared/ResultsHero'
@@ -8,6 +8,8 @@ import InsightSection from './shared/InsightSection'
 import ScoreBar from './shared/ScoreBar'
 import SourcesStrip from './shared/SourcesStrip'
 import StatusBar from './shared/StatusBar'
+import CopyModePicker from './shared/CopyModePicker'
+import DegradedBanner from './shared/DegradedBanner'
 
 interface CompetitiveResultsProps {
   brief: CompetitiveAnalysisBrief
@@ -15,6 +17,8 @@ interface CompetitiveResultsProps {
 }
 
 export default function CompetitiveResults({ brief, onNewSearch }: CompetitiveResultsProps) {
+  const exportRef = useRef<HTMLDivElement>(null)
+
   const scrollToSource = useCallback((id: string) => {
     const el = document.getElementById(`source-${id}`)
     if (!el) return
@@ -23,34 +27,27 @@ export default function CompetitiveResults({ brief, onNewSearch }: CompetitiveRe
     setTimeout(() => el.classList.remove('intel-source-highlighted'), 2000)
   }, [])
 
-  const handleCopy = useCallback(async () => {
-    const lines: string[] = [`# ${brief.headline}`, '', `> ${brief.bottomLine}`, '']
-    for (const comp of brief.competitors) {
-      lines.push(`## ${comp.name}`, comp.description)
-      if (comp.strengths.length) lines.push(`**Strengths:** ${comp.strengths.join(', ')}`)
-      if (comp.weaknesses.length) lines.push(`**Weaknesses:** ${comp.weaknesses.join(', ')}`)
-      lines.push('')
-    }
-    if (brief.comparisonMatrix.length) {
-      lines.push('## Comparison Matrix')
-      for (const row of brief.comparisonMatrix) {
-        lines.push(`**${row.dimension}:** ${row.values.map((v) => `${v.company}: ${v.position} (${v.score}/5)`).join(' | ')}`)
-      }
-      lines.push('')
-    }
-    await navigator.clipboard.writeText(lines.join('\n'))
-  }, [brief])
-
   return (
     <div className="mx-auto w-full max-w-4xl">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <button
+          onClick={onNewSearch}
+          className="rounded-lg bg-[var(--surface)] px-3 py-2 text-xs text-[var(--text-muted)] hover:bg-[var(--surface-strong)] hover:text-[var(--text)] sm:text-sm"
+        >
+          ← New Search
+        </button>
+        <CopyModePicker brief={brief} exportRef={exportRef} />
+      </div>
+
+      <div ref={exportRef}>
       <ResultsHero
         headline={brief.headline}
         bottomLine={brief.bottomLine}
         confidence={brief.confidence}
         researchType="competitive_analysis"
-        onNewSearch={onNewSearch}
-        onCopy={handleCopy}
       />
+
+      {brief.status.degraded && <DegradedBanner reasons={brief.status.reasons} />}
 
       {/* Competitor Cards */}
       {brief.competitors.length > 0 && (
@@ -91,20 +88,20 @@ export default function CompetitiveResults({ brief, onNewSearch }: CompetitiveRe
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[var(--surface-strong)]">
-                <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-muted)]">Dimension</th>
+                <th className="px-2 py-2 text-left text-xs font-semibold text-[var(--text-muted)] sm:px-4 sm:py-3">Dimension</th>
                 {getUniqueCompanies(brief.comparisonMatrix).map((c) => (
-                  <th key={c} className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-muted)]">{c}</th>
+                  <th key={c} className="px-2 py-2 text-left text-xs font-semibold text-[var(--text-muted)] sm:px-4 sm:py-3">{c}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {brief.comparisonMatrix.map((row) => (
                 <tr key={row.dimension} className="border-b border-[var(--surface-strong)] last:border-0">
-                  <td className="px-4 py-3 text-xs font-medium text-[var(--text)]">{row.dimension}</td>
+                  <td className="px-2 py-2 text-xs font-medium text-[var(--text)] sm:px-4 sm:py-3">{row.dimension}</td>
                   {getUniqueCompanies(brief.comparisonMatrix).map((company) => {
                     const val = row.values.find((v) => v.company === company)
                     return (
-                      <td key={company} className="px-4 py-3">
+                      <td key={company} className="px-2 py-2 sm:px-4 sm:py-3">
                         {val ? (
                           <div>
                             <ScoreBar score={val.score} />
@@ -152,6 +149,8 @@ export default function CompetitiveResults({ brief, onNewSearch }: CompetitiveRe
           />
         </div>
       )}
+
+      </div>
 
       <div className="mt-6">
         <SourcesStrip sources={brief.sources} />

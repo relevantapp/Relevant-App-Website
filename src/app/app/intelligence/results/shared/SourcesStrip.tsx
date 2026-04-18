@@ -1,6 +1,6 @@
 'use client'
 
-import type { BriefSource } from '@/lib/intelligence/types'
+import type { BriefSource } from '@/lib/intelligence/contracts'
 
 interface SourcesStripProps {
   sources: BriefSource[]

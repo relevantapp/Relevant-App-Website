@@ -6,7 +6,16 @@ import ChipSelector from './shared/ChipSelector'
 import TagInput from './shared/TagInput'
 import AIRefineButton from './shared/AIRefineButton'
 import { MEETING_TYPE_OPTIONS_V3, GOAL_PLACEHOLDERS_V3 } from '../constants'
-import type { MeetingPrepInput, MeetingTypeV3 } from '../types'
+import type { MeetingPrepInput, MeetingTypeV3, RelationshipStage } from '../types'
+
+const RELATIONSHIP_STAGE_OPTIONS: Array<{ value: RelationshipStage; label: string }> = [
+  { value: 'first-meeting', label: 'First Meeting' },
+  { value: 'active-deal', label: 'Active Deal' },
+  { value: 'renewal', label: 'Renewal' },
+  { value: 'exec-review', label: 'Exec Review' },
+  { value: 'rescue', label: 'Rescue' },
+  { value: 'partner', label: 'Partner' },
+]
 
 interface MeetingPrepFormProps {
   value: Partial<MeetingPrepInput>
@@ -67,6 +76,10 @@ export default function MeetingPrepForm({ value, onChange, onSubmit, loading }: 
       attendees: (value.attendees ?? []).length > 0 ? value.attendees : undefined,
       context: value.context?.trim() || undefined,
       competitors: (value.competitors ?? []).length > 0 ? value.competitors : undefined,
+      relationshipStage: value.relationshipStage || undefined,
+      whatYoureSelling: value.whatYoureSelling?.trim() || undefined,
+      desiredNextStep: value.desiredNextStep?.trim() || undefined,
+      painPoints: (value.painPoints ?? []).length > 0 ? value.painPoints : undefined,
     })
   }
 
@@ -96,6 +109,39 @@ export default function MeetingPrepForm({ value, onChange, onSubmit, loading }: 
           value={meetingType}
           onChange={(v: MeetingTypeV3) => onChange({ ...value, meetingType: v })}
           disabled={loading}
+        />
+      </FormSection>
+
+      <FormSection label="Relationship stage">
+        <ChipSelector
+          options={RELATIONSHIP_STAGE_OPTIONS}
+          value={value.relationshipStage ?? null}
+          onChange={(v: RelationshipStage) => onChange({ ...value, relationshipStage: v })}
+          disabled={loading}
+        />
+      </FormSection>
+
+      <FormSection label="What are you selling?">
+        <input
+          type="text"
+          value={value.whatYoureSelling ?? ''}
+          onChange={(e) => onChange({ ...value, whatYoureSelling: e.target.value })}
+          placeholder="e.g., Enterprise SaaS platform, consulting retainer"
+          maxLength={200}
+          disabled={loading}
+          style={inputStyle}
+        />
+      </FormSection>
+
+      <FormSection label="Desired next step">
+        <input
+          type="text"
+          value={value.desiredNextStep ?? ''}
+          onChange={(e) => onChange({ ...value, desiredNextStep: e.target.value })}
+          placeholder="e.g., Schedule a pilot, get budget approval"
+          maxLength={200}
+          disabled={loading}
+          style={inputStyle}
         />
       </FormSection>
 
@@ -150,6 +196,16 @@ export default function MeetingPrepForm({ value, onChange, onSubmit, loading }: 
           maxLength={2000}
           disabled={loading}
           style={textareaStyle}
+        />
+      </FormSection>
+
+      <FormSection label="Pain points to explore">
+        <TagInput
+          value={value.painPoints ?? []}
+          onChange={(tags) => onChange({ ...value, painPoints: tags })}
+          max={5}
+          placeholder="Type a pain point and press Enter"
+          disabled={loading}
         />
       </FormSection>
 

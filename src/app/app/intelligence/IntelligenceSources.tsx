@@ -1,7 +1,7 @@
 /* PHASE 4: HORIZONTAL SCROLLING CARD STRIP */
 'use client'
 
-import type { BriefSource } from '@/lib/intelligence/types'
+import type { BriefSource } from '@/lib/intelligence/contracts'
 
 interface IntelligenceSourcesProps {
   sources: BriefSource[]

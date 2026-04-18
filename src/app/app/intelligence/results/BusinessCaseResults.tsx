@@ -1,7 +1,7 @@
 'use client'
 
-import { useCallback } from 'react'
-import { TrendingUp, AlertTriangle, Lightbulb, HelpCircle } from 'lucide-react'
+import { useCallback, useRef } from 'react'
+import { TrendingUp, HelpCircle } from 'lucide-react'
 import type { BusinessCaseBrief } from '../types'
 import ResultsHero from './shared/ResultsHero'
 import VerdictBadge from './shared/VerdictBadge'
@@ -9,6 +9,8 @@ import BalanceView from './shared/BalanceView'
 import InsightSection from './shared/InsightSection'
 import SourcesStrip from './shared/SourcesStrip'
 import StatusBar from './shared/StatusBar'
+import CopyModePicker from './shared/CopyModePicker'
+import DegradedBanner from './shared/DegradedBanner'
 
 interface BusinessCaseResultsProps {
   brief: BusinessCaseBrief
@@ -22,6 +24,8 @@ const OUTCOME_STYLE = {
 }
 
 export default function BusinessCaseResults({ brief, onNewSearch }: BusinessCaseResultsProps) {
+  const exportRef = useRef<HTMLDivElement>(null)
+
   const scrollToSource = useCallback((id: string) => {
     const el = document.getElementById(`source-${id}`)
     if (!el) return
@@ -30,43 +34,27 @@ export default function BusinessCaseResults({ brief, onNewSearch }: BusinessCase
     setTimeout(() => el.classList.remove('intel-source-highlighted'), 2000)
   }, [])
 
-  const handleCopy = useCallback(async () => {
-    const lines: string[] = [
-      `# ${brief.headline}`, '', `> ${brief.bottomLine}`, '',
-      `**Verdict:** ${brief.verdict}`, brief.verdictRationale, '',
-    ]
-    if (brief.comparables.length) {
-      lines.push('## Comparable Companies')
-      for (const c of brief.comparables) {
-        lines.push(`- **${c.name}** (${c.outcome}): ${c.keyTakeaway}`)
-      }
-      lines.push('')
-    }
-    const sectionMap = [
-      ['Market Evidence', brief.sections.marketEvidence],
-      ['Supporting Factors', brief.sections.supportingFactors],
-      ['Risk Factors', brief.sections.riskFactors],
-      ['Open Questions', brief.sections.openQuestions],
-    ] as const
-    for (const [title, bullets] of sectionMap) {
-      if (bullets.length === 0) continue
-      lines.push(`## ${title}`)
-      for (const b of bullets) lines.push(`- ${b.text} [${b.sourceIds.join(', ')}]`)
-      lines.push('')
-    }
-    await navigator.clipboard.writeText(lines.join('\n'))
-  }, [brief])
-
   return (
     <div className="mx-auto w-full max-w-4xl">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <button
+          onClick={onNewSearch}
+          className="rounded-lg bg-[var(--surface)] px-3 py-2 text-xs text-[var(--text-muted)] hover:bg-[var(--surface-strong)] hover:text-[var(--text)] sm:text-sm"
+        >
+          ← New Search
+        </button>
+        <CopyModePicker brief={brief} exportRef={exportRef} />
+      </div>
+
+      <div ref={exportRef}>
       <ResultsHero
         headline={brief.headline}
         bottomLine={brief.bottomLine}
         confidence={brief.confidence}
         researchType="business_case"
-        onNewSearch={onNewSearch}
-        onCopy={handleCopy}
       />
+
+      {brief.status.degraded && <DegradedBanner reasons={brief.status.reasons} />}
 
       {/* Verdict */}
       <div className="mt-5">
@@ -126,6 +114,8 @@ export default function BusinessCaseResults({ brief, onNewSearch }: BusinessCase
           borderColor="border-[var(--accent-violet)]/20"
           onSourceClick={scrollToSource}
         />
+      </div>
+
       </div>
 
       <div className="mt-6">

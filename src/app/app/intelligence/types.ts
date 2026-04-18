@@ -1,7 +1,6 @@
 /* ── Intelligence Frontend Types + Constants ───────────────── */
-/* V2 re-exports preserved for backward compat */
 
-import type { MeetingType } from '@/lib/intelligence/types'
+import type { MeetingType } from '@/lib/intelligence/contracts'
 
 export type {
   IntelligenceBrief,
@@ -11,7 +10,6 @@ export type {
   BriefStatus,
   CompanySnapshot,
   AttendeeProfile,
-  IntelligenceBriefV3,
   MeetingPrepBrief,
   CompetitiveAnalysisBrief,
   BusinessCaseBrief,
@@ -20,7 +18,8 @@ export type {
   ComparisonRow,
   ComparableCompany,
   MarketPlayer,
-} from '@/lib/intelligence/types'
+  ResearchType,
+} from '@/lib/intelligence/contracts'
 
 export const MEETING_TYPE_OPTIONS: Array<{ value: MeetingType; label: string; icon: string }> = [
   { value: 'sales', label: 'Sales Call', icon: '💰' },
@@ -60,15 +59,29 @@ export const LOADING_STEPS = [
 
 /* ── Intelligence V3 Types ─────────────────────────────────── */
 
-export type ResearchType = 'meeting_prep' | 'business_case' | 'competitive_analysis' | 'market_research'
-
 export type MeetingTypeV3 = 'customer' | 'partner' | 'reseller' | 'investor' | 'board' | 'internal' | 'other'
 
+export type RelationshipStage = 'first-meeting' | 'active-deal' | 'renewal' | 'exec-review' | 'rescue' | 'partner'
+
 export type CompetitiveFocusArea = 'product' | 'pricing' | 'gtm' | 'technology' | 'talent' | 'overall'
+
+export type CompetitiveUseCase = 'sales-battlecard' | 'product-strategy' | 'pricing-review' | 'board-update'
 
 export type MarketScope = 'global' | 'north_america' | 'europe' | 'apac' | 'specific_region'
 
 export type TimeHorizon = '30d' | '90d' | '6m' | '1y'
+
+export type MarketObjective = 'market-size' | 'trend-scan' | 'player-map' | 'whitespace' | 'investment-view'
+
+export type MarketDepth = 'fast-scan' | 'deep-dive'
+
+export type DecisionType = 'launch' | 'expansion' | 'pricing' | 'partnership' | 'internal-investment'
+
+export type DecisionAudience = 'ceo' | 'board' | 'exec-team' | 'finance' | 'product'
+
+export type InvestmentLevel = '<50k' | '50k-500k' | '500k-5M' | '>5M'
+
+export type ROIFrame = 'revenue' | 'cost-savings' | 'speed' | 'retention' | 'risk-reduction'
 
 export interface AttendeeInput {
   name: string
@@ -84,6 +97,10 @@ export interface MeetingPrepInput {
   attendees?: AttendeeInput[]
   context?: string
   competitors?: string[]
+  relationshipStage?: RelationshipStage
+  whatYoureSelling?: string
+  desiredNextStep?: string
+  painPoints?: string[]
 }
 
 export interface BusinessCaseInput {
@@ -94,14 +111,23 @@ export interface BusinessCaseInput {
   successMetrics?: string[]
   keyQuestions?: string
   comparableCompanies?: string[]
+  decisionType?: DecisionType
+  decisionAudience?: DecisionAudience
+  timeHorizon?: TimeHorizon
+  investmentLevel?: InvestmentLevel
+  roiFrame?: ROIFrame[]
 }
 
 export interface CompetitiveAnalysisInput {
   researchType: 'competitive_analysis'
   competitors: string[]
-  yourCompany?: string
+  yourCompany: string
   focusArea: CompetitiveFocusArea
   specificQuestions?: string
+  marketSegment?: string
+  geography?: string
+  customerType?: string
+  useCasePreset?: CompetitiveUseCase
 }
 
 export interface MarketResearchInput {
@@ -111,6 +137,11 @@ export interface MarketResearchInput {
   keyQuestions?: string
   knownPlayers?: string[]
   timeHorizon?: TimeHorizon
+  objective?: MarketObjective
+  region?: string
+  customerSegment?: string
+  useCase?: string
+  depth?: MarketDepth
 }
 
 export type IntelligenceInput = MeetingPrepInput | BusinessCaseInput | CompetitiveAnalysisInput | MarketResearchInput

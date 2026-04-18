@@ -1,0 +1,89 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e2]
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "Relevant app logo Intelligence" [ref=e79] [cursor=pointer]:
+          - /url: /app/feed
+          - img "Relevant app logo" [ref=e8]
+          - generic [ref=e9]: Intelligence
+        - button "Toggle theme" [ref=e31] [cursor=pointer]:
+          - img [ref=e32]
+    - main [ref=e40]:
+      - generic [ref=e106]:
+        - button "Back" [ref=e107] [cursor=pointer]:
+          - img [ref=e108]
+          - text: Back
+        - generic [ref=e110]:
+          - generic [ref=e111]:
+            - generic [ref=e112]: Who are you meeting?*
+            - textbox "Company or person name" [ref=e113]
+          - generic [ref=e114]:
+            - generic [ref=e115]: Meeting type*
+            - generic [ref=e116]:
+              - button "Customer" [ref=e117] [cursor=pointer]
+              - button "Partner" [ref=e118] [cursor=pointer]
+              - button "Reseller" [ref=e119] [cursor=pointer]
+              - button "Investor" [ref=e120] [cursor=pointer]
+              - button "Board" [ref=e121] [cursor=pointer]
+              - button "Internal" [ref=e122] [cursor=pointer]
+              - button "Other" [ref=e123] [cursor=pointer]
+          - generic [ref=e124]:
+            - generic [ref=e125]: Relationship stage
+            - generic [ref=e126]:
+              - button "First Meeting" [ref=e127] [cursor=pointer]
+              - button "Active Deal" [ref=e128] [cursor=pointer]
+              - button "Renewal" [ref=e129] [cursor=pointer]
+              - button "Exec Review" [ref=e130] [cursor=pointer]
+              - button "Rescue" [ref=e131] [cursor=pointer]
+              - button "Partner" [ref=e132] [cursor=pointer]
+          - generic [ref=e133]:
+            - generic [ref=e134]: What are you selling?
+            - textbox "e.g., Enterprise SaaS platform, consulting retainer" [ref=e135]
+          - generic [ref=e136]:
+            - generic [ref=e137]: Desired next step
+            - textbox "e.g., Schedule a pilot, get budget approval" [ref=e138]
+          - generic [ref=e139]:
+            - generic [ref=e140]: What's your goal?*
+            - textbox "What do you want to accomplish?" [ref=e141]
+            - button "Refine" [disabled] [ref=e143]:
+              - img [ref=e144]
+              - text: Refine
+          - generic [ref=e147]:
+            - generic [ref=e148]: Their website
+            - textbox "https://..." [ref=e149]
+          - generic [ref=e150]:
+            - generic [ref=e151]: Attendees
+            - textbox "Type a name and press Enter" [ref=e153]
+          - generic [ref=e154]:
+            - generic [ref=e155]: Key topics / context
+            - textbox "Anything else we should know?" [ref=e156]
+          - generic [ref=e157]:
+            - generic [ref=e158]: Pain points to explore
+            - textbox "Type a pain point and press Enter" [ref=e160]
+          - generic [ref=e161]:
+            - generic [ref=e162]: Competitors to watch
+            - textbox "Type a competitor name" [ref=e164]
+          - button "Generate Intelligence" [disabled] [ref=e165]
+    - navigation [ref=e80]:
+      - generic [ref=e81]:
+        - link "Feed" [ref=e82] [cursor=pointer]:
+          - /url: /app/feed
+          - img [ref=e83]
+          - generic [ref=e86]: Feed
+        - link "Search" [ref=e87] [cursor=pointer]:
+          - /url: /app/search
+          - img [ref=e88]
+          - generic [ref=e91]: Search
+        - link "Intelligence" [ref=e92] [cursor=pointer]:
+          - /url: /app/intelligence
+          - img [ref=e93]
+          - generic [ref=e96]: Intel
+        - link "Journal" [ref=e97] [cursor=pointer]:
+          - /url: /app/journal
+          - img [ref=e98]
+          - generic [ref=e100]: Journal
+        - link "You" [ref=e101] [cursor=pointer]:
+          - /url: /app/profile
+          - img [ref=e102]
+          - generic [ref=e105]: You

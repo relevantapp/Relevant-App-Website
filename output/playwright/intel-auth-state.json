@@ -1,0 +1,45 @@
+{
+  "cookies": [
+    {
+      "name": "sb-ebmglyjbeueunlsqeahr-auth-token.0",
+      "value": "base64-eyJhY2Nlc3NfdG9rZW4iOiJleUpoYkdjaU9pSkZVekkxTmlJc0ltdHBaQ0k2SWprd01HRmhOREV3TFdFNFltRXRORGcyTXkxaVpETTNMVGt3TWpGa1pXWmtObUptT1NJc0luUjVjQ0k2SWtwWFZDSjkuZXlKcGMzTWlPaUpvZEhSd2N6b3ZMMlZpYldkc2VXcGlaWFZsZFc1c2MzRmxZV2h5TG5OMWNHRmlZWE5sTG1OdkwyRjFkR2d2ZGpFaUxDSnpkV0lpT2lKa09UTTFabU0xTWkxaU1EZGpMVFJrWmpJdE9ESmlOeTAyTldZNVlXSXlaV1JqWkdRaUxDSmhkV1FpT2lKaGRYUm9aVzUwYVdOaGRHVmtJaXdpWlhod0lqb3hOemMyTlRVeU9ESTFMQ0pwWVhRaU9qRTNOelkxTkRreU1qVXNJbVZ0WVdsc0lqb2lkR0Z1YldGNUxtZDFjSFJoTXpBM1FHZHRZV2xzTG1OdmJTSXNJbkJvYjI1bElqb2lJaXdpWVhCd1gyMWxkR0ZrWVhSaElqcDdJbkJ5YjNacFpHVnlJam9pWlcxaGFXd2lMQ0p3Y205MmFXUmxjbk1pT2xzaVpXMWhhV3dpWFgwc0luVnpaWEpmYldWMFlXUmhkR0VpT25zaVkyOXRjR0Z1ZVY5cFpDSTZJalU0TURKaU9EWXhMV1E1TVdVdE5HTmpZeTA0TXpFNUxXWmxaR0kwT1RoallXUmtNaUlzSW1WdFlXbHNJam9pZEdGdWJXRjVMbWQxY0hSaE16QTNRR2R0WVdsc0xtTnZiU0lzSW1WdFlXbHNYM1psY21sbWFXVmtJanAwY25WbExDSm1kV3hzWDI1aGJXVWlPaUpVWVc1dFlYa2dSM1Z3ZEdFaUxDSnBibVIxYzNSeWVWOXBaQ0k2SW1Fd01EQXdNREF3TFRBd01EQXRNREF3TUMwd01EQXdMVEF3TURBd01EQXdNREF4TUNJc0ltbHVaSFZ6ZEhKNVgzSmhkeUk2SWxSeVlXNXpjRzl5ZEdGMGFXOXVJRngxTURBeU5pQk1iMmRwYzNScFkzTWlMQ0p1YjNScFptbGpZWFJwYjI1elgyVnVZV0pzWldRaU9uUnlkV1VzSW5Cb2IyNWxYM1psY21sbWFXVmtJanBtWVd4elpTd2ljSEp2Wm1sc1pWOXJhVzVrSWpvaWNISnZabVZ6YzJsdmJtRnNJaXdpY205c1pWOXBaQ0k2SWpaaU1qRXlaR1EyTFRVMFpqVXROR0V3TVMxaE5tTmlMVFl5WldKall6QTNNek0yWlNJc0luSnZiR1ZmY21GM0lqb2lVSEp2WkhWamRDQk5ZVzVoWjJWeUlpd2ljM1ZpSWpvaVpEa3pOV1pqTlRJdFlqQTNZeTAwWkdZeUxUZ3lZamN0TmpWbU9XRmlNbVZrWTJSa0luMHNJbkp2YkdVaU9pSmhkWFJvWlc1MGFXTmhkR1ZrSWl3aVlXRnNJam9pWVdGc01TSXNJbUZ0Y2lJNlczc2liV1YwYUc5a0lqb2ljR0Z6YzNkdmNtUWlMQ0owYVcxbGMzUmhiWEFpT2pFM056WTFORGt5TWpWOVhTd2ljMlZ6YzJsdmJsOXBaQ0k2SWpoaVlqWTROREV4TFRJNU16Y3ROR1l5TnkxaU1URTRMVE0yTnpjMU16WmpPV001TWlJc0ltbHpYMkZ1YjI1NWJXOTFjeUk2Wm1Gc2MyVjkuYnlfSkYwdXBud1A4cV9xdDVLZHJrLXMwak11NEdwaGNlaWZfMlZ0TVctSWhYWWE0NTMyTlF6TlRtSzFiYjJIdjVLNEpBZ2RGOTNqRGE2MmJKM0VnOHciLCJ0b2tlbl90eXBlIjoiYmVhcmVyIiwiZXhwaXJlc19pbiI6MzYwMCwiZXhwaXJlc19hdCI6MTc3NjU1MjgyNSwicmVmcmVzaF90b2tlbiI6InNjN2E3ejQzNnNveSIsInVzZXIiOnsiaWQiOiJkOTM1ZmM1Mi1iMDdjLTRkZjItODJiNy02NWY5YWIyZWRjZGQiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJlbWFpbCI6InRhbm1heS5ndXB0YTMwN0BnbWFpbC5jb20iLCJlbWFpbF9jb25maXJtZWRfYXQiOiIyMDI2LTAzLTA2VDIzOjE0OjIxLjE4OTM1MloiLCJwaG9uZSI6IiIsImNvbmZpcm1lZF9hdCI6IjIwMjYtMDMtMDZUMjM6MTQ6MjEuMTg5MzUyWiIsImxhc3Rfc2lnbl9pbl9hdCI6IjIwMjYtMDQtMThUMjE6NTM6NDUuODM2NTYyNjI4WiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIl19LCJ1c2VyX21ldGFkYXRhIjp7ImNvbXBhbnlfaWQiOiI1ODAyYjg2MS1kOTFlLTRjY2MtODMxOS1mZWRiNDk4Y2FkZDIiLCJlbWFpbCI6InRhbm1heS5ndXB0YTMwN0BnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZnVsbF9uYW1lIjoiVGFubWF5IEd1cHRhIiwiaW5kdXN0cnlfaWQiOiJhMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMTAiLCJpbmR1c3RyeV9yYXciOiJUcmFuc3BvcnRhdGlvbiAmIExvZ2lzdGljcyIsIm5vdGlmaWNhdGlvbnNfZW5hYmxlZCI6dHJ1ZSwicGhvbmVfdmVyaWZpZWQiOmZhbHNlLCJwcm9maWxlX2tpbmQiOiJwcm9mZXNzaW9uYWwiLCJyb2xlX2lkIjoiNmIyMTJkZDYtNTRmNS00YTAxLWE2Y2ItNjJlYmNjMDczMzZlIiwicm9sZV9yYXciOiJQcm9kdWN0IE1hbmFnZXIiLCJzdWIiOiJkOTM1ZmM1Mi1iMDdjLTRkZjItODJiNy02NWY5YWIyZWRjZGQifSwiaWRlbnRpdGllcyI6W3siaWRlbnRpdHlfaWQiOiI0ZmVjOGE1NS00MzA2LTRlM2UtODQ4Yi0wNjY5MDc5MmZiMzYiLCJpZCI6ImQ5MzVmYzUyLWIwN2MtNGRmM",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1811109225.914195,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "sb-ebmglyjbeueunlsqeahr-auth-token.1",
+      "value": "i04MmI3LTY1ZjlhYjJlZGNkZCIsInVzZXJfaWQiOiJkOTM1ZmM1Mi1iMDdjLTRkZjItODJiNy02NWY5YWIyZWRjZGQiLCJpZGVudGl0eV9kYXRhIjp7ImVtYWlsIjoidGFubWF5Lmd1cHRhMzA3QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmdWxsX25hbWUiOiJUYW5tYXkgR3VwdGEiLCJwaG9uZV92ZXJpZmllZCI6ZmFsc2UsInN1YiI6ImQ5MzVmYzUyLWIwN2MtNGRmMi04MmI3LTY1ZjlhYjJlZGNkZCJ9LCJwcm92aWRlciI6ImVtYWlsIiwibGFzdF9zaWduX2luX2F0IjoiMjAyNi0wMi0yOFQxNTowOTo0Ni41NzM5MzRaIiwiY3JlYXRlZF9hdCI6IjIwMjYtMDItMjhUMTU6MDk6NDYuNTczOTg2WiIsInVwZGF0ZWRfYXQiOiIyMDI2LTAyLTI4VDE1OjA5OjQ2LjU3Mzk4NloiLCJlbWFpbCI6InRhbm1heS5ndXB0YTMwN0BnbWFpbC5jb20ifV0sImNyZWF0ZWRfYXQiOiIyMDI2LTAyLTI4VDE1OjA5OjQ2LjU1MzQwMloiLCJ1cGRhdGVkX2F0IjoiMjAyNi0wNC0xOFQyMTo1Mzo0NS44ODI2NjVaIiwiaXNfYW5vbnltb3VzIjpmYWxzZX0sIndlYWtfcGFzc3dvcmQiOnsibWVzc2FnZSI6IlBhc3N3b3JkIGlzIGtub3duIHRvIGJlIHdlYWsgYW5kIGVhc3kgdG8gZ3Vlc3MsIHBsZWFzZSBjaG9vc2UgYSBkaWZmZXJlbnQgb25lLiIsInJlYXNvbnMiOlsicHduZWQiXX19",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1811109225.914719,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__cf_bm",
+      "value": "oNpVPhf0YLupQC44twqYUXsPhk09i6rX9IARWelYUUU-1776549227-1.0.1.1-yfy8kfOfb9BUdX_ktooNdh1pil0JwZ_x72yqZE5SFM6_sg8vRUradmcmcb0gmdGKqJS2YTA_dHDaw5xuU.YhGD3kebq36R3PAELqazZvTqQ",
+      "domain": ".knightsbridgefx.com",
+      "path": "/",
+      "expires": 1776551027.359984,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "http://localhost:3002",
+      "localStorage": [
+        {
+          "name": "relevant_cached_user",
+          "value": "{\"id\":\"d935fc52-b07c-4df2-82b7-65f9ab2edcdd\",\"email\":\"tanmay.gupta307@gmail.com\",\"name\":\"Tanmay Gupta\"}"
+        }
+      ]
+    }
+  ]
+}

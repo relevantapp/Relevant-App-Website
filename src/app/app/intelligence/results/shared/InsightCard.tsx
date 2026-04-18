@@ -1,6 +1,6 @@
 'use client'
 
-import type { BriefBullet } from '@/lib/intelligence/types'
+import type { BriefBullet } from '@/lib/intelligence/contracts'
 
 interface InsightCardProps {
   icon: React.ReactNode

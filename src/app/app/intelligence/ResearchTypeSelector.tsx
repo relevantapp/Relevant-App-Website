@@ -19,25 +19,10 @@ interface ResearchTypeSelectorProps {
 export default function ResearchTypeSelector({ selected, onSelect }: ResearchTypeSelectorProps) {
   return (
     <div>
-      <h2
-        style={{
-          fontSize: 20,
-          fontWeight: 600,
-          color: 'var(--text)',
-          textAlign: 'center',
-          marginBottom: 24,
-        }}
-      >
+      <h2 className="mb-6 text-center text-base font-semibold text-[var(--text)] sm:text-xl">
         What would you like to prepare for?
       </h2>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: 16,
-        }}
-        className="research-type-grid"
-      >
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
         {RESEARCH_TYPES.map((card) => {
           const Icon = ICON_MAP[card.icon]
           const isSelected = selected === card.type
@@ -46,17 +31,13 @@ export default function ResearchTypeSelector({ selected, onSelect }: ResearchTyp
               key={card.type}
               type="button"
               onClick={() => onSelect(card.type)}
+              className="research-type-card rounded-2xl border p-4 text-left transition-all sm:p-6"
               style={{
                 background: isSelected ? 'rgba(47, 107, 255, 0.06)' : 'var(--surface)',
-                border: `1px solid ${isSelected ? 'var(--accent)' : 'var(--border)'}`,
-                borderRadius: 16,
-                padding: 24,
-                textAlign: 'left',
+                borderColor: isSelected ? 'var(--accent)' : 'var(--border)',
                 cursor: 'pointer',
-                transition: 'all var(--motion-micro) var(--ease-out)',
                 boxShadow: isSelected ? '0 0 0 1px var(--accent)' : 'none',
               }}
-              className="research-type-card"
             >
               {Icon && (
                 <div style={{ color: 'var(--accent)', marginBottom: 12 }}>

@@ -1,0 +1,61 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e2]
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "Relevant app logo Relevant" [ref=e6] [cursor=pointer]:
+          - /url: /app/feed
+          - img "Relevant app logo" [ref=e8]
+          - generic [ref=e9]: Relevant
+        - navigation [ref=e10]:
+          - link "Feed" [ref=e11] [cursor=pointer]:
+            - /url: /app/feed
+            - img [ref=e12]
+            - text: Feed
+          - link "Search" [ref=e15] [cursor=pointer]:
+            - /url: /app/search
+            - img [ref=e16]
+            - text: Search
+          - link "Intelligence" [ref=e19] [cursor=pointer]:
+            - /url: /app/intelligence
+            - img [ref=e20]
+            - text: Intelligence
+          - link "Journal" [ref=e23] [cursor=pointer]:
+            - /url: /app/journal
+            - img [ref=e24]
+            - text: Journal
+          - link "You" [ref=e26] [cursor=pointer]:
+            - /url: /app/profile
+            - img [ref=e27]
+            - text: You
+        - generic [ref=e30]:
+          - button "Toggle theme" [ref=e31] [cursor=pointer]:
+            - img [ref=e32]
+          - generic [ref=e34]:
+            - generic [ref=e35]: Tanmay Gupta
+            - button "Sign out" [ref=e36] [cursor=pointer]:
+              - img [ref=e37]
+    - main [ref=e40]:
+      - generic [ref=e127]:
+        - generic [ref=e129]:
+          - heading "Research Progress" [level=3] [ref=e130]
+          - generic [ref=e131]:
+            - generic [ref=e132]:
+              - img [ref=e136]
+              - generic [ref=e139]:
+                - paragraph [ref=e140]: Identifying company
+                - paragraph [ref=e141]: Completed in 0.1s
+            - generic [ref=e142]:
+              - img [ref=e146]
+              - generic [ref=e150]:
+                - paragraph [ref=e151]: Gathering evidence
+                - paragraph [ref=e152]: Completed in 4.7s
+            - generic [ref=e153]:
+              - img [ref=e157]
+              - generic [ref=e160]:
+                - paragraph [ref=e161]: Ranking sources
+                - paragraph [ref=e162]: Completed in 0.0s
+            - generic [ref=e163]:
+              - img [ref=e165]
+              - paragraph [ref=e168]: Analyzing with AI
+        - button "Cancel" [ref=e170] [cursor=pointer]
