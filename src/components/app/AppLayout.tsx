@@ -28,7 +28,8 @@ function useTheme() {
 function getMobileTitle(pathname: string): string | null {
   if (pathname.startsWith('/app/feed')) return 'Feed'
   if (pathname.startsWith('/app/search')) return 'Search'
-  if (pathname.startsWith('/app/meeting-prep')) return 'Research'
+  if (pathname.startsWith('/app/intelligence')) return 'Intelligence'
+  if (pathname.startsWith('/app/meeting-prep')) return 'Intelligence'
   if (pathname.startsWith('/app/journal')) return 'Journal'
   if (pathname.startsWith('/app/profile')) return 'You'
   if (pathname.startsWith('/app/signal')) return 'Signal'
@@ -44,7 +45,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const navItems = [
     { href: '/app/feed', label: 'Feed', mobileLabel: 'Feed', icon: Newspaper },
     { href: '/app/search', label: 'Search', mobileLabel: 'Search', icon: Search },
-    { href: '/app/meeting-prep', label: 'Research', mobileLabel: 'Research', icon: Briefcase },
+    { href: '/app/intelligence', label: 'Intelligence', mobileLabel: 'Intel', icon: Briefcase },
     { href: '/app/journal', label: 'Journal', mobileLabel: 'Journal', icon: BookOpen },
     { href: '/app/profile', label: 'You', mobileLabel: 'You', icon: User },
   ]

@@ -9,6 +9,12 @@ const nextConfig = {
         destination: '/signal/:id',
         permanent: false,
       },
+      {
+        // meeting-prep → intelligence redirect
+        source: '/app/meeting-prep',
+        destination: '/app/intelligence',
+        permanent: false,
+      },
     ]
   },
   images: {
