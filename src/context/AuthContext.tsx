@@ -4,6 +4,7 @@ import React, { createContext, useCallback, useContext, useEffect, useState } fr
 import type { AuthChangeEvent, Session } from '@supabase/supabase-js'
 import { supabase, getValidAccessToken } from '@/lib/supabase'
 import type { AuthUser, AuthNotice } from '@/types/signals'
+import { isSignalForgePending } from '@/lib/signalForgeSession'
 
 export interface AuthContextType {
   user: AuthUser | null
@@ -24,6 +25,8 @@ export interface AuthContextType {
   requestPasswordReset: (email: string) => Promise<void>
   confirmPasswordReset: (email: string, token: string, newPassword: string) => Promise<void>
   signOut: () => Promise<void>
+  isSignalForgeInProgress: boolean
+  setIsSignalForgeInProgress: (v: boolean) => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -99,6 +102,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [needsOnboarding, setNeedsOnboarding] = useState(false)
   const [needsEmailVerification, setNeedsEmailVerification] = useState(false)
   const [pendingVerificationEmail, setPendingVerificationEmail] = useState<string | null>(null)
+  const [isSignalForgeInProgress, setIsSignalForgeInProgress] = useState(false)
 
   const cacheUser = (u: AuthUser | null) => {
     if (u) {
@@ -122,6 +126,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setNeedsOnboarding(true)
       } else {
         setNeedsOnboarding(false)
+        if (isSignalForgePending(userId)) {
+          setIsSignalForgeInProgress(true)
+        }
       }
 
       const nextUser = toUser(userId, email, data?.full_name)
@@ -401,6 +408,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     notice, clearNotice: () => setNotice(null),
     signIn, signUp, verifySignUp, resendVerification,
     updateProfile, requestPasswordReset, confirmPasswordReset, signOut,
+    isSignalForgeInProgress, setIsSignalForgeInProgress,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Loader2, ArrowRight, ArrowLeft, Check, ChevronDown, Sparkles, Search, LogOut } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { supabase, getValidAccessToken } from '@/lib/supabase'
+import { markSignalForgePending } from '@/lib/signalForgeSession'
 
 /* ─── Types ─── */
 type TaxonomyOption = { id: string; name: string; slug?: string }
@@ -16,25 +17,8 @@ type CompanyRow = { id: string; name: string; slug: string }
 /* ─── Constants ─── */
 const COUNTRIES = [
   { code: 'US', name: 'United States' },
-  { code: 'GB', name: 'United Kingdom' },
   { code: 'CA', name: 'Canada' },
-  { code: 'AU', name: 'Australia' },
-  { code: 'DE', name: 'Germany' },
-  { code: 'FR', name: 'France' },
   { code: 'IN', name: 'India' },
-  { code: 'SG', name: 'Singapore' },
-  { code: 'AE', name: 'United Arab Emirates' },
-  { code: 'JP', name: 'Japan' },
-  { code: 'BR', name: 'Brazil' },
-  { code: 'NL', name: 'Netherlands' },
-  { code: 'IL', name: 'Israel' },
-  { code: 'SE', name: 'Sweden' },
-  { code: 'CH', name: 'Switzerland' },
-  { code: 'KR', name: 'South Korea' },
-  { code: 'ES', name: 'Spain' },
-  { code: 'IT', name: 'Italy' },
-  { code: 'MX', name: 'Mexico' },
-  { code: 'IE', name: 'Ireland' },
 ]
 
 const TOTAL_STEPS = 5
@@ -237,7 +221,7 @@ function extractSseEvents(buffer: string): { events: { event: string; data: stri
 
 /* ─── Main Page ─── */
 export default function OnboardingPage() {
-  const { updateProfile, markOnboardingComplete, signOut } = useAuth()
+  const { user, updateProfile, markOnboardingComplete, setIsSignalForgeInProgress, signOut } = useAuth()
   const router = useRouter()
   const taxonomy = useTaxonomySearch()
 
@@ -259,8 +243,10 @@ export default function OnboardingPage() {
   const [passageLoading, setPassageLoading] = useState(false)
   const [passageStatus, setPassageStatus] = useState('')
   const [contextNote, setContextNote] = useState('')
+  const [regenCount, setRegenCount] = useState(0)
   const passageAbort = useRef<AbortController | null>(null)
   const hasFetchedPassage = useRef(false)
+  const MAX_REGENERATIONS = 3
 
   const handleSignOut = async () => {
     await signOut()
@@ -394,7 +380,9 @@ export default function OnboardingPage() {
         onboarding_completed: true,
       })
       markOnboardingComplete()
-      router.push('/app/feed')
+      if (user) markSignalForgePending(user.id)
+      setIsSignalForgeInProgress(true)
+      router.push('/app/building')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not save profile.')
     } finally {
@@ -594,18 +582,56 @@ export default function OnboardingPage() {
                       rows={3}
                       className="w-full resize-none rounded-lg border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] placeholder-[var(--text-soft)] outline-none transition-colors focus:border-accent-blue disabled:opacity-50"
                     />
-                    <div className="mt-1 flex items-center justify-between">
-                      <span className="text-[10px] text-[var(--text-soft)]">{contextNote.length}/500</span>
-                      {contextNote.trim().length > 0 && !passageLoading && (
-                        <button
-                          type="button"
-                          onClick={() => { hasFetchedPassage.current = false; void fetchPassagePreview() }}
-                          className="text-xs font-medium text-accent-blue transition-opacity hover:opacity-80"
-                        >
-                          Regenerate
-                        </button>
+                    <span className="mt-1 block text-[10px] text-[var(--text-soft)]">{contextNote.length}/500</span>
+                  </div>
+
+                  {/* Action buttons */}
+                  <div className="flex flex-col gap-3">
+                    {/* Regenerate — primary, requires feedback text */}
+                    <button
+                      type="button"
+                      disabled={!contextNote.trim() || passageLoading || regenCount >= MAX_REGENERATIONS}
+                      onClick={() => {
+                        setRegenCount((c) => c + 1)
+                        hasFetchedPassage.current = false
+                        void fetchPassagePreview()
+                      }}
+                      className="flex h-11 items-center justify-center gap-2 rounded-lg bg-accent-blue text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-40"
+                    >
+                      {passageLoading ? (
+                        <Loader2 size={16} className="animate-spin" />
+                      ) : (
+                        <>
+                          <Sparkles size={14} />
+                          {regenCount >= MAX_REGENERATIONS ? 'Max regenerations reached' : 'Regenerate'}
+                        </>
                       )}
-                    </div>
+                    </button>
+                    {!contextNote.trim() && regenCount < MAX_REGENERATIONS && !passageLoading && (
+                      <p className="text-center text-[10px] text-[var(--text-soft)]">Write feedback above to regenerate</p>
+                    )}
+
+                    {/* Looks good — secondary */}
+                    <button
+                      type="button"
+                      disabled={loading || passageLoading}
+                      onClick={() => void handleComplete()}
+                      className="flex h-11 items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-sm font-medium text-[var(--text)] transition-colors hover:bg-[var(--bg)] disabled:opacity-50"
+                    >
+                      {loading ? <Loader2 size={16} className="animate-spin" /> : (
+                        <><Check size={16} /> Looks good, sign up</>
+                      )}
+                    </button>
+
+                    {/* Skip — tertiary */}
+                    <button
+                      type="button"
+                      disabled={loading}
+                      onClick={() => { setContextNote(''); void handleComplete() }}
+                      className="text-xs text-[var(--text-soft)] transition-opacity hover:text-[var(--text-muted)]"
+                    >
+                      Skip and sign up
+                    </button>
                   </div>
 
                   {/* Acceptance */}
@@ -627,7 +653,8 @@ export default function OnboardingPage() {
             </motion.p>
           )}
 
-          {/* Navigation buttons */}
+          {/* Navigation buttons — hidden on step 5 which has its own buttons */}
+          {step < TOTAL_STEPS && (
           <div className="mt-6 flex items-center justify-between">
             {step > 1 ? (
               <button
@@ -651,13 +678,22 @@ export default function OnboardingPage() {
             >
               {loading ? (
                 <Loader2 size={16} className="animate-spin" />
-              ) : step === TOTAL_STEPS ? (
-                'Create my feed'
               ) : (
                 <>Continue <ArrowRight size={16} /></>
               )}
             </button>
           </div>
+          )}
+          {step === TOTAL_STEPS && (
+            <div className="mt-4 flex items-center">
+              <button
+                onClick={back}
+                className="flex items-center gap-1 text-sm text-[var(--text-muted)] transition-colors hover:text-[var(--text)]"
+              >
+                <ArrowLeft size={16} /> Back
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

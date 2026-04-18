@@ -1,7 +1,8 @@
 'use client'
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Clock, Layers, TrendingUp, Radio } from 'lucide-react'
+import { Clock, Layers, TrendingUp, Radio, Sparkles, Share2, Check } from 'lucide-react'
 import type { ProBriefItem, ConsequenceStep } from '@/types/signals'
 
 const TRAJECTORY_COLORS: Record<string, string> = {
@@ -10,6 +11,14 @@ const TRAJECTORY_COLORS: Record<string, string> = {
   DEVELOPING: 'bg-accent-amber text-gray-950',
   STABLE: 'bg-[var(--surface-strong)] text-[var(--text)]',
   FADING: 'bg-[var(--surface)] text-[var(--text-muted)]',
+}
+
+const TRAJECTORY_GRADIENTS: Record<string, string> = {
+  ESCALATING: 'from-red-500/30 to-orange-400/20',
+  EMERGING: 'from-teal-500/30 to-cyan-400/20',
+  DEVELOPING: 'from-blue-500/30 to-indigo-400/20',
+  STABLE: 'from-gray-500/20 to-gray-400/10',
+  FADING: 'from-violet-400/25 to-purple-300/15',
 }
 
 const CONSEQUENCE_TYPE_COLORS: Record<string, string> = {
@@ -58,33 +67,68 @@ type Props = {
 }
 
 export default function SignalCard({ signal, onClick, index = 0 }: Props) {
+  const [imgError, setImgError] = useState(false)
+  const [shareFeedback, setShareFeedback] = useState(false)
+
+  const handleShare = async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    const url = `https://www.getrelevantapp.com/signal/${encodeURIComponent(signal.id)}`
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({ title: signal.headline, url })
+        return
+      } catch { /* user cancelled */ }
+    }
+    try {
+      await navigator.clipboard.writeText(url)
+      setShareFeedback(true)
+      setTimeout(() => setShareFeedback(false), 1500)
+    } catch { /* noop */ }
+  }
   const consequenceTypes = getTopConsequenceTypes(signal.consequence_steps)
   const trajectoryLabel = signal.trajectory?.toUpperCase()
   const trajectoryClass = trajectoryLabel ? TRAJECTORY_COLORS[trajectoryLabel] ?? TRAJECTORY_COLORS.STABLE : null
+  const hasImage = !!signal.imageUrl && !imgError
+  const placeholderGradient = trajectoryLabel
+    ? TRAJECTORY_GRADIENTS[trajectoryLabel] ?? TRAJECTORY_GRADIENTS.STABLE
+    : TRAJECTORY_GRADIENTS.STABLE
 
   return (
     <motion.article
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, delay: index * 0.06, ease: [0, 0, 0.2, 1] }}
-      whileHover={{ y: -2 }}
       onClick={onClick}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => { if (e.key === 'Enter') onClick() }}
-      className="group cursor-pointer overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] transition-shadow hover:shadow-lg"
+      className="group cursor-pointer overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] will-change-transform transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)]"
     >
-      {/* Hero image */}
-      {signal.imageUrl && (
-        <div className="relative h-36 w-full overflow-hidden sm:h-44 lg:h-40">
+      {/* Hero image or gradient placeholder */}
+      <div className="relative h-36 w-full overflow-hidden sm:h-44 lg:h-40">
+        {hasImage ? (
           <img
-            src={signal.imageUrl}
+            src={signal.imageUrl!}
             alt=""
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            loading="lazy"
+            onError={() => setImgError(true)}
+            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-elevated)] via-transparent to-transparent" />
-        </div>
-      )}
+        ) : (
+          <div className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${placeholderGradient}`}>
+            <Sparkles size={24} className="text-[var(--text-soft)] opacity-40" />
+          </div>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-elevated)] via-transparent to-transparent" />
+        {/* Share button — visible on hover (desktop) or always (mobile) */}
+        <button
+          onClick={handleShare}
+          title={shareFeedback ? 'Copied!' : 'Share'}
+          className="absolute right-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm transition-opacity md:opacity-0 md:group-hover:opacity-100"
+        >
+          {shareFeedback ? <Check size={13} /> : <Share2 size={13} />}
+        </button>
+      </div>
 
       <div className="p-5">
         {/* Top badges row */}

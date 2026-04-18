@@ -11,6 +11,7 @@ import {
   Eye, Zap, Binoculars, Link2, Play, MessageCircle, History,
 } from 'lucide-react'
 import { AskAIFab } from '@/components/app/AskAIChat'
+import ShareButton from '@/components/app/ShareButton'
 
 /* ── constants ───────────────────────────────────────────────── */
 
@@ -554,14 +555,17 @@ export default function SignalDetailPage() {
 
   return (
     <div className="py-6">
-      {/* Back */}
-      <button
-        onClick={() => router.back()}
-        className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--text-muted)] transition-colors hover:text-[var(--text)]"
-      >
-        <ArrowLeft size={16} />
-        Back
-      </button>
+      {/* Top bar */}
+      <div className="mb-6 flex items-center justify-between">
+        <button
+          onClick={() => router.back()}
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--text-muted)] transition-colors hover:text-[var(--text)]"
+        >
+          <ArrowLeft size={16} />
+          Back
+        </button>
+        <ShareButton signal={signal} variant="full" />
+      </div>
 
       {/* Hero image — full width */}
       {signal.imageUrl && (

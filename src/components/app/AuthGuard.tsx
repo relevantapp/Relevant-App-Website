@@ -7,7 +7,7 @@ import { useEffect } from 'react'
 const PUBLIC_PATHS = ['/', '/login', '/signup', '/verify-email', '/privacy', '/terms', '/signal']
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isLoading, needsEmailVerification, needsOnboarding, pendingVerificationEmail } = useAuth()
+  const { isAuthenticated, isLoading, needsEmailVerification, needsOnboarding, pendingVerificationEmail, isSignalForgeInProgress } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
 
@@ -37,12 +37,18 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       return
     }
 
+    // Signal forge in progress → redirect to building screen
+    if (isAuthenticated && isSignalForgeInProgress && !pathname.startsWith('/app/building')) {
+      router.replace('/app/building')
+      return
+    }
+
     // Not authenticated trying to access app pages → redirect to login
     if (!isAuthenticated && isAppPage) {
       router.replace('/login')
       return
     }
-  }, [isAuthenticated, isLoading, needsEmailVerification, needsOnboarding, pendingVerificationEmail, pathname, router])
+  }, [isAuthenticated, isLoading, needsEmailVerification, needsOnboarding, pendingVerificationEmail, isSignalForgeInProgress, pathname, router])
 
   if (isLoading) {
     return (

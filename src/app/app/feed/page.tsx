@@ -497,107 +497,44 @@ export default function FeedPage() {
         </div>
       </section>
 
-      {/* ── Desktop / tablet summary card ── */}
-      <section className="mb-6 hidden max-w-[980px] rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3 shadow-[0_20px_60px_rgba(0,0,0,0.16)] sm:block sm:rounded-3xl sm:p-5 lg:mb-10 lg:max-w-[1060px] lg:rounded-[32px] lg:p-8">
-        <div className="mb-5 flex flex-col gap-3 lg:mb-6 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-soft)] lg:text-sm">
-              {greeting}{firstName ? ',' : ''}
-            </p>
-            <h1 className="mt-2 font-display text-2xl font-semibold tracking-[-0.04em] text-[var(--text)] lg:mt-3 lg:text-3xl xl:text-4xl 2xl:text-[3.25rem]">
-              {firstName ?? 'Your feed'}
-            </h1>
-          </div>
-
-          <p className="hidden max-w-sm text-sm leading-6 text-[var(--text-muted)] lg:block xl:max-w-md xl:text-base">
-            A tighter weekly readout up top, then the full story timeline below.
-          </p>
+      {/* ── Desktop / tablet compact stats bar ── */}
+      <section className="mb-6 hidden sm:block lg:mb-8">
+        <div className="mb-4 flex items-baseline justify-between">
+          <h1 className="font-display text-2xl font-semibold tracking-[-0.04em] text-[var(--text)] lg:text-3xl">
+            {greeting}{firstName ? `, ${firstName}` : ''}
+          </h1>
         </div>
-
-        <div className="grid gap-3 lg:grid-cols-[minmax(0,1.08fr)_minmax(300px,0.92fr)] lg:gap-5 xl:gap-6">
+        <div className="flex gap-3">
           <button
             type="button"
             onClick={() => setShowStatsPanel(true)}
             aria-haspopup="dialog"
-            className="group flex min-h-[140px] flex-col justify-between rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-4 text-left transition-colors hover:border-[var(--border-strong)] sm:min-h-[188px] sm:rounded-2xl sm:px-5 sm:py-5 lg:min-h-[210px] lg:rounded-[28px] lg:px-6 lg:py-6"
+            className="group flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3 text-left transition-colors hover:border-[var(--border-strong)]"
           >
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--text-soft)]">
-                Time saved · 7D
-              </p>
-              <div className="mt-4 flex items-end gap-2">
-                <span className="font-display text-[2.5rem] font-semibold leading-none tracking-[-0.07em] text-[var(--text)] sm:text-[3.6rem] md:text-[4.4rem] lg:text-[5rem] xl:text-[5.5rem]">
-                  {summaryTimeSavedHours ?? '—'}
-                </span>
-                {summaryTimeSavedHours ? (
-                  <span className="pb-2 font-mono text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--text-soft)]">
-                    hrs
-                  </span>
-                ) : null}
-              </div>
-              <p className="mt-2 max-w-[20rem] text-sm leading-6 text-[var(--text-muted)]">
-                Back in your week.
-              </p>
-            </div>
-
-            <div className="mt-5 flex items-center justify-between gap-4 border-t border-[var(--border)] pt-3">
-              <p className="truncate text-xs text-[var(--text-soft)]">
-                {summaryStoryCount} stories • {summaryMatchedArticles} source docs
-              </p>
-              <span className="inline-flex items-center gap-1 text-xs font-medium text-[var(--accent)]">
-                Open summary
-                <ArrowUpRight size={13} />
-              </span>
-            </div>
+            <span className="font-display text-2xl font-semibold leading-none tracking-[-0.04em] text-[var(--text)]">{summaryTimeSavedHours ?? '—'}<span className="ml-0.5 text-[10px] font-medium uppercase tracking-wider text-[var(--text-soft)]">hrs</span></span>
+            <span className="text-xs text-[var(--text-muted)]">saved this week</span>
+            <ArrowUpRight size={13} className="text-[var(--text-soft)] transition-colors group-hover:text-[var(--text)]" />
           </button>
-
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 lg:gap-4 xl:grid-cols-2">
-            <button
-              type="button"
-              onClick={() => setShowStatsPanel(true)}
-              aria-haspopup="dialog"
-              className="group flex min-h-[80px] flex-col justify-between rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-3 text-left transition-colors hover:border-[var(--border-strong)] sm:min-h-[92px] sm:rounded-2xl sm:px-4 sm:py-4 lg:min-h-[100px] lg:rounded-[24px] lg:px-5 lg:py-5"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--text-soft)] lg:text-[11px]">
-                    Stories · 7D
-                  </p>
-                  <p className="mt-2 font-display text-[2rem] font-semibold leading-none tracking-[-0.05em] text-[var(--text)] lg:text-[2.25rem]">
-                    {summaryStoryCount}
-                  </p>
-                </div>
-                <ArrowUpRight size={14} className="mt-1 text-[var(--text-soft)] transition-colors group-hover:text-[var(--text)]" />
-              </div>
-
-              <p className="mt-3 text-xs leading-5 text-[var(--text-muted)]">
-                {activeDaysCount} active days • {uniquePublisherCount} publishers
-              </p>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setShowTuneSheet(true)}
-              aria-haspopup="dialog"
-              className="group flex min-h-[80px] items-center justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-3 text-left transition-colors hover:border-[var(--border-strong)] sm:min-h-[92px] sm:rounded-2xl sm:px-4 sm:py-4 lg:min-h-[100px] lg:rounded-[24px] lg:px-5 lg:py-5"
-            >
-              <div className="flex items-center gap-3">
-                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[18px] bg-[var(--bg)] text-[var(--text)]">
-                  <SlidersHorizontal size={16} />
-                </span>
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--text-soft)]">
-                    Adjust
-                  </p>
-                  <p className="mt-1 text-sm font-semibold text-[var(--text)]">Tune feed</p>
-                  <p className="mt-1 text-xs text-[var(--text-muted)]">
-                    {activeSensitivity.label} • {activeStyle.label}
-                  </p>
-                </div>
-              </div>
-              <ArrowUpRight size={14} className="text-[var(--text-soft)] transition-colors group-hover:text-[var(--text)]" />
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => setShowStatsPanel(true)}
+            aria-haspopup="dialog"
+            className="group flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3 text-left transition-colors hover:border-[var(--border-strong)]"
+          >
+            <span className="font-display text-2xl font-semibold leading-none tracking-[-0.04em] text-[var(--text)]">{summaryStoryCount}</span>
+            <span className="text-xs text-[var(--text-muted)]">stories · {summaryMatchedArticles} sources</span>
+            <ArrowUpRight size={13} className="text-[var(--text-soft)] transition-colors group-hover:text-[var(--text)]" />
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowTuneSheet(true)}
+            aria-haspopup="dialog"
+            className="group flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3 text-left transition-colors hover:border-[var(--border-strong)]"
+          >
+            <SlidersHorizontal size={15} className="text-[var(--text-muted)]" />
+            <span className="text-xs font-medium text-[var(--text-muted)]">{activeSensitivity.label} · {activeStyle.label}</span>
+            <ArrowUpRight size={13} className="text-[var(--text-soft)] transition-colors group-hover:text-[var(--text)]" />
+          </button>
         </div>
       </section>
 

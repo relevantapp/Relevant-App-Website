@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useRef, useEffect, FormEvent } from 'react'
+import { useState, useRef, useEffect, FormEvent, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Loader2, MailCheck, RotateCcw } from 'lucide-react'
+import { Loader2, MailCheck, RotateCcw, ClipboardPaste } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 
 const CODE_LENGTH = 8
@@ -18,9 +18,36 @@ export default function VerifyEmailPage() {
   const [loading, setLoading] = useState(false)
   const [resendCooldown, setResendCooldown] = useState(0)
   const [resendMessage, setResendMessage] = useState('')
+  const [clipboardAvailable, setClipboardAvailable] = useState(false)
+  const [pasteFeedback, setPasteFeedback] = useState('')
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
 
   const email = pendingVerificationEmail || ''
+
+  useEffect(() => {
+    setClipboardAvailable(typeof navigator !== 'undefined' && !!navigator.clipboard?.readText)
+  }, [])
+
+  const handlePasteFromClipboard = useCallback(async () => {
+    try {
+      const text = await navigator.clipboard.readText()
+      const digitsOnly = text.replace(/\D/g, '').slice(0, CODE_LENGTH)
+      if (digitsOnly.length === 0) {
+        setPasteFeedback('No code found in clipboard')
+        setTimeout(() => setPasteFeedback(''), 2500)
+        return
+      }
+      const next = Array(CODE_LENGTH).fill('')
+      digitsOnly.split('').forEach((ch, i) => { next[i] = ch })
+      setDigits(next)
+      const focusIdx = Math.min(digitsOnly.length, CODE_LENGTH - 1)
+      inputRefs.current[focusIdx]?.focus()
+      setPasteFeedback('')
+    } catch {
+      setPasteFeedback('Paste not available')
+      setTimeout(() => setPasteFeedback(''), 2500)
+    }
+  }, [])
 
   useEffect(() => {
     if (resendCooldown <= 0) return
@@ -98,7 +125,7 @@ export default function VerifyEmailPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--bg)] px-4">
+    <div className="flex min-h-[100dvh] items-center justify-center overflow-y-auto bg-[var(--bg)] px-4 py-8">
       <motion.div {...fadeIn} className="w-full max-w-md">
         {/* Brand */}
         <div className="mb-8 flex flex-col items-center gap-3">
@@ -116,7 +143,7 @@ export default function VerifyEmailPage() {
         <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-6 sm:p-8">
           <form onSubmit={handleVerify} className="flex flex-col gap-5">
             {/* Code input boxes */}
-            <div className="flex justify-center gap-2" onPaste={handlePaste}>
+            <div className="flex justify-center gap-1.5 sm:gap-2" onPaste={handlePaste}>
               {digits.map((digit, i) => (
                 <input
                   key={i}
@@ -127,10 +154,27 @@ export default function VerifyEmailPage() {
                   value={digit}
                   onChange={(e) => handleDigitChange(i, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(i, e)}
-                  className="h-12 w-9 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-center text-lg font-semibold text-[var(--text)] outline-none transition-colors focus:border-accent-blue sm:h-14 sm:w-10 sm:text-xl"
+                  className="h-11 w-8 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-center text-base font-semibold text-[var(--text)] outline-none transition-colors focus:border-accent-blue sm:h-14 sm:w-10 sm:text-xl"
                 />
               ))}
             </div>
+
+            {/* Paste button */}
+            {clipboardAvailable && (
+              <div className="flex flex-col items-center gap-1">
+                <button
+                  type="button"
+                  onClick={handlePasteFromClipboard}
+                  className="flex items-center gap-1.5 text-sm text-accent-blue transition-opacity hover:opacity-80"
+                >
+                  <ClipboardPaste size={14} />
+                  Paste code
+                </button>
+                {pasteFeedback && (
+                  <span className="text-xs text-[var(--text-muted)]">{pasteFeedback}</span>
+                )}
+              </div>
+            )}
 
             {error && (
               <motion.p

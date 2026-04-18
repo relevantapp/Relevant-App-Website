@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, FormEvent } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
@@ -13,7 +12,6 @@ type ResetStep = 'idle' | 'request' | 'verify'
 
 export default function LoginPage() {
   const { signIn, requestPasswordReset, confirmPasswordReset } = useAuth()
-  const router = useRouter()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -36,7 +34,7 @@ export default function LoginPage() {
     setLoading(true)
     try {
       await signIn(email, password)
-      router.push('/app/feed')
+      // AuthGuard handles routing (to /app/feed or /onboarding based on state)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong.')
     } finally {
