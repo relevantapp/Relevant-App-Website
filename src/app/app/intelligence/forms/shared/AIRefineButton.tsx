@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { Sparkles, Undo2, Loader2 } from 'lucide-react'
+import { MODEL_STORAGE_KEY, normalizeModelPreference } from '@/lib/intelligence/models'
 import { getValidAccessToken } from '@/lib/supabase'
 
 interface AIRefineButtonProps {
@@ -35,7 +36,12 @@ export default function AIRefineButton({
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ goal, meetingType, accountName }),
+        body: JSON.stringify({
+          goal,
+          meetingType,
+          accountName,
+          preferredModel: normalizeModelPreference(localStorage.getItem(MODEL_STORAGE_KEY)),
+        }),
       })
 
       if (!res.ok) throw new Error('Refine failed')

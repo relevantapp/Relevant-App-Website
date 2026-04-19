@@ -6,7 +6,14 @@ import { motion } from 'framer-motion'
 import { User, LogOut, Sun, Moon, Save, Edit, Loader2, Brain } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/context/AuthContext'
-import { MODEL_OPTIONS, type ModelPreference } from '@/lib/intelligence/models'
+import {
+  DEFAULT_MODEL_PREFERENCE,
+  MODEL_STORAGE_KEY,
+  getModelFamilyId,
+  normalizeModelPreference,
+  type ModelCatalogResponse,
+  type ModelPreference,
+} from '@/lib/intelligence/models'
 
 type ProfileData = {
   full_name: string
@@ -19,13 +26,31 @@ type ProfileData = {
 
 const PROFILE_KINDS = ['general', 'executive', 'investor', 'operator', 'analyst']
 
+function formatContextLength(value: number | null): string {
+  if (!value) return '—'
+  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(value % 1_000_000 === 0 ? 0 : 1)}M tokens`
+  if (value >= 1_000) return `${Math.round(value / 1_000)}k tokens`
+  return `${value} tokens`
+}
+
+function formatPricePerMillion(price: string | null): string {
+  if (!price) return '—'
+  const numeric = Number(price)
+  if (!Number.isFinite(numeric)) return '—'
+  return `$${(numeric * 1_000_000).toFixed(numeric * 1_000_000 >= 1 ? 2 : 3)}/M`
+}
+
 export default function ProfilePage() {
   const router = useRouter()
   const { user, signOut, updateProfile } = useAuth()
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
   const [theme, setTheme] = useState<'dark' | 'light'>('dark')
-  const [intelligenceModel, setIntelligenceModel] = useState<ModelPreference>('gemini-2.5-flash')
+  const [intelligenceModel, setIntelligenceModel] = useState<ModelPreference>(DEFAULT_MODEL_PREFERENCE)
+  const [modelCatalog, setModelCatalog] = useState<ModelCatalogResponse | null>(null)
+  const [modelCatalogLoading, setModelCatalogLoading] = useState(true)
+  const [modelCatalogError, setModelCatalogError] = useState<string | null>(null)
+  const [selectedFamily, setSelectedFamily] = useState<string>(getModelFamilyId(DEFAULT_MODEL_PREFERENCE))
 
   const [profile, setProfile] = useState<ProfileData>({
     full_name: '',
@@ -43,9 +68,51 @@ export default function ProfilePage() {
     const stored = localStorage.getItem('relevant-site-theme') as 'dark' | 'light' | null
     const current = stored || (document.documentElement.getAttribute('data-theme') as 'dark' | 'light') || 'dark'
     setTheme(current)
-    const storedModel = localStorage.getItem('relevant-intelligence-model') as ModelPreference | null
-    if (storedModel && MODEL_OPTIONS.some((m) => m.value === storedModel)) {
-      setIntelligenceModel(storedModel)
+    const storedModel = normalizeModelPreference(localStorage.getItem(MODEL_STORAGE_KEY))
+    setIntelligenceModel(storedModel)
+    setSelectedFamily(getModelFamilyId(storedModel))
+    localStorage.setItem(MODEL_STORAGE_KEY, storedModel)
+  }, [])
+
+  useEffect(() => {
+    let cancelled = false
+
+    const loadModelCatalog = async () => {
+      setModelCatalogLoading(true)
+      setModelCatalogError(null)
+
+      try {
+        const res = await fetch('/api/intelligence/models', { cache: 'no-store' })
+        if (!res.ok) throw new Error('Failed to load model catalog')
+
+        const data = await res.json() as ModelCatalogResponse
+        if (cancelled) return
+
+        setModelCatalog(data)
+
+        const availableModelIds = new Set(data.families.flatMap((family) => family.models.map((model) => model.id)))
+        const storedModel = normalizeModelPreference(localStorage.getItem(MODEL_STORAGE_KEY))
+        const resolvedModel = availableModelIds.has(storedModel)
+          ? storedModel
+          : data.defaultModel
+
+        setIntelligenceModel(resolvedModel)
+        setSelectedFamily(getModelFamilyId(resolvedModel))
+        localStorage.setItem(MODEL_STORAGE_KEY, resolvedModel)
+      } catch (err) {
+        if (cancelled) return
+
+        console.error('Load model catalog error:', err)
+        setModelCatalogError('Could not load the latest OpenRouter model list.')
+      } finally {
+        if (!cancelled) setModelCatalogLoading(false)
+      }
+    }
+
+    void loadModelCatalog()
+
+    return () => {
+      cancelled = true
     }
   }, [])
 
@@ -95,7 +162,8 @@ export default function ProfilePage() {
 
   const handleModelChange = useCallback((model: ModelPreference) => {
     setIntelligenceModel(model)
-    localStorage.setItem('relevant-intelligence-model', model)
+    setSelectedFamily(getModelFamilyId(model))
+    localStorage.setItem(MODEL_STORAGE_KEY, model)
   }, [])
 
   const handleSave = async () => {
@@ -126,6 +194,16 @@ export default function ProfilePage() {
     setEditProfile(profile)
     setEditing(false)
   }
+
+  const families = modelCatalog?.families ?? []
+  const activeFamily = families.find((family) => family.id === selectedFamily)
+    ?? families.find((family) => family.id === getModelFamilyId(intelligenceModel))
+    ?? families[0]
+  const activeModels = activeFamily?.models ?? []
+  const activeModel = families
+    .flatMap((family) => family.models)
+    .find((model) => model.id === intelligenceModel)
+    ?? activeModels[0]
 
   return (
     <div className="mx-auto max-w-3xl py-8">
@@ -289,32 +367,81 @@ export default function ProfilePage() {
             Intelligence Model
           </h3>
           <p className="mb-3 text-xs text-[var(--text-muted)]">
-            Choose which AI model powers your Intelligence research.
+            Intelligence now runs through OpenRouter. Pick a model family, then the exact model you want for research, refine, and follow-up.
           </p>
-          <div className="grid gap-2 sm:grid-cols-2">
-            {MODEL_OPTIONS.map((opt) => (
-              <button
-                key={opt.value}
-                type="button"
-                onClick={() => handleModelChange(opt.value)}
-                className={`rounded-xl border p-3.5 text-left transition-all ${
-                  intelligenceModel === opt.value
-                    ? 'border-[var(--accent)] bg-[var(--accent)]/[0.06]'
-                    : 'border-[var(--border)] bg-[var(--surface)] hover:border-[var(--border-strong)]'
-                }`}
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="mb-1 block text-xs text-[var(--text-muted)]">Model Family</label>
+              <select
+                value={activeFamily?.id ?? selectedFamily}
+                onChange={(e) => {
+                  const nextFamily = e.target.value
+                  setSelectedFamily(nextFamily)
+                  const firstModel = families.find((family) => family.id === nextFamily)?.models[0]
+                  if (firstModel) handleModelChange(firstModel.id)
+                }}
+                disabled={modelCatalogLoading || families.length === 0}
+                className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 py-2 text-sm text-[var(--text)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)] disabled:opacity-60"
               >
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-[var(--text)]">{opt.label}</span>
-                  {intelligenceModel === opt.value && (
-                    <span className="rounded-full bg-[var(--accent)]/15 px-2 py-0.5 text-[10px] font-medium text-[var(--accent)]">
-                      Active
-                    </span>
-                  )}
-                </div>
-                <p className="mt-1 text-xs text-[var(--text-muted)]">{opt.description}</p>
-              </button>
-            ))}
+                {families.map((family) => (
+                  <option key={family.id} value={family.id}>
+                    {family.label} ({family.models.length})
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="mb-1 block text-xs text-[var(--text-muted)]">Exact Model</label>
+              <select
+                value={activeModel?.id ?? intelligenceModel}
+                onChange={(e) => handleModelChange(e.target.value)}
+                disabled={modelCatalogLoading || activeModels.length === 0}
+                className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 py-2 text-sm text-[var(--text)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)] disabled:opacity-60"
+              >
+                {activeModels.map((model) => (
+                  <option key={model.id} value={model.id}>
+                    {model.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
+          {modelCatalogError && (
+            <p className="mt-3 text-xs text-[var(--accent-coral)]">{modelCatalogError}</p>
+          )}
+          {modelCatalogLoading && (
+            <p className="mt-3 text-xs text-[var(--text-muted)]">Loading the latest OpenRouter model catalog…</p>
+          )}
+          {activeModel && (
+            <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-sm font-medium text-[var(--text)]">{activeModel.name}</p>
+                  <p className="text-xs text-[var(--text-muted)]">{activeModel.id}</p>
+                </div>
+                <span className="rounded-full bg-[var(--accent)]/15 px-2.5 py-1 text-[10px] font-medium text-[var(--accent)]">
+                  Active
+                </span>
+              </div>
+              <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-[var(--text-soft)]">Context</p>
+                  <p className="mt-1 text-sm text-[var(--text)]">{formatContextLength(activeModel.contextLength)}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-[var(--text-soft)]">Input</p>
+                  <p className="mt-1 text-sm text-[var(--text)]">{formatPricePerMillion(activeModel.promptPrice)}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-[var(--text-soft)]">Output</p>
+                  <p className="mt-1 text-sm text-[var(--text)]">{formatPricePerMillion(activeModel.completionPrice)}</p>
+                </div>
+              </div>
+              {activeModel.description && (
+                <p className="mt-3 text-xs leading-5 text-[var(--text-muted)]">{activeModel.description}</p>
+              )}
+            </div>
+          )}
         </section>
 
         {/* Appearance + Danger zone side by side on desktop */}

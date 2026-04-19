@@ -22,6 +22,11 @@ import type {
   BusinessCaseBrief,
   MarketResearchBrief,
 } from '@/lib/intelligence/contracts'
+import {
+  DEFAULT_MODEL_PREFERENCE,
+  MODEL_STORAGE_KEY,
+  normalizeModelPreference,
+} from '@/lib/intelligence/models'
 import type {
   ResearchType,
   IntelligenceInput,
@@ -150,8 +155,8 @@ export default function IntelligencePage() {
     await generate({
       ...apiBody,
       preferredModel: typeof window !== 'undefined'
-        ? localStorage.getItem('relevant-intelligence-model') || 'gemini-2.5-flash'
-        : 'gemini-2.5-flash',
+        ? normalizeModelPreference(localStorage.getItem(MODEL_STORAGE_KEY))
+        : DEFAULT_MODEL_PREFERENCE,
     })
   }, [generate, pendingInput])
 

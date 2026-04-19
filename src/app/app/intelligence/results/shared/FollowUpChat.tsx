@@ -3,6 +3,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { Send, Loader2 } from 'lucide-react'
+import { MODEL_STORAGE_KEY, normalizeModelPreference } from '@/lib/intelligence/models'
 import { getValidAccessToken } from '@/lib/supabase'
 
 interface ChatMessage {
@@ -66,7 +67,11 @@ export default function FollowUpChat({ briefId, researchType }: FollowUpChatProp
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ briefId, question: q }),
+        body: JSON.stringify({
+          briefId,
+          question: q,
+          preferredModel: normalizeModelPreference(localStorage.getItem(MODEL_STORAGE_KEY)),
+        }),
       })
 
       if (res.ok) {
