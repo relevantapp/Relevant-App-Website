@@ -3,9 +3,10 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { User, LogOut, Sun, Moon, Save, Edit, Loader2 } from 'lucide-react'
+import { User, LogOut, Sun, Moon, Save, Edit, Loader2, Brain } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/context/AuthContext'
+import { MODEL_OPTIONS, type ModelPreference } from '@/lib/intelligence/models'
 
 type ProfileData = {
   full_name: string
@@ -24,6 +25,7 @@ export default function ProfilePage() {
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
   const [theme, setTheme] = useState<'dark' | 'light'>('dark')
+  const [intelligenceModel, setIntelligenceModel] = useState<ModelPreference>('gemini-2.5-flash')
 
   const [profile, setProfile] = useState<ProfileData>({
     full_name: '',
@@ -41,6 +43,10 @@ export default function ProfilePage() {
     const stored = localStorage.getItem('relevant-site-theme') as 'dark' | 'light' | null
     const current = stored || (document.documentElement.getAttribute('data-theme') as 'dark' | 'light') || 'dark'
     setTheme(current)
+    const storedModel = localStorage.getItem('relevant-intelligence-model') as ModelPreference | null
+    if (storedModel && MODEL_OPTIONS.some((m) => m.value === storedModel)) {
+      setIntelligenceModel(storedModel)
+    }
   }, [])
 
   // Fetch user profile from DB
@@ -86,6 +92,11 @@ export default function ProfilePage() {
     document.documentElement.setAttribute('data-theme', next)
     localStorage.setItem('relevant-site-theme', next)
   }, [theme])
+
+  const handleModelChange = useCallback((model: ModelPreference) => {
+    setIntelligenceModel(model)
+    localStorage.setItem('relevant-intelligence-model', model)
+  }, [])
 
   const handleSave = async () => {
     setSaving(true)
@@ -268,6 +279,41 @@ export default function ProfilePage() {
                 </p>
               )}
             </div>
+          </div>
+        </section>
+
+        {/* Intelligence Model */}
+        <section className="mb-6 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5">
+          <h3 className="mb-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--text-soft)]">
+            <Brain size={14} />
+            Intelligence Model
+          </h3>
+          <p className="mb-3 text-xs text-[var(--text-muted)]">
+            Choose which AI model powers your Intelligence research.
+          </p>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {MODEL_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => handleModelChange(opt.value)}
+                className={`rounded-xl border p-3.5 text-left transition-all ${
+                  intelligenceModel === opt.value
+                    ? 'border-[var(--accent)] bg-[var(--accent)]/[0.06]'
+                    : 'border-[var(--border)] bg-[var(--surface)] hover:border-[var(--border-strong)]'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-[var(--text)]">{opt.label}</span>
+                  {intelligenceModel === opt.value && (
+                    <span className="rounded-full bg-[var(--accent)]/15 px-2 py-0.5 text-[10px] font-medium text-[var(--accent)]">
+                      Active
+                    </span>
+                  )}
+                </div>
+                <p className="mt-1 text-xs text-[var(--text-muted)]">{opt.description}</p>
+              </button>
+            ))}
           </div>
         </section>
 

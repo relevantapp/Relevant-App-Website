@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect, useRef } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { Loader2, Briefcase, AlertCircle, ArrowLeft } from 'lucide-react'
 import ResearchTypeSelector from './ResearchTypeSelector'
+import ResearchConfirmation from './ResearchConfirmation'
 import MeetingPrepForm from './forms/MeetingPrepForm'
 import BusinessCaseForm from './forms/BusinessCaseForm'
 import CompetitiveAnalysisForm from './forms/CompetitiveAnalysisForm'
@@ -48,6 +49,7 @@ export default function IntelligencePage() {
   const { isAuthenticated, isLoading: authLoading } = useAuth()
   const [selectedType, setSelectedType] = useState<ResearchType | null>(null)
   const [formStates, setFormStates] = useState<FormStates>({ ...INITIAL_FORM_STATES })
+  const [pendingInput, setPendingInput] = useState<IntelligenceInput | null>(null)
   const { state: streamState, generate, abort, reset } = useIntelligenceStream()
   const [savedBriefId, setSavedBriefId] = useState<string | null>(null)
   const savingRef = useRef(false)
@@ -75,7 +77,15 @@ export default function IntelligencePage() {
     )
   }, [brief, savedBriefId])
 
-  const handleSubmit = useCallback(async (input: IntelligenceInput) => {
+  const handleSubmit = useCallback((input: IntelligenceInput) => {
+    setPendingInput(input)
+  }, [])
+
+  const handleConfirm = useCallback(async () => {
+    if (!pendingInput) return
+    const input = pendingInput
+    setPendingInput(null)
+
     // Build request body based on research type
     let apiBody: Record<string, unknown>
 
@@ -137,16 +147,23 @@ export default function IntelligencePage() {
       }
     }
 
-    await generate(apiBody)
-  }, [generate])
+    await generate({
+      ...apiBody,
+      preferredModel: typeof window !== 'undefined'
+        ? localStorage.getItem('relevant-intelligence-model') || 'gemini-2.5-flash'
+        : 'gemini-2.5-flash',
+    })
+  }, [generate, pendingInput])
 
   const handleNewSearch = useCallback(() => {
     reset()
     setSavedBriefId(null)
+    setPendingInput(null)
   }, [reset])
 
   const handleBack = useCallback(() => {
     setSelectedType(null)
+    setPendingInput(null)
     reset()
   }, [reset])
 
@@ -181,18 +198,18 @@ export default function IntelligencePage() {
           </div>
         )}
         {researchType === 'meeting_prep' && (
-          <IntelligenceResults brief={brief as MeetingPrepBrief} onNewSearch={handleNewSearch} />
+          <IntelligenceResults brief={brief as MeetingPrepBrief} onNewSearch={handleNewSearch} savedBriefId={savedBriefId} />
         )}
         {researchType === 'competitive_analysis' && (
-          <CompetitiveResults brief={brief as CompetitiveAnalysisBrief} onNewSearch={handleNewSearch} />
+          <CompetitiveResults brief={brief as CompetitiveAnalysisBrief} onNewSearch={handleNewSearch} savedBriefId={savedBriefId} />
         )}
         {researchType === 'business_case' && (
-          <BusinessCaseResults brief={brief as BusinessCaseBrief} onNewSearch={handleNewSearch} />
+          <BusinessCaseResults brief={brief as BusinessCaseBrief} onNewSearch={handleNewSearch} savedBriefId={savedBriefId} />
         )}
         {researchType === 'market_research' && (
-          <MarketResearchResults brief={brief as MarketResearchBrief} onNewSearch={handleNewSearch} />
+          <MarketResearchResults brief={brief as MarketResearchBrief} onNewSearch={handleNewSearch} savedBriefId={savedBriefId} />
         )}
-        <FollowUpChat briefId={savedBriefId} />
+        <FollowUpChat briefId={savedBriefId} researchType={researchType ?? undefined} />
       </div>
     )
   }
@@ -227,10 +244,20 @@ export default function IntelligencePage() {
         )}
 
         {/* Step 1: Research type selector (if no type selected) */}
-        {!selectedType && !loading && <ResearchTypeSelector selected={null} onSelect={setSelectedType} />}
+        {!selectedType && !loading && !pendingInput && <ResearchTypeSelector selected={null} onSelect={setSelectedType} />}
+
+        {/* Step 2a: Confirmation step */}
+        {pendingInput && !loading && (
+          <ResearchConfirmation
+            input={pendingInput}
+            onConfirm={() => void handleConfirm()}
+            onEdit={() => setPendingInput(null)}
+            loading={loading}
+          />
+        )}
 
         {/* Step 2: Per-type form */}
-        {selectedType && !loading && (
+        {selectedType && !loading && !pendingInput && (
           <div>
             <button
               type="button"

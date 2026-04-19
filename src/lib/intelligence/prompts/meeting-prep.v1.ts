@@ -20,6 +20,7 @@ Rules:
 export const MEETING_PREP_SCHEMA_DESC = `{
   "headline": "One sentence summary of what matters most",
   "bottomLine": "2-3 sentence meeting answer tailored to the goal",
+  "whyItMatters": "1-2 sentences explaining why this research matters to the user personally, based on their stated goal. Address the user directly as 'you'.",
   "confidence": "high|medium|low based on evidence quality",
   "whatJustHappened": [{"text": "...", "sourceIds": ["s1"], "tag": "fact|inference"}],
   "talkingPoints": [{"text": "...", "sourceIds": ["s1"], "tag": "fact|inference"}],

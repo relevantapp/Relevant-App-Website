@@ -13,9 +13,9 @@ interface BalanceViewProps {
 }
 
 const COLOR_MAP = {
-  green: { bg: 'bg-[var(--accent-teal)]/8', border: 'border-[var(--accent-teal)]/20', text: 'text-[var(--accent-teal)]' },
-  amber: { bg: 'bg-[var(--accent-amber)]/8', border: 'border-[var(--accent-amber)]/20', text: 'text-[var(--accent-amber)]' },
-  red: { bg: 'bg-[var(--accent-coral)]/8', border: 'border-[var(--accent-coral)]/20', text: 'text-[var(--accent-coral)]' },
+  green: 'var(--accent-teal)',
+  amber: 'var(--accent-amber)',
+  red: 'var(--accent-coral)',
 }
 
 export default function BalanceView({
@@ -31,50 +31,37 @@ export default function BalanceView({
   const rc = COLOR_MAP[rightColor]
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-      <div className={`rounded-xl border ${lc.border} ${lc.bg} p-4`}>
-        <h4 className={`mb-3 text-sm font-semibold ${lc.text}`}>{leftTitle}</h4>
-        <div className="space-y-2">
-          {leftItems.map((b, i) => (
-            <BulletItem key={i} bullet={b} onSourceClick={onSourceClick} />
-          ))}
-          {leftItems.length === 0 && (
-            <p className="text-xs text-[var(--text-soft)]">No data available</p>
-          )}
-        </div>
-      </div>
-      <div className={`rounded-xl border ${rc.border} ${rc.bg} p-4`}>
-        <h4 className={`mb-3 text-sm font-semibold ${rc.text}`}>{rightTitle}</h4>
-        <div className="space-y-2">
-          {rightItems.map((b, i) => (
-            <BulletItem key={i} bullet={b} onSourceClick={onSourceClick} />
-          ))}
-          {rightItems.length === 0 && (
-            <p className="text-xs text-[var(--text-soft)]">No data available</p>
-          )}
-        </div>
-      </div>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <Column title={leftTitle} items={leftItems} color={lc} onSourceClick={onSourceClick} />
+      <Column title={rightTitle} items={rightItems} color={rc} onSourceClick={onSourceClick} />
     </div>
   )
 }
 
-function BulletItem({ bullet, onSourceClick }: { bullet: BriefBullet; onSourceClick?: (id: string) => void }) {
+function Column({ title, items, color, onSourceClick }: { title: string; items: BriefBullet[]; color: string; onSourceClick?: (id: string) => void }) {
   return (
-    <div className="rounded-lg bg-[var(--surface)] p-3">
-      <p className="text-sm text-[var(--text)]">{bullet.text}</p>
-      {bullet.sourceIds.length > 0 && (
-        <div className="mt-1 flex gap-1">
-          {bullet.sourceIds.map((id) => (
-            <button
-              key={id}
-              onClick={() => onSourceClick?.(id)}
-              className="rounded bg-[var(--surface-strong)] px-1 py-0.5 text-[10px] text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors"
-            >
-              {id}
-            </button>
-          ))}
-        </div>
-      )}
+    <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden' }}>
+      <div style={{ padding: '10px 16px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{ width: 4, height: 4, borderRadius: '50%', background: color }} />
+        <span className="kicker" style={{ color }}>{title}</span>
+      </div>
+      <div style={{ padding: '8px 16px 12px' }}>
+        {items.map((b, i) => (
+          <div key={i} style={{ padding: '8px 0', borderBottom: i < items.length - 1 ? '1px solid var(--border)' : 'none' }}>
+            <p style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--text)' }}>{b.text}</p>
+            {b.sourceIds.length > 0 && (
+              <div style={{ marginTop: 4, display: 'flex', gap: 3 }}>
+                {b.sourceIds.map((id) => (
+                  <button key={id} onClick={() => onSourceClick?.(id)} className="source-chip">[{id}]</button>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+        {items.length === 0 && (
+          <p style={{ fontSize: 12, color: 'var(--text-soft)', padding: '8px 0' }}>No data</p>
+        )}
+      </div>
     </div>
   )
 }

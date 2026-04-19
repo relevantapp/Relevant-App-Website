@@ -59,6 +59,7 @@ export interface BriefBase {
   generatedAt: string
   headline: string
   bottomLine: string
+  whyItMatters: string | null
   confidence: Confidence
   sources: BriefSource[]
   status: BriefStatus
@@ -95,6 +96,7 @@ export interface AttendeeProfile {
 export const MeetingPrepSynthesisSchema = z.object({
   headline: z.string(),
   bottomLine: z.string(),
+  whyItMatters: z.string().optional(),
   confidence: ConfidenceSchema,
   whatJustHappened: z.array(BriefBulletSchema),
   talkingPoints: z.array(BriefBulletSchema),
@@ -141,6 +143,7 @@ export type ComparisonRow = z.infer<typeof ComparisonRowSchema>
 export const CompetitiveSynthesisSchema = z.object({
   headline: z.string(),
   bottomLine: z.string(),
+  whyItMatters: z.string().optional(),
   confidence: ConfidenceSchema,
   competitors: z.array(CompetitorProfileSchema),
   comparisonMatrix: z.array(ComparisonRowSchema),
@@ -175,6 +178,7 @@ export type ComparableCompany = z.infer<typeof ComparableCompanySchema>
 export const BusinessCaseSynthesisSchema = z.object({
   headline: z.string(),
   bottomLine: z.string(),
+  whyItMatters: z.string().optional(),
   confidence: ConfidenceSchema,
   verdict: z.enum(['strong', 'moderate', 'weak', 'insufficient_data']),
   verdictRationale: z.string(),
@@ -212,6 +216,7 @@ export type MarketPlayer = z.infer<typeof MarketPlayerSchema>
 export const MarketResearchSynthesisSchema = z.object({
   headline: z.string(),
   bottomLine: z.string(),
+  whyItMatters: z.string().optional(),
   confidence: ConfidenceSchema,
   marketOverview: z.string(),
   players: z.array(MarketPlayerSchema),

@@ -1,4 +1,4 @@
-/* ── Model Provider — Claude #1, Gemini #2, OpenRouter #3 ─── */
+/* ── Model Provider — user-selectable primary, fallback chain ─── */
 
 import Anthropic from '@anthropic-ai/sdk'
 import { type ZodSchema } from 'zod'
@@ -17,6 +17,19 @@ interface ModelCandidate {
   model: string
 }
 
+export type ModelPreference =
+  | 'gemini-2.5-flash'
+  | 'claude-haiku-4.5'
+  | 'gemini-2.0-flash'
+  | 'auto'
+
+export const MODEL_OPTIONS: Array<{ value: ModelPreference; label: string; description: string }> = [
+  { value: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash', description: 'Fast, high quality (recommended)' },
+  { value: 'claude-haiku-4.5', label: 'Claude Haiku 4.5', description: 'Anthropic, strong reasoning' },
+  { value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash', description: 'Google, fast and capable' },
+  { value: 'auto', label: 'Auto (best available)', description: 'Tries each model in order' },
+]
+
 export interface SynthesisResult<T> {
   data: T | null
   model: string | null
@@ -28,21 +41,23 @@ export interface SynthesisResult<T> {
 
 /* ── Candidate list ────────────────────────────────────────── */
 
-function getModelCandidates(): ModelCandidate[] {
-  const candidates: ModelCandidate[] = []
-  if (process.env.ANTHROPIC_API_KEY) {
-    candidates.push({ provider: 'anthropic', model: 'claude-haiku-4-5-20251001' })
+const ALL_CANDIDATES: Array<ModelCandidate & { preference: ModelPreference; envKey: string }> = [
+  { preference: 'gemini-2.5-flash', provider: 'gemini', model: 'gemini-2.5-flash', envKey: 'GEMINI_API_KEY' },
+  { preference: 'claude-haiku-4.5', provider: 'anthropic', model: 'claude-haiku-4-5-20251001', envKey: 'ANTHROPIC_API_KEY' },
+  { preference: 'gemini-2.0-flash', provider: 'gemini', model: 'gemini-2.0-flash', envKey: 'GEMINI_API_KEY' },
+  { preference: 'auto', provider: 'openrouter', model: 'google/gemini-2.5-flash-lite', envKey: 'OPENROUTER_API_KEY' },
+]
+
+function getModelCandidates(preferred?: ModelPreference): ModelCandidate[] {
+  const available = ALL_CANDIDATES.filter((c) => process.env[c.envKey])
+
+  if (preferred && preferred !== 'auto') {
+    const primary = available.find((c) => c.preference === preferred)
+    const rest = available.filter((c) => c.preference !== preferred)
+    return primary ? [primary, ...rest] : available
   }
-  if (process.env.GEMINI_API_KEY) {
-    candidates.push({ provider: 'gemini', model: 'gemini-2.0-flash' })
-  }
-  if (process.env.OPENROUTER_API_KEY) {
-    candidates.push({ provider: 'openrouter', model: 'google/gemini-2.5-flash-lite' })
-  }
-  if (process.env.GEMINI_API_KEY) {
-    candidates.push({ provider: 'gemini', model: 'gemini-1.5-flash' })
-  }
-  return candidates
+
+  return available
 }
 
 /* ── Provider calls ────────────────────────────────────────── */
@@ -160,9 +175,10 @@ export async function synthesizeWithSchema<T>(
   userPrompt: string,
   schema: ZodSchema<T>,
   schemaDescription: string,
-  logTag: string
+  logTag: string,
+  preferredModel?: ModelPreference
 ): Promise<SynthesisResult<T>> {
-  const candidates = getModelCandidates()
+  const candidates = getModelCandidates(preferredModel)
   if (candidates.length === 0) {
     return {
       data: null,

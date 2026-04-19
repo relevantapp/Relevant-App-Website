@@ -2,12 +2,14 @@
 
 import { z, type ZodSchema } from 'zod'
 import type { SSEEmitter } from './sse-emitter'
+import type { ModelPreference } from './models'
 
 /* ── Step context (passed through pipeline) ────────────────── */
 
 export interface PipelineContext {
   emitter?: SSEEmitter
   signal?: AbortSignal
+  preferredModel?: ModelPreference
 }
 
 /* ── Step result ───────────────────────────────────────────── */

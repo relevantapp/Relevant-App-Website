@@ -158,7 +158,8 @@ export async function generateCompetitiveAnalysisBrief(
     })
     return synthesizeWithSchema(
       COMPETITIVE_SYSTEM_PROMPT, userPrompt,
-      CompetitiveSynthesisSchema, COMPETITIVE_SCHEMA_DESC, 'competitive_analysis'
+      CompetitiveSynthesisSchema, COMPETITIVE_SCHEMA_DESC, 'competitive_analysis',
+      ctx?.preferredModel
     )
   }, undefined, ctx)
 
@@ -175,6 +176,7 @@ export async function generateCompetitiveAnalysisBrief(
     generatedAt: new Date().toISOString(),
     headline: synthesis?.data?.headline ?? 'Unable to generate competitive analysis',
     bottomLine: synthesis?.data?.bottomLine ?? 'AI synthesis failed. Raw evidence is still available.',
+    whyItMatters: synthesis?.data?.whyItMatters ?? null,
     confidence: synthesis?.data?.confidence ?? 'low',
     yourCompany: input.yourCompany ?? null,
     competitors: synthesis?.data?.competitors ?? [],

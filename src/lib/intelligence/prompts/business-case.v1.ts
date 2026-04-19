@@ -15,6 +15,7 @@ Rules:
 export const BUSINESS_CASE_SCHEMA_DESC = `{
   "headline": "One sentence assessment",
   "bottomLine": "2-3 sentence go/no-go recommendation",
+  "whyItMatters": "1-2 sentences explaining why this assessment matters to the user's decision. Address the user directly as 'you'.",
   "confidence": "high|medium|low based on evidence quality",
   "verdict": "strong|moderate|weak|insufficient_data",
   "verdictRationale": "2-3 sentences explaining the verdict",

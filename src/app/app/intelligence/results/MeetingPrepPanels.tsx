@@ -1,20 +1,19 @@
-/* ── Meeting Prep Panels — extracted components ──────────── */
+/* ── Meeting Prep Panels — editorial design ──────────────── */
 
 'use client'
 
-import { Building2, Users } from 'lucide-react'
 import type { BriefBullet, CompanySnapshot, AttendeeProfile } from '@/lib/intelligence/contracts'
 
 /* ── Bento Section Card ──────────────────────────────────────── */
 
 type SectionVariant = 'news' | 'talking' | 'landmines' | 'questions' | 'competitors'
 
-const VARIANT_BORDER: Record<SectionVariant, string> = {
-  news: 'border-[var(--surface-strong)]',
-  talking: 'border-[var(--accent-teal)]/20',
-  landmines: 'border-[var(--accent-coral)]/20',
-  questions: 'border-[var(--accent-violet)]/20',
-  competitors: 'border-[var(--accent-amber)]/20',
+const VARIANT_COLOR: Record<SectionVariant, string> = {
+  news: 'var(--text-muted)',
+  talking: 'var(--accent-teal)',
+  landmines: 'var(--accent-coral)',
+  questions: 'var(--accent-violet)',
+  competitors: 'var(--accent-amber)',
 }
 
 export function BentoSection({
@@ -31,39 +30,42 @@ export function BentoSection({
   onSourceClick: (id: string) => void
 }) {
   if (bullets.length === 0) return null
+  const color = VARIANT_COLOR[variant]
 
   return (
-    <div className={`rounded-xl border ${VARIANT_BORDER[variant]} bg-[var(--surface)] p-4 sm:p-5`}>
-      <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-[var(--text)]">
-        {icon} {title}
-      </h3>
-      <ul className="space-y-3">
+    <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden' }}>
+      <div style={{ padding: '10px 16px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 8 }}>
+        <span style={{ color }}>{icon}</span>
+        <span className="kicker">{title}</span>
+      </div>
+      <div style={{ padding: '8px 16px 14px' }}>
         {bullets.slice(0, 5).map((bullet, i) => (
-          <li key={i} className="text-sm text-[var(--text)]">
-            <p>{bullet.text}</p>
-            <div className="mt-1 flex flex-wrap items-center gap-1.5">
-              {bullet.sourceIds.map((id) => (
-                <button
-                  key={id}
-                  onClick={() => onSourceClick(id)}
-                  className="rounded bg-[var(--surface-strong)] px-1.5 py-0.5 text-[10px] text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors"
-                >
-                  [{id}]
-                </button>
-              ))}
-              <span
-                className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${
-                  bullet.tag === 'fact'
-                    ? 'bg-[var(--accent-teal)]/15 text-[var(--accent-teal)]'
-                    : 'bg-[var(--accent-violet)]/15 text-[var(--accent-violet)]'
-                }`}
-              >
-                {bullet.tag}
-              </span>
+          <div
+            key={i}
+            style={{
+              display: 'flex',
+              gap: 10,
+              padding: '8px 0',
+              borderBottom: i < Math.min(bullets.length, 5) - 1 ? '1px solid var(--border)' : 'none',
+            }}
+          >
+            <span className="mono tnum" style={{ fontSize: 10, color: 'var(--text-soft)', paddingTop: 3, minWidth: 16 }}>
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <div style={{ flex: 1 }}>
+              <p style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.5 }}>{bullet.text}</p>
+              <div style={{ marginTop: 5, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 4 }}>
+                <span className={bullet.tag === 'fact' ? 'ev-tag ev-tag--fact' : 'ev-tag ev-tag--infer'}>
+                  {bullet.tag === 'fact' ? 'FACT' : 'INFER'}
+                </span>
+                {bullet.sourceIds.map((id) => (
+                  <button key={id} onClick={() => onSourceClick(id)} className="source-chip">[{id}]</button>
+                ))}
+              </div>
             </div>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   )
 }
@@ -81,22 +83,23 @@ export function SnapshotCard({ snapshot }: { snapshot: CompanySnapshot }) {
   ].filter(Boolean) as Array<[string, string]>
 
   return (
-    <div className="rounded-xl border border-[var(--surface-strong)] bg-[var(--surface)] p-4 sm:p-5">
-      <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-[var(--text)]">
-        <Building2 className="h-4 w-4" /> Company Snapshot
-      </h3>
-      <div className="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2">
+    <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden' }}>
+      <div style={{ padding: '10px 16px', borderBottom: '1px solid var(--border)' }}>
+        <span className="kicker">Company snapshot</span>
+      </div>
+      {/* Grid-table */}
+      <div className="grid-bordered" style={{ borderRadius: 0, border: 'none', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
         {facts.map(([label, value]) => (
-          <div key={label}>
-            <span className="text-xs text-[var(--text-soft)]">{label}</span>
-            <p className="text-sm font-medium text-[var(--text)]">{value}</p>
+          <div key={label} style={{ padding: '8px 16px' }}>
+            <span className="kicker" style={{ fontSize: 9, color: 'var(--text-soft)' }}>{label}</span>
+            <p className="mono" style={{ fontSize: 13, color: 'var(--text)', marginTop: 2 }}>{value}</p>
           </div>
         ))}
       </div>
       {snapshot.recentMilestone && (
-        <div className="mt-3 rounded-lg bg-[var(--accent-amber)]/10 px-3 py-2 text-sm text-[var(--accent-amber)]">
-          <span className="text-xs font-medium opacity-70">Recent</span>
-          <p>{snapshot.recentMilestone}</p>
+        <div style={{ borderTop: '1px solid var(--border)', padding: '10px 16px', borderLeft: '2px solid var(--accent-amber)' }}>
+          <span className="kicker" style={{ color: 'var(--accent-amber)' }}>Recent milestone</span>
+          <p style={{ fontSize: 13, color: 'var(--text)', marginTop: 4, lineHeight: 1.5 }}>{snapshot.recentMilestone}</p>
         </div>
       )}
     </div>
@@ -109,34 +112,42 @@ export function PeopleCard({ profiles }: { profiles: AttendeeProfile[] }) {
   if (!profiles.length) return null
 
   return (
-    <div className="rounded-xl border border-[var(--surface-strong)] bg-[var(--surface)] p-4 sm:p-5">
-      <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-[var(--text)]">
-        <Users className="h-4 w-4" /> Key People
-      </h3>
-      <div className="space-y-3">
-        {profiles.map((person) => (
-          <div key={person.name} className="rounded-lg border border-[var(--surface-strong)] p-3">
-            <div className="font-medium text-sm text-[var(--text)]">{person.name}</div>
-            {(person.title || person.company) && (
-              <div className="text-xs text-[var(--text-muted)]">
-                {[person.title, person.company].filter(Boolean).join(' · ')}
+    <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden' }}>
+      <div style={{ padding: '10px 16px', borderBottom: '1px solid var(--border)' }}>
+        <span className="kicker">Key people</span>
+      </div>
+      <div>
+        {profiles.map((person, i) => (
+          <div
+            key={person.name}
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: 10,
+              padding: '10px 16px',
+              borderBottom: i < profiles.length - 1 ? '1px solid var(--border)' : 'none',
+            }}
+          >
+            {/* Monogram */}
+            <div style={{ width: 26, height: 26, borderRadius: 6, background: 'var(--surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)', flexShrink: 0, marginTop: 2 }}>
+              <span className="mono" style={{ fontSize: 10, fontWeight: 600, color: 'var(--accent)' }}>{person.name.charAt(0)}</span>
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>{person.name}</span>
+                {person.linkedinUrl && (
+                  <a href={person.linkedinUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontSize: 10 }}>↗</a>
+                )}
               </div>
-            )}
-            {person.background && (
-              <p className="mt-1 text-xs text-[var(--text-soft)] line-clamp-2">
-                {person.background}
-              </p>
-            )}
-            {person.linkedinUrl && (
-              <a
-                href={person.linkedinUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-1 inline-block text-xs text-[var(--accent)] hover:underline"
-              >
-                LinkedIn ↗
-              </a>
-            )}
+              {(person.title || person.company) && (
+                <div className="mono" style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}>
+                  {[person.title, person.company].filter(Boolean).join(' · ')}
+                </div>
+              )}
+              {person.background && (
+                <p style={{ fontSize: 12, color: 'var(--text-soft)', marginTop: 4, lineHeight: 1.45 }}>{person.background}</p>
+              )}
+            </div>
           </div>
         ))}
       </div>

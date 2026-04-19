@@ -213,7 +213,8 @@ export async function generateMeetingPrepBrief(
     })
     return synthesizeWithSchema(
       MEETING_PREP_SYSTEM_PROMPT, userPrompt,
-      SynthesisSchema, MEETING_PREP_SCHEMA_DESC, 'meeting_prep'
+      SynthesisSchema, MEETING_PREP_SCHEMA_DESC, 'meeting_prep',
+      ctx?.preferredModel
     )
   }, undefined, ctx)
 
@@ -230,6 +231,7 @@ export async function generateMeetingPrepBrief(
     generatedAt: new Date().toISOString(),
     headline: synthesis?.data?.headline ?? 'Unable to generate full analysis',
     bottomLine: synthesis?.data?.bottomLine ?? 'The AI synthesis step failed. The raw evidence is still available below.',
+    whyItMatters: synthesis?.data?.whyItMatters ?? null,
     confidence: synthesis?.data?.confidence ?? 'low',
     snapshot,
     attendeeProfiles,

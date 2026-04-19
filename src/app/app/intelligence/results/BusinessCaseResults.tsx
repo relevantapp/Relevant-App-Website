@@ -11,19 +11,21 @@ import SourcesStrip from './shared/SourcesStrip'
 import StatusBar from './shared/StatusBar'
 import CopyModePicker from './shared/CopyModePicker'
 import DegradedBanner from './shared/DegradedBanner'
+import ShareButton from './shared/ShareButton'
 
 interface BusinessCaseResultsProps {
   brief: BusinessCaseBrief
   onNewSearch: () => void
+  savedBriefId?: string | null
 }
 
-const OUTCOME_STYLE = {
-  success: { bg: 'bg-[var(--accent-teal)]/15', text: 'text-[var(--accent-teal)]', label: 'Success' },
-  mixed: { bg: 'bg-[var(--accent-amber)]/15', text: 'text-[var(--accent-amber)]', label: 'Mixed' },
-  failure: { bg: 'bg-[var(--accent-coral)]/15', text: 'text-[var(--accent-coral)]', label: 'Failed' },
+const OUTCOME_COLOR: Record<string, string> = {
+  success: 'var(--accent-teal)',
+  mixed: 'var(--accent-amber)',
+  failure: 'var(--accent-coral)',
 }
 
-export default function BusinessCaseResults({ brief, onNewSearch }: BusinessCaseResultsProps) {
+export default function BusinessCaseResults({ brief, onNewSearch, savedBriefId }: BusinessCaseResultsProps) {
   const exportRef = useRef<HTMLDivElement>(null)
 
   const scrollToSource = useCallback((id: string) => {
@@ -36,14 +38,17 @@ export default function BusinessCaseResults({ brief, onNewSearch }: BusinessCase
 
   return (
     <div className="mx-auto w-full max-w-4xl">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+      <div style={{ marginBottom: 20, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
         <button
           onClick={onNewSearch}
-          className="rounded-lg bg-[var(--surface)] px-3 py-2 text-xs text-[var(--text-muted)] hover:bg-[var(--surface-strong)] hover:text-[var(--text)] sm:text-sm"
+          style={{ padding: '6px 14px', fontSize: 12, color: 'var(--text-muted)', background: 'transparent', border: '1px solid var(--border)', borderRadius: 6, cursor: 'pointer' }}
         >
-          ← New Search
+          ← New search
         </button>
-        <CopyModePicker brief={brief} exportRef={exportRef} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <ShareButton briefId={savedBriefId ?? null} />
+          <CopyModePicker brief={brief} exportRef={exportRef} />
+        </div>
       </div>
 
       <div ref={exportRef}>
@@ -52,20 +57,20 @@ export default function BusinessCaseResults({ brief, onNewSearch }: BusinessCase
         bottomLine={brief.bottomLine}
         confidence={brief.confidence}
         researchType="business_case"
+        whyItMatters={brief.whyItMatters}
+        generatedAt={brief.generatedAt}
       />
 
       {brief.status.degraded && <DegradedBanner reasons={brief.status.reasons} />}
 
-      {/* Verdict */}
-      <div className="mt-5">
+      <div style={{ marginTop: 24 }}>
         <VerdictBadge verdict={brief.verdict} rationale={brief.verdictRationale} />
       </div>
 
-      {/* Evidence Balance */}
-      <div className="mt-5">
+      <div style={{ marginTop: 24 }}>
         <BalanceView
-          leftTitle="Supporting Factors"
-          rightTitle="Risk Factors"
+          leftTitle="Supporting factors"
+          rightTitle="Risk factors"
           leftItems={brief.sections.supportingFactors}
           rightItems={brief.sections.riskFactors}
           leftColor="green"
@@ -76,21 +81,23 @@ export default function BusinessCaseResults({ brief, onNewSearch }: BusinessCase
 
       {/* Comparable Companies */}
       {brief.comparables.length > 0 && (
-        <div className="mt-5">
-          <h3 className="mb-3 text-sm font-semibold text-[var(--text)]">Comparable Companies</h3>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div style={{ marginTop: 24 }}>
+          <div style={{ marginBottom: 12 }}>
+            <span className="kicker">Comparable companies</span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 14 }}>
             {brief.comparables.map((comp) => {
-              const style = OUTCOME_STYLE[comp.outcome]
+              const color = OUTCOME_COLOR[comp.outcome] ?? 'var(--text-muted)'
               return (
-                <div key={comp.name} className="rounded-xl border border-[var(--surface-strong)] bg-[var(--surface)] p-4">
-                  <div className="flex items-start justify-between gap-2">
-                    <h4 className="text-sm font-semibold text-[var(--text)]">{comp.name}</h4>
-                    <span className={`shrink-0 rounded-full ${style.bg} ${style.text} px-2 py-0.5 text-[10px] font-medium`}>
-                      {style.label}
+                <div key={comp.name} style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 10, padding: '14px 16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                    <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>{comp.name}</span>
+                    <span className="mono" style={{ fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '1px 6px', borderRadius: 3, color, border: `1px solid ${color}` }}>
+                      {comp.outcome}
                     </span>
                   </div>
-                  <p className="mt-1.5 text-xs text-[var(--text-muted)]">{comp.relevance}</p>
-                  <p className="mt-1 text-xs text-[var(--text-soft)] italic">{comp.keyTakeaway}</p>
+                  <p style={{ fontSize: 12.5, lineHeight: 1.5, color: 'var(--text-muted)', marginTop: 6 }}>{comp.relevance}</p>
+                  <p style={{ fontSize: 12, lineHeight: 1.45, color: 'var(--text-soft)', marginTop: 4, fontStyle: 'italic' }}>{comp.keyTakeaway}</p>
                 </div>
               )
             })}
@@ -99,26 +106,24 @@ export default function BusinessCaseResults({ brief, onNewSearch }: BusinessCase
       )}
 
       {/* Market Evidence + Open Questions */}
-      <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div style={{ marginTop: 24, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
         <InsightSection
           title="Market Evidence"
-          icon={<TrendingUp className="h-4 w-4 text-[var(--accent-teal)]" />}
+          icon={<TrendingUp className="h-4 w-4" style={{ color: 'var(--accent-teal)' }} />}
           bullets={brief.sections.marketEvidence}
-          borderColor="border-[var(--accent-teal)]/20"
           onSourceClick={scrollToSource}
         />
         <InsightSection
           title="Open Questions"
-          icon={<HelpCircle className="h-4 w-4 text-[var(--accent-violet)]" />}
+          icon={<HelpCircle className="h-4 w-4" style={{ color: 'var(--accent-violet)' }} />}
           bullets={brief.sections.openQuestions}
-          borderColor="border-[var(--accent-violet)]/20"
           onSourceClick={scrollToSource}
         />
       </div>
 
       </div>
 
-      <div className="mt-6">
+      <div style={{ marginTop: 32 }}>
         <SourcesStrip sources={brief.sources} />
       </div>
       <StatusBar status={brief.status} />

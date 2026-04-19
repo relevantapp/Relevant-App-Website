@@ -156,8 +156,19 @@ export default function CopyModePicker({ brief, exportRef }: CopyModePickerProps
 
       {open && (
         <div
-          className="absolute right-0 top-full mt-1 w-[min(240px,calc(100vw-2rem))] rounded-[10px] border border-[var(--border)] bg-[var(--surface-strong)] p-1 shadow-[0_8px_24px_rgba(0,0,0,0.3)]"
-          style={{ zIndex: 50 }}
+          style={{
+            position: 'absolute',
+            right: 0,
+            top: '100%',
+            marginTop: 4,
+            width: 'min(240px, calc(100vw - 2rem))',
+            borderRadius: 10,
+            border: '1px solid var(--border)',
+            background: 'var(--surface-strong)',
+            padding: 4,
+            boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+            zIndex: 50,
+          }}
         >
           {FORMATS.map((fmt) => (
             <button

@@ -153,7 +153,8 @@ export async function generateMarketResearchBrief(
     })
     return synthesizeWithSchema(
       MARKET_RESEARCH_SYSTEM_PROMPT, userPrompt,
-      MarketResearchSynthesisSchema, MARKET_RESEARCH_SCHEMA_DESC, 'market_research'
+      MarketResearchSynthesisSchema, MARKET_RESEARCH_SCHEMA_DESC, 'market_research',
+      ctx?.preferredModel
     )
   }, undefined, ctx)
 
@@ -170,6 +171,7 @@ export async function generateMarketResearchBrief(
     generatedAt: new Date().toISOString(),
     headline: synthesis?.data?.headline ?? 'Unable to generate market research',
     bottomLine: synthesis?.data?.bottomLine ?? 'AI synthesis failed. Raw evidence is still available.',
+    whyItMatters: synthesis?.data?.whyItMatters ?? null,
     confidence: synthesis?.data?.confidence ?? 'low',
     marketOverview: synthesis?.data?.marketOverview ?? '',
     players: synthesis?.data?.players ?? [],

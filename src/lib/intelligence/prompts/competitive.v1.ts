@@ -16,6 +16,7 @@ Rules:
 export const COMPETITIVE_SCHEMA_DESC = `{
   "headline": "One sentence competitive landscape summary",
   "bottomLine": "2-3 sentence strategic takeaway",
+  "whyItMatters": "1-2 sentences explaining why this competitive landscape matters to the user personally. Address the user directly as 'you'.",
   "confidence": "high|medium|low based on evidence quality",
   "competitors": [
     {

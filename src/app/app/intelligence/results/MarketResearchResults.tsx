@@ -11,13 +11,15 @@ import SourcesStrip from './shared/SourcesStrip'
 import StatusBar from './shared/StatusBar'
 import CopyModePicker from './shared/CopyModePicker'
 import DegradedBanner from './shared/DegradedBanner'
+import ShareButton from './shared/ShareButton'
 
 interface MarketResearchResultsProps {
   brief: MarketResearchBrief
   onNewSearch: () => void
+  savedBriefId?: string | null
 }
 
-export default function MarketResearchResults({ brief, onNewSearch }: MarketResearchResultsProps) {
+export default function MarketResearchResults({ brief, onNewSearch, savedBriefId }: MarketResearchResultsProps) {
   const exportRef = useRef<HTMLDivElement>(null)
 
   const scrollToSource = useCallback((id: string) => {
@@ -28,7 +30,6 @@ export default function MarketResearchResults({ brief, onNewSearch }: MarketRese
     setTimeout(() => el.classList.remove('intel-source-highlighted'), 2000)
   }, [])
 
-  // Sort players: leaders first
   const sortedPlayers = [...brief.players].sort((a, b) => {
     const order = { leader: 0, challenger: 1, niche: 2, emerging: 3 }
     return (order[a.category] ?? 4) - (order[b.category] ?? 4)
@@ -36,14 +37,17 @@ export default function MarketResearchResults({ brief, onNewSearch }: MarketRese
 
   return (
     <div className="mx-auto w-full max-w-4xl">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+      <div style={{ marginBottom: 20, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
         <button
           onClick={onNewSearch}
-          className="rounded-lg bg-[var(--surface)] px-3 py-2 text-xs text-[var(--text-muted)] hover:bg-[var(--surface-strong)] hover:text-[var(--text)] sm:text-sm"
+          style={{ padding: '6px 14px', fontSize: 12, color: 'var(--text-muted)', background: 'transparent', border: '1px solid var(--border)', borderRadius: 6, cursor: 'pointer' }}
         >
-          ← New Search
+          ← New search
         </button>
-        <CopyModePicker brief={brief} exportRef={exportRef} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <ShareButton briefId={savedBriefId ?? null} />
+          <CopyModePicker brief={brief} exportRef={exportRef} />
+        </div>
       </div>
 
       <div ref={exportRef}>
@@ -52,23 +56,31 @@ export default function MarketResearchResults({ brief, onNewSearch }: MarketRese
         bottomLine={brief.bottomLine}
         confidence={brief.confidence}
         researchType="market_research"
+        whyItMatters={brief.whyItMatters}
+        generatedAt={brief.generatedAt}
       />
 
       {brief.status.degraded && <DegradedBanner reasons={brief.status.reasons} />}
 
       {/* Market Overview */}
       {brief.marketOverview && (
-        <div className="mt-5 rounded-xl border border-[var(--surface-strong)] bg-[var(--surface)] p-4 sm:p-5">
-          <h3 className="mb-2 text-sm font-semibold text-[var(--text)]">Market Overview</h3>
-          <p className="text-sm text-[var(--text-muted)] leading-relaxed">{brief.marketOverview}</p>
+        <div style={{ marginTop: 24, background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden' }}>
+          <div style={{ padding: '10px 18px', borderBottom: '1px solid var(--border)' }}>
+            <span className="kicker">Market overview</span>
+          </div>
+          <div style={{ padding: '14px 18px' }}>
+            <p style={{ fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.55 }}>{brief.marketOverview}</p>
+          </div>
         </div>
       )}
 
       {/* Player Landscape */}
       {sortedPlayers.length > 0 && (
-        <div className="mt-5">
-          <h3 className="mb-3 text-sm font-semibold text-[var(--text)]">Player Landscape</h3>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div style={{ marginTop: 24 }}>
+          <div style={{ marginBottom: 12 }}>
+            <span className="kicker">Player landscape</span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 14 }}>
             {sortedPlayers.map((p) => (
               <PlayerCard
                 key={p.name}
@@ -84,19 +96,18 @@ export default function MarketResearchResults({ brief, onNewSearch }: MarketRese
 
       {/* Trend Signals */}
       {brief.sections.trendSignals.length > 0 && (
-        <div className="mt-5">
+        <div style={{ marginTop: 24 }}>
           <InsightSection
-            title="Trend Signals"
-            icon={<TrendingUp className="h-4 w-4 text-[var(--accent-teal)]" />}
+            title="Trend signals"
+            icon={<TrendingUp className="h-4 w-4" style={{ color: 'var(--accent-teal)' }} />}
             bullets={brief.sections.trendSignals}
-            borderColor="border-[var(--accent-teal)]/20"
             onSourceClick={scrollToSource}
           />
         </div>
       )}
 
       {/* Opportunities vs Threats */}
-      <div className="mt-5">
+      <div style={{ marginTop: 24 }}>
         <BalanceView
           leftTitle="Opportunities"
           rightTitle="Threats"
@@ -110,12 +121,11 @@ export default function MarketResearchResults({ brief, onNewSearch }: MarketRese
 
       {/* Key Findings */}
       {brief.sections.keyFindings.length > 0 && (
-        <div className="mt-5">
+        <div style={{ marginTop: 24 }}>
           <InsightSection
-            title="Key Findings"
-            icon={<Target className="h-4 w-4 text-[var(--accent)]" />}
+            title="Key findings"
+            icon={<Target className="h-4 w-4" style={{ color: 'var(--accent)' }} />}
             bullets={brief.sections.keyFindings}
-            borderColor="border-[var(--accent)]/20"
             onSourceClick={scrollToSource}
           />
         </div>
@@ -123,7 +133,7 @@ export default function MarketResearchResults({ brief, onNewSearch }: MarketRese
 
       </div>
 
-      <div className="mt-6">
+      <div style={{ marginTop: 32 }}>
         <SourcesStrip sources={brief.sources} />
       </div>
       <StatusBar status={brief.status} />

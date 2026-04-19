@@ -15,6 +15,7 @@ Rules:
 export const MARKET_RESEARCH_SCHEMA_DESC = `{
   "headline": "One sentence market summary",
   "bottomLine": "2-3 sentence strategic takeaway",
+  "whyItMatters": "1-2 sentences explaining why this market research matters to the user personally. Address the user directly as 'you'.",
   "confidence": "high|medium|low based on evidence quality",
   "marketOverview": "2-3 paragraph market overview with key metrics inline",
   "players": [

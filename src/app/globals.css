@@ -28,6 +28,81 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Editorial design primitives ───────────────────────────── */
+.kicker {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.display {
+  font-family: var(--font-display), -apple-system, sans-serif;
+  letter-spacing: -0.02em;
+}
+.mono {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-feature-settings: "ss01", "zero", "tnum";
+  letter-spacing: 0;
+}
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Evidence tag */
+.ev-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+.ev-tag--fact {
+  color: var(--accent-teal);
+  background: color-mix(in oklch, var(--accent-teal) 12%, transparent);
+  border: 1px solid color-mix(in oklch, var(--accent-teal) 20%, transparent);
+}
+.ev-tag--infer {
+  color: var(--accent-violet);
+  background: color-mix(in oklch, var(--accent-violet) 12%, transparent);
+  border: 1px solid color-mix(in oklch, var(--accent-violet) 20%, transparent);
+}
+
+/* Source chip */
+.source-chip {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  padding: 1px 4px;
+  border-radius: 3px;
+  color: var(--text-muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+.source-chip:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Grid border trick — parent gets bg: var(--border), gap: 1 */
+.grid-bordered {
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.grid-bordered > * {
+  background: var(--bg-elevated);
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    CHROME OPTIMIZATION
    Better font rendering, GPU compositing hints, smooth scrolling

@@ -5,31 +5,25 @@ interface ScoreBarProps {
   label?: string
 }
 
-const SCORE_COLORS = [
-  '', // 0 unused
-  'bg-[var(--accent-coral)]',     // 1
-  'bg-[var(--accent-coral)]/70',  // 2
-  'bg-[var(--accent-amber)]',     // 3
-  'bg-[var(--accent-teal)]/70',   // 4
-  'bg-[var(--accent-teal)]',      // 5
-]
+function scoreColor(s: number): string {
+  if (s <= 2) return 'var(--accent-coral)'
+  if (s <= 3) return 'var(--accent-amber)'
+  return 'var(--accent-teal)'
+}
 
 export default function ScoreBar({ score, label }: ScoreBarProps) {
   const clamped = Math.max(1, Math.min(5, Math.round(score)))
+  const pct = (clamped / 5) * 100
+  const color = scoreColor(clamped)
 
   return (
-    <div className="flex items-center gap-2">
-      <div className="flex gap-0.5">
-        {[1, 2, 3, 4, 5].map((i) => (
-          <div
-            key={i}
-            className={`h-2 w-4 rounded-sm ${
-              i <= clamped ? SCORE_COLORS[clamped] : 'bg-[var(--surface-strong)]'
-            }`}
-          />
-        ))}
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div style={{ width: 60, height: 3, borderRadius: 1, background: 'var(--surface)' }}>
+        <div style={{ width: `${pct}%`, height: '100%', borderRadius: 1, background: color }} />
       </div>
-      {label && <span className="text-xs text-[var(--text-muted)]">{label}</span>}
+      <span className="mono tnum" style={{ fontSize: 10, color: 'var(--text-muted)' }}>
+        {clamped}/5{label ? ` · ${label}` : ''}
+      </span>
     </div>
   )
 }

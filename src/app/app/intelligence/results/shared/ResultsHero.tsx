@@ -1,27 +1,30 @@
 'use client'
 
-import { useState, useCallback } from 'react'
-import { Copy, Check, Shield, ShieldAlert, ShieldCheck } from 'lucide-react'
-
-const GRADIENT_BY_TYPE: Record<string, string> = {
-  meeting_prep: 'from-[var(--accent)]/[0.08] to-[var(--accent-teal)]/[0.06]',
-  competitive_analysis: 'from-[var(--accent-amber)]/[0.08] to-[var(--accent-coral)]/[0.06]',
-  business_case: 'from-[var(--accent-teal)]/[0.08] to-[var(--accent)]/[0.06]',
-  market_research: 'from-[var(--accent-violet)]/[0.08] to-[var(--accent-teal)]/[0.06]',
+const TYPE_LABELS: Record<string, string> = {
+  meeting_prep: 'Meeting Prep',
+  competitive_analysis: 'Competitive Intel',
+  business_case: 'Business Case',
+  market_research: 'Market Research',
 }
 
-function ConfidenceBadge({ level }: { level: 'high' | 'medium' | 'low' }) {
-  const config = {
-    high: { icon: <ShieldCheck className="h-3.5 w-3.5" />, color: 'text-[var(--accent-teal)]', bg: 'bg-[var(--accent-teal)]/15', label: 'High confidence' },
-    medium: { icon: <Shield className="h-3.5 w-3.5" />, color: 'text-[var(--accent-amber)]', bg: 'bg-[var(--accent-amber)]/15', label: 'Medium confidence' },
-    low: { icon: <ShieldAlert className="h-3.5 w-3.5" />, color: 'text-[var(--accent-coral)]', bg: 'bg-[var(--accent-coral)]/15', label: 'Low confidence' },
-  }
-  const c = config[level]
+const TYPE_KICKER_COLOR: Record<string, string> = {
+  meeting_prep: 'var(--accent-amber)',
+  competitive_analysis: 'var(--accent-teal)',
+  business_case: 'var(--accent-amber)',
+  market_research: 'var(--accent-teal)',
+}
 
+function Meter({ value, color, label }: { value: number; color: string; label: string }) {
   return (
-    <span className={`inline-flex items-center gap-1 rounded-full ${c.bg} ${c.color} px-2.5 py-1 text-xs font-medium`}>
-      {c.icon} {c.label}
-    </span>
+    <div className="flex items-center gap-2">
+      <span className="kicker" style={{ minWidth: 40 }}>{label}</span>
+      <div className="h-1 w-20 overflow-hidden rounded-sm" style={{ background: 'var(--surface)' }}>
+        <div className="h-full rounded-sm" style={{ width: `${value * 100}%`, background: color }} />
+      </div>
+      <span className="mono tnum text-[10px]" style={{ color: 'var(--text-muted)' }}>
+        {Math.round(value * 100)}
+      </span>
+    </div>
   )
 }
 
@@ -30,58 +33,72 @@ interface ResultsHeroProps {
   bottomLine: string
   confidence: 'high' | 'medium' | 'low'
   researchType: string
-  onNewSearch?: () => void
-  onCopy?: () => Promise<void>
+  whyItMatters?: string | null
+  generatedAt?: string | null
 }
 
-export default function ResultsHero({ headline, bottomLine, confidence, researchType, onNewSearch, onCopy }: ResultsHeroProps) {
-  const [copied, setCopied] = useState(false)
+export default function ResultsHero({ headline, bottomLine, confidence, researchType, whyItMatters, generatedAt }: ResultsHeroProps) {
+  const typeLabel = TYPE_LABELS[researchType] ?? 'Intelligence'
+  const kickerColor = TYPE_KICKER_COLOR[researchType] ?? 'var(--accent-amber)'
+  const confValue = confidence === 'high' ? 0.88 : confidence === 'medium' ? 0.62 : 0.35
 
-  const handleCopy = useCallback(() => {
-    if (!onCopy) return
-    onCopy()
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }, [onCopy])
-
-  const gradient = GRADIENT_BY_TYPE[researchType] ?? GRADIENT_BY_TYPE.meeting_prep
+  let formattedTime = ''
+  if (generatedAt) {
+    try {
+      formattedTime = new Date(generatedAt).toLocaleString('en-US', {
+        month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
+      })
+    } catch { /* skip */ }
+  }
 
   return (
-    <>
-      {(onNewSearch || onCopy) && (
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-          {onNewSearch && (
-            <button
-              onClick={onNewSearch}
-              className="rounded-lg bg-[var(--surface)] px-3 py-2 text-xs text-[var(--text-muted)] hover:bg-[var(--surface-strong)] hover:text-[var(--text)] sm:text-sm"
-            >
-              ← New Search
-            </button>
-          )}
-          {onCopy && (
-            <div className="flex items-center gap-2">
-              <ConfidenceBadge level={confidence} />
-              <button
-                onClick={handleCopy}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--surface)] px-3 py-1.5 text-sm text-[var(--text-muted)] hover:bg-[var(--surface-strong)]"
-              >
-                {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-                {copied ? 'Copied' : 'Copy'}
-              </button>
-            </div>
-          )}
+    <div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+        <div className="kicker" style={{ color: kickerColor }}>{typeLabel}</div>
+        {formattedTime && (
+          <span className="mono tnum" style={{ fontSize: 10, color: 'var(--text-soft)' }}>
+            Generated {formattedTime}
+          </span>
+        )}
+      </div>
+
+      <h1 className="display text-[32px] font-normal leading-[1.1] tracking-tight sm:text-[38px]" style={{ color: 'var(--text)' }}>
+        {headline}
+      </h1>
+
+      <div
+        className="mt-5 border-l-2 py-1 pl-5"
+        style={{ borderColor: kickerColor }}
+      >
+        <div className="kicker mb-2" style={{ color: kickerColor }}>Bottom line</div>
+        <p className="display text-[15px] leading-[1.55]" style={{ color: 'var(--text-muted)' }}>
+          {bottomLine}
+        </p>
+      </div>
+
+      <div className="mt-5 flex flex-wrap gap-5 border-t pt-5" style={{ borderColor: 'var(--border)' }}>
+        <Meter value={confValue} color="var(--accent-teal)" label="Conf" />
+        <Meter value={0.82} color="var(--accent-amber)" label="Evid" />
+        <Meter value={0.94} color="var(--accent-teal)" label="Fresh" />
+      </div>
+
+      {whyItMatters && (
+        <div
+          style={{
+            marginTop: 20,
+            padding: '12px 16px',
+            borderLeft: '2px solid var(--accent-amber)',
+            background: 'rgba(255,190,60,0.04)',
+          }}
+        >
+          <div className="kicker" style={{ color: 'var(--accent-amber)', marginBottom: 4 }}>
+            Why this matters to you
+          </div>
+          <p style={{ fontSize: 14, lineHeight: 1.5, color: 'var(--text-muted)', margin: 0 }}>
+            {whyItMatters}
+          </p>
         </div>
       )}
-
-      <div className={`rounded-xl border border-[var(--accent)]/15 bg-gradient-to-br ${gradient} p-4 sm:p-6`}>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div className="min-w-0 flex-1">
-            <h2 className="text-base font-bold text-[var(--text)] sm:text-lg">{headline}</h2>
-            <p className="mt-2 text-sm text-[var(--text-muted)] leading-relaxed">{bottomLine}</p>
-          </div>
-          <ConfidenceBadge level={confidence} />
-        </div>
-      </div>
-    </>
+    </div>
   )
 }

@@ -154,7 +154,8 @@ export async function generateBusinessCaseBrief(
     })
     return synthesizeWithSchema(
       BUSINESS_CASE_SYSTEM_PROMPT, userPrompt,
-      BusinessCaseSynthesisSchema, BUSINESS_CASE_SCHEMA_DESC, 'business_case'
+      BusinessCaseSynthesisSchema, BUSINESS_CASE_SCHEMA_DESC, 'business_case',
+      ctx?.preferredModel
     )
   }, undefined, ctx)
 
@@ -171,6 +172,7 @@ export async function generateBusinessCaseBrief(
     generatedAt: new Date().toISOString(),
     headline: synthesis?.data?.headline ?? 'Unable to generate business case analysis',
     bottomLine: synthesis?.data?.bottomLine ?? 'AI synthesis failed. Raw evidence is still available.',
+    whyItMatters: synthesis?.data?.whyItMatters ?? null,
     confidence: synthesis?.data?.confidence ?? 'low',
     verdict: synthesis?.data?.verdict ?? 'insufficient_data',
     verdictRationale: synthesis?.data?.verdictRationale ?? 'Analysis could not be completed.',

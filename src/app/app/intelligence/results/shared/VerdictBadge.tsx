@@ -1,7 +1,5 @@
 'use client'
 
-import { CheckCircle2, AlertCircle, MinusCircle, HelpCircle } from 'lucide-react'
-
 type Verdict = 'strong' | 'moderate' | 'weak' | 'insufficient_data'
 
 interface VerdictBadgeProps {
@@ -9,48 +7,24 @@ interface VerdictBadgeProps {
   rationale?: string
 }
 
-const CONFIG: Record<Verdict, { label: string; icon: React.ReactNode; bg: string; text: string; border: string }> = {
-  strong: {
-    label: 'Strong Case',
-    icon: <CheckCircle2 className="h-6 w-6" />,
-    bg: 'bg-[var(--accent-teal)]/10',
-    text: 'text-[var(--accent-teal)]',
-    border: 'border-[var(--accent-teal)]/20',
-  },
-  moderate: {
-    label: 'Moderate Case',
-    icon: <MinusCircle className="h-6 w-6" />,
-    bg: 'bg-[var(--accent-amber)]/10',
-    text: 'text-[var(--accent-amber)]',
-    border: 'border-[var(--accent-amber)]/20',
-  },
-  weak: {
-    label: 'Weak Case',
-    icon: <AlertCircle className="h-6 w-6" />,
-    bg: 'bg-[var(--accent-coral)]/10',
-    text: 'text-[var(--accent-coral)]',
-    border: 'border-[var(--accent-coral)]/20',
-  },
-  insufficient_data: {
-    label: 'Need More Data',
-    icon: <HelpCircle className="h-6 w-6" />,
-    bg: 'bg-[var(--surface-strong)]',
-    text: 'text-[var(--text-muted)]',
-    border: 'border-[var(--surface-strong)]',
-  },
+const CONFIG: Record<Verdict, { label: string; color: string }> = {
+  strong: { label: 'Strong case', color: 'var(--accent-teal)' },
+  moderate: { label: 'Moderate case', color: 'var(--accent-amber)' },
+  weak: { label: 'Weak case', color: 'var(--accent-coral)' },
+  insufficient_data: { label: 'Insufficient data', color: 'var(--text-muted)' },
 }
 
 export default function VerdictBadge({ verdict, rationale }: VerdictBadgeProps) {
   const c = CONFIG[verdict]
 
   return (
-    <div className={`rounded-xl border ${c.border} ${c.bg} p-5`}>
-      <div className={`flex items-center gap-3 ${c.text}`}>
-        {c.icon}
-        <span className="text-lg font-bold">{c.label}</span>
+    <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 12, padding: '20px 24px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ width: 6, height: 6, borderRadius: '50%', background: c.color, flexShrink: 0 }} />
+        <span className="display" style={{ fontSize: 18, letterSpacing: '-0.01em', color: c.color }}>{c.label}</span>
       </div>
       {rationale && (
-        <p className="mt-3 text-sm text-[var(--text-muted)] leading-relaxed">{rationale}</p>
+        <p style={{ marginTop: 12, fontSize: 14, lineHeight: 1.55, color: 'var(--text-muted)' }}>{rationale}</p>
       )}
     </div>
   )

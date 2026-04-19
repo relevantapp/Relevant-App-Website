@@ -10,13 +10,15 @@ import SourcesStrip from './shared/SourcesStrip'
 import StatusBar from './shared/StatusBar'
 import CopyModePicker from './shared/CopyModePicker'
 import DegradedBanner from './shared/DegradedBanner'
+import ShareButton from './shared/ShareButton'
 
 interface CompetitiveResultsProps {
   brief: CompetitiveAnalysisBrief
   onNewSearch: () => void
+  savedBriefId?: string | null
 }
 
-export default function CompetitiveResults({ brief, onNewSearch }: CompetitiveResultsProps) {
+export default function CompetitiveResults({ brief, onNewSearch, savedBriefId }: CompetitiveResultsProps) {
   const exportRef = useRef<HTMLDivElement>(null)
 
   const scrollToSource = useCallback((id: string) => {
@@ -29,14 +31,17 @@ export default function CompetitiveResults({ brief, onNewSearch }: CompetitiveRe
 
   return (
     <div className="mx-auto w-full max-w-4xl">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+      <div style={{ marginBottom: 20, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
         <button
           onClick={onNewSearch}
-          className="rounded-lg bg-[var(--surface)] px-3 py-2 text-xs text-[var(--text-muted)] hover:bg-[var(--surface-strong)] hover:text-[var(--text)] sm:text-sm"
+          style={{ padding: '6px 14px', fontSize: 12, color: 'var(--text-muted)', background: 'transparent', border: '1px solid var(--border)', borderRadius: 6, cursor: 'pointer' }}
         >
-          ← New Search
+          ← New search
         </button>
-        <CopyModePicker brief={brief} exportRef={exportRef} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <ShareButton briefId={savedBriefId ?? null} />
+          <CopyModePicker brief={brief} exportRef={exportRef} />
+        </div>
       </div>
 
       <div ref={exportRef}>
@@ -45,35 +50,42 @@ export default function CompetitiveResults({ brief, onNewSearch }: CompetitiveRe
         bottomLine={brief.bottomLine}
         confidence={brief.confidence}
         researchType="competitive_analysis"
+        whyItMatters={brief.whyItMatters}
+        generatedAt={brief.generatedAt}
       />
 
       {brief.status.degraded && <DegradedBanner reasons={brief.status.reasons} />}
 
       {/* Competitor Cards */}
       {brief.competitors.length > 0 && (
-        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div style={{ marginTop: 24, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 14 }}>
           {brief.competitors.map((comp) => (
-            <div key={comp.name} className="rounded-xl border border-[var(--surface-strong)] bg-[var(--surface)] p-4">
-              <h4 className="text-sm font-semibold text-[var(--text)]">{comp.name}</h4>
-              <p className="mt-1 text-xs text-[var(--text-muted)] line-clamp-2">{comp.description}</p>
+            <div key={comp.name} style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 10, padding: '14px 16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                <div style={{ width: 26, height: 26, borderRadius: 6, background: 'var(--surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)' }}>
+                  <span className="mono" style={{ fontSize: 11, fontWeight: 600, color: 'var(--accent)' }}>{comp.name.charAt(0)}</span>
+                </div>
+                <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>{comp.name}</span>
+              </div>
+              <p style={{ fontSize: 12.5, lineHeight: 1.5, color: 'var(--text-muted)' }}>{comp.description}</p>
               {comp.strengths.length > 0 && (
-                <div className="mt-2 flex flex-wrap gap-1">
+                <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
                   {comp.strengths.map((s) => (
-                    <span key={s} className="rounded-full bg-[var(--accent-teal)]/15 px-2 py-0.5 text-[10px] text-[var(--accent-teal)]">{s}</span>
+                    <span key={s} className="ev-tag ev-tag--fact">{s}</span>
                   ))}
                 </div>
               )}
               {comp.weaknesses.length > 0 && (
-                <div className="mt-1.5 flex flex-wrap gap-1">
+                <div style={{ marginTop: 6, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
                   {comp.weaknesses.map((w) => (
-                    <span key={w} className="rounded-full bg-[var(--accent-coral)]/15 px-2 py-0.5 text-[10px] text-[var(--accent-coral)]">{w}</span>
+                    <span key={w} className="mono" style={{ fontSize: 9, padding: '1px 5px', borderRadius: 3, color: 'var(--accent-coral)', background: 'color-mix(in oklch, var(--accent-coral) 12%, transparent)', border: '1px solid color-mix(in oklch, var(--accent-coral) 20%, transparent)', letterSpacing: '0.08em' }}>{w}</span>
                   ))}
                 </div>
               )}
               {comp.recentMoves.length > 0 && (
-                <div className="mt-2 space-y-1">
+                <div style={{ marginTop: 8, borderTop: '1px solid var(--border)', paddingTop: 8 }}>
                   {comp.recentMoves.map((move, i) => (
-                    <p key={i} className="text-[11px] text-[var(--text-soft)]">• {move}</p>
+                    <p key={i} style={{ fontSize: 11, lineHeight: 1.45, color: 'var(--text-soft)', marginTop: i > 0 ? 4 : 0 }}>• {move}</p>
                   ))}
                 </div>
               )}
@@ -84,67 +96,69 @@ export default function CompetitiveResults({ brief, onNewSearch }: CompetitiveRe
 
       {/* Comparison Matrix */}
       {brief.comparisonMatrix.length > 0 && (
-        <div className="mt-5 overflow-x-auto rounded-xl border border-[var(--surface-strong)] bg-[var(--surface)]">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-[var(--surface-strong)]">
-                <th className="px-2 py-2 text-left text-xs font-semibold text-[var(--text-muted)] sm:px-4 sm:py-3">Dimension</th>
-                {getUniqueCompanies(brief.comparisonMatrix).map((c) => (
-                  <th key={c} className="px-2 py-2 text-left text-xs font-semibold text-[var(--text-muted)] sm:px-4 sm:py-3">{c}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {brief.comparisonMatrix.map((row) => (
-                <tr key={row.dimension} className="border-b border-[var(--surface-strong)] last:border-0">
-                  <td className="px-2 py-2 text-xs font-medium text-[var(--text)] sm:px-4 sm:py-3">{row.dimension}</td>
-                  {getUniqueCompanies(brief.comparisonMatrix).map((company) => {
-                    const val = row.values.find((v) => v.company === company)
-                    return (
-                      <td key={company} className="px-2 py-2 sm:px-4 sm:py-3">
-                        {val ? (
-                          <div>
-                            <ScoreBar score={val.score} />
-                            <p className="mt-1 text-[11px] text-[var(--text-muted)]">{val.position}</p>
-                          </div>
-                        ) : (
-                          <span className="text-xs text-[var(--text-soft)]">—</span>
-                        )}
-                      </td>
-                    )
-                  })}
+        <div style={{ marginTop: 24, background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden' }}>
+          <div style={{ padding: '10px 18px', borderBottom: '1px solid var(--border)' }}>
+            <span className="kicker">Comparison matrix</span>
+          </div>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', fontSize: 13, borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                  <th className="kicker" style={{ textAlign: 'left', padding: '10px 18px', fontSize: 10 }}>Dimension</th>
+                  {getUniqueCompanies(brief.comparisonMatrix).map((c) => (
+                    <th key={c} className="kicker" style={{ textAlign: 'left', padding: '10px 18px', fontSize: 10 }}>{c}</th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {brief.comparisonMatrix.map((row) => (
+                  <tr key={row.dimension} style={{ borderBottom: '1px solid var(--border)' }}>
+                    <td style={{ padding: '10px 18px', fontSize: 13, fontWeight: 500, color: 'var(--text)' }}>{row.dimension}</td>
+                    {getUniqueCompanies(brief.comparisonMatrix).map((company) => {
+                      const val = row.values.find((v) => v.company === company)
+                      return (
+                        <td key={company} style={{ padding: '10px 18px' }}>
+                          {val ? (
+                            <div>
+                              <ScoreBar score={val.score} />
+                              <p style={{ marginTop: 4, fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.4 }}>{val.position}</p>
+                            </div>
+                          ) : (
+                            <span style={{ fontSize: 12, color: 'var(--text-soft)' }}>—</span>
+                          )}
+                        </td>
+                      )
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
       {/* Insight sections */}
-      <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div style={{ marginTop: 24, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
         <InsightSection
           title="Key Findings"
-          icon={<Target className="h-4 w-4 text-[var(--accent-teal)]" />}
+          icon={<Target className="h-4 w-4" style={{ color: 'var(--accent-teal)' }} />}
           bullets={brief.sections.keyFindings}
-          borderColor="border-[var(--accent-teal)]/20"
           onSourceClick={scrollToSource}
         />
         <InsightSection
           title="Strategic Implications"
-          icon={<TrendingUp className="h-4 w-4 text-[var(--accent-amber)]" />}
+          icon={<TrendingUp className="h-4 w-4" style={{ color: 'var(--accent-amber)' }} />}
           bullets={brief.sections.strategicImplications}
-          borderColor="border-[var(--accent-amber)]/20"
           onSourceClick={scrollToSource}
         />
       </div>
 
       {brief.sections.recommendations.length > 0 && (
-        <div className="mt-4">
+        <div style={{ marginTop: 16 }}>
           <InsightSection
             title="Recommendations"
-            icon={<Lightbulb className="h-4 w-4 text-[var(--accent)]" />}
+            icon={<Lightbulb className="h-4 w-4" style={{ color: 'var(--accent)' }} />}
             bullets={brief.sections.recommendations}
-            borderColor="border-[var(--accent)]/20"
             onSourceClick={scrollToSource}
           />
         </div>
@@ -152,7 +166,7 @@ export default function CompetitiveResults({ brief, onNewSearch }: CompetitiveRe
 
       </div>
 
-      <div className="mt-6">
+      <div style={{ marginTop: 32 }}>
         <SourcesStrip sources={brief.sources} />
       </div>
       <StatusBar status={brief.status} />

@@ -11,6 +11,9 @@ import {
 import type { MeetingType } from '@/lib/intelligence/contracts'
 import { createSSEEmitter } from '@/lib/intelligence/sse-emitter'
 import type { PipelineContext } from '@/lib/intelligence/pipeline'
+import type { ModelPreference } from '@/lib/intelligence/models'
+
+const VALID_MODELS = new Set<ModelPreference>(['gemini-2.5-flash', 'claude-haiku-4.5', 'gemini-2.0-flash', 'auto'])
 
 export const maxDuration = 60
 
@@ -88,12 +91,16 @@ export async function POST(request: NextRequest) {
   }
 
   const researchType = sanitizeString(body.researchType, 30) || 'meeting_prep'
+  const rawModel = sanitizeString(body.preferredModel, 30)
+  const preferredModel: ModelPreference = VALID_MODELS.has(rawModel as ModelPreference)
+    ? (rawModel as ModelPreference)
+    : 'gemini-2.5-flash'
 
   // ── Check if client wants SSE streaming ──
   const wantsStream = request.headers.get('accept')?.includes('text/event-stream')
 
   if (wantsStream) {
-    return handleStreaming(body, researchType)
+    return handleStreaming(body, researchType, preferredModel)
   }
 
   // ── Branch by research type (JSON fallback) ──
@@ -238,9 +245,10 @@ async function handleMarketResearch(body: Record<string, unknown>) {
 function handleStreaming(
   body: Record<string, unknown>,
   researchType: string,
+  preferredModel: ModelPreference,
 ): Response {
   const emitter = createSSEEmitter()
-  const ctx: PipelineContext = { emitter, signal: emitter.signal }
+  const ctx: PipelineContext = { emitter, signal: emitter.signal, preferredModel }
 
   // Run generation in background, stream events
   const generateAsync = async () => {

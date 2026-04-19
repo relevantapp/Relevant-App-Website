@@ -9,27 +9,38 @@ interface PlayerCardProps {
   estimatedPosition?: string
 }
 
-const CATEGORY_STYLE: Record<Category, { label: string; bg: string; text: string }> = {
-  leader: { label: 'Leader', bg: 'bg-[var(--accent)]/15', text: 'text-[var(--accent)]' },
-  challenger: { label: 'Challenger', bg: 'bg-[var(--accent-teal)]/15', text: 'text-[var(--accent-teal)]' },
-  niche: { label: 'Niche', bg: 'bg-[var(--accent-amber)]/15', text: 'text-[var(--accent-amber)]' },
-  emerging: { label: 'Emerging', bg: 'bg-[var(--accent-violet)]/15', text: 'text-[var(--accent-violet)]' },
+const CATEGORY_COLOR: Record<Category, string> = {
+  leader: 'var(--accent)',
+  challenger: 'var(--accent-teal)',
+  niche: 'var(--accent-amber)',
+  emerging: 'var(--accent-violet)',
+}
+
+const CATEGORY_LABEL: Record<Category, string> = {
+  leader: 'Leader',
+  challenger: 'Challenger',
+  niche: 'Niche',
+  emerging: 'Emerging',
 }
 
 export default function PlayerCard({ name, category, description, estimatedPosition }: PlayerCardProps) {
-  const style = CATEGORY_STYLE[category]
+  const color = CATEGORY_COLOR[category]
 
   return (
-    <div className="rounded-xl border border-[var(--surface-strong)] bg-[var(--surface)] p-4">
-      <div className="flex items-start justify-between gap-2">
-        <h4 className="text-sm font-semibold text-[var(--text)]">{name}</h4>
-        <span className={`shrink-0 rounded-full ${style.bg} ${style.text} px-2 py-0.5 text-[10px] font-medium`}>
-          {style.label}
+    <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 10, padding: '16px 18px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+        {/* LogoChip — monogram */}
+        <div style={{ width: 28, height: 28, borderRadius: 6, background: 'var(--surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)' }}>
+          <span className="mono" style={{ fontSize: 11, fontWeight: 600, color }}>{name.charAt(0)}</span>
+        </div>
+        <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>{name}</span>
+        <span className="mono" style={{ fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '1px 6px', borderRadius: 3, color, border: `1px solid ${color}`, marginLeft: 'auto' }}>
+          {CATEGORY_LABEL[category]}
         </span>
       </div>
-      <p className="mt-1.5 text-xs text-[var(--text-muted)] line-clamp-2">{description}</p>
+      <p style={{ fontSize: 12.5, lineHeight: 1.5, color: 'var(--text-muted)' }}>{description}</p>
       {estimatedPosition && (
-        <p className="mt-2 text-[10px] font-medium text-[var(--text-soft)]">{estimatedPosition}</p>
+        <p className="mono" style={{ fontSize: 11, color: 'var(--text-soft)', marginTop: 6 }}>{estimatedPosition}</p>
       )}
     </div>
   )
