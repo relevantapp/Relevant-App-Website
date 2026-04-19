@@ -11,7 +11,7 @@ import SignalCard from '@/components/app/SignalCard'
 import FeedStatsSheet from '@/components/app/FeedStatsSheet'
 import FeedTuneSheet from '@/components/app/FeedTuneSheet'
 import FeedSkeleton from '@/components/app/FeedSkeleton'
-import { ArrowUpRight, Inbox, Lightbulb, Loader2, Radio, Shield, SlidersHorizontal, Swords, TrendingUp } from 'lucide-react'
+import { AlertTriangle, ArrowUpRight, Compass, Inbox, Lightbulb, Loader2, Radio, RefreshCw, Shield, SlidersHorizontal, Swords, TrendingUp } from 'lucide-react'
 /* ── filter config ───────────────────────────────────────────── */
 
 type FilterKey = 'all' | 'escalating' | 'developing' | 'opportunity' | 'risk' | 'competitive'
@@ -209,7 +209,7 @@ function groupByDate(items: ProBriefItem[]): { key: string; label: string; items
 export default function FeedPage() {
   const router = useRouter()
   const { user } = useAuth()
-  const { fetchProBrief, fetchOlderSignals, subscribeToBriefUpdates, isLoading } = useProBrief()
+  const { fetchProBrief, fetchOlderSignals, subscribeToBriefUpdates, isLoading, error } = useProBrief()
 
   const [signals, setSignals] = useState<ProBriefItem[]>([])
   const [activeFilter, setActiveFilter] = useState<FilterKey>('all')
@@ -223,6 +223,9 @@ export default function FeedPage() {
   const [savingPreferences, setSavingPreferences] = useState(false)
   const [showTuneSheet, setShowTuneSheet] = useState(false)
   const [showStatsPanel, setShowStatsPanel] = useState(false)
+  const [newItemIds, setNewItemIds] = useState<Set<string>>(() => new Set())
+  const [generating, setGenerating] = useState(false)
+  const [cachedAgeMinutes, setCachedAgeMinutes] = useState<number | null>(null)
   const mountedRef = useRef(true)
 
   // Initial fetch
@@ -234,6 +237,16 @@ export default function FeedPage() {
       setSignals(result.items)
       setHasMore(result.hasMore)
       setNextCursor(result.nextCursor)
+      setGenerating(result.generating)
+      // Mark items delivered in the last 30 min as "new"
+      const thirtyMinAgo = Date.now() - 30 * 60_000
+      const ids = new Set<string>()
+      for (const item of result.items) {
+        if (item.deliveredAt && new Date(item.deliveredAt).getTime() > thirtyMinAgo) {
+          ids.add(item.id)
+        }
+      }
+      setNewItemIds(ids)
       setInitialLoaded(true)
     })()
     return () => { cancelled = true }
@@ -442,19 +455,41 @@ export default function FeedPage() {
   }
 
   if (signals.length === 0) {
+    const isError = !!error
     return (
       <div className="py-6">
         <h1 className="mb-6 font-display text-2xl font-bold text-[var(--text)] lg:text-3xl">Your feed</h1>
         <div className="flex flex-col items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-6 py-16 text-center">
           <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--surface)]">
-            <Inbox size={28} className="text-[var(--text-muted)]" />
+            {isError ? (
+              <AlertTriangle size={28} className="text-[var(--accent-amber)]" />
+            ) : (
+              <Inbox size={28} className="text-[var(--text-muted)]" />
+            )}
           </div>
           <h2 className="mb-2 font-display text-lg font-semibold text-[var(--text)]">
-            Your stories are being assembled
+            {isError ? 'Could not load your brief' : 'Quiet week in your tracked topics'}
           </h2>
-          <p className="max-w-sm text-sm text-[var(--text-muted)]">
-            We&apos;re building your personalized feed. Check back soon.
+          <p className="mb-4 max-w-sm text-sm text-[var(--text-muted)]">
+            {isError
+              ? 'Something went wrong. Try refreshing.'
+              : "We\u2019re learning your interests. Add a few topics to get started."}
           </p>
+          {isError ? (
+            <button
+              onClick={() => window.location.reload()}
+              className="rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white transition-colors hover:opacity-90"
+            >
+              Retry
+            </button>
+          ) : (
+            <button
+              onClick={() => router.push('/app/profile')}
+              className="rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white transition-colors hover:opacity-90"
+            >
+              Add interests
+            </button>
+          )}
         </div>
       </div>
     )
@@ -577,6 +612,28 @@ export default function FeedPage() {
         }))}
       />
 
+      {/* ── Stale brief banner ── */}
+      {cachedAgeMinutes != null && cachedAgeMinutes > 60 && (
+        <div className="mb-4 flex items-center gap-2 rounded-lg border border-[var(--accent-amber)]/30 bg-[var(--accent-amber)]/8 px-4 py-2.5 text-xs text-[var(--accent-amber)]">
+          <AlertTriangle size={14} className="shrink-0" />
+          <span>
+            Your brief is {cachedAgeMinutes > 1440
+              ? `${Math.floor(cachedAgeMinutes / 1440)}d`
+              : cachedAgeMinutes > 60
+                ? `${Math.floor(cachedAgeMinutes / 60)}h`
+                : `${Math.round(cachedAgeMinutes)}m`} old. A fresh one is being prepared.
+          </span>
+        </div>
+      )}
+
+      {/* ── Generating shimmer ── */}
+      {generating && (
+        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-1.5 text-xs text-[var(--text-muted)]">
+          <Loader2 size={12} className="animate-spin" />
+          <span>Building your brief…</span>
+        </div>
+      )}
+
       {/* Filter pills */}
       <div className="mb-6 flex flex-wrap gap-2">
         {FILTERS.map((f) => {
@@ -631,6 +688,7 @@ export default function FeedPage() {
                   key={signal.id}
                   signal={signal}
                   index={i}
+                  isNew={newItemIds.has(signal.id)}
                   onClick={() => router.push(`/app/signal/${signal.id}`)}
                 />
               ))}

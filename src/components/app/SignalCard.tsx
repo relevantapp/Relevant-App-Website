@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Clock, Layers, TrendingUp, Radio, Sparkles, Share2, Check } from 'lucide-react'
+import { Clock, Compass, Layers, TrendingUp, Radio, RefreshCw, Sparkles, Share2, Check } from 'lucide-react'
 import type { ProBriefItem, ConsequenceStep } from '@/types/signals'
 
 const TRAJECTORY_COLORS: Record<string, string> = {
@@ -64,9 +64,10 @@ type Props = {
   signal: ProBriefItem
   onClick: () => void
   index?: number
+  isNew?: boolean
 }
 
-export default function SignalCard({ signal, onClick, index = 0 }: Props) {
+export default function SignalCard({ signal, onClick, index = 0, isNew }: Props) {
   const [imgError, setImgError] = useState(false)
   const [shareFeedback, setShareFeedback] = useState(false)
 
@@ -145,7 +146,20 @@ export default function SignalCard({ signal, onClick, index = 0 }: Props) {
               {trajectoryLabel.charAt(0) + trajectoryLabel.slice(1).toLowerCase()}
             </span>
           )}
+          {isNew && (
+            <span className="inline-flex items-center rounded-full bg-accent-teal/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent-teal">
+              New
+            </span>
+          )}
         </div>
+
+        {/* Why showing pill */}
+        {signal.why_showing?.trim() && (
+          <div className="mb-1.5 flex items-center gap-1.5 self-start rounded-full border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 max-w-full" aria-label={`Why shown: ${signal.why_showing}`}>
+            <Compass size={10} className="shrink-0 text-[var(--text-soft)]" />
+            <span className="truncate font-mono text-[11px] text-[var(--text-muted)]">{signal.why_showing}</span>
+          </div>
+        )}
 
         {/* Headline */}
         <h3 className="mb-2 font-display text-lg font-bold leading-snug text-[var(--text)]">
@@ -157,6 +171,22 @@ export default function SignalCard({ signal, onClick, index = 0 }: Props) {
           <p className="mb-3 text-sm leading-relaxed text-[var(--text-muted)]">
             {signal.synthesis}
           </p>
+        )}
+
+        {/* What Changed */}
+        {signal.deltaSummary && (
+          <div className="mb-3 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2">
+            <div className="mb-1 flex items-center gap-1.5">
+              <RefreshCw size={10} className="text-[var(--text-soft)]" />
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-soft)]">
+                What changed
+                {signal.storyStartedAt && (
+                  <span className="ml-1 font-normal normal-case tracking-normal">· tracking {formatRelativeTime(signal.storyStartedAt)}</span>
+                )}
+              </span>
+            </div>
+            <p className="text-xs leading-relaxed text-[var(--text-muted)]">{signal.deltaSummary}</p>
+          </div>
         )}
 
         {/* Meta row */}
@@ -173,6 +203,18 @@ export default function SignalCard({ signal, onClick, index = 0 }: Props) {
               {signal.sourceCount} {signal.sourceCount === 1 ? 'source' : 'sources'}
             </span>
           )}
+          {(() => {
+            const n = signal.sourceCount
+            if (!n || n < 1) return null
+            const level = n >= 3 ? 'high' : n === 2 ? 'medium' : 'low'
+            const color = level === 'high' ? 'bg-emerald-500' : level === 'medium' ? 'bg-amber-400' : 'bg-[var(--text-soft)]'
+            return (
+              <span className="inline-flex items-center gap-1 text-[var(--text-soft)]" title={`${level} confidence`}>
+                <span className={`inline-block h-1.5 w-1.5 rounded-full ${color}`} />
+                <span className="text-[10px] capitalize">{level}</span>
+              </span>
+            )
+          })()}
           {/* Consequence type dots */}
           {consequenceTypes.length > 0 && (
             <div className="flex items-center gap-1">
