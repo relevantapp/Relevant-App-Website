@@ -3,10 +3,10 @@
 import { useEffect, useRef, useState } from 'react'
 
 const PHRASES = [
-  "You shouldn't need",
-  'to read the news',
-  'just to stay sharp',
-  'at work.',
+  'Staying informed',
+  'is the trap.',
+  'Staying relevant',
+  'is the edge.',
 ]
 
 export default function HeroHeadline() {

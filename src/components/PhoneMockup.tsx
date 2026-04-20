@@ -14,18 +14,18 @@ interface AppScreen {
 const APP_SCREENS: AppScreen[] = [
   {
     src: '/screenshots/onboarding-intro.png?v=20260412c',
-    label: 'Three things about your work',
-    description: 'Give Relevant the context it needs to shape your feed.',
+    label: 'Set your work lens',
+    description: 'Role, company, industry, country, and what should interrupt your day.',
   },
   {
     src: '/screenshots/feed-main-new.png?v=20260412f',
-    label: 'Get alerted when something changes',
-    description: 'Important signals show up when something could affect your company, industry, or role.',
+    label: 'See what is worth your attention',
+    description: 'Relevant ranks external change by consequence to your role, company, and market.',
   },
   {
     src: '/screenshots/signal-detail.png?v=20260412f',
-    label: 'Understand the signal fast',
-    description: 'Open the alert to see what happened, why it matters, and what it means for you.',
+    label: 'Get consequence, not just summary',
+    description: 'Open one signal to see what changed, why it matters, and what to watch next.',
   },
 ]
 

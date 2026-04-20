@@ -27,16 +27,16 @@ const themeScript = `
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.getrelevantapp.com'),
   title: {
-    default: 'Relevant — Less Noise. More Clarity.',
+    default: 'Relevant — Role-Aware Work Signals',
     template: '%s | Relevant',
   },
   description:
-    'Relevant is an AI app that watches the news for your work, then tells you what changed, why it matters, and what to do next.',
+    'Relevant turns external change into a few clear work signals: what changed, why it matters to you, and what to do next.',
   keywords: [
-    'relevant app', 'ai news app', 'personalized news', 'work intelligence',
-    'ai briefing', 'news for professionals', 'role-aware news',
-    'what happened why it matters', 'ai relevance engine',
-    'business intelligence app', 'news monitoring',
+    'relevant app', 'role-aware work signals', 'work radar', 'professional awareness',
+    'ai work signals', 'role-aware relevance engine', 'business radar',
+    'what changed why it matters', 'competitive monitoring',
+    'market signals', 'personalized business intelligence',
   ],
   authors: [{ name: 'Relevant' }],
   creator: 'Relevant',
@@ -57,9 +57,9 @@ export const metadata: Metadata = {
     apple: '/app-icon.png',
   },
   openGraph: {
-    title: 'Relevant — Less Noise. More Clarity.',
+    title: 'Relevant — Role-Aware Work Signals',
     description:
-      'AI that reads the news for your work and tells you what changed, why it matters, and what it means for you.',
+      'Relevant is your role-aware work radar for what changed, why it matters to you, and what to do next.',
     url: 'https://www.getrelevantapp.com',
     siteName: 'Relevant',
     images: [
@@ -67,7 +67,7 @@ export const metadata: Metadata = {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Relevant — AI-powered personalized news feed for professionals',
+        alt: 'Relevant — role-aware work signals for professionals',
       },
     ],
     locale: 'en_US',
@@ -75,9 +75,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Relevant — Less Noise. More Clarity.',
+    title: 'Relevant — Role-Aware Work Signals',
     description:
-      'AI that reads the news for your work and tells you what changed, why it matters, and what it means for you.',
+      'Relevant is your role-aware work radar for what changed, why it matters to you, and what to do next.',
     images: ['/og-image.png'],
   },
   alternates: {
@@ -109,7 +109,7 @@ export default function RootLayout({
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'iOS',
     description:
-      'Relevant is an AI-powered app that watches the news for your work, then tells you what changed, why it matters, and what to do next. Role-aware, personalized intelligence — not a generic feed.',
+      'Relevant is a role-aware relevance engine that turns external change into a few clear work signals: what changed, why it matters to you, and what to do next.',
     url: 'https://www.getrelevantapp.com',
     image: 'https://www.getrelevantapp.com/og-image.png',
     offers: {

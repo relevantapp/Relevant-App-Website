@@ -3,37 +3,37 @@
 
 export const siteConfig = {
   name: 'Relevant',
-  tagline: "You shouldn't need to read the news just to stay sharp at work.",
-  description: 'We scan thousands of articles. You get one alert when something matters.',
+  tagline: 'Staying informed is the trap. Staying relevant is the edge.',
+  description: 'Relevant turns external change into a few clear work signals: what changed, why it matters to you, and what to do next.',
   email: 'support@getrelevantapp.com',
 }
 
 export const heroContent = {
-  headline: "You shouldn't need to read the news just to stay sharp at work.",
-  subheadline: 'We scan thousands of articles. You get one alert when something matters.',
-  cta: 'Try it free',
-  microcopy: 'Web app is live. Mobile coming soon.',
+  headline: 'Staying informed is the trap. Staying relevant is the edge.',
+  subheadline: 'Relevant is your role-aware work radar. It turns the outside world into a few clear signals tied to your role, company, and market.',
+  cta: 'Try the web app',
+  microcopy: 'Web app is live. Mobile beta is opening next.',
 }
 
 export const problemContent = {
-  title: "The old way doesn't work.",
+  title: 'You do not need more news.',
   bullets: [
-    'Tabs. Newsletters. Podcasts.',
-    'Still missed something.',
+    'You need to know what changed in your world.',
+    'You need to know why it matters before everyone else does.',
   ],
-  closing: 'The new way: We read. You know.',
-  clarityLine: 'Know what changed before it changes your week.',
+  closing: 'Relevant turns noise into ranked consequence.',
+  clarityLine: 'Know what matters before it changes your week.',
 }
 
 export const whatIsContent = {
   title: 'What is Relevant?',
-  intro: 'We read it all.\\nYou read what counts.',
+  intro: 'A role-aware relevance engine for work.',
   focusPoints: [
     'what changed',
     'why it matters',
-    'what to do',
+    'what to do next',
   ],
-  closing: "That's it.",
+  closing: 'Few signals. Clear consequence.',
 }
 
 export const howItWorksContent = {
@@ -41,23 +41,23 @@ export const howItWorksContent = {
   steps: [
     {
       number: '1',
-      title: 'Answer three questions',
-      description: 'Company. Industry. Role. Done.',
+      title: 'Set your work lens',
+      description: 'Role, company, industry, country, and what should interrupt your day.',
     },
     {
       number: '2',
-      title: 'We read',
-      description: "Thousands of articles. You don't.",
+      title: 'Relevant watches',
+      description: 'Companies, markets, policies, technologies, and people move. We rank the few that matter to you.',
     },
     {
       number: '3',
-      title: 'You gain',
-      description: 'Hours back. Every week.',
+      title: 'You get signals',
+      description: 'Each one tells you what changed, why it matters, and what to do next.',
     },
     {
       number: '4',
-      title: 'Go deeper',
-      description: 'Search. Follow. Explore.',
+      title: 'Follow the thread',
+      description: 'Keep one story alive as it evolves instead of rereading duplicate updates.',
     },
   ],
 }
@@ -66,41 +66,41 @@ export const featuresContent = {
   title: 'Inside the app',
   features: [
     {
-      title: 'Ask',
-      description: 'What does this mean for my team?',
+      title: 'Ask AI',
+      description: 'Pressure-test what a signal means for your team, market, or next move.',
     },
     {
-      title: 'Learn',
-      description: 'Podcast. Video. One tap.',
+      title: 'Go deeper',
+      description: 'Watch, listen, and gather context without leaving the thread.',
     },
     {
       title: 'Save',
-      description: 'Capture the thought. Move on.',
+      description: 'Keep the thread, not just the headline.',
     },
     {
       title: 'Tune',
-      description: 'More signal. Less noise. Your call.',
+      description: 'Tell Relevant what should interrupt your day.',
     },
   ],
 }
 
 export const whoItsForContent = {
-  title: 'For people who act on what they know',
+  title: 'Built for people whose job depends on seeing around corners',
   audiences: [
     'Founders',
-    'PMs',
-    'Engineers',
-    'Sales',
-    'Finance',
+    'Operators',
+    'Product leaders',
+    'GTM leaders',
     'Investors',
+    'Advisors',
   ],
 }
 
 export const waitlistContent = {
-  title: 'You have better things to do than read the news.',
-  subtext: 'Web app is live. Mobile coming soon.',
-  cta: 'Notify me',
-  mobileNote: 'Mobile in early access.',
+  title: 'Build your work radar.',
+  subtext: 'Start on the web. Get mobile access next.',
+  cta: 'Get early access',
+  mobileNote: 'Mobile beta.',
   microcopy: 'No spam.',
 }
 

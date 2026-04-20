@@ -47,10 +47,10 @@ export default function FeatureBento() {
     <section id="features" className="section-block">
       <div className="site-frame">
         <div className="section-heading reveal-on-scroll">
-          <span className="section-kicker">USE IT FOR MORE</span>
-          <h2>The signal is just the start.</h2>
+          <span className="section-kicker">FROM SIGNAL TO NEXT MOVE</span>
+          <h2>Relevant does more than brief you.</h2>
           <p>
-            Ask questions. Watch and listen. Share what matters. Capture thoughts. All without leaving.
+            Ask follow-up questions, go deeper, track what matters, and keep the thread moving without opening ten more tabs.
           </p>
         </div>
 
@@ -58,7 +58,7 @@ export default function FeatureBento() {
           {/* Watch & Listen — focused crop showing the media section, 1 col */}
           <BentoCard
             kicker="WATCH & LISTEN"
-            title="Go deeper without leaving."
+            title="Go deeper when a signal deserves it."
             imgSrc="/screenshots/watch-listen.png?v=20260412e"
             imgAlt="Watch videos and listen to podcasts tied to this signal"
             imgWidth={1206}
@@ -69,7 +69,7 @@ export default function FeatureBento() {
           {/* Ask AI — 2 cols wide */}
           <BentoCard
             kicker="ASK AI"
-            title="Ask anything about a signal."
+            title="Pressure-test what the signal means."
             imgSrc="/screenshots/ask-ai.png?v=20260412e"
             imgAlt="Ask AI — deeper analysis, simpler explanations, tailored insights"
             imgWidth={1206}
@@ -80,7 +80,7 @@ export default function FeatureBento() {
           {/* Share */}
           <BentoCard
             kicker="SHARE"
-            title="Become a voice."
+            title="Turn a signal into a sharp point of view."
             imgSrc="/screenshots/share-curate.png?v=20260412e"
             imgAlt="Share — draft a cleaner post with AI, then share to your network"
             imgWidth={1206}
@@ -90,7 +90,7 @@ export default function FeatureBento() {
           {/* Find */}
           <BentoCard
             kicker="FIND"
-            title="Follow anything."
+            title="Track the companies, people, and themes that matter."
             imgSrc="/screenshots/search-explore-bento.png?v=20260412f"
             imgAlt="Search and explore — follow companies, people, and topics"
             imgWidth={1206}
@@ -100,7 +100,7 @@ export default function FeatureBento() {
           {/* Save */}
           <BentoCard
             kicker="SAVE"
-            title="Capture the thought."
+            title="Keep the thread, not just the headline."
             imgSrc="/screenshots/notes-space.png?v=20260412e"
             imgAlt="Notes — save signals and capture quick thoughts"
             imgWidth={1206}
@@ -110,7 +110,7 @@ export default function FeatureBento() {
           {/* Tune — full width */}
           <BentoCard
             kicker="TUNE"
-            title="More signal. Less noise. Your call."
+            title="Tell Relevant what should interrupt your day."
             imgSrc="/screenshots/tune-settings.png?v=20260412f"
             imgAlt="Make Relevant yours — choose what it follows and how it writes"
             imgWidth={1206}
@@ -122,4 +122,3 @@ export default function FeatureBento() {
     </section>
   )
 }
-

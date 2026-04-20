@@ -25,12 +25,12 @@ export default function NoiseToSignal() {
         <div className="signal-flow-step-head">
           <span className="signal-flow-step-number">1</span>
           <div>
-            <h3 className="signal-flow-step-title">Tell us about your work.</h3>
+            <h3 className="signal-flow-step-title">Set your work lens.</h3>
           </div>
         </div>
 
         <p className="signal-flow-step-copy">
-          Industry. Role. Company. Country. That&apos;s it.
+          Role, company, industry, country, and what should interrupt your day.
         </p>
 
         <div className="signal-flow-shot-shell">
@@ -53,12 +53,12 @@ export default function NoiseToSignal() {
         <div className="signal-flow-step-head">
           <span className="signal-flow-step-number">2</span>
           <div>
-            <h3 className="signal-flow-step-title">We filter thousands of articles.</h3>
+            <h3 className="signal-flow-step-title">Relevant watches the outside world.</h3>
           </div>
         </div>
 
         <p className="signal-flow-step-copy">
-          One question: could this change a decision you&apos;re about to make?
+          Companies, markets, policies, technologies, and people move. We rank what has consequence for you.
         </p>
 
         <div className="signal-flow-stream-window">
@@ -94,12 +94,12 @@ export default function NoiseToSignal() {
         <div className="signal-flow-step-head">
           <span className="signal-flow-step-number">3</span>
           <div>
-            <h3 className="signal-flow-step-title">You get hours back. Every week.</h3>
+            <h3 className="signal-flow-step-title">You get the few signals worth your time.</h3>
           </div>
         </div>
 
         <p className="signal-flow-step-copy">
-          We track how much reading time you skip — so you can see the value.
+          Most stories never reach you. The few that do explain what changed, why it matters, and what to do next.
         </p>
 
         <div className="signal-flow-shot-shell">
@@ -122,12 +122,12 @@ export default function NoiseToSignal() {
         <div className="signal-flow-step-head">
           <span className="signal-flow-step-number">4</span>
           <div>
-            <h3 className="signal-flow-step-title">Search. Follow. Explore.</h3>
+            <h3 className="signal-flow-step-title">Follow the story, not duplicate headlines.</h3>
           </div>
         </div>
 
         <p className="signal-flow-step-copy">
-          Everything we&apos;ve shown you, searchable. Your signals, your map.
+          Search, follow, and revisit the same thread as it evolves instead of rereading five versions of it.
         </p>
 
         <div className="signal-flow-shot-shell">

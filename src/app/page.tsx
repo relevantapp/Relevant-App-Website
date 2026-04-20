@@ -152,19 +152,19 @@ export default function Home() {
         {/* HERO */}
         <section className="hero-section">
           <div className="site-frame hero-centered">
-            <span className="hero-badge">AI THAT READS SO YOU DON&apos;T HAVE TO</span>
+            <span className="hero-badge">NEVER FEEL BEHIND AT WORK</span>
             <HeroHeadline />
             <p className="hero-sub">
-              We scan thousands of articles. You get one alert when something matters.
+              Relevant is your role-aware work radar. It watches the companies, markets, policies, technologies, and people that affect your work, then turns the noise into a few clear signals: what changed, why it matters, and what to do next.
             </p>
             <div className="hero-actions">
               <a href="/signup" className="btn-primary btn-pill">Try the web app</a>
-              <a href="#signal" className="btn-secondary btn-pill">See how</a>
+              <a href="#signal" className="btn-secondary btn-pill">See an example signal</a>
             </div>
 
             {/* Inline waitlist — always visible */}
             <form onSubmit={handleWaitlist} className="hero-waitlist-inline">
-              <p className="hero-waitlist-label">📱 The mobile app is coming — get early access.</p>
+              <p className="hero-waitlist-label">Mobile beta. Get early access.</p>
               <div className="hero-waitlist-row">
                 <input
                   type="email"
@@ -177,7 +177,7 @@ export default function Home() {
                   aria-label="Email for mobile app waitlist"
                 />
                 <button type="submit" className="waitlist-submit" disabled={waitlistStatus === 'loading'}>
-                  {waitlistStatus === 'loading' ? 'Joining...' : 'Notify me'}
+                  {waitlistStatus === 'loading' ? 'Joining...' : 'Get early access'}
                 </button>
               </div>
               {waitlistMessage && (
@@ -187,16 +187,16 @@ export default function Home() {
 
             <div className="hero-cards reveal-stagger">
               <div className="hero-info-card reveal-on-scroll">
-                <span className="hero-info-kicker">THE OLD WAY</span>
-                <span className="hero-info-text">Tabs. Newsletters. Podcasts. Still missed something.</span>
+                <span className="hero-info-kicker">WHAT CHANGED</span>
+                <span className="hero-info-text">A major competitor just entered Canada through a new fintech partnership.</span>
               </div>
               <div className="hero-info-card reveal-on-scroll">
-                <span className="hero-info-kicker">THE NEW WAY</span>
-                <span className="hero-info-text">We read it all. You read what counts.</span>
+                <span className="hero-info-kicker">WHY IT MATTERS</span>
+                <span className="hero-info-text">If you lead product, partnerships, or GTM, buyer expectations can shift fast around pricing, compliance, and local integrations.</span>
               </div>
               <div className="hero-info-card reveal-on-scroll">
-                <span className="hero-info-kicker">THE RESULT</span>
-                <span className="hero-info-text">Know what changed before it changes your week.</span>
+                <span className="hero-info-kicker">WHAT TO DO NEXT</span>
+                <span className="hero-info-text">Watch for migration incentives, compliance tooling, and which partners start showing up in active deals.</span>
               </div>
             </div>
             
@@ -210,10 +210,10 @@ export default function Home() {
         <section id="signal" className="section-block">
           <div className="site-frame">
             <div className="section-heading reveal-on-scroll">
-              <span className="section-kicker">HOW IT WORKS</span>
-              <h2>Three questions. Then we take it from here.</h2>
+              <span className="section-kicker">HOW RELEVANT WORKS</span>
+              <h2>Your context in. A few clear signals out.</h2>
               <p>
-                Company. Industry. Role. That&apos;s enough for us to know what matters to you.
+                Tell Relevant what world you work in. We track the outside changes most likely to affect your role, company, and next move.
               </p>
             </div>
             <NoiseToSignal />
@@ -227,12 +227,12 @@ export default function Home() {
         <section id="access" className="section-block section-cta border-t border-[var(--border)] bg-[var(--bg-elevated)]">
           <div className="site-frame access-shell">
             <div className="access-copy reveal-on-scroll">
-              <span className="section-kicker">GET STARTED</span>
-              <h2>You have better things to do than read the news.</h2>
-              <p>Web app is live. Mobile coming soon.</p>
+              <span className="section-kicker">EARLY ACCESS</span>
+              <h2>Build your work radar.</h2>
+              <p>Start on the web. Get mobile access next.</p>
             </div>
             <form onSubmit={handleWaitlist} className="waitlist-card reveal-on-scroll">
-              <span className="waitlist-label">Notify me for mobile</span>
+              <span className="waitlist-label">Get mobile early access</span>
               <label className="sr-only" htmlFor="waitlist-email">Email</label>
               <div className="waitlist-row">
                 <input
@@ -246,13 +246,13 @@ export default function Home() {
                   className="waitlist-input"
                 />
                 <button type="submit" className="btn-primary waitlist-submit" disabled={waitlistStatus === 'loading'}>
-                  {waitlistStatus === 'loading' ? 'Joining...' : 'Notify me'}
+                  {waitlistStatus === 'loading' ? 'Joining...' : 'Get early access'}
                 </button>
               </div>
               {waitlistMessage ? (
                 <p className={`waitlist-msg ${waitlistStatus === 'success' ? 'msg-success' : 'msg-error'}`}>{waitlistMessage}</p>
               ) : (
-                <p className="waitlist-hint">Web app is live. No spam.</p>
+                <p className="waitlist-hint">Web app is live. Mobile beta is next. No spam.</p>
               )}
             </form>
           </div>
@@ -264,7 +264,7 @@ export default function Home() {
         <div className="site-frame footer-inner">
           <div className="footer-brand">
             <BrandMark />
-            <span>Less noise. More clarity.</span>
+            <span>What changed. Why it matters. What to do next.</span>
           </div>
           <div className="footer-social">
             <a href="https://www.instagram.com/relevant.app/" target="_blank" rel="noopener noreferrer" className="footer-social-link" aria-label="Instagram">
@@ -287,7 +287,7 @@ export default function Home() {
       <div className={`mobile-floating-island${showMobileCta ? ' is-visible' : ''}`}>
         <a href="/signup" className="mobile-island-btn mobile-island-btn--primary">Try the web app</a>
         <div className="mobile-island-divider" />
-        <a href="#access" className="mobile-island-btn mobile-island-btn--secondary">Get the app</a>
+        <a href="#access" className="mobile-island-btn mobile-island-btn--secondary">Get early access</a>
       </div>
     </>
   )
