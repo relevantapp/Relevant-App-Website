@@ -3,6 +3,13 @@ export type ModelPreference = string
 export const DEFAULT_MODEL_PREFERENCE: ModelPreference = 'google/gemini-3.1-flash-lite-preview'
 export const MODEL_STORAGE_KEY = 'relevant-intelligence-model'
 
+export const MODEL_OPTIONS: Array<{ value: ModelPreference; label: string; description: string }> = [
+  { value: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash', description: 'Fast, high quality (recommended)' },
+  { value: 'claude-haiku-4.5', label: 'Claude Haiku 4.5', description: 'Anthropic, strong reasoning' },
+  { value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash', description: 'Google, fast and capable' },
+  { value: 'auto', label: 'Auto (best available)', description: 'Tries each model in order' },
+]
+
 const LEGACY_MODEL_ALIASES: Record<string, ModelPreference> = {
   auto: DEFAULT_MODEL_PREFERENCE,
   'gemini-2.5-flash-lite': 'google/gemini-2.5-flash-lite',
