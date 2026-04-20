@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from 'react'
 import BrandMark from '@/components/BrandMark'
 import FeatureBento from '@/components/FeatureBento'
 import HeroHeadline from '@/components/HeroHeadline'
+import IntelligenceSpotlight from '@/components/IntelligenceSpotlight'
 import NoiseToSignal from '@/components/NoiseToSignal'
 import PhoneMockup from '@/components/PhoneMockup'
 
@@ -135,6 +136,7 @@ export default function Home() {
             </div>
             <div className="site-nav-links">
               <a href="#signal">How it works</a>
+              <a href="#intelligence">Intelligence</a>
               <a href="#features">Inside the app</a>
             </div>
             <button
@@ -238,6 +240,8 @@ export default function Home() {
             <NoiseToSignal />
           </div>
         </section>
+
+        <IntelligenceSpotlight />
 
         <section className="section-block">
           <div className="site-frame">

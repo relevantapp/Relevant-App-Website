@@ -217,7 +217,7 @@ export default function IntelligencePage() {
 
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 py-8 sm:py-12">
-      <div className="w-full max-w-2xl">
+      <div className={`w-full ${!selectedType && !loading && !pendingInput ? 'max-w-5xl' : 'max-w-2xl'}`}>
         {/* Error */}
         {error && (
           <div className="mb-6 rounded-xl border border-[var(--accent-coral)]/30 bg-[var(--accent-coral)]/10 p-4">

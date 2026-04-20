@@ -9,6 +9,8 @@ export interface ResearchTypeCard {
   icon: string
   title: string
   description: string
+  example: string
+  meta: string
 }
 
 export const RESEARCH_TYPES: ResearchTypeCard[] = [
@@ -17,24 +19,32 @@ export const RESEARCH_TYPES: ResearchTypeCard[] = [
     icon: 'ClipboardList',
     title: 'Meeting Prep',
     description: 'Prepare for a sales, client, or partner conversation',
+    example: 'Anthropic · partnership intro',
+    meta: '~1m 45s · 8-12 sources',
   },
   {
     type: 'business_case',
     icon: 'BarChart3',
     title: 'Business Case',
     description: 'Build proof points for an initiative or proposal',
+    example: 'Launch weekend delivery · East Coast',
+    meta: '~2m 30s · 14-20 sources',
   },
   {
     type: 'competitive_analysis',
     icon: 'Swords',
     title: 'Competitive Intel',
     description: "Analyze a competitor's latest moves and positioning",
+    example: 'Cursor vs Copilot · positioning',
+    meta: '~2m 10s · 12-18 sources',
   },
   {
     type: 'market_research',
     icon: 'Search',
     title: 'Market Research',
     description: 'Explore a market trend, space, or opportunity',
+    example: 'Agent payments · infra category',
+    meta: '~2m 15s · 15-22 sources',
   },
 ]
 
