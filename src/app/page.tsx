@@ -15,6 +15,19 @@ export default function Home() {
   const currentYear = new Date().getFullYear()
 
   const [theme, setTheme] = useState<'light' | 'dark'>('dark')
+  const genericFeedPoints = [
+    'More headlines. More tabs. More repetition.',
+    'Popularity decides what floats to the top.',
+    'Everyone gets the same story framing.',
+    'You still have to work out the consequence yourself.',
+  ]
+  const relevantFeedPoints = [
+    'Fewer signals ranked by consequence to your role.',
+    'Your company, market, and priorities shape the lens.',
+    'Each signal explains what changed, why it matters, and what to watch next.',
+    'Ongoing developments stay in one thread instead of duplicating across the feed.',
+  ]
+  const audienceRoles = ['Founders', 'Operators', 'Product leaders', 'GTM leaders', 'Investors']
 
   useEffect(() => {
     const stored = localStorage.getItem('relevant-site-theme')
@@ -142,7 +155,7 @@ export default function Home() {
               )}
             </button>
             <a href="#access" className="nav-button nav-button--waitlist">Get the app</a>
-            <a href="/login" className="nav-button nav-button--secondary" style={{ background: 'var(--surface)', border: '1px solid var(--border-strong)', color: 'var(--text)', fontWeight: 600 }}>Sign in</a>
+            <a href="/login" className="nav-button nav-button--ghost">Sign in</a>
             <a href="/signup" className="nav-button">Try the web app</a>
           </div>
         </div>
@@ -185,18 +198,24 @@ export default function Home() {
               )}
             </form>
 
-            <div className="hero-cards reveal-stagger">
-              <div className="hero-info-card reveal-on-scroll">
-                <span className="hero-info-kicker">WHAT CHANGED</span>
-                <span className="hero-info-text">A major competitor just entered Canada through a new fintech partnership.</span>
+            <div className="hero-signal-board reveal-on-scroll">
+              <div className="hero-signal-board-head">
+                <span className="hero-signal-board-label">Example signal</span>
+                <span className="hero-signal-board-meta">Product · partnerships · Canada</span>
               </div>
-              <div className="hero-info-card reveal-on-scroll">
-                <span className="hero-info-kicker">WHY IT MATTERS</span>
-                <span className="hero-info-text">If you lead product, partnerships, or GTM, buyer expectations can shift fast around pricing, compliance, and local integrations.</span>
-              </div>
-              <div className="hero-info-card reveal-on-scroll">
-                <span className="hero-info-kicker">WHAT TO DO NEXT</span>
-                <span className="hero-info-text">Watch for migration incentives, compliance tooling, and which partners start showing up in active deals.</span>
+              <div className="hero-cards reveal-stagger">
+                <div className="hero-info-card reveal-on-scroll">
+                  <span className="hero-info-kicker">WHAT CHANGED</span>
+                  <span className="hero-info-text">A major competitor just entered Canada through a new fintech partnership.</span>
+                </div>
+                <div className="hero-info-card reveal-on-scroll">
+                  <span className="hero-info-kicker">WHY IT MATTERS</span>
+                  <span className="hero-info-text">If you lead product, partnerships, or GTM, buyer expectations can shift fast around pricing, compliance, and local integrations.</span>
+                </div>
+                <div className="hero-info-card reveal-on-scroll">
+                  <span className="hero-info-kicker">WHAT TO DO NEXT</span>
+                  <span className="hero-info-text">Watch for migration incentives, compliance tooling, and which partners start showing up in active deals.</span>
+                </div>
               </div>
             </div>
             
@@ -217,6 +236,46 @@ export default function Home() {
               </p>
             </div>
             <NoiseToSignal />
+          </div>
+        </section>
+
+        <section className="section-block">
+          <div className="site-frame">
+            <div className="section-heading reveal-on-scroll">
+              <span className="section-kicker">NOT ANOTHER NEWS FEED</span>
+              <h2>Relevant translates change into consequence.</h2>
+              <p>
+                Generic news tools give everyone more to read. Relevant gives you fewer, sharper signals tied to your role, company, and next move.
+              </p>
+            </div>
+            <div className="comparison-shell reveal-stagger">
+              <article className="comparison-card comparison-card--generic reveal-on-scroll">
+                <span className="comparison-card-label">Generic news apps</span>
+                <h3 className="comparison-card-title">Same stories. More noise.</h3>
+                <ul className="comparison-list">
+                  {genericFeedPoints.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </article>
+              <article className="comparison-card comparison-card--relevant reveal-on-scroll">
+                <span className="comparison-card-label">Relevant</span>
+                <h3 className="comparison-card-title">Personalized professional awareness.</h3>
+                <ul className="comparison-list comparison-list--strong">
+                  {relevantFeedPoints.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </article>
+            </div>
+            <div className="audience-strip reveal-on-scroll">
+              <span className="audience-strip-label">Built for people whose job depends on seeing around corners</span>
+              <div className="audience-strip-items">
+                {audienceRoles.map((role) => (
+                  <span key={role} className="audience-strip-item">{role}</span>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 

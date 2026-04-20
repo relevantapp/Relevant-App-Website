@@ -1,11 +1,11 @@
 import type { Metadata, Viewport } from 'next'
-import { IBM_Plex_Mono, Inter, Space_Grotesk } from 'next/font/google'
+import { Fraunces, IBM_Plex_Mono, Instrument_Sans } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from '@/context/AuthContext'
 import AuthGuard from '@/components/app/AuthGuard'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
-const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-display' })
+const instrumentSans = Instrument_Sans({ subsets: ['latin'], variable: '--font-sans' })
+const fraunces = Fraunces({ subsets: ['latin'], variable: '--font-display' })
 const ibmPlexMono = IBM_Plex_Mono({ weight: ['400', '500', '600', '700'], subsets: ['latin'], variable: '--font-mono' })
 
 const themeScript = `
@@ -92,8 +92,8 @@ export const viewport: Viewport = {
   maximumScale: 1,
   viewportFit: 'cover',
   themeColor: [
-    { media: '(prefers-color-scheme: dark)', color: '#202124' },
-    { media: '(prefers-color-scheme: light)', color: '#fafafa' },
+    { media: '(prefers-color-scheme: dark)', color: '#07090c' },
+    { media: '(prefers-color-scheme: light)', color: '#fbfaf7' },
   ],
 }
 
@@ -128,7 +128,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`${inter.variable} ${spaceGrotesk.variable} ${ibmPlexMono.variable} antialiased`}>
+      <body className={`${instrumentSans.variable} ${fraunces.variable} ${ibmPlexMono.variable} antialiased`}>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <AuthProvider>
           <AuthGuard>
