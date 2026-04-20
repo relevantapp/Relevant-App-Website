@@ -16,17 +16,13 @@ import MarketResearchResults from './results/MarketResearchResults'
 import FollowUpChat from './results/shared/FollowUpChat'
 import ActivityRail from './ActivityRail'
 import { useIntelligenceStream } from '@/hooks/useIntelligenceStream'
+import { MODEL_STORAGE_KEY, normalizeModelPreference } from '@/lib/intelligence/models'
 import type {
   MeetingPrepBrief,
   CompetitiveAnalysisBrief,
   BusinessCaseBrief,
   MarketResearchBrief,
 } from '@/lib/intelligence/contracts'
-import {
-  DEFAULT_MODEL_PREFERENCE,
-  MODEL_STORAGE_KEY,
-  normalizeModelPreference,
-} from '@/lib/intelligence/models'
 import type {
   ResearchType,
   IntelligenceInput,
@@ -156,7 +152,7 @@ export default function IntelligencePage() {
       ...apiBody,
       preferredModel: typeof window !== 'undefined'
         ? normalizeModelPreference(localStorage.getItem(MODEL_STORAGE_KEY))
-        : DEFAULT_MODEL_PREFERENCE,
+        : undefined,
     })
   }, [generate, pendingInput])
 

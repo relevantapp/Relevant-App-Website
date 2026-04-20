@@ -11,10 +11,7 @@ import {
 import type { MeetingType } from '@/lib/intelligence/contracts'
 import { createSSEEmitter } from '@/lib/intelligence/sse-emitter'
 import type { PipelineContext } from '@/lib/intelligence/pipeline'
-import {
-  type ModelPreference,
-  normalizeModelPreference,
-} from '@/lib/intelligence/models'
+import { normalizeModelPreference, type ModelPreference } from '@/lib/intelligence/models'
 
 export const maxDuration = 60
 

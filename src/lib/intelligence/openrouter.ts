@@ -3,6 +3,7 @@ import {
   DEFAULT_MODEL_PREFERENCE,
   getModelFamilyId,
   getModelFamilyLabel,
+  isCuratedModelId,
   normalizeModelPreference,
   sortFamilyIds,
   type ModelCatalogFamily,
@@ -79,14 +80,12 @@ function coerceTextContent(content: unknown): string {
 }
 
 function isSelectableModel(model: OpenRouterModelRecord): boolean {
-  if (!model.id?.includes('/')) return false
+  if (!isCuratedModelId(model.id)) return false
 
   if (model.expiration_date) {
     const expiration = Date.parse(model.expiration_date)
     if (!Number.isNaN(expiration) && expiration <= Date.now()) return false
   }
-
-  if (/guard|safeguard/i.test(model.id)) return false
 
   const outputs = model.architecture?.output_modalities
   if (outputs && !outputs.includes('text')) return false
@@ -143,20 +142,21 @@ function buildCatalog(models: OpenRouterModelRecord[]): ModelCatalogResponse {
 
 function buildFallbackCatalog(): ModelCatalogResponse {
   const fallbackModels: OpenRouterModelRecord[] = [
-    { id: 'google/gemini-3.1-flash-lite-preview', name: 'Gemini 3.1 Flash-Lite Preview' },
-    { id: 'google/gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash-Lite' },
-    { id: 'google/gemini-2.5-pro', name: 'Gemini 2.5 Pro' },
-    { id: 'openai/gpt-5.4-mini', name: 'GPT-5.4 Mini' },
-    { id: 'openai/gpt-5.4', name: 'GPT-5.4' },
-    { id: 'openai/gpt-5.1', name: 'GPT-5.1' },
-    { id: 'anthropic/claude-haiku-4.5', name: 'Claude Haiku 4.5' },
-    { id: 'anthropic/claude-sonnet-4.5', name: 'Claude Sonnet 4.5' },
-    { id: 'x-ai/grok-4.1-fast', name: 'Grok 4.1 Fast' },
-    { id: 'x-ai/grok-4', name: 'Grok 4' },
-    { id: 'z-ai/glm-4.7-flash', name: 'GLM 4.7 Flash' },
-    { id: 'z-ai/glm-5.1', name: 'GLM 5.1' },
-    { id: 'meta-llama/llama-4-maverick', name: 'Llama 4 Maverick' },
-    { id: 'meta-llama/llama-4-scout', name: 'Llama 4 Scout' },
+    { id: 'google/gemini-2.5-flash', name: 'Google: Gemini 2.5 Flash' },
+    { id: 'google/gemini-3.1-flash-lite-preview', name: 'Google: Gemini 3.1 Flash Lite Preview' },
+    { id: 'google/gemini-2.5-pro', name: 'Google: Gemini 2.5 Pro' },
+    { id: 'openai/gpt-5.4-mini', name: 'OpenAI: GPT-5.4 Mini' },
+    { id: 'openai/gpt-5.4', name: 'OpenAI: GPT-5.4' },
+    { id: 'openai/gpt-5.1', name: 'OpenAI: GPT-5.1' },
+    { id: 'anthropic/claude-haiku-4.5', name: 'Anthropic: Claude Haiku 4.5' },
+    { id: 'anthropic/claude-sonnet-4.6', name: 'Anthropic: Claude Sonnet 4.6' },
+    { id: 'z-ai/glm-4.7-flash', name: 'Z.ai: GLM 4.7 Flash' },
+    { id: 'z-ai/glm-5.1', name: 'Z.ai: GLM 5.1' },
+    { id: 'meta-llama/llama-4-scout', name: 'Meta: Llama 4 Scout' },
+    { id: 'meta-llama/llama-4-maverick', name: 'Meta: Llama 4 Maverick' },
+    { id: 'qwen/qwen3.5-flash-02-23', name: 'Qwen: Qwen3.5 Flash' },
+    { id: 'qwen/qwen3.6-plus', name: 'Qwen: Qwen3.6 Plus' },
+    { id: 'qwen/qwen3-235b-a22b', name: 'Qwen: Qwen3 235B A22B' },
   ].map((model) => ({
     ...model,
     description: '',
@@ -186,13 +186,14 @@ export async function listSelectableOpenRouterModels(forceFresh = false): Promis
     const payload = await res.json()
     const catalog = buildCatalog(Array.isArray(payload?.data) ? payload.data as OpenRouterModelRecord[] : [])
     if (catalog.families.length === 0) {
-      throw new Error('OpenRouter models catalog was empty')
+      throw new Error('OpenRouter curated catalog was empty')
     }
+
     modelCatalogCache = { data: catalog, expiresAt: now + MODEL_CATALOG_TTL_MS }
     return catalog
   } catch (err) {
     if (modelCatalogCache) return modelCatalogCache.data
-    console.error('[intel:openrouter:models] Failed to load live catalog:', err)
+    console.error('[intel:openrouter:models] Failed to load curated catalog:', err)
     return buildFallbackCatalog()
   }
 }

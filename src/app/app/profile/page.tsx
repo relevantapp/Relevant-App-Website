@@ -6,7 +6,14 @@ import { motion } from 'framer-motion'
 import { User, LogOut, Sun, Moon, Save, Edit, Loader2, Brain } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/context/AuthContext'
-import { MODEL_OPTIONS, type ModelPreference } from '@/lib/intelligence/models'
+import {
+  DEFAULT_MODEL_PREFERENCE,
+  MODEL_STORAGE_KEY,
+  getModelFamilyId,
+  normalizeModelPreference,
+  type ModelCatalogResponse,
+  type ModelPreference,
+} from '@/lib/intelligence/models'
 
 type ProfileData = {
   full_name: string
@@ -14,10 +21,30 @@ type ProfileData = {
   profile_kind: string
   industry_raw: string
   role_raw: string
+  company_id: string | null
   company_name_manual: string
+  company_display_name: string
+}
+
+type CompanyLookupRow = {
+  name: string | null
 }
 
 const PROFILE_KINDS = ['general', 'executive', 'investor', 'operator', 'analyst']
+
+function formatContextLength(value: number | null): string {
+  if (!value) return '—'
+  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(value % 1_000_000 === 0 ? 0 : 1)}M tokens`
+  if (value >= 1_000) return `${Math.round(value / 1_000)}k tokens`
+  return `${value} tokens`
+}
+
+function formatPricePerMillion(price: string | null): string {
+  if (!price) return '—'
+  const numeric = Number(price)
+  if (!Number.isFinite(numeric)) return '—'
+  return `$${(numeric * 1_000_000).toFixed(numeric * 1_000_000 >= 1 ? 2 : 3)}/M`
+}
 
 export default function ProfilePage() {
   const router = useRouter()
@@ -25,7 +52,11 @@ export default function ProfilePage() {
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
   const [theme, setTheme] = useState<'dark' | 'light'>('dark')
-  const [intelligenceModel, setIntelligenceModel] = useState<ModelPreference>('gemini-2.5-flash')
+  const [intelligenceModel, setIntelligenceModel] = useState<ModelPreference>(DEFAULT_MODEL_PREFERENCE)
+  const [modelCatalog, setModelCatalog] = useState<ModelCatalogResponse | null>(null)
+  const [modelCatalogLoading, setModelCatalogLoading] = useState(true)
+  const [modelCatalogError, setModelCatalogError] = useState<string | null>(null)
+  const [selectedFamily, setSelectedFamily] = useState<string>(getModelFamilyId(DEFAULT_MODEL_PREFERENCE))
 
   const [profile, setProfile] = useState<ProfileData>({
     full_name: '',
@@ -33,56 +64,121 @@ export default function ProfilePage() {
     profile_kind: 'general',
     industry_raw: '',
     role_raw: '',
+    company_id: null,
     company_name_manual: '',
+    company_display_name: '',
   })
 
   const [editProfile, setEditProfile] = useState<ProfileData>(profile)
 
-  // Load theme from localStorage
   useEffect(() => {
     const stored = localStorage.getItem('relevant-site-theme') as 'dark' | 'light' | null
     const current = stored || (document.documentElement.getAttribute('data-theme') as 'dark' | 'light') || 'dark'
     setTheme(current)
-    const storedModel = localStorage.getItem('relevant-intelligence-model') as ModelPreference | null
-    if (storedModel && MODEL_OPTIONS.some((m) => m.value === storedModel)) {
-      setIntelligenceModel(storedModel)
+    const storedModel = normalizeModelPreference(localStorage.getItem(MODEL_STORAGE_KEY))
+    setIntelligenceModel(storedModel)
+    setSelectedFamily(getModelFamilyId(storedModel))
+    localStorage.setItem(MODEL_STORAGE_KEY, storedModel)
+  }, [])
+
+  useEffect(() => {
+    let cancelled = false
+
+    const loadModelCatalog = async () => {
+      setModelCatalogLoading(true)
+      setModelCatalogError(null)
+
+      try {
+        const res = await fetch('/api/intelligence/models', { cache: 'no-store' })
+        if (!res.ok) throw new Error('Failed to load model catalog')
+
+        const data = await res.json() as ModelCatalogResponse
+        if (cancelled) return
+
+        setModelCatalog(data)
+
+        const availableModelIds = new Set(data.families.flatMap((family) => family.models.map((model) => model.id)))
+        const storedModel = normalizeModelPreference(localStorage.getItem(MODEL_STORAGE_KEY))
+        const resolvedModel = availableModelIds.has(storedModel)
+          ? storedModel
+          : data.defaultModel
+
+        setIntelligenceModel(resolvedModel)
+        setSelectedFamily(getModelFamilyId(resolvedModel))
+        localStorage.setItem(MODEL_STORAGE_KEY, resolvedModel)
+      } catch (err) {
+        if (cancelled) return
+
+        console.error('Load model catalog error:', err)
+        setModelCatalogError('Could not load the curated model list.')
+      } finally {
+        if (!cancelled) setModelCatalogLoading(false)
+      }
+    }
+
+    void loadModelCatalog()
+
+    return () => {
+      cancelled = true
     }
   }, [])
 
-  // Fetch user profile from DB
   useEffect(() => {
     if (!user) return
+
     const fetchProfile = async () => {
       const { data } = await supabase
         .from('users')
-        .select('full_name, email, profile_kind, industry_raw, role_raw, company_name_manual')
+        .select('full_name, email, profile_kind, industry_raw, role_raw, company_id, company_name_manual')
         .eq('id', user.id)
         .maybeSingle()
 
-      if (data) {
-        const p: ProfileData = {
-          full_name: (data.full_name as string) || user.name || '',
-          email: (data.email as string) || user.email || '',
-          profile_kind: (data.profile_kind as string) || 'general',
-          industry_raw: (data.industry_raw as string) || '',
-          role_raw: (data.role_raw as string) || '',
-          company_name_manual: (data.company_name_manual as string) || '',
+      const companyId = typeof data?.company_id === 'string' && data.company_id.trim()
+        ? data.company_id.trim()
+        : null
+      const companyManual = typeof data?.company_name_manual === 'string'
+        ? data.company_name_manual.trim()
+        : ''
+
+      let companyDisplayName = companyManual
+
+      if (companyId) {
+        const { data: companyData } = await supabase
+          .from('companies')
+          .select('name')
+          .eq('id', companyId)
+          .maybeSingle()
+
+        const company = companyData as CompanyLookupRow | null
+        if (typeof company?.name === 'string' && company.name.trim()) {
+          companyDisplayName = company.name.trim()
         }
-        setProfile(p)
-        setEditProfile(p)
-      } else {
-        const p: ProfileData = {
-          full_name: user.name || '',
-          email: user.email || '',
-          profile_kind: 'general',
-          industry_raw: '',
-          role_raw: '',
-          company_name_manual: '',
-        }
-        setProfile(p)
-        setEditProfile(p)
       }
+
+      const nextProfile: ProfileData = data ? {
+        full_name: (data.full_name as string) || user.name || '',
+        email: (data.email as string) || user.email || '',
+        profile_kind: (data.profile_kind as string) || 'general',
+        industry_raw: (data.industry_raw as string) || '',
+        role_raw: (data.role_raw as string) || '',
+        company_id: companyId,
+        company_name_manual: companyManual,
+        company_display_name: companyDisplayName,
+      } : {
+        full_name: user.name || '',
+        email: user.email || '',
+        profile_kind: 'general',
+        industry_raw: '',
+        role_raw: '',
+        company_id: null,
+        company_name_manual: '',
+        company_display_name: '',
+      }
+
+      setProfile(nextProfile)
+      setEditProfile(nextProfile)
     }
+
     void fetchProfile()
   }, [user])
 
@@ -95,20 +191,31 @@ export default function ProfilePage() {
 
   const handleModelChange = useCallback((model: ModelPreference) => {
     setIntelligenceModel(model)
-    localStorage.setItem('relevant-intelligence-model', model)
+    setSelectedFamily(getModelFamilyId(model))
+    localStorage.setItem(MODEL_STORAGE_KEY, model)
   }, [])
 
   const handleSave = async () => {
     setSaving(true)
     try {
+      const nextCompanyManual = editProfile.company_name_manual.trim()
       await updateProfile({
         full_name: editProfile.full_name.trim(),
         profile_kind: editProfile.profile_kind,
         industry_raw: editProfile.industry_raw.trim(),
         role_raw: editProfile.role_raw.trim(),
-        company_name_manual: editProfile.company_name_manual.trim(),
+        ...(profile.company_id ? {} : { company_name_manual: nextCompanyManual }),
       })
-      setProfile(editProfile)
+
+      const nextProfile: ProfileData = {
+        ...editProfile,
+        company_display_name: profile.company_id
+          ? profile.company_display_name
+          : nextCompanyManual,
+      }
+
+      setProfile(nextProfile)
+      setEditProfile(nextProfile)
       setEditing(false)
     } catch (err) {
       console.error('Save profile error:', err)
@@ -127,6 +234,16 @@ export default function ProfilePage() {
     setEditing(false)
   }
 
+  const families = modelCatalog?.families ?? []
+  const activeFamily = families.find((family) => family.id === selectedFamily)
+    ?? families.find((family) => family.id === getModelFamilyId(intelligenceModel))
+    ?? families[0]
+  const activeModels = activeFamily?.models ?? []
+  const activeModel = families
+    .flatMap((family) => family.models)
+    .find((model) => model.id === intelligenceModel)
+    ?? activeModels[0]
+
   return (
     <div className="mx-auto max-w-3xl py-8">
       <motion.div
@@ -134,7 +251,6 @@ export default function ProfilePage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        {/* Header */}
         <div className="mb-8 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-[var(--text)]">Profile</h1>
           {!editing ? (
@@ -165,7 +281,6 @@ export default function ProfilePage() {
           )}
         </div>
 
-        {/* Avatar + Name */}
         <div className="mb-8 flex items-center gap-4">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--surface)] text-[var(--text-muted)]">
             <User size={28} />
@@ -176,7 +291,6 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Account section */}
         <section className="mb-6 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5">
           <h3 className="mb-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-soft)]">Account</h3>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -227,7 +341,6 @@ export default function ProfilePage() {
           </div>
         </section>
 
-        {/* Professional section */}
         <section className="mb-6 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5">
           <h3 className="mb-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-soft)]">Professional</h3>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -266,60 +379,117 @@ export default function ProfilePage() {
             <div>
               <label className="mb-1 block text-xs text-[var(--text-muted)]">Company</label>
               {editing ? (
-                <input
-                  type="text"
-                  value={editProfile.company_name_manual}
-                  onChange={(e) => setEditProfile({ ...editProfile, company_name_manual: e.target.value })}
-                  placeholder="Company name"
-                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 py-2 text-sm text-[var(--text)] placeholder:text-[var(--text-soft)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
-                />
+                profile.company_id ? (
+                  <div>
+                    <p className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)]">
+                      {profile.company_display_name || '—'}
+                    </p>
+                    <p className="mt-1 text-xs text-[var(--text-muted)]">
+                      This company came from your onboarding selection.
+                    </p>
+                  </div>
+                ) : (
+                  <input
+                    type="text"
+                    value={editProfile.company_name_manual}
+                    onChange={(e) => setEditProfile({ ...editProfile, company_name_manual: e.target.value })}
+                    placeholder="Company name"
+                    className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 py-2 text-sm text-[var(--text)] placeholder:text-[var(--text-soft)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                  />
+                )
               ) : (
                 <p className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)]">
-                  {profile.company_name_manual || '—'}
+                  {profile.company_display_name || '—'}
                 </p>
               )}
             </div>
           </div>
         </section>
 
-        {/* Intelligence Model */}
         <section className="mb-6 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5">
           <h3 className="mb-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--text-soft)]">
             <Brain size={14} />
             Intelligence Model
           </h3>
           <p className="mb-3 text-xs text-[var(--text-muted)]">
-            Choose which AI model powers your Intelligence research.
+            Intelligence now runs through OpenRouter. Pick a model family, then the exact model you want for research, refine, and follow-up.
           </p>
-          <div className="grid gap-2 sm:grid-cols-2">
-            {MODEL_OPTIONS.map((opt) => (
-              <button
-                key={opt.value}
-                type="button"
-                onClick={() => handleModelChange(opt.value)}
-                className={`rounded-xl border p-3.5 text-left transition-all ${
-                  intelligenceModel === opt.value
-                    ? 'border-[var(--accent)] bg-[var(--accent)]/[0.06]'
-                    : 'border-[var(--border)] bg-[var(--surface)] hover:border-[var(--border-strong)]'
-                }`}
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="mb-1 block text-xs text-[var(--text-muted)]">Model Family</label>
+              <select
+                value={activeFamily?.id ?? selectedFamily}
+                onChange={(e) => {
+                  const nextFamily = e.target.value
+                  setSelectedFamily(nextFamily)
+                  const firstModel = families.find((family) => family.id === nextFamily)?.models[0]
+                  if (firstModel) handleModelChange(firstModel.id)
+                }}
+                disabled={modelCatalogLoading || families.length === 0}
+                className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 py-2 text-sm text-[var(--text)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)] disabled:opacity-60"
               >
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-[var(--text)]">{opt.label}</span>
-                  {intelligenceModel === opt.value && (
-                    <span className="rounded-full bg-[var(--accent)]/15 px-2 py-0.5 text-[10px] font-medium text-[var(--accent)]">
-                      Active
-                    </span>
-                  )}
-                </div>
-                <p className="mt-1 text-xs text-[var(--text-muted)]">{opt.description}</p>
-              </button>
-            ))}
+                {families.map((family) => (
+                  <option key={family.id} value={family.id}>
+                    {family.label} ({family.models.length})
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="mb-1 block text-xs text-[var(--text-muted)]">Exact Model</label>
+              <select
+                value={activeModel?.id ?? intelligenceModel}
+                onChange={(e) => handleModelChange(e.target.value)}
+                disabled={modelCatalogLoading || activeModels.length === 0}
+                className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 py-2 text-sm text-[var(--text)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)] disabled:opacity-60"
+              >
+                {activeModels.map((model) => (
+                  <option key={model.id} value={model.id}>
+                    {model.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
+          {modelCatalogError && (
+            <p className="mt-3 text-xs text-[var(--accent-coral)]">{modelCatalogError}</p>
+          )}
+          {modelCatalogLoading && (
+            <p className="mt-3 text-xs text-[var(--text-muted)]">Loading the curated model list…</p>
+          )}
+          {activeModel && (
+            <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-sm font-medium text-[var(--text)]">{activeModel.name}</p>
+                  <p className="text-xs text-[var(--text-muted)]">{activeModel.id}</p>
+                </div>
+                <span className="rounded-full bg-[var(--accent)]/15 px-2.5 py-1 text-[10px] font-medium text-[var(--accent)]">
+                  Active
+                </span>
+              </div>
+              <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-[var(--text-soft)]">Context</p>
+                  <p className="mt-1 text-sm text-[var(--text)]">{formatContextLength(activeModel.contextLength)}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-[var(--text-soft)]">Input</p>
+                  <p className="mt-1 text-sm text-[var(--text)]">{formatPricePerMillion(activeModel.promptPrice)}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-[var(--text-soft)]">Output</p>
+                  <p className="mt-1 text-sm text-[var(--text)]">{formatPricePerMillion(activeModel.completionPrice)}</p>
+                </div>
+              </div>
+              {activeModel.description && (
+                <p className="mt-3 text-xs leading-5 text-[var(--text-muted)]">{activeModel.description}</p>
+              )}
+            </div>
+          )}
         </section>
 
-        {/* Appearance + Danger zone side by side on desktop */}
         <div className="grid gap-6 sm:grid-cols-2">
-          {/* Appearance */}
           <section className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5">
             <h3 className="mb-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-soft)]">Appearance</h3>
             <div className="flex items-center justify-between">
@@ -331,17 +501,15 @@ export default function ProfilePage() {
               </div>
               <button
                 onClick={toggleTheme}
-                className="rounded-lg border border-[var(--border)] p-2.5 text-[var(--text-muted)] transition-colors hover:border-[var(--border-strong)] hover:text-[var(--text)]"
-                aria-label="Toggle theme"
+                className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--border)] text-[var(--text-muted)] transition-colors hover:border-[var(--border-strong)] hover:text-[var(--text)]"
               >
                 {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
               </button>
             </div>
           </section>
 
-          {/* Danger zone */}
-          <section className="rounded-xl border border-red-500/20 bg-[var(--bg-elevated)] p-5">
-            <h3 className="mb-4 text-xs font-semibold uppercase tracking-wider text-red-400">Danger Zone</h3>
+          <section className="rounded-xl border border-[var(--accent-coral)]/25 bg-[var(--bg-elevated)] p-5">
+            <h3 className="mb-4 text-xs font-semibold uppercase tracking-wider text-[var(--accent-coral)]">Danger Zone</h3>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-[var(--text)]">Sign out</p>
@@ -349,7 +517,7 @@ export default function ProfilePage() {
               </div>
               <button
                 onClick={() => void handleSignOut()}
-                className="inline-flex items-center gap-2 rounded-lg border border-red-500/30 px-4 py-2 text-sm font-medium text-red-400 transition-colors hover:bg-red-500/10"
+                className="inline-flex items-center gap-2 rounded-lg border border-[var(--accent-coral)]/30 px-4 py-2 text-sm font-medium text-[var(--accent-coral)] transition-colors hover:border-[var(--accent-coral)]/50 hover:bg-[var(--accent-coral)]/8"
               >
                 <LogOut size={14} />
                 Sign Out

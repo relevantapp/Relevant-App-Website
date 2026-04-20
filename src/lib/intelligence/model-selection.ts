@@ -1,20 +1,32 @@
 export type ModelPreference = string
 
-export const DEFAULT_MODEL_PREFERENCE: ModelPreference = 'google/gemini-3.1-flash-lite-preview'
+export const DEFAULT_MODEL_PREFERENCE: ModelPreference = 'google/gemini-2.5-flash'
 export const MODEL_STORAGE_KEY = 'relevant-intelligence-model'
 
-export const MODEL_OPTIONS: Array<{ value: ModelPreference; label: string; description: string }> = [
-  { value: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash', description: 'Fast, high quality (recommended)' },
-  { value: 'claude-haiku-4.5', label: 'Claude Haiku 4.5', description: 'Anthropic, strong reasoning' },
-  { value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash', description: 'Google, fast and capable' },
-  { value: 'auto', label: 'Auto (best available)', description: 'Tries each model in order' },
-]
+export const CURATED_MODEL_IDS = [
+  'google/gemini-2.5-flash',
+  'google/gemini-3.1-flash-lite-preview',
+  'google/gemini-2.5-pro',
+  'openai/gpt-5.4-mini',
+  'openai/gpt-5.4',
+  'openai/gpt-5.1',
+  'anthropic/claude-haiku-4.5',
+  'anthropic/claude-sonnet-4.6',
+  'z-ai/glm-4.7-flash',
+  'z-ai/glm-5.1',
+  'meta-llama/llama-4-scout',
+  'meta-llama/llama-4-maverick',
+  'qwen/qwen3.5-flash-02-23',
+  'qwen/qwen3.6-plus',
+  'qwen/qwen3-235b-a22b',
+] as const satisfies readonly ModelPreference[]
+
+const CURATED_MODEL_ID_SET = new Set<ModelPreference>(CURATED_MODEL_IDS)
 
 const LEGACY_MODEL_ALIASES: Record<string, ModelPreference> = {
   auto: DEFAULT_MODEL_PREFERENCE,
-  'gemini-2.5-flash-lite': 'google/gemini-2.5-flash-lite',
   'gemini-2.5-flash': 'google/gemini-2.5-flash',
-  'gemini-2.0-flash': 'google/gemini-2.0-flash-001',
+  'gemini-2.0-flash': DEFAULT_MODEL_PREFERENCE,
   'claude-haiku-4.5': 'anthropic/claude-haiku-4.5',
 }
 
@@ -22,12 +34,12 @@ const FAMILY_LABELS: Record<string, string> = {
   google: 'Google / Gemini',
   openai: 'OpenAI / GPT',
   anthropic: 'Anthropic / Claude',
-  'x-ai': 'xAI / Grok',
   'z-ai': 'Z.ai / GLM',
   'meta-llama': 'Meta / Llama',
+  qwen: 'Qwen',
 }
 
-const PINNED_FAMILY_ORDER = ['google', 'openai', 'anthropic', 'x-ai', 'z-ai', 'meta-llama']
+const PINNED_FAMILY_ORDER = ['google', 'openai', 'anthropic', 'z-ai', 'meta-llama', 'qwen']
 
 export interface ModelCatalogItem {
   id: string
@@ -66,12 +78,18 @@ export function isLikelyOpenRouterModelId(value: string): boolean {
   return /^[a-z0-9][a-z0-9-]*\/[a-z0-9][a-z0-9\-.:]*$/i.test(value)
 }
 
+export function isCuratedModelId(value: string | null | undefined): value is ModelPreference {
+  return Boolean(value && CURATED_MODEL_ID_SET.has(value))
+}
+
 export function normalizeModelPreference(raw: string | null | undefined): ModelPreference {
   if (!raw) return DEFAULT_MODEL_PREFERENCE
 
   const trimmed = raw.trim()
   const mapped = LEGACY_MODEL_ALIASES[trimmed] ?? trimmed
-  return isLikelyOpenRouterModelId(mapped) ? mapped : DEFAULT_MODEL_PREFERENCE
+
+  if (!isLikelyOpenRouterModelId(mapped)) return DEFAULT_MODEL_PREFERENCE
+  return isCuratedModelId(mapped) ? mapped : DEFAULT_MODEL_PREFERENCE
 }
 
 export function getModelFamilyId(modelId: string): string {
