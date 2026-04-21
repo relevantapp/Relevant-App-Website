@@ -2,7 +2,7 @@
 
 const TYPE_LABELS: Record<string, string> = {
   meeting_prep: 'Meeting Prep',
-  competitive_analysis: 'Competitive Intel',
+  competitive_analysis: 'Competitive Analysis',
   business_case: 'Business Case',
   market_research: 'Market Research',
 }

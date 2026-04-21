@@ -5,18 +5,17 @@ import type {
   CompetitiveAnalysisBrief,
   BriefSource,
   NormalizedEvidence,
+  SearchTask,
 } from '../contracts'
 import { CompetitiveSynthesisSchema } from '../contracts'
 import { runStep, generateBriefId, type PipelineContext } from '../pipeline'
 import { synthesizeWithSchema } from '../models'
 import { rankEvidence, extractQueryTerms } from '../ranker'
 import { COMPETITIVE_SYSTEM_PROMPT, COMPETITIVE_SCHEMA_DESC, buildCompetitivePrompt } from '../prompts/competitive.v1'
-import { searchExaSnapshot, searchExaNews } from '../providers/exa'
-import { searchTavilyNews } from '../providers/tavily'
+import { searchExaSnapshot } from '../providers/exa'
+import { buildResearchSearchPlan, executeSearchPlan } from '../search-planner'
 import {
   normalizeExaSnapshot,
-  normalizeExaResults,
-  normalizeTavilyResults,
   deduplicateSources,
   resetSourceCounter,
 } from '../normalize'
@@ -63,56 +62,72 @@ export async function generateCompetitiveAnalysisBrief(
   const competitorSnapshots = entityStep.data?.snapshots ?? new Map<string, string>()
   const yourSnapshot = entityStep.data?.yourSnapshot ?? null
 
-  /* ── Step 2: gatherEvidence ──────────────────────────────── */
+  /* ── Step 2: planSearches ───────────────────────────────── */
+  const fallbackSearches: SearchTask[] = [
+    ...limitedCompetitors.map((competitor) => ({
+      provider: 'exa' as const,
+      type: 'news' as const,
+      query: `${competitor} ${input.focusArea} recent product pricing customer moves`,
+      purpose: `Find recent evidence for ${competitor} in ${input.focusArea}.`,
+      lookbackDays: 90,
+      category: 'news' as const,
+    })),
+    {
+      provider: 'tavily',
+      type: 'tavily_news',
+      query: `${limitedCompetitors.join(' vs ')} ${input.focusArea} comparison customer segment`,
+      purpose: 'Find cross-source competitive comparisons and market perception.',
+      topic: 'general',
+      timeRange: 'month',
+      includeImages: true,
+    },
+    {
+      provider: 'tavily',
+      type: 'tavily_news',
+      query: `${limitedCompetitors.join(' ')} risks weaknesses pricing complaints`,
+      purpose: 'Find counter-evidence, objections, and weaknesses.',
+      topic: 'general',
+      timeRange: 'month',
+      includeImages: false,
+    },
+  ]
+
+  if (input.yourCompany) {
+    fallbackSearches.push({
+      provider: 'exa',
+      type: 'news',
+      query: `${input.yourCompany} ${limitedCompetitors.join(' ')} competitive positioning ${input.focusArea}`,
+      purpose: 'Compare the user company against named competitors.',
+      lookbackDays: 120,
+    })
+  }
+
+  if (input.marketSegment || input.customerType || input.geography) {
+    fallbackSearches.push({
+      provider: 'tavily',
+      type: 'tavily_news',
+      query: `${limitedCompetitors.join(' ')} ${input.marketSegment ?? ''} ${input.customerType ?? ''} ${input.geography ?? ''} buying criteria`,
+      purpose: 'Ground the analysis in the requested segment, buyer, and geography.',
+      topic: 'general',
+      timeRange: 'month',
+      includeImages: true,
+    })
+  }
+
+  const planStep = await runStep('competitive_analysis', 'planSearches', async () => (
+    buildResearchSearchPlan('competitive_analysis', input, fallbackSearches, ctx)
+  ), undefined, ctx)
+
+  const researchPlan = planStep.data
+
+  /* ── Step 3: gatherEvidence ──────────────────────────────── */
   const evidenceStep = await runStep('competitive_analysis', 'gatherEvidence', async () => {
     const allSources: BriefSource[] = []
     const allEvidence: NormalizedEvidence[] = []
 
-    const searchJobs: Array<Promise<unknown>> = [
-      ...limitedCompetitors.map((c) => searchExaNews(c, 30)),
-      searchTavilyNews(limitedCompetitors.join(' vs ')),
-    ]
-
-    if (input.focusArea !== 'overall') {
-      for (const c of limitedCompetitors) {
-        searchJobs.push(searchTavilyNews(`${c} ${input.focusArea}`))
-      }
-    }
-
-    const results = await Promise.allSettled(searchJobs)
-    let idx = 0
-
-    // Exa news per competitor
-    for (let i = 0; i < limitedCompetitors.length; i++) {
-      const r = results[idx++]
-      if (r.status === 'fulfilled' && r.value) {
-        const { sources, evidence } = normalizeExaResults(r.value as Awaited<ReturnType<typeof searchExaNews>>)
-        allSources.push(...sources)
-        allEvidence.push(...evidence)
-      }
-    }
-
-    // Cross-comparison (Tavily)
-    const crossResult = results[idx++]
-    if (crossResult.status === 'fulfilled' && crossResult.value) {
-      const tavily = crossResult.value as Awaited<ReturnType<typeof searchTavilyNews>>
-      const { sources, evidence } = normalizeTavilyResults(tavily.results)
-      allSources.push(...sources)
-      allEvidence.push(...evidence)
-    }
-
-    // Focus-area searches
-    if (input.focusArea !== 'overall') {
-      for (let i = 0; i < limitedCompetitors.length; i++) {
-        const r = results[idx++]
-        if (r.status === 'fulfilled' && r.value) {
-          const tavily = r.value as Awaited<ReturnType<typeof searchTavilyNews>>
-          const { sources, evidence } = normalizeTavilyResults(tavily.results)
-          allSources.push(...sources)
-          allEvidence.push(...evidence)
-        }
-      }
-    }
+    const planned = researchPlan ? await executeSearchPlan(researchPlan) : { sources: [], evidence: [] }
+    allSources.push(...planned.sources)
+    allEvidence.push(...planned.evidence)
 
     // Also add snapshot sources
     for (const [name] of Array.from(competitorSnapshots)) {
@@ -152,6 +167,12 @@ export async function generateCompetitiveAnalysisBrief(
       yourCompany: input.yourCompany,
       focusArea: input.focusArea,
       specificQuestions: input.specificQuestions,
+      marketSegment: input.marketSegment,
+      geography: input.geography,
+      customerType: input.customerType,
+      useCasePreset: input.useCasePreset,
+      steering: input.steering,
+      userContext: input.userContext,
       evidence: rankedEvidence,
       competitorSnapshots,
       yourSnapshot,
@@ -168,6 +189,7 @@ export async function generateCompetitiveAnalysisBrief(
 
   /* ── Step 5: assembleBrief ───────────────────────────────── */
   const dedupedSources = deduplicateSources(allSources)
+  if (dedupedSources.length < 4) degradedReasons.push('Low source count')
   const totalMs = Math.round(performance.now() - totalStart)
 
   return {
@@ -187,11 +209,13 @@ export async function generateCompetitiveAnalysisBrief(
       recommendations: synthesis?.data?.recommendations ?? [],
     },
     sources: dedupedSources,
+    researchPlan,
+    contextUsed: input.userContext ?? null,
     status: {
       degraded: degradedReasons.length > 0,
       reasons: degradedReasons,
       exaSearchMs: entityStep.timings.durationMs,
-      tavilySearchMs: evidenceStep.timings.durationMs,
+      tavilySearchMs: planStep.timings.durationMs + evidenceStep.timings.durationMs,
       synthesisMs: synthesisStep.timings.durationMs,
       totalMs,
       sourceCount: dedupedSources.length,

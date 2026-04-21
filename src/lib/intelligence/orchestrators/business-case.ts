@@ -5,18 +5,17 @@ import type {
   BusinessCaseBrief,
   BriefSource,
   NormalizedEvidence,
+  SearchTask,
 } from '../contracts'
 import { BusinessCaseSynthesisSchema } from '../contracts'
 import { runStep, generateBriefId, type PipelineContext } from '../pipeline'
 import { synthesizeWithSchema } from '../models'
 import { rankEvidence, extractQueryTerms } from '../ranker'
 import { BUSINESS_CASE_SYSTEM_PROMPT, BUSINESS_CASE_SCHEMA_DESC, buildBusinessCasePrompt } from '../prompts/business-case.v1'
-import { searchExaSnapshot, searchExaNews } from '../providers/exa'
-import { searchTavilyNews } from '../providers/tavily'
+import { searchExaSnapshot } from '../providers/exa'
+import { buildResearchSearchPlan, executeSearchPlan } from '../search-planner'
 import {
   normalizeExaSnapshot,
-  normalizeExaResults,
-  normalizeTavilyResults,
   deduplicateSources,
   resetSourceCounter,
 } from '../normalize'
@@ -51,68 +50,72 @@ export async function generateBusinessCaseBrief(
 
   const comparableSnapshots = entityStep.data?.comparableSnapshots ?? new Map<string, string>()
 
-  /* ── Step 2: gatherEvidence ──────────────────────────────── */
+  /* ── Step 2: planSearches ───────────────────────────────── */
+  const fallbackSearches: SearchTask[] = [
+    {
+      provider: 'exa',
+      type: 'news',
+      query: `${input.initiativeName} ${input.hypothesis} recent evidence customer demand`,
+      purpose: 'Find recent proof for or against the business case hypothesis.',
+      lookbackDays: 90,
+      category: 'news',
+    },
+    {
+      provider: 'tavily',
+      type: 'tavily_news',
+      query: `${input.initiativeName} ${input.targetMarket ?? ''} market size growth adoption`,
+      purpose: 'Find market sizing, adoption, and demand evidence.',
+      topic: 'general',
+      timeRange: 'year',
+      includeImages: true,
+    },
+    {
+      provider: 'tavily',
+      type: 'tavily_news',
+      query: `${input.initiativeName} risks failures unit economics objections`,
+      purpose: 'Find disconfirming evidence and reasons the initiative could fail.',
+      topic: 'general',
+      timeRange: 'year',
+      includeImages: false,
+    },
+  ]
+
+  for (const comparable of input.comparableCompanies ?? []) {
+    fallbackSearches.push({
+      provider: 'exa',
+      type: 'news',
+      query: `${comparable} ${input.initiativeName} comparable outcome revenue adoption`,
+      purpose: 'Find comparable company outcomes and lessons.',
+      lookbackDays: 365,
+    })
+  }
+
+  if (input.keyQuestions) {
+    fallbackSearches.push({
+      provider: 'tavily',
+      type: 'tavily_news',
+      query: `${input.keyQuestions} ${input.targetMarket ?? input.initiativeName}`,
+      purpose: 'Answer the specific decision questions from the user.',
+      topic: 'general',
+      timeRange: 'year',
+      includeImages: true,
+    })
+  }
+
+  const planStep = await runStep('business_case', 'planSearches', async () => (
+    buildResearchSearchPlan('business_case', input, fallbackSearches, ctx)
+  ), undefined, ctx)
+
+  const researchPlan = planStep.data
+
+  /* ── Step 3: gatherEvidence ──────────────────────────────── */
   const evidenceStep = await runStep('business_case', 'gatherEvidence', async () => {
     const allSources: BriefSource[] = []
     const allEvidence: NormalizedEvidence[] = []
 
-    const searchJobs: Array<Promise<unknown>> = [
-      searchExaNews(input.initiativeName, 30),
-      searchTavilyNews(`${input.initiativeName} ${input.hypothesis}`),
-    ]
-
-    if (input.targetMarket) {
-      searchJobs.push(searchTavilyNews(`${input.targetMarket} market size growth`))
-    }
-
-    if (input.comparableCompanies?.length) {
-      for (const c of input.comparableCompanies.slice(0, 3)) {
-        searchJobs.push(searchExaNews(c, 30))
-      }
-    }
-
-    const results = await Promise.allSettled(searchJobs)
-    let idx = 0
-
-    // Initiative news
-    const initResult = results[idx++]
-    if (initResult.status === 'fulfilled' && initResult.value) {
-      const { sources, evidence } = normalizeExaResults(initResult.value as Awaited<ReturnType<typeof searchExaNews>>)
-      allSources.push(...sources)
-      allEvidence.push(...evidence)
-    }
-
-    // Hypothesis search
-    const hypResult = results[idx++]
-    if (hypResult.status === 'fulfilled' && hypResult.value) {
-      const tavily = hypResult.value as Awaited<ReturnType<typeof searchTavilyNews>>
-      const { sources, evidence } = normalizeTavilyResults(tavily.results)
-      allSources.push(...sources)
-      allEvidence.push(...evidence)
-    }
-
-    // Market search
-    if (input.targetMarket) {
-      const mktResult = results[idx++]
-      if (mktResult.status === 'fulfilled' && mktResult.value) {
-        const tavily = mktResult.value as Awaited<ReturnType<typeof searchTavilyNews>>
-        const { sources, evidence } = normalizeTavilyResults(tavily.results)
-        allSources.push(...sources)
-        allEvidence.push(...evidence)
-      }
-    }
-
-    // Comparable company news
-    if (input.comparableCompanies?.length) {
-      for (let i = 0; i < Math.min(3, input.comparableCompanies.length); i++) {
-        const r = results[idx++]
-        if (r.status === 'fulfilled' && r.value) {
-          const { sources, evidence } = normalizeExaResults(r.value as Awaited<ReturnType<typeof searchExaNews>>)
-          allSources.push(...sources)
-          allEvidence.push(...evidence)
-        }
-      }
-    }
+    const planned = researchPlan ? await executeSearchPlan(researchPlan) : { sources: [], evidence: [] }
+    allSources.push(...planned.sources)
+    allEvidence.push(...planned.evidence)
 
     // Add comparable snapshots as evidence
     for (const [name, desc] of Array.from(comparableSnapshots)) {
@@ -149,6 +152,13 @@ export async function generateBusinessCaseBrief(
       successMetrics: input.successMetrics,
       keyQuestions: input.keyQuestions,
       comparableCompanies: input.comparableCompanies,
+      decisionType: input.decisionType,
+      decisionAudience: input.decisionAudience,
+      timeHorizon: input.timeHorizon,
+      investmentLevel: input.investmentLevel,
+      roiFrame: input.roiFrame,
+      steering: input.steering,
+      userContext: input.userContext,
       evidence: rankedEvidence,
       comparableSnapshots,
     })
@@ -164,6 +174,7 @@ export async function generateBusinessCaseBrief(
 
   /* ── Step 5: assembleBrief ───────────────────────────────── */
   const dedupedSources = deduplicateSources(allSources)
+  if (dedupedSources.length < 4) degradedReasons.push('Low source count')
   const totalMs = Math.round(performance.now() - totalStart)
 
   return {
@@ -184,11 +195,13 @@ export async function generateBusinessCaseBrief(
       openQuestions: synthesis?.data?.openQuestions ?? [],
     },
     sources: dedupedSources,
+    researchPlan,
+    contextUsed: input.userContext ?? null,
     status: {
       degraded: degradedReasons.length > 0,
       reasons: degradedReasons,
       exaSearchMs: entityStep.timings.durationMs,
-      tavilySearchMs: evidenceStep.timings.durationMs,
+      tavilySearchMs: planStep.timings.durationMs + evidenceStep.timings.durationMs,
       synthesisMs: synthesisStep.timings.durationMs,
       totalMs,
       sourceCount: dedupedSources.length,

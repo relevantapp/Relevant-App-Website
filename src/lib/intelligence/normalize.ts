@@ -38,6 +38,8 @@ export function normalizeExaSnapshot(
       publishedAt: null,
       provider: 'exa',
       snippet: result.description.slice(0, 300),
+      imageUrl: result.imageUrl ?? null,
+      faviconUrl: result.faviconUrl ?? null,
     },
     evidence: {
       id,
@@ -47,6 +49,7 @@ export function normalizeExaSnapshot(
       domain: domainFrom(result.sourceUrl),
       publishedAt: null,
       provider: 'exa',
+      imageUrl: result.imageUrl ?? null,
     },
   }
 }
@@ -71,6 +74,8 @@ export function normalizeExaResults(
       publishedAt: r.publishedDate,
       provider: 'exa',
       snippet: text.slice(0, 300),
+      imageUrl: r.imageUrl ?? null,
+      faviconUrl: r.faviconUrl ?? null,
     })
 
     evidence.push({
@@ -81,6 +86,7 @@ export function normalizeExaResults(
       domain: domainFrom(r.url),
       publishedAt: r.publishedDate,
       provider: 'exa',
+      imageUrl: r.imageUrl ?? null,
     })
   }
 
@@ -106,6 +112,8 @@ export function normalizeTavilyResults(
       publishedAt: r.publishedDate,
       provider: 'tavily',
       snippet: r.content.slice(0, 300),
+      imageUrl: r.images?.[0]?.url ?? null,
+      faviconUrl: r.faviconUrl ?? null,
     })
 
     evidence.push({
@@ -116,6 +124,7 @@ export function normalizeTavilyResults(
       domain: domainFrom(r.url),
       publishedAt: r.publishedDate,
       provider: 'tavily',
+      imageUrl: r.images?.[0]?.url ?? null,
     })
   }
 

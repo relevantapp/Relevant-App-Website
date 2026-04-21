@@ -19,7 +19,7 @@ export default function ChipSelector<T extends string>({
   disabled,
 }: ChipSelectorProps<T>) {
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+    <div className="intel-chip-group">
       {options.map((opt) => {
         const selected = opt.value === value
         return (
@@ -28,17 +28,8 @@ export default function ChipSelector<T extends string>({
             type="button"
             onClick={() => onChange(opt.value)}
             disabled={disabled}
-            style={{
-              padding: '6px 14px',
-              borderRadius: 999,
-              fontSize: 13,
-              fontWeight: 500,
-              cursor: disabled ? 'default' : 'pointer',
-              border: `1px solid ${selected ? 'var(--accent)' : 'var(--border)'}`,
-              background: selected ? 'rgba(47, 107, 255, 0.12)' : 'var(--surface)',
-              color: selected ? 'var(--accent)' : 'var(--text)',
-              transition: 'all var(--motion-micro) var(--ease-out)',
-            }}
+            className="intel-chip"
+            data-selected={selected ? 'true' : 'false'}
           >
             {opt.label}
           </button>

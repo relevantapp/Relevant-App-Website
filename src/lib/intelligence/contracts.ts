@@ -22,6 +22,8 @@ export const BriefSourceSchema = z.object({
   publishedAt: z.string().nullable(),
   provider: z.enum(['exa', 'tavily', 'internal']),
   snippet: z.string().nullable(),
+  imageUrl: z.string().nullable().optional(),
+  faviconUrl: z.string().nullable().optional(),
 })
 export type BriefSource = z.infer<typeof BriefSourceSchema>
 
@@ -46,10 +48,20 @@ export const NormalizedEvidenceSchema = z.object({
   domain: z.string(),
   publishedAt: z.string().nullable(),
   provider: z.enum(['exa', 'tavily']),
+  imageUrl: z.string().nullable().optional(),
 })
 export type NormalizedEvidence = z.infer<typeof NormalizedEvidenceSchema>
 
 export type ResearchType = 'meeting_prep' | 'competitive_analysis' | 'business_case' | 'market_research'
+
+export interface UserResearchContext {
+  profileKind: string | null
+  industry: string | null
+  role: string | null
+  company: string | null
+  country: string | null
+  contextNote: string | null
+}
 
 /* ── Shared brief base ─────────────────────────────────────── */
 
@@ -63,6 +75,8 @@ export interface BriefBase {
   confidence: Confidence
   sources: BriefSource[]
   status: BriefStatus
+  researchPlan?: ResearchPlan | null
+  contextUsed?: UserResearchContext | null
 }
 
 /* ── Company snapshot ──────────────────────────────────────── */
@@ -91,13 +105,91 @@ export interface AttendeeProfile {
   sourceUrl: string | null
 }
 
+export const MEETING_PREP_TIMELINE_EVENT_TYPES = [
+  'funding',
+  'leadership',
+  'product',
+  'customer',
+  'partnership',
+  'competition',
+  'risk',
+  'market',
+] as const
+export const MeetingPrepTimelineEventTypeSchema = z.enum(MEETING_PREP_TIMELINE_EVENT_TYPES)
+export type MeetingPrepTimelineEventType = z.infer<typeof MeetingPrepTimelineEventTypeSchema>
+
+export const MEETING_PREP_TIMELINE_IMPACTS = ['positive', 'neutral', 'negative', 'mixed'] as const
+export const MeetingPrepTimelineEventImpactSchema = z.enum(MEETING_PREP_TIMELINE_IMPACTS)
+export type MeetingPrepTimelineEventImpact = z.infer<typeof MeetingPrepTimelineEventImpactSchema>
+
+export const TimelineEventSchema = z.object({
+  date: z.string().min(1),
+  type: MeetingPrepTimelineEventTypeSchema,
+  impact: MeetingPrepTimelineEventImpactSchema,
+  text: z.string().min(1),
+  sourceIds: z.array(z.string()).min(1),
+})
+export interface TimelineEvent {
+  date: string
+  type: MeetingPrepTimelineEventType
+  impact: MeetingPrepTimelineEventImpact
+  text: string
+  sourceIds: string[]
+}
+
+export const MEETING_PREP_RADAR_CATEGORIES = ['budget', 'tech', 'competitor', 'champion', 'setup'] as const
+export const MeetingPrepRadarCategorySchema = z.enum(MEETING_PREP_RADAR_CATEGORIES)
+export type MeetingPrepRadarCategory = z.infer<typeof MeetingPrepRadarCategorySchema>
+
+export const RadarMetricSchema = z.object({
+  category: MeetingPrepRadarCategorySchema,
+  severity: z.number().int().min(0).max(5),
+  details: z.string().min(1),
+  sourceIds: z.array(z.string()).min(1),
+})
+export interface RadarMetric {
+  category: MeetingPrepRadarCategory
+  severity: number
+  details: string
+  sourceIds: string[]
+}
+
+export const CompetitorMatrixRowSchema = z.object({
+  name: z.string().min(1),
+  threatLevel: z.number().int().min(0).max(4),
+  marketOverlap: z.number().int().min(0).max(4),
+  advantage: z.string().min(1),
+  tags: z.array(z.string()),
+  sourceIds: z.array(z.string()).min(1),
+})
+export interface CompetitorMatrixRow {
+  name: string
+  threatLevel: number
+  marketOverlap: number
+  advantage: string
+  tags: string[]
+  sourceIds: string[]
+}
+
 /* ── Meeting Prep synthesis schema ─────────────────────────── */
+
+export const MeetingPrepRiskLevelSchema = z.enum(['low', 'medium', 'high'])
+export type MeetingPrepRiskLevel = z.infer<typeof MeetingPrepRiskLevelSchema>
+
+export const MeetingPrepSentimentSchema = z.enum(['positive', 'neutral', 'negative'])
+export type MeetingPrepSentiment = z.infer<typeof MeetingPrepSentimentSchema>
 
 export const MeetingPrepSynthesisSchema = z.object({
   headline: z.string(),
   bottomLine: z.string(),
   whyItMatters: z.string().optional(),
   confidence: ConfidenceSchema,
+  momentumScore: z.number().min(0).max(100).optional(),
+  riskLevel: MeetingPrepRiskLevelSchema.optional(),
+  sentiment: MeetingPrepSentimentSchema.optional(),
+  timelineEvents: z.array(TimelineEventSchema).max(6).optional(),
+  radarMetrics: z.array(RadarMetricSchema).max(5).optional(),
+  competitorMatrix: z.array(CompetitorMatrixRowSchema).max(5).optional(),
   whatJustHappened: z.array(BriefBulletSchema),
   talkingPoints: z.array(BriefBulletSchema),
   landmines: z.array(BriefBulletSchema),
@@ -110,6 +202,12 @@ export interface MeetingPrepBrief extends BriefBase {
   researchType: 'meeting_prep'
   snapshot: CompanySnapshot | null
   attendeeProfiles: AttendeeProfile[]
+  momentumScore?: number
+  riskLevel?: MeetingPrepRiskLevel
+  sentiment?: MeetingPrepSentiment
+  timelineEvents?: TimelineEvent[]
+  radarMetrics?: RadarMetric[]
+  competitorMatrix?: CompetitorMatrixRow[]
   sections: {
     whatJustHappened: BriefBullet[]
     talkingPoints: BriefBullet[]
@@ -253,10 +351,20 @@ export interface SearchTask {
   type: 'snapshot' | 'news' | 'person' | 'competitor' | 'tavily_news' | 'tavily_extract'
   query: string
   provider: 'exa' | 'tavily'
+  purpose?: string
+  lookbackDays?: number
+  category?: 'company' | 'research paper' | 'news' | 'pdf' | 'personal site' | 'financial report' | 'people'
+  topic?: 'general' | 'news' | 'finance'
+  timeRange?: 'day' | 'week' | 'month' | 'year'
+  includeImages?: boolean
+  includeDomains?: string[]
+  excludeDomains?: string[]
   meta?: Record<string, string>
 }
 
 export interface ResearchPlan {
+  summary?: string
+  intent?: string[]
   searches: SearchTask[]
 }
 
@@ -274,6 +382,12 @@ export interface MeetingPrepRequest {
   notes?: string
   competitors?: string[]
   lookbackDays?: number
+  relationshipStage?: string
+  whatYoureSelling?: string
+  desiredNextStep?: string
+  painPoints?: string[]
+  steering?: string
+  userContext?: UserResearchContext | null
 }
 
 export interface CompetitiveAnalysisRequest {
@@ -281,6 +395,12 @@ export interface CompetitiveAnalysisRequest {
   yourCompany?: string
   focusArea: string
   specificQuestions?: string
+  marketSegment?: string
+  geography?: string
+  customerType?: string
+  useCasePreset?: string
+  steering?: string
+  userContext?: UserResearchContext | null
 }
 
 export interface BusinessCaseRequest {
@@ -290,6 +410,13 @@ export interface BusinessCaseRequest {
   successMetrics?: string[]
   keyQuestions?: string
   comparableCompanies?: string[]
+  decisionType?: string
+  decisionAudience?: string
+  timeHorizon?: string
+  investmentLevel?: string
+  roiFrame?: string[]
+  steering?: string
+  userContext?: UserResearchContext | null
 }
 
 export interface MarketResearchRequest {
@@ -298,4 +425,11 @@ export interface MarketResearchRequest {
   keyQuestions?: string
   knownPlayers?: string[]
   timeHorizon: string
+  objective?: string
+  region?: string
+  customerSegment?: string
+  useCase?: string
+  depth?: string
+  steering?: string
+  userContext?: UserResearchContext | null
 }

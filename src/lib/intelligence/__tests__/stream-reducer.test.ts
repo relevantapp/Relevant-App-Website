@@ -1,7 +1,7 @@
 /* ── streamReducer Unit Tests ───────────────────────────────── */
 
 import { describe, it, expect } from 'vitest'
-import { streamReducer, INITIAL_STREAM_STATE } from '../sse-types'
+import { streamReducer, INITIAL_STREAM_STATE, MAX_DISCOVERY_HISTORY } from '../sse-types'
 import type { StreamState, StreamAction } from '../sse-types'
 
 function dispatch(actions: StreamAction[]): StreamState {
@@ -66,6 +66,31 @@ describe('streamReducer', () => {
     expect(state.discoveries).toHaveLength(2)
     expect(state.discoveries[0].kind).toBe('entity')
     expect(state.discoveries[1].text).toBe('reuters.com article')
+  })
+
+  it('caps discoveries to a rolling window', () => {
+    const actions: StreamAction[] = [{ type: 'START_STREAM' }]
+
+    for (let i = 0; i < MAX_DISCOVERY_HISTORY + 3; i++) {
+      actions.push({ type: 'discovery', kind: 'source', text: `discovery-${i}` })
+    }
+
+    const state = dispatch(actions)
+    expect(state.discoveries).toHaveLength(MAX_DISCOVERY_HISTORY)
+    expect(state.discoveries[0].text).toBe('discovery-3')
+    expect(state.discoveries.at(-1)?.text).toBe(`discovery-${MAX_DISCOVERY_HISTORY + 2}`)
+  })
+
+  it('upserts duplicate step_start events instead of duplicating the step', () => {
+    const state = dispatch([
+      { type: 'START_STREAM' },
+      { type: 'step_start', step: 'fetch', label: 'Fetching sources' },
+      { type: 'step_start', step: 'fetch', label: 'Fetching sources again' },
+    ])
+
+    expect(state.steps).toHaveLength(1)
+    expect(state.steps[0].label).toBe('Fetching sources again')
+    expect(state.steps[0].status).toBe('in-progress')
   })
 
   it('brief_ready stores brief and stops streaming', () => {

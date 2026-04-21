@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { Search, X, Plus, Loader2 } from 'lucide-react'
+import { X, Plus, Loader2 } from 'lucide-react'
 import type { MeetingType } from '@/lib/intelligence/contracts'
 import { MEETING_TYPE_OPTIONS, GOAL_PLACEHOLDERS, MEETING_TYPE_DETAILS } from './types'
 
@@ -77,18 +77,15 @@ export default function IntelligenceForm({ onSubmit, loading }: IntelligenceForm
         <p className="mt-1 text-xs text-[var(--text-soft)] opacity-70 leading-relaxed">
           We&apos;ll pull their company profile, recent news, and key people
         </p>
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-soft)]" />
-          <input
-            type="text"
-            value={accountName}
-            onChange={(e) => setAccountName(e.target.value)}
-            placeholder="Company or person name"
-            className="w-full rounded-lg border border-[var(--surface-strong)] bg-[var(--surface)] py-2.5 pl-10 pr-4 text-sm text-[var(--text)] placeholder:text-[var(--text-soft)] focus:border-[var(--accent)] focus:outline-none"
-            required
-            maxLength={200}
-          />
-        </div>
+        <input
+          type="text"
+          value={accountName}
+          onChange={(e) => setAccountName(e.target.value)}
+          placeholder="Company or person name"
+          className="w-full rounded-lg border border-[var(--surface-strong)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--text)] placeholder:text-[var(--text-soft)] focus:border-[var(--accent)] focus:outline-none"
+          required
+          maxLength={200}
+        />
       </div>
 
 
@@ -131,7 +128,7 @@ export default function IntelligenceForm({ onSubmit, loading }: IntelligenceForm
                   : 'bg-[var(--surface)] text-[var(--text-muted)] hover:bg-[var(--surface-strong)]'
               }`}
             >
-              {opt.icon} {opt.label}
+              {opt.icon ? `${opt.icon} ${opt.label}` : opt.label}
             </button>
           ))}
         </div>

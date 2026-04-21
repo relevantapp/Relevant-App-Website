@@ -2,13 +2,6 @@
 'use client'
 
 import { useCallback, useRef } from 'react'
-import {
-  AlertTriangle,
-  MessageSquare,
-  HelpCircle,
-  Swords,
-  Newspaper,
-} from 'lucide-react'
 import type { MeetingPrepBrief } from '@/lib/intelligence/contracts'
 import IntelligenceSources from './IntelligenceSources'
 import ResultsHero from './results/shared/ResultsHero'
@@ -16,7 +9,17 @@ import StatusBar from './results/shared/StatusBar'
 import CopyModePicker from './results/shared/CopyModePicker'
 import DegradedBanner from './results/shared/DegradedBanner'
 import ShareButton from './results/shared/ShareButton'
-import { BentoSection, SnapshotCard, PeopleCard } from './results/MeetingPrepPanels'
+import SearchPlanPanel from './results/shared/SearchPlanPanel'
+import {
+  CompetitorMatrix,
+  DeepDivePanels,
+  MomentumGauge,
+  PeopleCard,
+  RiskRadar,
+  SnapshotCard,
+  VisualTimeline,
+  getMeetingPrepGaugeSourceIds,
+} from './results/MeetingPrepPanels'
 
 interface IntelligenceResultsProps {
   brief: MeetingPrepBrief
@@ -36,6 +39,8 @@ export default function IntelligenceResults({ brief, onNewSearch, savedBriefId }
   }, [])
 
   const { sections } = brief
+  const gaugeSourceIds = getMeetingPrepGaugeSourceIds(brief)
+  const hasOverviewColumn = Boolean(brief.snapshot) || brief.attendeeProfiles.length > 0
 
   return (
     <div className="mx-auto w-full max-w-4xl">
@@ -55,66 +60,52 @@ export default function IntelligenceResults({ brief, onNewSearch, savedBriefId }
 
       {/* Exportable area */}
       <div ref={exportRef}>
-        <ResultsHero
-          headline={brief.headline}
-          bottomLine={brief.bottomLine}
-          confidence={brief.confidence}
-          researchType="meeting_prep"
-          whyItMatters={brief.whyItMatters}
-          generatedAt={brief.generatedAt}
-        />
-
-        {brief.status.degraded && <DegradedBanner reasons={brief.status.reasons} />}
-
-        {/* Sidebar + Grid layout */}
-        <div style={{ marginTop: 24, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-          {brief.snapshot && <SnapshotCard snapshot={brief.snapshot} />}
-          {brief.attendeeProfiles.length > 0 && <PeopleCard profiles={brief.attendeeProfiles} />}
-
-          <BentoSection
-            title="What just happened"
-            icon={<Newspaper className="h-4 w-4" />}
-            bullets={sections.whatJustHappened}
-            variant="news"
-            onSourceClick={scrollToSource}
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1.5fr)_340px] xl:items-start">
+          <ResultsHero
+            headline={brief.headline}
+            bottomLine={brief.bottomLine}
+            confidence={brief.confidence}
+            researchType="meeting_prep"
+            whyItMatters={brief.whyItMatters}
+            generatedAt={brief.generatedAt}
           />
-          <BentoSection
-            title="Talking points"
-            icon={<MessageSquare className="h-4 w-4" />}
-            bullets={sections.talkingPoints}
-            variant="talking"
-            onSourceClick={scrollToSource}
-          />
-          <BentoSection
-            title="Landmines"
-            icon={<AlertTriangle className="h-4 w-4" />}
-            bullets={sections.landmines}
-            variant="landmines"
-            onSourceClick={scrollToSource}
-          />
-          <BentoSection
-            title="Questions to ask"
-            icon={<HelpCircle className="h-4 w-4" />}
-            bullets={sections.questionsToAsk}
-            variant="questions"
+
+          <MomentumGauge
+            score={brief.momentumScore}
+            riskLevel={brief.riskLevel}
+            sentiment={brief.sentiment}
+            sourceIds={gaugeSourceIds}
             onSourceClick={scrollToSource}
           />
         </div>
 
-        {sections.competitorContext.length > 0 && (
-          <div style={{ marginTop: 16 }}>
-            <BentoSection
-              title="Competitor context"
-              icon={<Swords className="h-4 w-4" />}
-              bullets={sections.competitorContext}
-              variant="competitors"
-              onSourceClick={scrollToSource}
-            />
-          </div>
-        )}
+        {brief.status.degraded && <DegradedBanner reasons={brief.status.reasons} />}
+
+        <div className={`mt-6 grid gap-4 ${hasOverviewColumn ? 'xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]' : ''}`}>
+          {hasOverviewColumn && (
+            <div className="space-y-4">
+              {brief.snapshot && <SnapshotCard snapshot={brief.snapshot} />}
+              {brief.attendeeProfiles.length > 0 && <PeopleCard profiles={brief.attendeeProfiles} />}
+            </div>
+          )}
+
+          <VisualTimeline events={brief.timelineEvents} onSourceClick={scrollToSource} />
+        </div>
+
+        <div className="mt-4 grid gap-4 xl:grid-cols-2">
+          <RiskRadar metrics={brief.radarMetrics} onSourceClick={scrollToSource} />
+          <CompetitorMatrix rows={brief.competitorMatrix} onSourceClick={scrollToSource} />
+        </div>
+
+        <div className="mt-4">
+          <DeepDivePanels sections={sections} onSourceClick={scrollToSource} />
+        </div>
       </div>
 
       {/* Sources */}
+      <div style={{ marginTop: 32 }}>
+        <SearchPlanPanel plan={brief.researchPlan} />
+      </div>
       <div style={{ marginTop: 32 }}>
         <IntelligenceSources sources={brief.sources} />
       </div>

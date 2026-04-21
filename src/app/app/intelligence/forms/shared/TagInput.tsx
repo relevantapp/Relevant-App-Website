@@ -23,18 +23,24 @@ export default function TagInput({
   const [inputValue, setInputValue] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const addTag = useCallback((raw: string) => {
-    const tag = raw.trim()
-    if (!tag || value.length >= max) return
-    if (value.some((t) => t.toLowerCase() === tag.toLowerCase())) return
-    onChange([...value, tag])
-    setInputValue('')
-    onPendingChange?.('')
-  }, [value, max, onChange, onPendingChange])
+  const addTag = useCallback(
+    (raw: string) => {
+      const tag = raw.trim()
+      if (!tag || value.length >= max) return
+      if (value.some((t) => t.toLowerCase() === tag.toLowerCase())) return
+      onChange([...value, tag])
+      setInputValue('')
+      onPendingChange?.('')
+    },
+    [value, max, onChange, onPendingChange],
+  )
 
-  const removeTag = useCallback((index: number) => {
-    onChange(value.filter((_, i) => i !== index))
-  }, [value, onChange])
+  const removeTag = useCallback(
+    (index: number) => {
+      onChange(value.filter((_, i) => i !== index))
+    },
+    [value, onChange],
+  )
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' || e.key === ',') {
@@ -47,73 +53,56 @@ export default function TagInput({
   }
 
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center' }}>
-      {value.map((tag, i) => (
-        <span
-          key={`${tag}-${i}`}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 4,
-            background: 'var(--surface-strong)',
-            borderRadius: 999,
-            padding: '4px 10px',
-            fontSize: 13,
-            color: 'var(--text)',
-          }}
-        >
-          {tag}
-          <button
-            type="button"
-            onClick={() => removeTag(i)}
-            disabled={disabled}
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              padding: 0,
-              display: 'flex',
-              color: 'var(--text-muted)',
-            }}
-            aria-label={`Remove ${tag}`}
-          >
-            <X size={12} />
-          </button>
-        </span>
-      ))}
-      {value.length < max && (
-        <input
-          ref={inputRef}
-          type="text"
-          value={inputValue}
-          onChange={(e) => {
-            setInputValue(e.target.value)
-            onPendingChange?.(e.target.value)
-          }}
-          onKeyDown={handleKeyDown}
-          onBlur={() => {
-            if (inputValue.trim()) {
-              addTag(inputValue)
-              return
-            }
-            onPendingChange?.('')
-          }}
-          placeholder={value.length === 0 ? placeholder : undefined}
-          disabled={disabled}
-          style={{
-            flex: 1,
-            minWidth: 120,
-            background: 'transparent',
-            border: 'none',
-            outline: 'none',
-            fontSize: 14,
-            color: 'var(--text)',
-            padding: '4px 0',
-          }}
-        />
-      )}
-      {value.length >= max && (
-        <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Max {max}</span>
+    <div>
+      <input
+        ref={inputRef}
+        type="text"
+        value={inputValue}
+        onChange={(e) => {
+          setInputValue(e.target.value)
+          onPendingChange?.(e.target.value)
+        }}
+        onKeyDown={handleKeyDown}
+        onBlur={() => {
+          if (inputValue.trim()) {
+            addTag(inputValue)
+            return
+          }
+          onPendingChange?.('')
+        }}
+        placeholder={value.length >= max ? `Max ${max} reached` : placeholder ?? 'Type and press Enter'}
+        disabled={disabled || value.length >= max}
+        style={{
+          width: '100%',
+          background: 'var(--bg-elev)',
+          border: '1px solid var(--border)',
+          borderRadius: 8,
+          padding: '11px 14px',
+          color: 'var(--ink)',
+          fontSize: 14,
+          outline: 'none',
+          fontFamily: 'inherit',
+        }}
+      />
+      {value.length > 0 && (
+        <div className="intel-tag-list">
+          {value.map((tag, i) => (
+            <span
+              key={`${tag}-${i}`}
+              className="intel-tag"
+            >
+              {tag}
+              <button
+                type="button"
+                onClick={() => removeTag(i)}
+                disabled={disabled}
+                aria-label={`Remove ${tag}`}
+              >
+                <X size={11} />
+              </button>
+            </span>
+          ))}
+        </div>
       )}
     </div>
   )

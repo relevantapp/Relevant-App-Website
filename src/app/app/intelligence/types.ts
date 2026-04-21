@@ -19,16 +19,18 @@ export type {
   ComparableCompany,
   MarketPlayer,
   ResearchType,
+  ResearchPlan,
+  UserResearchContext,
 } from '@/lib/intelligence/contracts'
 
 export const MEETING_TYPE_OPTIONS: Array<{ value: MeetingType; label: string; icon: string }> = [
-  { value: 'sales', label: 'Sales Call', icon: '💰' },
-  { value: 'client', label: 'Client Meeting', icon: '🤝' },
-  { value: 'partner', label: 'Partnership', icon: '🔗' },
-  { value: 'investor', label: 'Investor Meeting', icon: '📈' },
-  { value: 'board', label: 'Board Meeting', icon: '🏛️' },
-  { value: 'hiring', label: 'Recruiting', icon: '👤' },
-  { value: 'general', label: 'General', icon: '📋' },
+  { value: 'sales', label: 'Sales Call', icon: '' },
+  { value: 'client', label: 'Client Meeting', icon: '' },
+  { value: 'partner', label: 'Partnership', icon: '' },
+  { value: 'investor', label: 'Investor Meeting', icon: '' },
+  { value: 'board', label: 'Board Meeting', icon: '' },
+  { value: 'hiring', label: 'Recruiting', icon: '' },
+  { value: 'general', label: 'General', icon: '' },
 ]
 
 export const GOAL_PLACEHOLDERS: Record<MeetingType, string> = {
@@ -101,6 +103,7 @@ export interface MeetingPrepInput {
   whatYoureSelling?: string
   desiredNextStep?: string
   painPoints?: string[]
+  steering?: string
 }
 
 export interface BusinessCaseInput {
@@ -116,6 +119,7 @@ export interface BusinessCaseInput {
   timeHorizon?: TimeHorizon
   investmentLevel?: InvestmentLevel
   roiFrame?: ROIFrame[]
+  steering?: string
 }
 
 export interface CompetitiveAnalysisInput {
@@ -128,6 +132,7 @@ export interface CompetitiveAnalysisInput {
   geography?: string
   customerType?: string
   useCasePreset?: CompetitiveUseCase
+  steering?: string
 }
 
 export interface MarketResearchInput {
@@ -142,6 +147,7 @@ export interface MarketResearchInput {
   customerSegment?: string
   useCase?: string
   depth?: MarketDepth
+  steering?: string
 }
 
 export type IntelligenceInput = MeetingPrepInput | BusinessCaseInput | CompetitiveAnalysisInput | MarketResearchInput

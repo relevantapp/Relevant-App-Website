@@ -64,6 +64,8 @@ export interface StreamState {
   isStreaming: boolean
 }
 
+export const MAX_DISCOVERY_HISTORY = 25
+
 export const INITIAL_STREAM_STATE: StreamState = {
   steps: [],
   discoveries: [],
@@ -79,6 +81,13 @@ export type StreamAction =
   | { type: 'RESET' }
   | SSEEvent
 
+function upsertStep(state: StreamState, nextStep: StreamStep): StreamStep[] {
+  const existingIndex = state.steps.findIndex((step) => step.id === nextStep.id)
+  if (existingIndex === -1) return [...state.steps, nextStep]
+
+  return state.steps.map((step, index) => (index === existingIndex ? nextStep : step))
+}
+
 export function streamReducer(state: StreamState, action: StreamAction): StreamState {
   switch (action.type) {
     case 'START_STREAM':
@@ -90,32 +99,35 @@ export function streamReducer(state: StreamState, action: StreamAction): StreamS
     case 'step_start':
       return {
         ...state,
-        steps: [
-          ...state.steps,
-          { id: action.step, label: action.label, status: 'in-progress' },
-        ],
+        steps: upsertStep(state, { id: action.step, label: action.label, status: 'in-progress' }),
       }
 
     case 'step_done':
       return {
         ...state,
-        steps: state.steps.map((s) =>
-          s.id === action.step ? { ...s, status: 'done' as const, summary: action.summary } : s
-        ),
+        steps: upsertStep(state, {
+          id: action.step,
+          label: state.steps.find((step) => step.id === action.step)?.label ?? action.step,
+          status: 'done',
+          summary: action.summary,
+        }),
       }
 
     case 'discovery':
       return {
         ...state,
-        discoveries: [...state.discoveries, { kind: action.kind, text: action.text }],
+        discoveries: [...state.discoveries, { kind: action.kind, text: action.text }].slice(-MAX_DISCOVERY_HISTORY),
       }
 
     case 'step_error':
       return {
         ...state,
-        steps: state.steps.map((s) =>
-          s.id === action.step ? { ...s, status: 'error' as const, errorReason: action.reason } : s
-        ),
+        steps: upsertStep(state, {
+          id: action.step,
+          label: state.steps.find((step) => step.id === action.step)?.label ?? action.step,
+          status: 'error',
+          errorReason: action.reason,
+        }),
       }
 
     case 'brief_ready':

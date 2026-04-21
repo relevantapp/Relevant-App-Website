@@ -91,7 +91,9 @@ function isSelectableModel(model: OpenRouterModelRecord): boolean {
   if (outputs && !outputs.includes('text')) return false
 
   const supported = model.supported_parameters ?? []
-  return supported.includes('response_format') || supported.includes('structured_outputs')
+  const supportsStructuredOutput = supported.includes('response_format') || supported.includes('structured_outputs')
+  const supportsReasoning = supported.includes('reasoning') || supported.includes('include_reasoning')
+  return supportsStructuredOutput && supportsReasoning
 }
 
 function toCatalogItem(model: OpenRouterModelRecord): ModelCatalogItem {
@@ -142,25 +144,19 @@ function buildCatalog(models: OpenRouterModelRecord[]): ModelCatalogResponse {
 
 function buildFallbackCatalog(): ModelCatalogResponse {
   const fallbackModels: OpenRouterModelRecord[] = [
-    { id: 'google/gemini-2.5-flash', name: 'Google: Gemini 2.5 Flash' },
-    { id: 'google/gemini-3.1-flash-lite-preview', name: 'Google: Gemini 3.1 Flash Lite Preview' },
-    { id: 'google/gemini-2.5-pro', name: 'Google: Gemini 2.5 Pro' },
     { id: 'openai/gpt-5.4-mini', name: 'OpenAI: GPT-5.4 Mini' },
     { id: 'openai/gpt-5.4', name: 'OpenAI: GPT-5.4' },
     { id: 'openai/gpt-5.1', name: 'OpenAI: GPT-5.1' },
-    { id: 'anthropic/claude-haiku-4.5', name: 'Anthropic: Claude Haiku 4.5' },
+    { id: 'google/gemini-2.5-pro', name: 'Google: Gemini 2.5 Pro' },
+    { id: 'google/gemini-3.1-flash-lite-preview', name: 'Google: Gemini 3.1 Flash Lite Preview' },
     { id: 'anthropic/claude-sonnet-4.6', name: 'Anthropic: Claude Sonnet 4.6' },
-    { id: 'z-ai/glm-4.7-flash', name: 'Z.ai: GLM 4.7 Flash' },
     { id: 'z-ai/glm-5.1', name: 'Z.ai: GLM 5.1' },
-    { id: 'meta-llama/llama-4-scout', name: 'Meta: Llama 4 Scout' },
-    { id: 'meta-llama/llama-4-maverick', name: 'Meta: Llama 4 Maverick' },
-    { id: 'qwen/qwen3.5-flash-02-23', name: 'Qwen: Qwen3.5 Flash' },
     { id: 'qwen/qwen3.6-plus', name: 'Qwen: Qwen3.6 Plus' },
     { id: 'qwen/qwen3-235b-a22b', name: 'Qwen: Qwen3 235B A22B' },
   ].map((model) => ({
     ...model,
     description: '',
-    supported_parameters: ['response_format'],
+    supported_parameters: ['response_format', 'structured_outputs', 'reasoning'],
     architecture: { modality: 'text->text', output_modalities: ['text'] },
   }))
 
@@ -207,6 +203,7 @@ export async function callOpenRouterMessages(
     maxTokens?: number
     temperature?: number
     responseFormat?: { type: 'json_object' }
+    reasoning?: { effort?: 'minimal' | 'low' | 'medium' | 'high' | 'xhigh'; exclude?: boolean; enabled?: boolean; max_tokens?: number }
   },
 ): Promise<{ content: string; model: string; promptTokens: number; responseTokens: number }> {
   const selectedModel = normalizeModelPreference(model)
@@ -223,6 +220,7 @@ export async function callOpenRouterMessages(
       temperature: options?.temperature ?? 0.3,
       max_tokens: options?.maxTokens ?? 4096,
       ...(options?.responseFormat ? { response_format: options.responseFormat } : {}),
+      ...(options?.reasoning ? { reasoning: options.reasoning } : {}),
     }),
     signal,
   })
@@ -253,6 +251,7 @@ export async function callOpenRouterPrompt(
     maxTokens?: number
     temperature?: number
     responseFormat?: { type: 'json_object' }
+    reasoning?: { effort?: 'minimal' | 'low' | 'medium' | 'high' | 'xhigh'; exclude?: boolean; enabled?: boolean; max_tokens?: number }
   },
 ): Promise<{ content: string; model: string; promptTokens: number; responseTokens: number }> {
   return callOpenRouterMessages(
@@ -301,7 +300,12 @@ export async function synthesizeWithSchema<T>(
       userPrompt,
       model,
       controller.signal,
-      { maxTokens: 4096, temperature: 0.3, responseFormat: { type: 'json_object' } },
+      {
+        maxTokens: 8192,
+        temperature: 0.2,
+        responseFormat: { type: 'json_object' },
+        reasoning: { effort: 'medium', exclude: true },
+      },
     )
     clearTimeout(timeout)
 
@@ -331,7 +335,12 @@ export async function synthesizeWithSchema<T>(
         repairPrompt,
         model,
         repairController.signal,
-        { maxTokens: 4096, temperature: 0.2, responseFormat: { type: 'json_object' } },
+        {
+          maxTokens: 8192,
+          temperature: 0.1,
+          responseFormat: { type: 'json_object' },
+          reasoning: { effort: 'medium', exclude: true },
+        },
       )
       clearTimeout(repairTimeout)
 

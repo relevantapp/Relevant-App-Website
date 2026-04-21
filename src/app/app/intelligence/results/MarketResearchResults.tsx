@@ -12,6 +12,7 @@ import StatusBar from './shared/StatusBar'
 import CopyModePicker from './shared/CopyModePicker'
 import DegradedBanner from './shared/DegradedBanner'
 import ShareButton from './shared/ShareButton'
+import SearchPlanPanel from './shared/SearchPlanPanel'
 
 interface MarketResearchResultsProps {
   brief: MarketResearchBrief
@@ -133,6 +134,9 @@ export default function MarketResearchResults({ brief, onNewSearch, savedBriefId
 
       </div>
 
+      <div style={{ marginTop: 32 }}>
+        <SearchPlanPanel plan={brief.researchPlan} />
+      </div>
       <div style={{ marginTop: 32 }}>
         <SourcesStrip sources={brief.sources} />
       </div>

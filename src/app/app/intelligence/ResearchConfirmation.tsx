@@ -1,11 +1,15 @@
-/* ── Pre-search confirmation — editorial design ────────── */
 'use client'
 
-import { Edit3 } from 'lucide-react'
-import type { IntelligenceInput, ResearchType } from './types'
+import { useEffect, useState } from 'react'
+import { ArrowLeft, Pen, Zap } from 'lucide-react'
+import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/context/AuthContext'
+import { Btn, Dot, Kicker } from './ui/primitives'
+import type { IntelligenceInput, ResearchType, UserResearchContext } from './types'
 
 interface ResearchConfirmationProps {
   input: IntelligenceInput
+  onChange: (input: IntelligenceInput) => void
   onConfirm: () => void
   onEdit: () => void
   loading?: boolean
@@ -18,119 +22,288 @@ const TYPE_LABELS: Record<ResearchType, string> = {
   market_research: 'Market Research',
 }
 
-function buildSummaryItems(input: IntelligenceInput): Array<{ label: string; value: string }> {
-  const items: Array<{ label: string; value: string }> = []
+function clean(value?: string | null): string | null {
+  const trimmed = value?.trim()
+  return trimmed ? trimmed : null
+}
+
+function sentence(value: string): string {
+  return value.trim().replace(/[.!?]+$/, '')
+}
+
+function profileLens(profile: UserResearchContext | null): string {
+  if (!profile) return 'Role · Founder'
+  const parts = [profile.role, profile.industry].filter(Boolean)
+  return parts.length ? parts.join(' · ') : 'Role · Founder'
+}
+
+function buildBrief(input: IntelligenceInput, profile: UserResearchContext | null): string {
+  const lens = profile?.role || profile?.industry || profile?.company
+    ? ` through your ${[profile?.role, profile?.industry, profile?.company].filter(Boolean).join(' / ')} lens`
+    : ''
 
   if (input.researchType === 'meeting_prep') {
-    items.push({ label: 'Company', value: input.accountName })
-    if (input.meetingType) items.push({ label: 'Meeting type', value: input.meetingType })
-    if (input.goal) items.push({ label: 'Goal', value: input.goal })
-    if (input.relationshipStage) items.push({ label: 'Relationship', value: input.relationshipStage })
-    if (input.attendees?.length) {
-      items.push({ label: 'Attendees', value: input.attendees.map((a) => a.name).join(', ') })
-    }
-    if (input.competitors?.length) {
-      items.push({ label: 'Competitors', value: input.competitors.join(', ') })
-    }
-    if (input.context) items.push({ label: 'Context', value: input.context })
-  } else if (input.researchType === 'competitive_analysis') {
-    if (input.competitors?.length) {
-      items.push({ label: 'Competitors', value: input.competitors.join(', ') })
-    }
-    if (input.yourCompany) items.push({ label: 'Your company', value: input.yourCompany })
-    if (input.focusArea) items.push({ label: 'Focus', value: input.focusArea })
-    if (input.specificQuestions) items.push({ label: 'Questions', value: input.specificQuestions })
-  } else if (input.researchType === 'business_case') {
-    items.push({ label: 'Initiative', value: input.initiativeName })
-    if (input.hypothesis) items.push({ label: 'Hypothesis', value: input.hypothesis })
-    if (input.targetMarket) items.push({ label: 'Target market', value: input.targetMarket })
-    if (input.successMetrics?.length) {
-      items.push({ label: 'Success metrics', value: input.successMetrics.join(', ') })
-    }
-  } else if (input.researchType === 'market_research') {
-    items.push({ label: 'Market / Trend', value: input.marketOrTrend })
-    if (input.scope) items.push({ label: 'Scope', value: input.scope })
-    if (input.knownPlayers?.length) {
-      items.push({ label: 'Known players', value: input.knownPlayers.join(', ') })
-    }
-    if (input.keyQuestions) items.push({ label: 'Key questions', value: input.keyQuestions })
+    const pieces = [
+      `Prepare for a ${input.meetingType ?? 'meeting'} with ${input.accountName}${lens}.`,
+      `Goal: ${sentence(input.goal)}.`,
+    ]
+    if (input.whatYoureSelling) pieces.push(`Positioning: ${sentence(input.whatYoureSelling)}.`)
+    if (input.desiredNextStep) pieces.push(`Targeted next step: ${sentence(input.desiredNextStep)}.`)
+    pieces.push(
+      'Turn recent changes, attendee context, pain points, and competitor moves into talking points, landmines, and specific questions for the room.',
+    )
+    return pieces.join(' ')
   }
+  if (input.researchType === 'competitive_analysis') {
+    return `Compare ${input.competitors.join(', ')} against ${input.yourCompany}${lens}. Focus: ${input.focusArea}. Show where each player is strong or exposed, and what you should do next.`
+  }
+  if (input.researchType === 'business_case') {
+    return `Test the case for ${input.initiativeName}${lens}. Claim: ${sentence(input.hypothesis)}. Prove or weaken it, surface comparable outcomes, and show the risks before a decision is made.`
+  }
+  return `Map ${input.marketOrTrend}${lens}. Scope: ${input.region ?? input.scope ?? 'global'}. Find market shifts, named players, risks, and opportunities tied to ${input.customerSegment || input.useCase || 'the category'}.`
+}
 
-  return items
+function buildEvidencePlan(input: IntelligenceInput): Array<[string, string]> {
+  if (input.researchType === 'meeting_prep') {
+    return [
+      ['Account snapshot', `${input.accountName}, public profile, funding`],
+      ['Recent announcements', '90d news + product launches'],
+      ['Leadership & attendees', 'LinkedIn, podcasts, interviews'],
+      ['Hiring signals', 'careers page, job boards'],
+      ['Competitive context', input.competitors?.join(', ') || 'category watchlist'],
+      ['Analyst coverage', 'press, research reports'],
+    ]
+  }
+  if (input.researchType === 'competitive_analysis') {
+    return [
+      ['Competitor moves', `${input.competitors.join(', ')} · 90d`],
+      ['Focus area', `${input.focusArea} signals`],
+      ['Market view', input.marketSegment ?? 'category landscape'],
+      ['Customer complaints', 'reviews, social, forums'],
+      ['Pricing & packaging', 'public pricing pages, analyst notes'],
+      ['Counter-evidence', 'weaknesses, churn signals'],
+    ]
+  }
+  if (input.researchType === 'business_case') {
+    return [
+      ['Proof for claim', `${input.initiativeName} demand signals`],
+      ['Market sizing', input.targetMarket ?? 'category size + growth'],
+      ['Comparable outcomes', input.comparableCompanies?.join(', ') || 'comparable companies'],
+      ['Risks & failures', 'unit economics, objections'],
+      ['ROI framing', (input.roiFrame ?? []).join(', ') || 'revenue / cost / speed'],
+      ['Decision audience', input.decisionAudience ?? 'exec audience lens'],
+    ]
+  }
+  return [
+    ['Market movement', `${input.marketOrTrend} · 90d`],
+    ['Named players', input.knownPlayers?.join(', ') || 'key companies'],
+    ['Customer segment', input.customerSegment ?? 'segment signals'],
+    ['Use case', input.useCase ?? 'category use cases'],
+    ['Risks & barriers', 'regulation, adoption blockers'],
+    ['Analyst forecasts', 'press + research reports'],
+  ]
 }
 
 export default function ResearchConfirmation({
   input,
+  onChange,
   onConfirm,
   onEdit,
   loading,
 }: ResearchConfirmationProps) {
-  const items = buildSummaryItems(input)
+  const { user } = useAuth()
+  const [profile, setProfile] = useState<UserResearchContext | null>(null)
+  const [editingBrief, setEditingBrief] = useState(false)
+  const [briefDraft, setBriefDraft] = useState('')
   const typeLabel = TYPE_LABELS[input.researchType]
+  const brief = buildBrief(input, profile)
+  const evidencePlan = buildEvidencePlan(input)
+
+  useEffect(() => {
+    if (!user?.id) return
+    let cancelled = false
+
+    const loadProfile = async () => {
+      const { data } = await supabase
+        .from('users')
+        .select('profile_kind, industry_raw, role_raw, company_id, company_name_manual')
+        .eq('id', user.id)
+        .maybeSingle()
+
+      if (!data || cancelled) return
+      const row = data as Record<string, unknown>
+      let company = typeof row.company_name_manual === 'string' ? row.company_name_manual.trim() : ''
+      const companyId = typeof row.company_id === 'string' ? row.company_id.trim() : ''
+
+      if (companyId) {
+        const { data: companyData } = await supabase
+          .from('companies')
+          .select('name')
+          .eq('id', companyId)
+          .maybeSingle()
+        const lookup = companyData as { name?: string | null } | null
+        company = lookup?.name?.trim() || company
+      }
+
+      if (cancelled) return
+      setProfile({
+        profileKind: clean(row.profile_kind as string | null),
+        industry: clean(row.industry_raw as string | null),
+        role: clean(row.role_raw as string | null),
+        company: clean(company),
+        country: null,
+        contextNote: null,
+      })
+    }
+
+    void loadProfile()
+    return () => {
+      cancelled = true
+    }
+  }, [user?.id])
+
+  const depthLabel =
+    input.researchType === 'market_research' && input.depth === 'deep-dive'
+      ? 'Deep · 15–22 sources'
+      : input.researchType === 'meeting_prep'
+        ? 'Standard · 8–12 sources'
+        : input.researchType === 'competitive_analysis'
+          ? 'Standard · 12–18 sources'
+          : input.researchType === 'business_case'
+            ? 'Standard · 14–20 sources'
+            : 'Standard · 10–15 sources'
 
   return (
-    <div className="mx-auto w-full max-w-2xl">
-      <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden' }}>
-        {/* Header */}
-        <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--border)' }}>
-          <span className="kicker" style={{ color: 'var(--accent-amber)' }}>Confirm brief</span>
-          <p className="display" style={{ fontSize: 20, marginTop: 4, color: 'var(--text)', letterSpacing: '-0.01em' }}>
-            {typeLabel}
+    <div className="intel-refined-layout intel-rise">
+      <aside className="intel-refined-copy">
+        <button type="button" onClick={onEdit} className="intel-back-button">
+          <ArrowLeft size={14} strokeWidth={1.6} />
+          Edit inputs
+        </button>
+
+        <div style={{ marginTop: 28 }}>
+          <Kicker color="var(--amber)">02 / Refined intent / {typeLabel}</Kicker>
+          <h1 className="intel-display">Review the run before it starts.</h1>
+          <p>
+            Relevant has turned your intake into a sharper research brief. Add steering if
+            there is a specific angle the evidence should respect.
           </p>
         </div>
 
-        {/* Summary grid */}
-        <div className="grid-bordered" style={{ borderRadius: 0, border: 'none', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-          {items.map(({ label, value }) => (
-            <div key={label} style={{ padding: '10px 20px' }}>
-              <span className="kicker" style={{ fontSize: 9, color: 'var(--text-soft)' }}>{label}</span>
-              <p style={{ fontSize: 13, color: 'var(--text)', marginTop: 2, lineHeight: 1.45 }}>{value}</p>
+        <div className="intel-docket-block">
+          <Kicker>Run settings</Kicker>
+          <div className="intel-docket-table">
+            {[
+              { k: 'Lens', v: profileLens(profile) },
+              { k: 'Depth', v: depthLabel },
+              { k: 'Buckets', v: `${evidencePlan.length} planned` },
+            ].map((item) => (
+              <div key={item.k} className="intel-docket-row">
+                <span className="mono">{item.k}</span>
+                <strong>{item.v}</strong>
+              </div>
+            ))}
+          </div>
+        </div>
+      </aside>
+
+      <main>
+        <section className="intel-refined-panel">
+          <div className="intel-refined-toolbar">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Dot color="var(--amber)" size={7} />
+              <Kicker>System brief</Kicker>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                if (editingBrief) {
+                  onChange({ ...input, steering: briefDraft } as IntelligenceInput)
+                  setEditingBrief(false)
+                } else {
+                  setBriefDraft(input.steering ?? '')
+                  setEditingBrief(true)
+                }
+              }}
+              className="intel-back-button"
+            >
+              <Pen size={12} strokeWidth={1.6} />
+              {editingBrief ? 'Save steering' : input.steering ? 'Edit steering' : 'Add steering'}
+            </button>
+          </div>
+          <div className="intel-refined-brief">{brief}</div>
+          {(editingBrief || input.steering) && (
+            <div className="intel-steering-block">
+              <Kicker>Your steering notes</Kicker>
+              {editingBrief ? (
+                <textarea
+                  rows={4}
+                  value={briefDraft}
+                  onChange={(event) => setBriefDraft(event.target.value)}
+                  placeholder="Focus on evidence a founder can act on this week. Skip generic market commentary."
+                  className="intel-steering-textarea"
+                  style={{
+                    width: '100%',
+                    marginTop: 10,
+                    resize: 'vertical',
+                    padding: '11px 13px',
+                    borderRadius: 8,
+                    border: '1px solid var(--border)',
+                    background: 'var(--bg-elev)',
+                    color: 'var(--ink)',
+                    fontSize: 13,
+                    lineHeight: 1.5,
+                    outline: 'none',
+                    fontFamily: 'inherit',
+                  }}
+                />
+              ) : (
+                <p>{input.steering}</p>
+              )}
+            </div>
+          )}
+        </section>
+
+        <div className="intel-refined-meta">
+          {[
+            { k: 'Lens', v: profileLens(profile) },
+            { k: 'Depth', v: depthLabel },
+            { k: 'Evidence buckets', v: `${evidencePlan.length} planned` },
+          ].map((m) => (
+            <div key={m.k}>
+              <Kicker>{m.k}</Kicker>
+              <strong>{m.v}</strong>
             </div>
           ))}
         </div>
 
-        {/* Footer */}
-        <div style={{ padding: '14px 20px', borderTop: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 10 }}>
-          <button
-            type="button"
+        <div style={{ marginTop: 28 }}>
+          <Kicker>Evidence plan</Kicker>
+          <div className="intel-evidence-grid">
+            {evidencePlan.map(([k, v]) => (
+              <div key={k} className="intel-evidence-row">
+                <strong>{k}</strong>
+                <span>{v}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="intel-refined-actions">
+          <Btn variant="ghost" size="lg" onClick={onEdit}>
+            Edit inputs
+          </Btn>
+          <Btn
+            variant="amber"
+            size="lg"
             onClick={onConfirm}
             disabled={loading}
-            style={{
-              flex: 1,
-              padding: '10px 16px',
-              fontSize: 13,
-              fontWeight: 600,
-              color: '#000',
-              background: 'var(--accent-amber)',
-              border: 'none',
-              borderRadius: 6,
-              cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.5 : 1,
-            }}
+            icon={<Zap size={15} strokeWidth={2} />}
           >
-            Run the brief
-          </button>
-          <button
-            type="button"
-            onClick={onEdit}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 4,
-              padding: '10px 14px',
-              fontSize: 13,
-              color: 'var(--text-muted)',
-              background: 'transparent',
-              border: '1px solid var(--border)',
-              borderRadius: 6,
-              cursor: 'pointer',
-            }}
-          >
-            <Edit3 className="h-3.5 w-3.5" />
-            Edit
-          </button>
+            {loading ? 'Running…' : 'Run the brief'}
+          </Btn>
         </div>
-      </div>
+      </main>
     </div>
   )
 }

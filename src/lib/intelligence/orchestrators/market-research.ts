@@ -5,18 +5,17 @@ import type {
   MarketResearchBrief,
   BriefSource,
   NormalizedEvidence,
+  SearchTask,
 } from '../contracts'
 import { MarketResearchSynthesisSchema } from '../contracts'
 import { runStep, generateBriefId, type PipelineContext } from '../pipeline'
 import { synthesizeWithSchema } from '../models'
 import { rankEvidence, extractQueryTerms } from '../ranker'
 import { MARKET_RESEARCH_SYSTEM_PROMPT, MARKET_RESEARCH_SCHEMA_DESC, buildMarketResearchPrompt } from '../prompts/market-research.v1'
-import { searchExaSnapshot, searchExaNews } from '../providers/exa'
-import { searchTavilyNews } from '../providers/tavily'
+import { searchExaSnapshot } from '../providers/exa'
+import { buildResearchSearchPlan, executeSearchPlan } from '../search-planner'
 import {
   normalizeExaSnapshot,
-  normalizeExaResults,
-  normalizeTavilyResults,
   deduplicateSources,
   resetSourceCounter,
 } from '../normalize'
@@ -51,66 +50,86 @@ export async function generateMarketResearchBrief(
 
   const playerSnapshots = entityStep.data?.playerSnapshots ?? new Map<string, string>()
 
-  /* ── Step 2: gatherEvidence ──────────────────────────────── */
+  /* ── Step 2: planSearches ───────────────────────────────── */
+  const scopeStr = input.scope === 'global' ? '' : ` ${input.region || input.scope}`
+  const fallbackSearches: SearchTask[] = [
+    {
+      provider: 'exa',
+      type: 'news',
+      query: `${input.marketOrTrend}${scopeStr} market growth funding adoption`,
+      purpose: 'Find recent market signals, growth evidence, and funding or adoption data.',
+      lookbackDays: input.timeHorizon === '30d' ? 30 : input.timeHorizon === '90d' ? 90 : 365,
+      category: 'news',
+    },
+    {
+      provider: 'tavily',
+      type: 'tavily_news',
+      query: `${input.marketOrTrend}${scopeStr} market analysis forecast key players`,
+      purpose: 'Find market analysis, forecasts, and named players.',
+      topic: 'general',
+      timeRange: input.timeHorizon === '30d' ? 'month' : 'year',
+      includeImages: true,
+    },
+    {
+      provider: 'tavily',
+      type: 'tavily_news',
+      query: `${input.marketOrTrend}${scopeStr} risks regulation barriers customer adoption`,
+      purpose: 'Find risks, blockers, regulation, and adoption friction.',
+      topic: 'general',
+      timeRange: 'year',
+      includeImages: false,
+    },
+  ]
+
+  if (input.customerSegment || input.useCase) {
+    fallbackSearches.push({
+      provider: 'tavily',
+      type: 'tavily_news',
+      query: `${input.marketOrTrend} ${input.customerSegment ?? ''} ${input.useCase ?? ''} buying criteria pain points`,
+      purpose: 'Ground findings in the requested customer segment and use case.',
+      topic: 'general',
+      timeRange: 'year',
+      includeImages: true,
+    })
+  }
+
+  for (const player of input.knownPlayers ?? []) {
+    fallbackSearches.push({
+      provider: 'exa',
+      type: 'news',
+      query: `${player} ${input.marketOrTrend} product launch funding customers`,
+      purpose: 'Find recent moves by a known player.',
+      lookbackDays: 180,
+      category: 'news',
+    })
+  }
+
+  if (input.keyQuestions) {
+    fallbackSearches.push({
+      provider: 'tavily',
+      type: 'tavily_news',
+      query: `${input.keyQuestions} ${input.marketOrTrend}${scopeStr}`,
+      purpose: 'Answer the specific questions from the user.',
+      topic: 'general',
+      timeRange: 'year',
+      includeImages: true,
+    })
+  }
+
+  const planStep = await runStep('market_research', 'planSearches', async () => (
+    buildResearchSearchPlan('market_research', input, fallbackSearches, ctx)
+  ), undefined, ctx)
+
+  const researchPlan = planStep.data
+
+  /* ── Step 3: gatherEvidence ──────────────────────────────── */
   const evidenceStep = await runStep('market_research', 'gatherEvidence', async () => {
     const allSources: BriefSource[] = []
     const allEvidence: NormalizedEvidence[] = []
 
-    const scopeStr = input.scope === 'global' ? '' : ` ${input.scope}`
-    const searchJobs: Array<Promise<unknown>> = [
-      searchExaNews(`${input.marketOrTrend}${scopeStr}`, 90),
-      searchTavilyNews(`${input.marketOrTrend} market analysis${scopeStr}`),
-      searchTavilyNews(`${input.marketOrTrend} trends forecast${scopeStr}`),
-    ]
-
-    if (input.knownPlayers?.length) {
-      for (const p of input.knownPlayers.slice(0, 5)) {
-        searchJobs.push(searchExaNews(p, 30))
-      }
-    }
-
-    const results = await Promise.allSettled(searchJobs)
-    let idx = 0
-
-    // Market news (Exa)
-    const mktResult = results[idx++]
-    if (mktResult.status === 'fulfilled' && mktResult.value) {
-      const { sources, evidence } = normalizeExaResults(mktResult.value as Awaited<ReturnType<typeof searchExaNews>>)
-      allSources.push(...sources)
-      allEvidence.push(...evidence)
-    } else {
-      degradedReasons.push('Exa market search failed')
-    }
-
-    // Market analysis (Tavily)
-    const analysisResult = results[idx++]
-    if (analysisResult.status === 'fulfilled' && analysisResult.value) {
-      const tavily = analysisResult.value as Awaited<ReturnType<typeof searchTavilyNews>>
-      const { sources, evidence } = normalizeTavilyResults(tavily.results)
-      allSources.push(...sources)
-      allEvidence.push(...evidence)
-    }
-
-    // Trends (Tavily)
-    const trendsResult = results[idx++]
-    if (trendsResult.status === 'fulfilled' && trendsResult.value) {
-      const tavily = trendsResult.value as Awaited<ReturnType<typeof searchTavilyNews>>
-      const { sources, evidence } = normalizeTavilyResults(tavily.results)
-      allSources.push(...sources)
-      allEvidence.push(...evidence)
-    }
-
-    // Player news
-    if (input.knownPlayers?.length) {
-      for (let i = 0; i < Math.min(5, input.knownPlayers.length); i++) {
-        const r = results[idx++]
-        if (r.status === 'fulfilled' && r.value) {
-          const { sources, evidence } = normalizeExaResults(r.value as Awaited<ReturnType<typeof searchExaNews>>)
-          allSources.push(...sources)
-          allEvidence.push(...evidence)
-        }
-      }
-    }
+    const planned = researchPlan ? await executeSearchPlan(researchPlan) : { sources: [], evidence: [] }
+    allSources.push(...planned.sources)
+    allEvidence.push(...planned.evidence)
 
     // Add player snapshots as evidence
     for (const [name, desc] of Array.from(playerSnapshots)) {
@@ -148,6 +167,13 @@ export async function generateMarketResearchBrief(
       keyQuestions: input.keyQuestions,
       knownPlayers: input.knownPlayers,
       timeHorizon: input.timeHorizon,
+      objective: input.objective,
+      region: input.region,
+      customerSegment: input.customerSegment,
+      useCase: input.useCase,
+      depth: input.depth,
+      steering: input.steering,
+      userContext: input.userContext,
       evidence: rankedEvidence,
       playerSnapshots,
     })
@@ -163,6 +189,7 @@ export async function generateMarketResearchBrief(
 
   /* ── Step 5: assembleBrief ───────────────────────────────── */
   const dedupedSources = deduplicateSources(allSources)
+  if (dedupedSources.length < 4) degradedReasons.push('Low source count')
   const totalMs = Math.round(performance.now() - totalStart)
 
   return {
@@ -182,11 +209,13 @@ export async function generateMarketResearchBrief(
       keyFindings: synthesis?.data?.keyFindings ?? [],
     },
     sources: dedupedSources,
+    researchPlan,
+    contextUsed: input.userContext ?? null,
     status: {
       degraded: degradedReasons.length > 0,
       reasons: degradedReasons,
       exaSearchMs: entityStep.timings.durationMs,
-      tavilySearchMs: evidenceStep.timings.durationMs,
+      tavilySearchMs: planStep.timings.durationMs + evidenceStep.timings.durationMs,
       synthesisMs: synthesisStep.timings.durationMs,
       totalMs,
       sourceCount: dedupedSources.length,

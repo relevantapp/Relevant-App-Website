@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { Sparkles, Undo2, Loader2 } from 'lucide-react'
+import { Undo2, Loader2 } from 'lucide-react'
 import { getValidAccessToken } from '@/lib/supabase'
 import { MODEL_STORAGE_KEY, normalizeModelPreference } from '@/lib/intelligence/models'
 
@@ -62,26 +62,15 @@ export default function AIRefineButton({
   }, [original, onRefine])
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
       <button
         type="button"
         onClick={handleRefine}
         disabled={disabled || loading || !goal.trim()}
-        style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 4,
-          background: 'none',
-          border: 'none',
-          fontSize: 12,
-          fontWeight: 500,
-          color: disabled || !goal.trim() ? 'var(--text-muted)' : 'var(--accent)',
-          cursor: disabled || loading || !goal.trim() ? 'default' : 'pointer',
-          padding: '2px 0',
-        }}
+        className="intel-refine-button"
       >
-        {loading ? <Loader2 size={13} className="animate-spin" /> : <Sparkles size={13} />}
-        Refine
+        {loading && <Loader2 size={13} className="animate-spin" />}
+        Tighten goal
       </button>
       {original && !loading && (
         <button

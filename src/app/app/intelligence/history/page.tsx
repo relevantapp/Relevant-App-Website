@@ -9,7 +9,7 @@ import type { BriefListItem } from '@/lib/intelligence/db'
 
 const TYPE_CONFIG: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
   meeting_prep: { label: 'Meeting Prep', icon: <Users className="h-3.5 w-3.5" />, color: 'text-[var(--accent)]' },
-  competitive_analysis: { label: 'Competitive Intel', icon: <BarChart3 className="h-3.5 w-3.5" />, color: 'text-[var(--accent-amber)]' },
+  competitive_analysis: { label: 'Competitive Analysis', icon: <BarChart3 className="h-3.5 w-3.5" />, color: 'text-[var(--accent-amber)]' },
   business_case: { label: 'Business Case', icon: <FileText className="h-3.5 w-3.5" />, color: 'text-[var(--accent-teal)]' },
   market_research: { label: 'Market Research', icon: <TrendingUp className="h-3.5 w-3.5" />, color: 'text-[var(--accent-violet)]' },
 }

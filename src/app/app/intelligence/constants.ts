@@ -27,12 +27,12 @@ export const RESEARCH_TYPES: ResearchTypeCard[] = [
   {
     type: 'competitive_analysis',
     icon: 'Swords',
-    title: 'Competitive Intel',
+    title: 'Competitive Analysis',
     description: "Analyze a competitor's latest moves and positioning",
   },
   {
     type: 'market_research',
-    icon: 'Search',
+    icon: 'Compass',
     title: 'Market Research',
     description: 'Explore a market trend, space, or opportunity',
   },

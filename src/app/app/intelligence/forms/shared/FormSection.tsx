@@ -4,36 +4,30 @@ import type { ReactNode } from 'react'
 
 interface FormSectionProps {
   label: string
+  hint?: string
+  index?: string
   required?: boolean
   error?: string
   children: ReactNode
 }
 
-export default function FormSection({ label, required, error, children }: FormSectionProps) {
+export default function FormSection({ label, hint, index, required, error, children }: FormSectionProps) {
   return (
-    <div style={{ marginBottom: 20 }}>
-      <label
-        style={{
-          display: 'block',
-          fontSize: 13,
-          fontWeight: 500,
-          color: 'var(--text-muted)',
-          textTransform: 'uppercase' as const,
-          letterSpacing: '0.04em',
-          marginBottom: 8,
-        }}
-      >
-        {label}
-        {required && (
-          <span style={{ color: 'var(--accent-coral)', marginLeft: 4 }}>*</span>
+    <div className="intel-field-row">
+      <div className="intel-field-copy">
+        {index && <span className="mono intel-field-index">{index}</span>}
+        <label>
+          {label}
+          {required && <span>*</span>}
+        </label>
+        {hint && <p>{hint}</p>}
+      </div>
+      <div className="intel-field-control">
+        {children}
+        {error && (
+          <p className="intel-field-error">{error}</p>
         )}
-      </label>
-      {children}
-      {error && (
-        <p style={{ fontSize: 12, color: 'var(--accent-coral)', marginTop: 6 }}>
-          {error}
-        </p>
-      )}
+      </div>
     </div>
   )
 }

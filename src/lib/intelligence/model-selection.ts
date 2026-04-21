@@ -1,22 +1,16 @@
 export type ModelPreference = string
 
-export const DEFAULT_MODEL_PREFERENCE: ModelPreference = 'google/gemini-2.5-flash'
+export const DEFAULT_MODEL_PREFERENCE: ModelPreference = 'openai/gpt-5.4-mini'
 export const MODEL_STORAGE_KEY = 'relevant-intelligence-model'
 
 export const CURATED_MODEL_IDS = [
-  'google/gemini-2.5-flash',
-  'google/gemini-3.1-flash-lite-preview',
-  'google/gemini-2.5-pro',
   'openai/gpt-5.4-mini',
   'openai/gpt-5.4',
   'openai/gpt-5.1',
-  'anthropic/claude-haiku-4.5',
+  'google/gemini-2.5-pro',
+  'google/gemini-3.1-flash-lite-preview',
   'anthropic/claude-sonnet-4.6',
-  'z-ai/glm-4.7-flash',
   'z-ai/glm-5.1',
-  'meta-llama/llama-4-scout',
-  'meta-llama/llama-4-maverick',
-  'qwen/qwen3.5-flash-02-23',
   'qwen/qwen3.6-plus',
   'qwen/qwen3-235b-a22b',
 ] as const satisfies readonly ModelPreference[]
@@ -25,9 +19,9 @@ const CURATED_MODEL_ID_SET = new Set<ModelPreference>(CURATED_MODEL_IDS)
 
 const LEGACY_MODEL_ALIASES: Record<string, ModelPreference> = {
   auto: DEFAULT_MODEL_PREFERENCE,
-  'gemini-2.5-flash': 'google/gemini-2.5-flash',
+  'gemini-2.5-flash': DEFAULT_MODEL_PREFERENCE,
   'gemini-2.0-flash': DEFAULT_MODEL_PREFERENCE,
-  'claude-haiku-4.5': 'anthropic/claude-haiku-4.5',
+  'claude-haiku-4.5': DEFAULT_MODEL_PREFERENCE,
 }
 
 const FAMILY_LABELS: Record<string, string> = {

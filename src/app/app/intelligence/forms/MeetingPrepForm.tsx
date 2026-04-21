@@ -1,18 +1,21 @@
 'use client'
 
 import { useState } from 'react'
+import { Zap } from 'lucide-react'
 import FormSection from './shared/FormSection'
 import ChipSelector from './shared/ChipSelector'
 import TagInput from './shared/TagInput'
 import AIRefineButton from './shared/AIRefineButton'
+import IntakeShell from './shared/IntakeShell'
+import { Btn } from '../ui/primitives'
 import { MEETING_TYPE_OPTIONS_V3, GOAL_PLACEHOLDERS_V3 } from '../constants'
 import type { MeetingPrepInput, MeetingTypeV3, RelationshipStage } from '../types'
 
 const RELATIONSHIP_STAGE_OPTIONS: Array<{ value: RelationshipStage; label: string }> = [
-  { value: 'first-meeting', label: 'First Meeting' },
-  { value: 'active-deal', label: 'Active Deal' },
+  { value: 'first-meeting', label: 'First meeting' },
+  { value: 'active-deal', label: 'Active deal' },
   { value: 'renewal', label: 'Renewal' },
-  { value: 'exec-review', label: 'Exec Review' },
+  { value: 'exec-review', label: 'Exec review' },
   { value: 'rescue', label: 'Rescue' },
   { value: 'partner', label: 'Partner' },
 ]
@@ -26,23 +29,24 @@ interface MeetingPrepFormProps {
 
 const inputStyle: React.CSSProperties = {
   width: '100%',
-  padding: '10px 14px',
-  fontSize: 14,
-  background: 'var(--surface)',
+  background: 'var(--bg-elev)',
   border: '1px solid var(--border)',
-  borderRadius: 10,
-  color: 'var(--text)',
+  borderRadius: 8,
+  padding: '11px 14px',
+  color: 'var(--ink)',
+  fontSize: 14,
   outline: 'none',
+  fontFamily: 'inherit',
 }
 
 const textareaStyle: React.CSSProperties = {
   ...inputStyle,
-  resize: 'vertical' as const,
-  fontFamily: 'inherit',
+  resize: 'vertical',
 }
 
 export default function MeetingPrepForm({ value, onChange, onSubmit, loading }: MeetingPrepFormProps) {
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [advancedOpen, setAdvancedOpen] = useState(false)
 
   const meetingType = value.meetingType ?? null
   const goalPlaceholder = meetingType ? GOAL_PLACEHOLDERS_V3[meetingType] : 'What do you want to accomplish?'
@@ -88,158 +92,202 @@ export default function MeetingPrepForm({ value, onChange, onSubmit, loading }: 
     !!value.meetingType &&
     (value.goal?.trim().length ?? 0) >= 10 &&
     !loading
+  const meetingTypeLabel = MEETING_TYPE_OPTIONS_V3.find((opt) => opt.value === value.meetingType)?.label ?? 'Unset'
 
   return (
-    <div>
-      <FormSection label="Who are you meeting?" required error={errors.accountName}>
-        <input
-          type="text"
-          value={value.accountName ?? ''}
-          onChange={(e) => onChange({ ...value, accountName: e.target.value })}
-          placeholder="Company or person name"
-          maxLength={200}
-          disabled={loading}
-          style={inputStyle}
-        />
-      </FormSection>
+    <IntakeShell
+      workflow="01 / Meeting Prep"
+      title="Tell the engine what room you are walking into."
+      lede="Aim the research around the account, the meeting goal, and the relationship context that changes what matters."
+      estimate="~1m 45s · 8–12 sources"
+      docket={[
+        { label: 'Subject', value: value.accountName?.trim() || 'Unset' },
+        { label: 'Lens', value: meetingTypeLabel },
+        { label: 'Goal', value: value.goal?.trim() ? 'Drafted' : 'Unset' },
+        { label: 'Context', value: advancedOpen ? 'Expanded' : 'Standard' },
+      ]}
+      output={[
+        'What changed recently',
+        'People, motives, and landmines',
+        'Specific talking points and questions',
+      ]}
+      footer={
+        <>
+          <div className="mono intel-sheet-note">Required: subject, goal, meeting type</div>
+          <Btn
+            variant="amber"
+            size="lg"
+            onClick={handleSubmit}
+            disabled={!canSubmit}
+            icon={<Zap size={15} strokeWidth={2} />}
+          >
+            {loading ? 'Researching…' : 'Refine intent →'}
+          </Btn>
+        </>
+      }
+    >
+        <FormSection
+          index="01"
+          label="Who are you meeting?"
+          hint="Company or person. We'll pull public profile, news, and people."
+          required
+          error={errors.accountName}
+        >
+          <input
+            type="text"
+            value={value.accountName ?? ''}
+            onChange={(e) => onChange({ ...value, accountName: e.target.value })}
+            placeholder="Anthropic"
+            maxLength={200}
+            disabled={loading}
+            style={inputStyle}
+          />
+        </FormSection>
 
-      <FormSection label="Meeting type" required error={errors.meetingType}>
-        <ChipSelector
-          options={MEETING_TYPE_OPTIONS_V3}
-          value={meetingType}
-          onChange={(v: MeetingTypeV3) => onChange({ ...value, meetingType: v })}
-          disabled={loading}
-        />
-      </FormSection>
+        <FormSection
+          index="02"
+          label="What's your goal?"
+          hint="This shapes what gets prioritized. Be specific."
+          required
+          error={errors.goal}
+        >
+          <textarea
+            rows={2}
+            value={value.goal ?? ''}
+            onChange={(e) => onChange({ ...value, goal: e.target.value })}
+            placeholder={goalPlaceholder}
+            maxLength={500}
+            disabled={loading}
+            style={textareaStyle}
+          />
+          <div style={{ marginTop: 8 }}>
+            <AIRefineButton
+              goal={value.goal ?? ''}
+              meetingType={value.meetingType ?? ''}
+              accountName={value.accountName ?? ''}
+              onRefine={(refined) => onChange({ ...value, goal: refined })}
+              disabled={loading}
+            />
+          </div>
+        </FormSection>
 
-      <FormSection label="Relationship stage">
-        <ChipSelector
-          options={RELATIONSHIP_STAGE_OPTIONS}
-          value={value.relationshipStage ?? null}
-          onChange={(v: RelationshipStage) => onChange({ ...value, relationshipStage: v })}
-          disabled={loading}
-        />
-      </FormSection>
+        <FormSection
+          index="03"
+          label="Meeting type"
+          hint="Adjusts the analysis lens."
+          required
+          error={errors.meetingType}
+        >
+          <ChipSelector
+            options={MEETING_TYPE_OPTIONS_V3}
+            value={meetingType}
+            onChange={(v: MeetingTypeV3) => onChange({ ...value, meetingType: v })}
+            disabled={loading}
+          />
+        </FormSection>
 
-      <FormSection label="What are you selling?">
-        <input
-          type="text"
-          value={value.whatYoureSelling ?? ''}
-          onChange={(e) => onChange({ ...value, whatYoureSelling: e.target.value })}
-          placeholder="e.g., Enterprise SaaS platform, consulting retainer"
-          maxLength={200}
-          disabled={loading}
-          style={inputStyle}
-        />
-      </FormSection>
+        <FormSection
+          index="04"
+          label="Their website"
+          hint="Optional. We scrape recent content directly."
+          error={errors.website}
+        >
+          <input
+            type="url"
+            value={value.website ?? ''}
+            onChange={(e) => onChange({ ...value, website: e.target.value })}
+            placeholder="https://anthropic.com"
+            disabled={loading}
+            style={inputStyle}
+          />
+        </FormSection>
 
-      <FormSection label="Desired next step">
-        <input
-          type="text"
-          value={value.desiredNextStep ?? ''}
-          onChange={(e) => onChange({ ...value, desiredNextStep: e.target.value })}
-          placeholder="e.g., Schedule a pilot, get budget approval"
-          maxLength={200}
-          disabled={loading}
-          style={inputStyle}
-        />
-      </FormSection>
+        <FormSection index="05" label="Attendees" hint="Up to 5. We search LinkedIn + public profiles.">
+          <TagInput
+            value={(value.attendees ?? []).map((a) => a.name)}
+            onChange={(tags) => onChange({ ...value, attendees: tags.map((name) => ({ name })) })}
+            max={5}
+            placeholder="Name, then Enter"
+            disabled={loading}
+          />
+        </FormSection>
 
-      <FormSection label="What's your goal?" required error={errors.goal}>
-        <textarea
-          rows={2}
-          value={value.goal ?? ''}
-          onChange={(e) => onChange({ ...value, goal: e.target.value })}
-          placeholder={goalPlaceholder}
-          maxLength={500}
-          disabled={loading}
-          style={textareaStyle}
-        />
-        <AIRefineButton
-          goal={value.goal ?? ''}
-          meetingType={value.meetingType ?? ''}
-          accountName={value.accountName ?? ''}
-          onRefine={(refined) => onChange({ ...value, goal: refined })}
-          disabled={loading}
-        />
-      </FormSection>
+        <button
+          type="button"
+          onClick={() => setAdvancedOpen((v) => !v)}
+          className="intel-context-toggle"
+        >
+          {advancedOpen ? '− Less context' : '+ More context'}
+        </button>
 
-      <FormSection label="Their website" error={errors.website}>
-        <input
-          type="url"
-          value={value.website ?? ''}
-          onChange={(e) => onChange({ ...value, website: e.target.value })}
-          placeholder="https://..."
-          disabled={loading}
-          style={inputStyle}
-        />
-      </FormSection>
+        {advancedOpen && (
+          <div className="intel-advanced-panel">
+            <FormSection index="A1" label="Relationship stage" hint="Where are you in the arc?">
+              <ChipSelector
+                options={RELATIONSHIP_STAGE_OPTIONS}
+                value={value.relationshipStage ?? null}
+                onChange={(v: RelationshipStage) => onChange({ ...value, relationshipStage: v })}
+                disabled={loading}
+              />
+            </FormSection>
 
-      <FormSection label="Attendees">
-        <TagInput
-          value={(value.attendees ?? []).map((a) => a.name)}
-          onChange={(tags) =>
-            onChange({ ...value, attendees: tags.map((name) => ({ name })) })
-          }
-          max={5}
-          placeholder="Type a name and press Enter"
-          disabled={loading}
-        />
-      </FormSection>
+            <FormSection index="A2" label="What you're selling or proposing">
+              <input
+                type="text"
+                value={value.whatYoureSelling ?? ''}
+                onChange={(e) => onChange({ ...value, whatYoureSelling: e.target.value })}
+                placeholder="e.g. Enterprise SaaS platform, consulting retainer"
+                maxLength={200}
+                disabled={loading}
+                style={inputStyle}
+              />
+            </FormSection>
 
-      <FormSection label="Key topics / context">
-        <textarea
-          rows={3}
-          value={value.context ?? ''}
-          onChange={(e) => onChange({ ...value, context: e.target.value })}
-          placeholder="Anything else we should know?"
-          maxLength={2000}
-          disabled={loading}
-          style={textareaStyle}
-        />
-      </FormSection>
+            <FormSection index="A3" label="Desired next step">
+              <input
+                type="text"
+                value={value.desiredNextStep ?? ''}
+                onChange={(e) => onChange({ ...value, desiredNextStep: e.target.value })}
+                placeholder="e.g. Schedule a pilot, get budget approval"
+                maxLength={200}
+                disabled={loading}
+                style={inputStyle}
+              />
+            </FormSection>
 
-      <FormSection label="Pain points to explore">
-        <TagInput
-          value={value.painPoints ?? []}
-          onChange={(tags) => onChange({ ...value, painPoints: tags })}
-          max={5}
-          placeholder="Type a pain point and press Enter"
-          disabled={loading}
-        />
-      </FormSection>
+            <FormSection index="A4" label="Key topics or context">
+              <textarea
+                rows={3}
+                value={value.context ?? ''}
+                onChange={(e) => onChange({ ...value, context: e.target.value })}
+                placeholder="Anything else we should know?"
+                maxLength={2000}
+                disabled={loading}
+                style={textareaStyle}
+              />
+            </FormSection>
 
-      <FormSection label="Competitors to watch">
-        <TagInput
-          value={value.competitors ?? []}
-          onChange={(tags) => onChange({ ...value, competitors: tags })}
-          max={3}
-          placeholder="Type a competitor name"
-          disabled={loading}
-        />
-      </FormSection>
+            <FormSection index="A5" label="Pain points to explore">
+              <TagInput
+                value={value.painPoints ?? []}
+                onChange={(tags) => onChange({ ...value, painPoints: tags })}
+                max={5}
+                placeholder="Type a pain point and press Enter"
+                disabled={loading}
+              />
+            </FormSection>
 
-      <button
-        type="button"
-        onClick={handleSubmit}
-        disabled={!canSubmit}
-        style={{
-          width: '100%',
-          padding: 14,
-          borderRadius: 12,
-          fontSize: 15,
-          fontWeight: 600,
-          border: 'none',
-          cursor: canSubmit ? 'pointer' : 'default',
-          background: 'var(--accent)',
-          color: 'white',
-          opacity: canSubmit ? 1 : 0.4,
-          transition: 'opacity var(--motion-micro) var(--ease-out)',
-          marginTop: 8,
-        }}
-      >
-        {loading ? 'Researching...' : 'Generate Intelligence'}
-      </button>
-    </div>
+            <FormSection index="A6" label="Competitors to watch">
+              <TagInput
+                value={value.competitors ?? []}
+                onChange={(tags) => onChange({ ...value, competitors: tags })}
+                max={3}
+                placeholder="Type a competitor name"
+                disabled={loading}
+              />
+            </FormSection>
+          </div>
+        )}
+    </IntakeShell>
   )
 }

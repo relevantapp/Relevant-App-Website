@@ -21,7 +21,7 @@ export interface StepResult<T> {
   timings: { startMs: number; endMs: number; durationMs: number }
 }
 
-export type StepName = 'resolveEntity' | 'gatherEvidence' | 'rankEvidence' | 'synthesize' | 'assembleBrief'
+export type StepName = 'resolveEntity' | 'planSearches' | 'gatherEvidence' | 'rankEvidence' | 'synthesize' | 'assembleBrief'
 
 /* ── Logging ───────────────────────────────────────────────── */
 
@@ -47,6 +47,7 @@ export function logStep(researchType: string, log: StepLog): void {
 
 const STEP_LABELS: Record<StepName, string> = {
   resolveEntity: 'Identifying company',
+  planSearches: 'Planning searches',
   gatherEvidence: 'Gathering evidence',
   rankEvidence: 'Ranking sources',
   synthesize: 'Analyzing with AI',

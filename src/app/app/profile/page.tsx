@@ -412,7 +412,7 @@ export default function ProfilePage() {
             Intelligence Model
           </h3>
           <p className="mb-3 text-xs text-[var(--text-muted)]">
-            Intelligence now runs through OpenRouter. Pick a model family, then the exact model you want for research, refine, and follow-up.
+            Intelligence uses reasoning models only. Pick the exact model used for research, refine, and follow-up.
           </p>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>

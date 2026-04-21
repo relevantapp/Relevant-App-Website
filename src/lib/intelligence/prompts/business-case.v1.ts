@@ -1,10 +1,12 @@
 /* ── Business Case Prompts v1 ──────────────────────────────── */
 
-import type { NormalizedEvidence } from '../contracts'
+import type { NormalizedEvidence, UserResearchContext } from '../contracts'
+import { RELEVANT_RESEARCH_STANDARD, formatUserContext } from './common'
 
 export const BUSINESS_CASE_SYSTEM_PROMPT = `You are a strategy analyst evaluating a business case. Produce a go/no-go assessment. Be balanced. If evidence is thin, say verdict is insufficient_data. Don't fabricate market sizing.
 
 Rules:
+${RELEVANT_RESEARCH_STANDARD}
 - Every claim must reference a source by its ID (e.g. s1, s2)
 - Separate facts (sourced) from inferences (your analysis)
 - Be specific — reference real events, names, numbers
@@ -40,6 +42,13 @@ export function buildBusinessCasePrompt(input: {
   successMetrics?: string[]
   keyQuestions?: string
   comparableCompanies?: string[]
+  decisionType?: string
+  decisionAudience?: string
+  timeHorizon?: string
+  investmentLevel?: string
+  roiFrame?: string[]
+  steering?: string
+  userContext?: UserResearchContext | null
   evidence: NormalizedEvidence[]
   comparableSnapshots: Map<string, string>
 }): string {
@@ -52,6 +61,14 @@ export function buildBusinessCasePrompt(input: {
   if (input.targetMarket) parts.push(`- Target market: ${input.targetMarket}`)
   if (input.successMetrics?.length) parts.push(`- Success metrics: ${input.successMetrics.join(', ')}`)
   if (input.keyQuestions) parts.push(`- Key questions: ${input.keyQuestions}`)
+  if (input.decisionType) parts.push(`- Decision type: ${input.decisionType}`)
+  if (input.decisionAudience) parts.push(`- Decision audience: ${input.decisionAudience}`)
+  if (input.timeHorizon) parts.push(`- Time horizon: ${input.timeHorizon}`)
+  if (input.investmentLevel) parts.push(`- Investment level: ${input.investmentLevel}`)
+  if (input.roiFrame?.length) parts.push(`- ROI frame: ${input.roiFrame.join(', ')}`)
+  if (input.steering) parts.push(`- User steering note: ${input.steering}`)
+
+  parts.push(`\n## User Profile Context\n${formatUserContext(input.userContext)}`)
 
   for (const [name, snapshot] of Array.from(input.comparableSnapshots)) {
     parts.push(`\n## Comparable: ${name}\n${snapshot}`)

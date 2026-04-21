@@ -51,6 +51,7 @@ export default function IntelligencePage() {
   const [selectedType, setSelectedType] = useState<ResearchType | null>(null)
   const [formStates, setFormStates] = useState<FormStates>({ ...INITIAL_FORM_STATES })
   const [pendingInput, setPendingInput] = useState<IntelligenceInput | null>(null)
+  const [lastRequestPayload, setLastRequestPayload] = useState<IntelligenceInput | null>(null)
   const { state: streamState, generate, abort, reset } = useIntelligenceStream()
   const [savedBriefId, setSavedBriefId] = useState<string | null>(null)
   const savingRef = useRef(false)
@@ -68,7 +69,7 @@ export default function IntelligencePage() {
         fetch('/api/intelligence/briefs', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ action: 'save', researchType: brief.researchType, requestPayload: {}, brief }),
+          body: JSON.stringify({ action: 'save', researchType: brief.researchType, requestPayload: lastRequestPayload ?? {}, brief }),
         })
           .then((r) => r.json())
           .then((d) => { if (d.id) setSavedBriefId(d.id) })
@@ -76,7 +77,7 @@ export default function IntelligencePage() {
           .finally(() => { savingRef.current = false }),
       ),
     )
-  }, [brief, savedBriefId])
+  }, [brief, lastRequestPayload, savedBriefId])
 
   const handleSubmit = useCallback((input: IntelligenceInput) => {
     setPendingInput(input)
@@ -85,6 +86,7 @@ export default function IntelligencePage() {
   const handleConfirm = useCallback(async () => {
     if (!pendingInput) return
     const input = pendingInput
+    setLastRequestPayload(input)
     setPendingInput(null)
 
     // Build request body based on research type
@@ -104,6 +106,7 @@ export default function IntelligencePage() {
         whatYoureSelling: input.whatYoureSelling || undefined,
         desiredNextStep: input.desiredNextStep || undefined,
         painPoints: input.painPoints?.length ? input.painPoints : undefined,
+        steering: input.steering || undefined,
       }
     } else if (input.researchType === 'competitive_analysis') {
       apiBody = {
@@ -116,6 +119,7 @@ export default function IntelligencePage() {
         geography: input.geography || undefined,
         customerType: input.customerType || undefined,
         useCasePreset: input.useCasePreset || undefined,
+        steering: input.steering || undefined,
       }
     } else if (input.researchType === 'business_case') {
       apiBody = {
@@ -131,6 +135,7 @@ export default function IntelligencePage() {
         timeHorizon: input.timeHorizon || undefined,
         investmentLevel: input.investmentLevel || undefined,
         roiFrame: input.roiFrame?.length ? input.roiFrame : undefined,
+        steering: input.steering || undefined,
       }
     } else {
       apiBody = {
@@ -145,6 +150,7 @@ export default function IntelligencePage() {
         customerSegment: input.customerSegment || undefined,
         useCase: input.useCase || undefined,
         depth: input.depth || undefined,
+        steering: input.steering || undefined,
       }
     }
 
@@ -160,6 +166,7 @@ export default function IntelligencePage() {
     reset()
     setSavedBriefId(null)
     setPendingInput(null)
+    setLastRequestPayload(null)
   }, [reset])
 
   const handleBack = useCallback(() => {
@@ -170,17 +177,21 @@ export default function IntelligencePage() {
 
   if (authLoading) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-[var(--text-muted)]" />
+      <div data-intel="v4" className="intel-shell">
+        <div className="intel-stage flex min-h-[60vh] items-center justify-center">
+          <Loader2 className="h-6 w-6 animate-spin text-[var(--text-muted)]" />
+        </div>
       </div>
     )
   }
 
   if (!isAuthenticated) {
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3 text-center">
-        <Briefcase className="h-8 w-8 text-[var(--text-soft)]" />
-        <p className="text-[var(--text-muted)]">Sign in to use Intelligence.</p>
+      <div data-intel="v4" className="intel-shell">
+        <div className="intel-stage flex min-h-[60vh] flex-col items-center justify-center gap-3 text-center">
+          <Briefcase className="h-8 w-8 text-[var(--text-soft)]" />
+          <p className="text-[var(--text-muted)]">Sign in to use Intelligence.</p>
+        </div>
       </div>
     )
   }
@@ -189,38 +200,40 @@ export default function IntelligencePage() {
   if (brief) {
     const researchType = brief.researchType
     return (
-      <div className="px-4 py-6 sm:px-6">
-        {brief.status?.degraded && (
-          <div className="mx-auto mb-4 max-w-4xl rounded-xl border border-[var(--accent-coral)]/30 bg-[var(--accent-coral)]/10 p-4">
-            <div className="flex items-center gap-2 text-sm text-[var(--accent-coral)]">
-              <AlertCircle className="h-4 w-4 shrink-0" />
-              AI analysis unavailable — showing raw evidence
+      <div data-intel="v4" className="intel-shell">
+        <div className="intel-stage">
+          {brief.status?.degraded && (
+            <div className="mx-auto mb-4 max-w-4xl rounded-xl border border-[var(--accent-coral)]/30 bg-[var(--accent-coral)]/10 p-4">
+              <div className="flex items-center gap-2 text-sm text-[var(--accent-coral)]">
+                <AlertCircle className="h-4 w-4 shrink-0" />
+                Analysis unavailable — showing raw evidence
+              </div>
             </div>
-          </div>
-        )}
-        {researchType === 'meeting_prep' && (
-          <IntelligenceResults brief={brief as MeetingPrepBrief} onNewSearch={handleNewSearch} savedBriefId={savedBriefId} />
-        )}
-        {researchType === 'competitive_analysis' && (
-          <CompetitiveResults brief={brief as CompetitiveAnalysisBrief} onNewSearch={handleNewSearch} savedBriefId={savedBriefId} />
-        )}
-        {researchType === 'business_case' && (
-          <BusinessCaseResults brief={brief as BusinessCaseBrief} onNewSearch={handleNewSearch} savedBriefId={savedBriefId} />
-        )}
-        {researchType === 'market_research' && (
-          <MarketResearchResults brief={brief as MarketResearchBrief} onNewSearch={handleNewSearch} savedBriefId={savedBriefId} />
-        )}
-        <FollowUpChat briefId={savedBriefId} researchType={researchType ?? undefined} />
+          )}
+          {researchType === 'meeting_prep' && (
+            <IntelligenceResults brief={brief as MeetingPrepBrief} onNewSearch={handleNewSearch} savedBriefId={savedBriefId} />
+          )}
+          {researchType === 'competitive_analysis' && (
+            <CompetitiveResults brief={brief as CompetitiveAnalysisBrief} onNewSearch={handleNewSearch} savedBriefId={savedBriefId} />
+          )}
+          {researchType === 'business_case' && (
+            <BusinessCaseResults brief={brief as BusinessCaseBrief} onNewSearch={handleNewSearch} savedBriefId={savedBriefId} />
+          )}
+          {researchType === 'market_research' && (
+            <MarketResearchResults brief={brief as MarketResearchBrief} onNewSearch={handleNewSearch} savedBriefId={savedBriefId} />
+          )}
+          <FollowUpChat briefId={savedBriefId} researchType={researchType ?? undefined} />
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 py-8 sm:py-12">
-      <div className="w-full max-w-2xl">
+    <div data-intel="v4" className="intel-shell">
+      <div className="intel-stage min-h-[60vh]">
         {/* Error */}
         {error && (
-          <div className="mb-6 rounded-xl border border-[var(--accent-coral)]/30 bg-[var(--accent-coral)]/10 p-4">
+          <div className="mx-auto mb-6 max-w-3xl rounded-xl border border-[var(--accent-coral)]/30 bg-[var(--accent-coral)]/10 p-4">
             <div className="flex items-center gap-2 text-sm text-[var(--accent-coral)]">
               <AlertCircle className="h-4 w-4 shrink-0" />
               {error}
@@ -251,6 +264,7 @@ export default function IntelligencePage() {
         {pendingInput && !loading && (
           <ResearchConfirmation
             input={pendingInput}
+            onChange={(next) => setPendingInput(next)}
             onConfirm={() => void handleConfirm()}
             onEdit={() => setPendingInput(null)}
             loading={loading}
@@ -263,11 +277,10 @@ export default function IntelligencePage() {
             <button
               type="button"
               onClick={handleBack}
-              className="mb-5 inline-flex items-center gap-1.5 bg-transparent p-0 text-[13px] text-[var(--text-muted)] hover:text-[var(--text)] sm:mb-6"
-              style={{ border: 'none', cursor: 'pointer' }}
+              className="intel-back-button mb-5 sm:mb-6"
             >
               <ArrowLeft size={14} />
-              Back
+              Back to workflows
             </button>
 
             {selectedType === 'meeting_prep' && (

@@ -12,6 +12,7 @@ import StatusBar from './shared/StatusBar'
 import CopyModePicker from './shared/CopyModePicker'
 import DegradedBanner from './shared/DegradedBanner'
 import ShareButton from './shared/ShareButton'
+import SearchPlanPanel from './shared/SearchPlanPanel'
 
 interface BusinessCaseResultsProps {
   brief: BusinessCaseBrief
@@ -123,6 +124,9 @@ export default function BusinessCaseResults({ brief, onNewSearch, savedBriefId }
 
       </div>
 
+      <div style={{ marginTop: 32 }}>
+        <SearchPlanPanel plan={brief.researchPlan} />
+      </div>
       <div style={{ marginTop: 32 }}>
         <SourcesStrip sources={brief.sources} />
       </div>
