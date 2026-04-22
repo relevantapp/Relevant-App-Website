@@ -370,6 +370,7 @@ export const MeetingPrepSynthesisSchema = z.object({
   timelineEvents: z.array(TimelineEventSchema).max(6).optional(),
   radarMetrics: z.array(RadarMetricSchema).max(5).optional(),
   signalCards: z.array(SignalCardSchema).max(5).optional(),
+  stakeholders: z.array(StakeholderRowSchema).max(5).optional(),
   competitorMatrix: z.array(CompetitorMatrixRowSchema).max(5).optional(),
   whatJustHappened: z.array(RichBulletSchema),
   talkingPoints: z.array(RichBulletSchema),

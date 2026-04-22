@@ -59,6 +59,7 @@ describe('generateMeetingPrepBrief', () => {
       expect(userPrompt).toContain('"answer"')
       expect(userPrompt).toContain('"priority": "must|should|fyi"')
       expect(userPrompt).toContain('"signalCards"')
+      expect(userPrompt).toContain('"stakeholders"')
 
       return {
         data: {
@@ -73,6 +74,25 @@ describe('generateMeetingPrepBrief', () => {
               whyItMatters: 'That gives you a concrete reason to push on adoption ownership instead of staying at the feature layer.',
               suggestedOpener: 'I saw the new rollout push. Who actually owns deployment sign-off on your side?',
               sources: ['s1'],
+            },
+          ],
+          stakeholders: [
+            {
+              name: 'Maya Chen',
+              title: 'VP Revenue Operations',
+              likelyAgenda: {
+                text: 'Reduce evaluation drag without creating more analyst overhead.',
+                sourceIds: ['s1'],
+              },
+              pressure: {
+                text: 'Needs the team to trust deployment proof before the next buying checkpoint.',
+                sourceIds: ['s1'],
+              },
+              leverage: {
+                text: 'Can sponsor the workflow if the rollout path feels concrete.',
+                sourceIds: ['s1'],
+              },
+              unknowns: ['Budget authority is still unclear.'],
             },
           ],
           answer: {
@@ -111,6 +131,7 @@ describe('generateMeetingPrepBrief', () => {
       accountName: 'Acme',
       meetingType: 'sales',
       goal: 'Get to a pilot',
+      attendees: ['Maya Chen'],
     }
 
     const brief = await generateMeetingPrepBrief(request)
@@ -124,6 +145,25 @@ describe('generateMeetingPrepBrief', () => {
         whyItMatters: 'That gives you a concrete reason to push on adoption ownership instead of staying at the feature layer.',
         suggestedOpener: 'I saw the new rollout push. Who actually owns deployment sign-off on your side?',
         sources: ['s1'],
+      },
+    ])
+    expect(brief.stakeholders).toEqual([
+      {
+        name: 'Maya Chen',
+        title: 'VP Revenue Operations',
+        likelyAgenda: {
+          text: 'Reduce evaluation drag without creating more analyst overhead.',
+          sourceIds: ['s1'],
+        },
+        pressure: {
+          text: 'Needs the team to trust deployment proof before the next buying checkpoint.',
+          sourceIds: ['s1'],
+        },
+        leverage: {
+          text: 'Can sponsor the workflow if the rollout path feels concrete.',
+          sourceIds: ['s1'],
+        },
+        unknowns: ['Budget authority is still unclear.'],
       },
     ])
     expect(brief.sections.whatJustHappened[0]?.priority).toBe('must')

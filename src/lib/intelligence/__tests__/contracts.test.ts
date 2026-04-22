@@ -714,6 +714,25 @@ describe('MeetingPrepSynthesisSchema', () => {
         sources: ['s1'],
       },
     ],
+    stakeholders: [
+      {
+        name: 'Maya Chen',
+        title: 'VP Revenue Operations',
+        likelyAgenda: {
+          text: 'Reduce evaluation drag without creating more analyst overhead.',
+          sourceIds: ['s1'],
+        },
+        pressure: {
+          text: 'Needs the process to feel deployable before the next buying checkpoint.',
+          sourceIds: ['s2'],
+        },
+        leverage: {
+          text: 'Can sponsor the evaluation if the rollout path feels concrete.',
+          sourceIds: ['s3'],
+        },
+        unknowns: ['Budget authority is still unclear.'],
+      },
+    ],
     competitorMatrix: [
       {
         name: 'Acme AI',

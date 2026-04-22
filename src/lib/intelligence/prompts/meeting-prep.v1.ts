@@ -80,6 +80,14 @@ export const MEETING_PREP_SCHEMA_DESC = `{
     "suggestedOpener": "Optional opener the user can say out loud",
     "sources": ["s1"]
   }],
+  "stakeholders": [{
+    "name": "Attendee name",
+    "title": "Known title or null",
+    "likelyAgenda": {"text": "What they likely want from this meeting", "sourceIds": ["s2"], "sourceSnippet": "optional short proof snippet"} or null,
+    "pressure": {"text": "What pressure or constraint they seem to be under", "sourceIds": ["s3"], "sourceSnippet": "optional short proof snippet"} or null,
+    "leverage": {"text": "What influence they likely have on the outcome", "sourceIds": ["s4"], "sourceSnippet": "optional short proof snippet"} or null,
+    "unknowns": ["Concrete uncertainty that still matters"]
+  }],
   "competitorMatrix": [{
     "name": "Competitor name",
     "threatLevel": "integer 0-4",
@@ -161,6 +169,7 @@ Every bullet must have at least one sourceId referencing the evidence IDs above.
 Return 4-6 timelineEvents when there is evidence. Each event must be concrete, recent when possible, and include sourceIds.
 Return exactly 5 radarMetrics aligned to these categories in this spirit: ${MEETING_PREP_RADAR_CATEGORIES.join(', ')}. If the evidence cannot support a trustworthy five-axis view, return an empty array.
 Return 3-5 signalCards when there is real evidence of fresh movement. Each card must include a concrete date, a declarative headline, a one-sentence whyItMatters, at least one source, and an optional suggestedOpener. If the evidence is thin, return an empty array.
+Return one stakeholder row per named attendee when there is evidence. likelyAgenda, pressure, and leverage must be cited spans or null. unknowns should be concrete open questions, not filler. If there are no attendees, return an empty array.
 Return 3-5 competitorMatrix rows when there is real competitive evidence. If evidence is thin, return an empty array.
 Every timeline event, radar metric, competitor row, and signal card must include evidence IDs.
 Use empty arrays instead of filler whenever evidence is insufficient.

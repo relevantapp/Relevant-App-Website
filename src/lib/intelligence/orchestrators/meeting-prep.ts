@@ -11,6 +11,7 @@ import type {
   TimelineEvent,
   RadarMetric,
   SignalCard,
+  StakeholderRow,
   CompetitorMatrixRow,
   BriefBullet,
 } from '../contracts'
@@ -44,6 +45,7 @@ import {
   deriveSourceCounts,
   markSourcesUsedInAnswer,
   normalizeAnswerBlock,
+  normalizeCitedSpan,
   RADAR_DETAIL_MAX,
   sanitizeMeetingPrepText,
   TIMELINE_EVENT_TEXT_MAX,
@@ -59,6 +61,9 @@ const COMPETITOR_MATRIX_LIMIT = 5
 const SIGNAL_CARD_HEADLINE_MAX = 120
 const SIGNAL_CARD_REASON_MAX = 160
 const SIGNAL_CARD_OPENER_MAX = 140
+const STAKEHOLDER_LIMIT = 5
+const STAKEHOLDER_UNKNOWN_MAX = 120
+const STAKEHOLDER_TAG_MAX = 48
 
 const MONTH_INDEX: Record<string, number> = {
   jan: 0,
@@ -198,6 +203,69 @@ function normalizeSignalCards(
 
   if (!normalized.length) return undefined
   return normalized.slice(0, SIGNAL_CARD_LIMIT)
+}
+
+function normalizeStakeholders(
+  rows: StakeholderRow[] | undefined,
+  sourceIdMap: Map<string, string>,
+  attendeeProfiles: AttendeeProfile[],
+): StakeholderRow[] | undefined {
+  const fallbackProfiles = new Map(
+    attendeeProfiles.map((profile) => [profile.name.trim().toLowerCase(), profile]),
+  )
+
+  const normalizedRows = (rows ?? [])
+    .map((row) => {
+      const name = row.name.trim()
+      const fallbackProfile = fallbackProfiles.get(name.toLowerCase())
+
+      return {
+        name,
+        title: sanitizeMeetingPrepText(row.title ?? fallbackProfile?.title) ?? null,
+        likelyAgenda: normalizeCitedSpan(row.likelyAgenda, sourceIdMap),
+        pressure: normalizeCitedSpan(row.pressure, sourceIdMap),
+        leverage: normalizeCitedSpan(row.leverage, sourceIdMap),
+        unknowns: Array.from(
+          new Set(
+            row.unknowns
+              .map((unknown) => sanitizeMeetingPrepText(unknown, STAKEHOLDER_UNKNOWN_MAX))
+              .filter(Boolean) as string[],
+          ),
+        ),
+        commsStyleTag: sanitizeMeetingPrepText(row.commsStyleTag, STAKEHOLDER_TAG_MAX) ?? undefined,
+        disc: row.disc,
+      }
+    })
+    .filter((row) => row.name)
+
+  const seen = new Set<string>()
+  const dedupedRows = normalizedRows.filter((row) => {
+    const key = row.name.toLowerCase()
+    if (seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
+
+  for (const profile of attendeeProfiles) {
+    const name = profile.name.trim()
+    const key = name.toLowerCase()
+    if (!name || seen.has(key)) continue
+
+    dedupedRows.push({
+      name,
+      title: sanitizeMeetingPrepText(profile.title) ?? null,
+      likelyAgenda: null,
+      pressure: null,
+      leverage: null,
+      unknowns: [],
+      commsStyleTag: undefined,
+      disc: undefined,
+    })
+    seen.add(key)
+  }
+
+  if (!dedupedRows.length) return undefined
+  return dedupedRows.slice(0, STAKEHOLDER_LIMIT)
 }
 
 function normalizeCompetitorMatrix(
@@ -546,6 +614,7 @@ export async function generateMeetingPrepBrief(
     const normalizedTimelineEvents = normalizeTimelineEvents(synthesis?.data?.timelineEvents, canonicalSourceIdMap)
     const normalizedRadarMetrics = normalizeRadarMetrics(synthesis?.data?.radarMetrics, canonicalSourceIdMap)
     const normalizedSignalCards = normalizeSignalCards(synthesis?.data?.signalCards, canonicalSourceIdMap)
+    const normalizedStakeholders = normalizeStakeholders(synthesis?.data?.stakeholders, canonicalSourceIdMap, attendeeProfiles)
     const normalizedCompetitorMatrix = request.competitors?.length
       ? normalizeCompetitorMatrix(synthesis?.data?.competitorMatrix, canonicalSourceIdMap)
       : undefined
@@ -563,6 +632,11 @@ export async function generateMeetingPrepBrief(
         normalizedTimelineEvents?.flatMap((event) => event.sourceIds),
         normalizedRadarMetrics?.flatMap((metric) => metric.sourceIds),
         normalizedSignalCards?.flatMap((card) => card.sources),
+        normalizedStakeholders?.flatMap((stakeholder) => [
+          ...(stakeholder.likelyAgenda?.sourceIds ?? []),
+          ...(stakeholder.pressure?.sourceIds ?? []),
+          ...(stakeholder.leverage?.sourceIds ?? []),
+        ]),
         normalizedCompetitorMatrix?.flatMap((row) => row.sourceIds),
         normalizedSections.whatJustHappened.flatMap((bullet) => bullet.sourceIds),
         normalizedSections.talkingPoints.flatMap((bullet) => bullet.sourceIds),
@@ -584,6 +658,11 @@ export async function generateMeetingPrepBrief(
         ...(normalizedTimelineEvents?.map((event) => event.sourceIds) ?? []),
         ...(normalizedRadarMetrics?.map((metric) => metric.sourceIds) ?? []),
         ...(normalizedSignalCards?.map((card) => card.sources) ?? []),
+        ...(normalizedStakeholders?.flatMap((stakeholder) => [
+          stakeholder.likelyAgenda?.sourceIds,
+          stakeholder.pressure?.sourceIds,
+          stakeholder.leverage?.sourceIds,
+        ].filter((group): group is string[] => Boolean(group))) ?? []),
         ...(normalizedCompetitorMatrix?.map((row) => row.sourceIds) ?? []),
         ...normalizedSections.whatJustHappened.map((bullet) => bullet.sourceIds),
         ...normalizedSections.talkingPoints.map((bullet) => bullet.sourceIds),
@@ -628,6 +707,7 @@ export async function generateMeetingPrepBrief(
       timelineEvents: normalizedTimelineEvents,
       radarMetrics: normalizedRadarMetrics,
       signalCards: normalizedSignalCards,
+      stakeholders: normalizedStakeholders,
       competitorMatrix: normalizedCompetitorMatrix,
       sections: normalizedSections,
       sources: dedupedSources,
