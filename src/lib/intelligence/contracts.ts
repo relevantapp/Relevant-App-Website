@@ -645,6 +645,15 @@ export const TrackedSignalSchema = z.object({
 })
 export type TrackedSignal = z.infer<typeof TrackedSignalSchema>
 
+export const MaturityStageSchema = z.enum(['innovation-trigger', 'peak', 'trough', 'slope', 'plateau'])
+export type MaturityStage = z.infer<typeof MaturityStageSchema>
+
+export const MaturityPositionSchema = z.object({
+  stage: MaturityStageSchema,
+  rationale: CitedSpanSchema,
+})
+export type MaturityPosition = z.infer<typeof MaturityPositionSchema>
+
 export const MarketResearchSynthesisSchema = z.object({
   headline: z.string(),
   bottomLine: z.string(),
@@ -664,6 +673,7 @@ export interface MarketResearchBrief extends BriefBase {
   marketOverview: string
   marketMap?: MarketMap
   trackedSignals?: TrackedSignal[]
+  maturity?: MaturityPosition
   players: MarketPlayer[]
   sections: {
     trendSignals: BriefBullet[]
@@ -814,6 +824,7 @@ export const MarketResearchBriefSchema = BriefBaseSchema.extend({
   marketOverview: z.string(),
   marketMap: MarketMapSchema.optional(),
   trackedSignals: z.array(TrackedSignalSchema).optional(),
+  maturity: MaturityPositionSchema.optional(),
   players: z.array(MarketPlayerSchema),
   sections: z.object({
     trendSignals: z.array(BriefBulletSchema),

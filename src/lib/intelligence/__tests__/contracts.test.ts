@@ -22,6 +22,8 @@ import {
   MarketPlayerSchema,
   MarketPlayerTileSchema,
   MarketSegmentSchema,
+  MaturityPositionSchema,
+  MaturityStageSchema,
   TrackedSignalSchema,
   NormalizedEvidenceSchema,
   MeetingPrepBriefSchema,
@@ -221,6 +223,21 @@ describe('TrackedSignalSchema', () => {
     } as const
 
     expect(TrackedSignalSchema.parse(signal)).toEqual(signal)
+  })
+})
+
+describe('MaturityPositionSchema', () => {
+  it('accepts the five maturity stages with cited rationale', () => {
+    const maturity = {
+      stage: 'slope',
+      rationale: {
+        text: 'The category is moving into practical evaluation.',
+        sourceIds: ['s1'],
+      },
+    } as const
+
+    expect(MaturityStageSchema.parse('slope')).toBe('slope')
+    expect(MaturityPositionSchema.parse(maturity)).toEqual(maturity)
   })
 })
 

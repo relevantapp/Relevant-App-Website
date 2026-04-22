@@ -18,6 +18,7 @@ import SearchPlanPanel from './shared/SearchPlanPanel'
 import ExhibitShell from './shared/ExhibitShell'
 import MethodologyDrawer from './shared/MethodologyDrawer'
 import LogoMarketMap from './shared/viz/LogoMarketMap'
+import MaturityCurve from './shared/viz/MaturityCurve'
 import Quadrant from './shared/viz/Quadrant'
 import TrendTracker from './shared/viz/TrendTracker'
 import HistoryButton from '../HistoryButton'
@@ -114,6 +115,18 @@ export default function MarketResearchResults({ brief, onNewSearch, savedBriefId
       {INTEL_RESULTS_V2 && brief.trackedSignals?.length ? (
         <div style={{ marginTop: 24 }}>
           <TrendTracker data={brief.trackedSignals} asOf={brief.generatedAt} sources={brief.sources} />
+        </div>
+      ) : null}
+
+      {INTEL_RESULTS_V2 && brief.maturity ? (
+        <div style={{ marginTop: 24 }}>
+          <MaturityCurve
+            data={brief.maturity}
+            headline="The category has moved past early hype and is entering practical evaluation."
+            subhead="That matters because buyers now reward products that prove one repeatable workflow instead of sounding generically intelligent."
+            asOf={brief.generatedAt}
+            sources={brief.sources}
+          />
         </div>
       ) : null}
 

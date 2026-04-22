@@ -303,6 +303,14 @@ export const marketResearchFixture: MarketResearchBrief = {
       ],
     },
   ],
+  maturity: {
+    stage: 'slope',
+    rationale: {
+      text: 'The market is moving out of novelty and into practical evaluation, which is exactly where workflow-specific products can separate themselves.',
+      sourceIds: ['mr-2', 'mr-3', 'mr-4'],
+      sourceSnippet: 'Recent analyst and tracker evidence both point toward more practical buying behavior.',
+    },
+  },
   players: [
     {
       name: 'AlphaSense',
