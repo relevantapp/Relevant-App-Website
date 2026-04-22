@@ -4,6 +4,7 @@ import type {
   CompetitiveAnalysisRequest,
   CompetitiveAnalysisBrief,
   BriefSource,
+  CompositeQuadrant,
   NormalizedEvidence,
   SearchTask,
 } from '../contracts'
@@ -26,12 +27,75 @@ import {
   collectAnswerSourceIds,
   markSourcesUsedInAnswer,
   normalizeAnswerBlock,
+  normalizeCitedSpan,
 } from '../meeting-prep-display'
 import {
   buildV2PlanBridge,
   collectV2EvidenceBridge,
   persistV2EvidencePack,
 } from './v2-bridge'
+
+function clampUnit(value: number): number {
+  return Math.min(1, Math.max(0, value))
+}
+
+function normalizeCompositeQuadrant(
+  quadrant: CompositeQuadrant | undefined,
+  sourceIdMap: Map<string, string>,
+): CompositeQuadrant | undefined {
+  if (!quadrant) return undefined
+
+  if (!quadrant.rendered) {
+    const reason = quadrant.reason.trim()
+    return reason ? { rendered: false, reason } : undefined
+  }
+
+  const xRationale = normalizeCitedSpan(quadrant.xAxis.rationale, sourceIdMap)
+  const yRationale = normalizeCitedSpan(quadrant.yAxis.rationale, sourceIdMap)
+  if (!xRationale || !yRationale) {
+    return {
+      rendered: false,
+      reason: 'The quadrant evidence was not distinct enough to render reliably.',
+    }
+  }
+
+  const points = quadrant.points
+    .map((point) => {
+      const rationale = normalizeCitedSpan(point.rationale, sourceIdMap)
+      if (!rationale) return null
+
+      return {
+        entity: point.entity.trim(),
+        x: clampUnit(point.x),
+        y: clampUnit(point.y),
+        rationale,
+      }
+    })
+    .filter((point): point is NonNullable<typeof point> => Boolean(point))
+    .filter((point) => point.entity)
+
+  if (!quadrant.xAxis.name.trim() || !quadrant.yAxis.name.trim() || points.length < 2) {
+    return {
+      rendered: false,
+      reason: 'The quadrant evidence was not distinct enough to render reliably.',
+    }
+  }
+
+  return {
+    rendered: true,
+    xAxis: {
+      name: quadrant.xAxis.name.trim(),
+      description: quadrant.xAxis.description.trim(),
+      rationale: xRationale,
+    },
+    yAxis: {
+      name: quadrant.yAxis.name.trim(),
+      description: quadrant.yAxis.description.trim(),
+      rationale: yRationale,
+    },
+    points,
+  }
+}
 
 export async function generateCompetitiveAnalysisBrief(
   input: CompetitiveAnalysisRequest,
@@ -248,14 +312,31 @@ export async function generateCompetitiveAnalysisBrief(
   /* ── Step 5: assembleBrief ───────────────────────────────── */
   const canonicalSourceIdMap = buildCanonicalSourceIdMap(allSources)
   const normalizedAnswer = normalizeAnswerBlock(synthesis?.data?.answer, canonicalSourceIdMap)
+  const normalizedCompositeQuadrant = normalizeCompositeQuadrant(synthesis?.data?.compositeQuadrant, canonicalSourceIdMap)
   const dedupedSources = markSourcesUsedInAnswer(
     deduplicateSources(allSources),
-    collectAnswerSourceIds(normalizedAnswer),
+    [
+      ...collectAnswerSourceIds(normalizedAnswer),
+      ...(normalizedCompositeQuadrant?.rendered
+        ? [
+          ...normalizedCompositeQuadrant.xAxis.rationale.sourceIds,
+          ...normalizedCompositeQuadrant.yAxis.rationale.sourceIds,
+          ...normalizedCompositeQuadrant.points.flatMap((point) => point.rationale.sourceIds),
+        ]
+        : []),
+    ],
   )
   const trust = buildTrustLayer({
     sources: dedupedSources,
     sourceIdMap: canonicalSourceIdMap,
     claimSourceGroups: [
+      ...(normalizedCompositeQuadrant?.rendered
+        ? [
+          normalizedCompositeQuadrant.xAxis.rationale.sourceIds,
+          normalizedCompositeQuadrant.yAxis.rationale.sourceIds,
+          ...normalizedCompositeQuadrant.points.map((point) => point.rationale.sourceIds),
+        ]
+        : []),
       ...(synthesis?.data?.keyFindings.map((bullet) => bullet.sourceIds) ?? []),
       ...(synthesis?.data?.strategicImplications.map((bullet) => bullet.sourceIds) ?? []),
       ...(synthesis?.data?.recommendations.map((bullet) => bullet.sourceIds) ?? []),
@@ -295,6 +376,7 @@ export async function generateCompetitiveAnalysisBrief(
     yourCompany: input.yourCompany ?? null,
     competitors: synthesis?.data?.competitors ?? [],
     comparisonMatrix: synthesis?.data?.comparisonMatrix ?? [],
+    compositeQuadrant: normalizedCompositeQuadrant,
     sections: {
       keyFindings: synthesis?.data?.keyFindings ?? [],
       strategicImplications: synthesis?.data?.strategicImplications ?? [],

@@ -49,6 +49,7 @@ describe('generateCompetitiveAnalysisBrief', () => {
     synthesizeWithSchema.mockImplementation(async (_systemPrompt: string, userPrompt: string) => {
       expect(userPrompt).toContain('"answer"')
       expect(userPrompt).toContain('"priority": "must|should|fyi"')
+      expect(userPrompt).toContain('"compositeQuadrant"')
       expect(userPrompt).toContain('Every comparisonMatrix row must include exactly one values entry for Relevant')
 
       return {
@@ -118,6 +119,45 @@ describe('generateCompetitiveAnalysisBrief', () => {
               ],
             },
           ],
+          compositeQuadrant: {
+            rendered: true,
+            xAxis: {
+              name: 'Market breadth',
+              description: 'How broad and enterprise-ready the platform feels.',
+              rationale: {
+                text: 'Breadth is driven by coverage and enterprise comfort across the set.',
+                sourceIds: ['s1'],
+              },
+            },
+            yAxis: {
+              name: 'Decision velocity',
+              description: 'How quickly an operator gets to a usable answer.',
+              rationale: {
+                text: 'Decision velocity is based on how much synthesis work still falls back to the user.',
+                sourceIds: ['s1'],
+              },
+            },
+            points: [
+              {
+                entity: 'Relevant',
+                x: 0.42,
+                y: 0.84,
+                rationale: {
+                  text: 'Relevant is narrower but faster to a usable answer.',
+                  sourceIds: ['s1'],
+                },
+              },
+              {
+                entity: 'AlphaSense',
+                x: 0.92,
+                y: 0.63,
+                rationale: {
+                  text: 'AlphaSense leads on breadth but still asks the user to do more synthesis.',
+                  sourceIds: ['s1'],
+                },
+              },
+            ],
+          },
           keyFindings: [{ text: 'Relevant leads on directness.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
           strategicImplications: [{ text: 'Position as the decision layer.', sourceIds: ['s1'], tag: 'inference', priority: 'should' }],
           recommendations: [{ text: 'Lead with answer quality.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
@@ -149,8 +189,78 @@ describe('generateCompetitiveAnalysisBrief', () => {
     expect(brief.methodology?.confidenceDrivers.length).toBeGreaterThan(0)
     expect(brief.sources.some((source) => source.usedInAnswer)).toBe(true)
     expect(brief.comparisonMatrix).toHaveLength(2)
+    expect(brief.compositeQuadrant).toEqual({
+      rendered: true,
+      xAxis: {
+        name: 'Market breadth',
+        description: 'How broad and enterprise-ready the platform feels.',
+        rationale: {
+          text: 'Breadth is driven by coverage and enterprise comfort across the set.',
+          sourceIds: ['s1'],
+        },
+      },
+      yAxis: {
+        name: 'Decision velocity',
+        description: 'How quickly an operator gets to a usable answer.',
+        rationale: {
+          text: 'Decision velocity is based on how much synthesis work still falls back to the user.',
+          sourceIds: ['s1'],
+        },
+      },
+      points: [
+        {
+          entity: 'Relevant',
+          x: 0.42,
+          y: 0.84,
+          rationale: {
+            text: 'Relevant is narrower but faster to a usable answer.',
+            sourceIds: ['s1'],
+          },
+        },
+        {
+          entity: 'AlphaSense',
+          x: 0.92,
+          y: 0.63,
+          rationale: {
+            text: 'AlphaSense leads on breadth but still asks the user to do more synthesis.',
+            sourceIds: ['s1'],
+          },
+        },
+      ],
+    })
     brief.comparisonMatrix.forEach((row) => {
       expect(row.values.some((value) => value.company === 'Relevant')).toBe(true)
+    })
+  })
+
+  it('preserves the render-false quadrant reason when the model says the axes are not defensible', async () => {
+    synthesizeWithSchema.mockResolvedValueOnce({
+      data: {
+        headline: 'The comparison is real, but a quadrant would overstate precision.',
+        bottomLine: 'Stick with the matrix because the axes collapse into one another.',
+        confidence: 'medium',
+        competitors: [],
+        comparisonMatrix: [],
+        compositeQuadrant: {
+          rendered: false,
+          reason: 'The candidate axes mostly restate the same breadth score, so a quadrant would be misleading.',
+        },
+        keyFindings: [{ text: 'The evidence is still useful without a quadrant.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
+        strategicImplications: [],
+        recommendations: [],
+      },
+    })
+
+    const { generateCompetitiveAnalysisBrief } = await import('../orchestrators/competitive-analysis')
+    const brief = await generateCompetitiveAnalysisBrief({
+      competitors: ['AlphaSense', 'Klue'],
+      yourCompany: 'Relevant',
+      focusArea: 'competitive positioning',
+    })
+
+    expect(brief.compositeQuadrant).toEqual({
+      rendered: false,
+      reason: 'The candidate axes mostly restate the same breadth score, so a quadrant would be misleading.',
     })
   })
 })
