@@ -37,6 +37,7 @@ import { INTEL_RESULTS_V2 } from '@/lib/intelligence/feature-flags'
 import { buildMeetingPrepSnapshot } from '@/lib/intelligence/meeting-prep-display'
 import PriorityStrip from './shared/PriorityStrip'
 import UnknownField from './shared/UnknownField'
+import BulletChart from './shared/viz/BulletChart'
 
 /* ── Bento Section Card ──────────────────────────────────────── */
 
@@ -361,13 +362,7 @@ export function PeopleCard({ profiles }: { profiles: AttendeeProfile[] }) {
   )
 }
 
-/* ── Momentum Gauge ─────────────────────────────────────────── */
-
-function getMomentumTone(score: number): string {
-  if (score >= 67) return 'var(--accent-teal)'
-  if (score <= 33) return 'var(--accent-coral)'
-  return 'var(--accent-amber)'
-}
+/* ── Momentum Summary ───────────────────────────────────────── */
 
 export function MomentumGauge({
   score,
@@ -396,9 +391,6 @@ export function MomentumGauge({
     )
   }
 
-  const tone = getMomentumTone(score)
-  const normalizedScore = Math.max(0, Math.min(100, score)) / 100
-
   return (
     <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5">
       <div className="flex items-start justify-between gap-4">
@@ -414,53 +406,30 @@ export function MomentumGauge({
         </div>
       </div>
 
-      <div className="mt-5 grid gap-5 md:grid-cols-[minmax(0,220px)_1fr] md:items-center">
-        <div className="mx-auto w-full max-w-[220px]">
-          <svg viewBox="0 0 120 80" className="w-full" aria-label={`Momentum score ${score} out of 100`}>
-            <path
-              d="M 16 64 A 44 44 0 0 1 104 64"
-              fill="none"
-              stroke="var(--surface-strong)"
-              strokeWidth="10"
-              strokeLinecap="round"
+      <div className="mt-5 grid gap-5 md:grid-cols-[minmax(0,280px)_1fr] md:items-center">
+        <div className="mx-auto w-full max-w-[320px]">
+          <motion.div
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: shouldReduceMotion ? 0 : 0.4, ease: 'easeOut' }}
+          >
+            <BulletChart
+              value={score}
+              targetBands={[
+                { label: 'weak', from: 0, to: 40 },
+                { label: 'watch', from: 40, to: 70 },
+                { label: 'warm', from: 70, to: 100 },
+              ]}
+              label="Account state"
             />
-            <motion.path
-              d="M 16 64 A 44 44 0 0 1 104 64"
-              fill="none"
-              stroke={tone}
-              strokeWidth="10"
-              strokeLinecap="round"
-              initial={{ pathLength: shouldReduceMotion ? normalizedScore : 0 }}
-              animate={{ pathLength: normalizedScore }}
-              transition={{ duration: shouldReduceMotion ? 0 : 0.8, ease: 'easeOut' }}
-            />
-            <text x="60" y="52" textAnchor="middle" className="mono" style={{ fontSize: 24, fill: 'var(--text)' }}>
-              {score}
-            </text>
-            <text x="60" y="66" textAnchor="middle" className="kicker" style={{ fill: 'var(--text-soft)' }}>
-              account heat
-            </text>
-          </svg>
+          </motion.div>
         </div>
 
         <div>
-          <div className="grid grid-cols-3 gap-2">
-            {[
-              ['Cold', '0-33'],
-              ['Watch', '34-66'],
-              ['Hot', '67-100'],
-            ].map(([label, range]) => (
-              <div key={label} className="rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-3 text-center">
-                <p className="mono text-[10px] uppercase tracking-[0.16em] text-[var(--text-soft)]">{label}</p>
-                <p className="mt-1 text-xs text-[var(--text-muted)]">{range}</p>
-              </div>
-            ))}
-          </div>
-
           <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3">
             <p className="kicker">Signal support</p>
             <p className="mt-1.5 text-sm leading-relaxed text-[var(--text-muted)]">
-              Use the sources below to validate why the brief considers this account warm, neutral, or at risk.
+              Use the sources below to validate why the brief considers this account warm, watchful, or weak.
             </p>
             <SourceChipRow sourceIds={sourceIds} onSourceClick={onSourceClick} />
           </div>
