@@ -24,6 +24,7 @@ import {
   MarketSegmentSchema,
   MaturityPositionSchema,
   MaturityStageSchema,
+  PullQuoteSchema,
   TrackedSignalSchema,
   NormalizedEvidenceSchema,
   MeetingPrepBriefSchema,
@@ -238,6 +239,23 @@ describe('MaturityPositionSchema', () => {
 
     expect(MaturityStageSchema.parse('slope')).toBe('slope')
     expect(MaturityPositionSchema.parse(maturity)).toEqual(maturity)
+  })
+})
+
+describe('PullQuoteSchema', () => {
+  it('accepts quote cards with attribution and theme', () => {
+    const quote = {
+      quote: 'Proof matters more than generic summaries.',
+      attribution: {
+        name: 'Alicia Ford',
+        role: 'VP Strategy',
+        source: 'Operator interview',
+        date: '2026-04-04',
+      },
+      theme: 'Workflow proof',
+    } as const
+
+    expect(PullQuoteSchema.parse(quote)).toEqual(quote)
   })
 })
 

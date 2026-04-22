@@ -20,6 +20,7 @@ import MethodologyDrawer from './shared/MethodologyDrawer'
 import LogoMarketMap from './shared/viz/LogoMarketMap'
 import MaturityCurve from './shared/viz/MaturityCurve'
 import Quadrant from './shared/viz/Quadrant'
+import QuoteWall from './shared/viz/QuoteWall'
 import TrendTracker from './shared/viz/TrendTracker'
 import HistoryButton from '../HistoryButton'
 
@@ -212,6 +213,18 @@ export default function MarketResearchResults({ brief, onNewSearch, savedBriefId
           onSourceClick={scrollToSource}
         />
       </div>
+
+      {INTEL_RESULTS_V2 && brief.quotes?.length ? (
+        <div style={{ marginTop: 24 }}>
+          <QuoteWall
+            data={brief.quotes}
+            headline="The market is telling us that proof and workflow clarity matter more than generic AI posture."
+            subhead="These quotes add texture to the category signal and show where buyers are still skeptical."
+            asOf={brief.generatedAt}
+            sources={brief.sources}
+          />
+        </div>
+      ) : null}
 
       {/* Key Findings */}
       {brief.sections.keyFindings.length > 0 && (

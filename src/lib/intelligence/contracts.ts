@@ -654,6 +654,18 @@ export const MaturityPositionSchema = z.object({
 })
 export type MaturityPosition = z.infer<typeof MaturityPositionSchema>
 
+export const PullQuoteSchema = z.object({
+  quote: z.string(),
+  attribution: z.object({
+    name: z.string(),
+    role: z.string().optional(),
+    source: z.string(),
+    date: z.string(),
+  }),
+  theme: z.string(),
+})
+export type PullQuote = z.infer<typeof PullQuoteSchema>
+
 export const MarketResearchSynthesisSchema = z.object({
   headline: z.string(),
   bottomLine: z.string(),
@@ -674,6 +686,7 @@ export interface MarketResearchBrief extends BriefBase {
   marketMap?: MarketMap
   trackedSignals?: TrackedSignal[]
   maturity?: MaturityPosition
+  quotes?: PullQuote[]
   players: MarketPlayer[]
   sections: {
     trendSignals: BriefBullet[]
@@ -825,6 +838,7 @@ export const MarketResearchBriefSchema = BriefBaseSchema.extend({
   marketMap: MarketMapSchema.optional(),
   trackedSignals: z.array(TrackedSignalSchema).optional(),
   maturity: MaturityPositionSchema.optional(),
+  quotes: z.array(PullQuoteSchema).optional(),
   players: z.array(MarketPlayerSchema),
   sections: z.object({
     trendSignals: z.array(BriefBulletSchema),

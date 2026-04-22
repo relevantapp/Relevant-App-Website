@@ -311,6 +311,48 @@ export const marketResearchFixture: MarketResearchBrief = {
       sourceSnippet: 'Recent analyst and tracker evidence both point toward more practical buying behavior.',
     },
   },
+  quotes: [
+    {
+      quote: 'Teams keep asking whether the system gets them to a conclusion they can defend.',
+      attribution: {
+        name: 'Alicia Ford',
+        role: 'VP Strategy',
+        source: 'Operator interview',
+        date: '2026-04-04',
+      },
+      theme: 'Workflow proof',
+    },
+    {
+      quote: 'The broad monitoring category is still where buyers start, even if they eventually want a narrower workflow tool.',
+      attribution: {
+        name: 'Marcus Lee',
+        role: 'Market analyst',
+        source: 'Industry briefing',
+        date: '2026-03-27',
+      },
+      theme: 'Procurement comfort',
+    },
+    {
+      quote: 'If the output still feels like generic AI text, the team will bounce after the first week.',
+      attribution: {
+        name: 'Nina Patel',
+        role: 'Revenue operations leader',
+        source: 'Buyer interview',
+        date: '2026-04-09',
+      },
+      theme: 'Buyer expectation',
+    },
+    {
+      quote: 'People are willing to try a new tool when it clearly owns a repeated decision motion.',
+      attribution: {
+        name: 'Jordan Kim',
+        role: 'Founder',
+        source: 'Founder interview',
+        date: '2026-04-11',
+      },
+      theme: 'Buyer expectation',
+    },
+  ],
   players: [
     {
       name: 'AlphaSense',
