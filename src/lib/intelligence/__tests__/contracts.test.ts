@@ -24,6 +24,7 @@ import {
   RichBulletSchema,
   CompetitorMatrixRowSchema,
   MeetingPrepSynthesisSchema,
+  CompositeQuadrantSchema,
   StakeholderRowSchema,
   SignalCardSchema,
 } from '../contracts'
@@ -208,6 +209,29 @@ describe('StakeholderRowSchema', () => {
     } as const
 
     expect(StakeholderRowSchema.parse(stakeholder)).toEqual(stakeholder)
+  })
+})
+
+describe('CompositeQuadrantSchema', () => {
+  it('accepts both rendered and gated quadrant payloads', () => {
+    const rendered = {
+      rendered: true,
+      xAxis: {
+        name: 'Market breadth',
+        description: 'Breadth across the category',
+        rationale: { text: 'Breadth is defensible here.', sourceIds: ['s1'] },
+      },
+      yAxis: {
+        name: 'Decision velocity',
+        description: 'How fast the user gets to a conclusion',
+        rationale: { text: 'Workflow speed is also defensible.', sourceIds: ['s2'] },
+      },
+      points: [{ entity: 'Relevant', x: 0.42, y: 0.83, rationale: { text: 'Point rationale.', sourceIds: ['s1'] } }],
+    } as const
+    const gated = { rendered: false, reason: 'Axes were not distinct enough.' } as const
+
+    expect(CompositeQuadrantSchema.parse(rendered)).toEqual(rendered)
+    expect(CompositeQuadrantSchema.parse(gated)).toEqual(gated)
   })
 })
 

@@ -419,6 +419,34 @@ export const ComparisonRowSchema = z.object({
 })
 export type ComparisonRow = z.infer<typeof ComparisonRowSchema>
 
+export const QuadrantAxisSchema = z.object({
+  name: z.string(),
+  description: z.string(),
+  rationale: CitedSpanSchema,
+})
+export type QuadrantAxis = z.infer<typeof QuadrantAxisSchema>
+
+export const CompositeQuadrantSchema = z.union([
+  z.object({
+    rendered: z.literal(true),
+    xAxis: QuadrantAxisSchema,
+    yAxis: QuadrantAxisSchema,
+    points: z.array(
+      z.object({
+        entity: z.string(),
+        x: z.number().min(0).max(1),
+        y: z.number().min(0).max(1),
+        rationale: CitedSpanSchema,
+      }),
+    ),
+  }),
+  z.object({
+    rendered: z.literal(false),
+    reason: z.string(),
+  }),
+])
+export type CompositeQuadrant = z.infer<typeof CompositeQuadrantSchema>
+
 export const CompetitiveSynthesisSchema = z.object({
   headline: z.string(),
   bottomLine: z.string(),
@@ -437,6 +465,7 @@ export interface CompetitiveAnalysisBrief extends BriefBase {
   yourCompany: string | null
   competitors: CompetitorProfile[]
   comparisonMatrix: ComparisonRow[]
+  compositeQuadrant?: CompositeQuadrant
   sections: {
     keyFindings: BriefBullet[]
     strategicImplications: BriefBullet[]
@@ -643,6 +672,7 @@ export const CompetitiveAnalysisBriefSchema = BriefBaseSchema.extend({
   yourCompany: z.string().nullable(),
   competitors: z.array(CompetitorProfileSchema),
   comparisonMatrix: z.array(ComparisonRowSchema),
+  compositeQuadrant: CompositeQuadrantSchema.optional(),
   sections: z.object({
     keyFindings: z.array(BriefBulletSchema),
     strategicImplications: z.array(BriefBulletSchema),

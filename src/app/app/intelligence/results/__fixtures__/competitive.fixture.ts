@@ -261,6 +261,63 @@ export const competitiveFixture: CompetitiveAnalysisBrief = {
       ],
     },
   ],
+  compositeQuadrant: {
+    rendered: true,
+    xAxis: {
+      name: 'Market breadth',
+      description: 'How broad and enterprise-ready the platform feels across content, coverage, and procurement expectations.',
+      rationale: {
+        text: 'Breadth is driven by content depth, workflow coverage, and enterprise comfort signals across the evaluated set.',
+        sourceIds: ['ca-2', 'ca-4'],
+      },
+    },
+    yAxis: {
+      name: 'Decision velocity',
+      description: 'How quickly an operator gets to an answer they can act on and defend.',
+      rationale: {
+        text: 'Decision velocity is based on how much synthesis work still falls back to the user after the product returns results.',
+        sourceIds: ['ca-1', 'ca-3', 'ca-5'],
+      },
+    },
+    points: [
+      {
+        entity: 'Relevant',
+        x: 0.42,
+        y: 0.84,
+        rationale: {
+          text: 'Relevant sits highest on workflow decisiveness even though it is still narrower than the biggest enterprise platforms.',
+          sourceIds: ['ca-1', 'ca-5'],
+        },
+      },
+      {
+        entity: 'AlphaSense',
+        x: 0.92,
+        y: 0.63,
+        rationale: {
+          text: 'AlphaSense is the breadth leader, but the workflow still asks the user to do more of the final synthesis.',
+          sourceIds: ['ca-2', 'ca-5'],
+        },
+      },
+      {
+        entity: 'Klue',
+        x: 0.58,
+        y: 0.56,
+        rationale: {
+          text: 'Klue stays competitive on field usability, but its center of gravity is enablement rather than executive synthesis.',
+          sourceIds: ['ca-3'],
+        },
+      },
+      {
+        entity: 'Crayon',
+        x: 0.71,
+        y: 0.45,
+        rationale: {
+          text: 'Crayon has respectable breadth for monitoring buyers, but it lands lower on decision velocity than an answer-first workflow.',
+          sourceIds: ['ca-4', 'ca-5'],
+        },
+      },
+    ],
+  },
   sections: {
     keyFindings: [
       {
