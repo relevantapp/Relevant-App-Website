@@ -305,6 +305,15 @@ export interface RadarMetric {
   sourceIds: string[]
 }
 
+export const SignalCardSchema = z.object({
+  date: z.string(),
+  headline: z.string(),
+  whyItMatters: z.string(),
+  suggestedOpener: z.string().optional(),
+  sources: z.array(z.string()).min(1),
+})
+export type SignalCard = z.infer<typeof SignalCardSchema>
+
 export const CompetitorMatrixRowSchema = z.object({
   name: z.string().min(1),
   threatLevel: z.number().int().min(0).max(4),
@@ -358,6 +367,7 @@ export interface MeetingPrepBrief extends BriefBase {
   sentiment?: MeetingPrepSentiment
   timelineEvents?: TimelineEvent[]
   radarMetrics?: RadarMetric[]
+  signalCards?: SignalCard[]
   competitorMatrix?: CompetitorMatrixRow[]
   sections: {
     whatJustHappened: BriefBullet[]
@@ -596,6 +606,7 @@ export const MeetingPrepBriefSchema = BriefBaseSchema.extend({
   sentiment: MeetingPrepSentimentSchema.optional(),
   timelineEvents: z.array(TimelineEventSchema).optional(),
   radarMetrics: z.array(RadarMetricSchema).optional(),
+  signalCards: z.array(SignalCardSchema).optional(),
   competitorMatrix: z.array(CompetitorMatrixRowSchema).optional(),
   sections: z.object({
     whatJustHappened: z.array(BriefBulletSchema),

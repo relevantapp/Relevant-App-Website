@@ -43,6 +43,7 @@ function collectUsedSourceIds(brief: MeetingPrepBrief, sourceIdMap: Map<string, 
     ...(brief.timelineEvents?.flatMap((event) => event.sourceIds) ?? []),
     ...(brief.radarMetrics?.flatMap((metric) => metric.sourceIds) ?? []),
     ...(brief.competitorMatrix?.flatMap((row) => row.sourceIds) ?? []),
+    ...(brief.signalCards?.flatMap((card) => card.sources) ?? []),
     ...brief.sections.whatJustHappened.flatMap((bullet) => bullet.sourceIds),
     ...brief.sections.talkingPoints.flatMap((bullet) => bullet.sourceIds),
     ...brief.sections.landmines.flatMap((bullet) => bullet.sourceIds),
@@ -203,7 +204,13 @@ export default function IntelligenceResults({ brief, onNewSearch, savedBriefId }
         </div>
 
         <div className="mt-4">
-          <DeepDivePanels sections={sections} onSourceClick={scrollToSource} />
+          <DeepDivePanels
+            sections={sections}
+            signalCards={displayBrief.signalCards}
+            generatedAt={displayBrief.generatedAt}
+            sources={displayBrief.sources}
+            onSourceClick={scrollToSource}
+          />
         </div>
       </div>
 

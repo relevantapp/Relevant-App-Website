@@ -24,6 +24,7 @@ import {
   RichBulletSchema,
   CompetitorMatrixRowSchema,
   MeetingPrepSynthesisSchema,
+  SignalCardSchema,
 } from '../contracts'
 import { businessCaseFixture } from '@/app/app/intelligence/results/__fixtures__/business-case.fixture'
 import { competitiveFixture } from '@/app/app/intelligence/results/__fixtures__/competitive.fixture'
@@ -169,6 +170,28 @@ describe('MarketPlayerSchema', () => {
     } as const
 
     expect(MarketPlayerSchema.parse(player)).toEqual(player)
+  })
+})
+
+describe('SignalCardSchema', () => {
+  it('accepts dated signal cards with optional suggested openers', () => {
+    const signalCard = {
+      date: '2026-04-20',
+      headline: 'The account rolled out a new planning motion.',
+      whyItMatters: 'That creates a fresh opening for decision-ready research.',
+      suggestedOpener: 'How are you handling the new planning cadence?',
+      sources: ['s1'],
+    } as const
+
+    expect(SignalCardSchema.parse(signalCard)).toEqual(signalCard)
+    expect(
+      SignalCardSchema.parse({
+        date: '2026-04-12',
+        headline: 'A quieter but still relevant move.',
+        whyItMatters: 'It shifted the context slightly.',
+        sources: ['s2'],
+      }),
+    ).toBeTruthy()
   })
 })
 

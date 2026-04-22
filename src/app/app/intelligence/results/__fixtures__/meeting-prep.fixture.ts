@@ -315,6 +315,35 @@ export const meetingPrepFixture: MeetingPrepBrief = {
       sourceIds: ['mp-4', 'mp-6'],
     },
   ],
+  signalCards: [
+    {
+      date: '2026-04-20',
+      headline: 'Northstar launched EU data residency for regulated buyers.',
+      whyItMatters: 'The biggest compliance objection is weaker heading into the next enterprise conversation.',
+      suggestedOpener: 'How much has EU residency changed the deals you can actually move now?',
+      sources: ['mp-1'],
+    },
+    {
+      date: '2026-04-18',
+      headline: 'A new procurement leader suggests a tighter evaluation process.',
+      whyItMatters: 'You should expect more rigor around rollout proof and buying criteria.',
+      suggestedOpener: 'What does a strong evaluation process look like from your side now that procurement is more involved?',
+      sources: ['mp-2'],
+    },
+    {
+      date: '2026-04-04',
+      headline: 'The EMEA field push signals larger multi-region deal intent.',
+      whyItMatters: 'The conversation is moving upmarket, which raises the bar on operational credibility.',
+      suggestedOpener: 'Are you seeing the EMEA expansion change the kinds of teams you need to support?',
+      sources: ['mp-3'],
+    },
+    {
+      date: '2026-03-02',
+      headline: 'Security and rollout proof still look like decision gates.',
+      whyItMatters: 'You will lose momentum if the next meeting stays abstract on implementation readiness.',
+      sources: ['mp-4', 'mp-6'],
+    },
+  ],
   competitorMatrix: [
     {
       name: 'AtlasGrid',

@@ -31,6 +31,7 @@ import type {
   MeetingPrepSnapshot,
   MeetingPrepRadarCategory,
   RadarMetric,
+  SignalCard,
   TimelineEvent,
 } from '@/lib/intelligence/contracts'
 import { INTEL_RESULTS_V2 } from '@/lib/intelligence/feature-flags'
@@ -39,6 +40,7 @@ import PriorityStrip from './shared/PriorityStrip'
 import UnknownField from './shared/UnknownField'
 import BulletChart from './shared/viz/BulletChart'
 import Radar from './shared/viz/Radar'
+import SignalCardGrid from './shared/viz/SignalCardGrid'
 
 /* ── Bento Section Card ──────────────────────────────────────── */
 
@@ -800,46 +802,66 @@ export function RiskRadar({
 
 export function DeepDivePanels({
   sections,
+  signalCards,
+  generatedAt,
+  sources,
   onSourceClick,
 }: {
   sections: MeetingPrepBrief['sections']
+  signalCards?: SignalCard[]
+  generatedAt: string
+  sources: MeetingPrepBrief['sources']
   onSourceClick: (id: string) => void
 }) {
-  const configs: Array<{ title: string; icon: ReactNode; variant: SectionVariant; bullets: BriefBullet[] }> = [
+  const configs: Array<{ key: keyof MeetingPrepBrief['sections']; title: string; icon: ReactNode; variant: SectionVariant; bullets: BriefBullet[] }> = [
     {
+      key: 'whatJustHappened' as const,
       title: 'What just happened',
       icon: <Newspaper className="h-4 w-4" />,
-      variant: 'news',
+      variant: 'news' as const,
       bullets: sections.whatJustHappened,
     },
     {
+      key: 'talkingPoints' as const,
       title: 'Talking points',
       icon: <MessageSquare className="h-4 w-4" />,
-      variant: 'talking',
+      variant: 'talking' as const,
       bullets: sections.talkingPoints,
     },
     {
+      key: 'landmines' as const,
       title: 'Landmines',
       icon: <AlertTriangle className="h-4 w-4" />,
-      variant: 'landmines',
+      variant: 'landmines' as const,
       bullets: sections.landmines,
     },
     {
+      key: 'questionsToAsk' as const,
       title: 'Questions to ask',
       icon: <HelpCircle className="h-4 w-4" />,
-      variant: 'questions',
+      variant: 'questions' as const,
       bullets: sections.questionsToAsk,
     },
     {
+      key: 'competitorContext' as const,
       title: 'Competitor context',
       icon: <Swords className="h-4 w-4" />,
-      variant: 'competitors',
+      variant: 'competitors' as const,
       bullets: sections.competitorContext,
     },
-  ]
+  ].filter((section) => !(INTEL_RESULTS_V2 && signalCards?.length && section.key === 'whatJustHappened'))
 
   return (
     <div className="space-y-3">
+      <SignalCardGrid
+        cards={signalCards}
+        fallbackBullets={sections.whatJustHappened}
+        asOf={generatedAt}
+        sources={sources}
+        onSourceClick={onSourceClick}
+        flagEnabled={INTEL_RESULTS_V2}
+      />
+
       {configs.map((section, index) => {
         const color = VARIANT_COLOR[section.variant]
 
