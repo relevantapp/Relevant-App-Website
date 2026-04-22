@@ -899,6 +899,59 @@ describe('flow synthesis schemas', () => {
       confidence: 'medium',
       answer,
       marketOverview: 'The market is moving toward repeated workflow use cases.',
+      marketMap: {
+        segments: [
+          {
+            name: 'Answer-first workflow tools',
+            rationale: 'This wedge is where decisive output with proof feels most distinct.',
+            players: [
+              {
+                name: 'Relevant',
+                logoUrl: null,
+                domain: 'getrelevant.ai',
+              },
+            ],
+          },
+        ],
+      },
+      trackedSignals: [
+        {
+          metric: 'Search interest',
+          headline: 'Search interest is rising faster than general category awareness.',
+          unit: ' pts',
+          points: [
+            { t: 'Q1', value: 14 },
+            { t: 'Q2', value: 19 },
+          ],
+        },
+      ],
+      maturity: {
+        stage: 'slope',
+        rationale: {
+          text: 'The market is moving out of novelty and into practical evaluation.',
+          sourceIds: ['s1'],
+        },
+      },
+      quotes: [
+        {
+          quote: 'Teams keep asking whether the system gets them to a conclusion they can defend.',
+          attribution: {
+            name: 'Alicia Ford',
+            role: 'VP Strategy',
+            source: 'Operator interview',
+            date: '2026-04-04',
+          },
+          theme: 'Workflow proof',
+        },
+      ],
+      watchList: [
+        {
+          signal: 'More buyers naming answer plus proof in evaluations',
+          whyItMatters: 'That would confirm the wedge is moving into explicit buying criteria.',
+          nextCheckBy: '2026-05-12T12:00:00.000Z',
+          sources: ['s1'],
+        },
+      ],
       players: [],
       trendSignals: [{ text: 'Specialized workflows are gaining credibility.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
       opportunities: [{ text: 'Own the answer-plus-proof layer.', sourceIds: ['s2'], tag: 'inference', priority: 'should' }],

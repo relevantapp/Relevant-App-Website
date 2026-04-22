@@ -49,6 +49,11 @@ describe('generateMarketResearchBrief', () => {
     synthesizeWithSchema.mockImplementation(async (_systemPrompt: string, userPrompt: string) => {
       expect(userPrompt).toContain('"answer"')
       expect(userPrompt).toContain('"priority": "must|should|fyi"')
+      expect(userPrompt).toContain('"marketMap"')
+      expect(userPrompt).toContain('"trackedSignals"')
+      expect(userPrompt).toContain('"maturity"')
+      expect(userPrompt).toContain('"quotes"')
+      expect(userPrompt).toContain('"watchList"')
 
       return {
         data: {
@@ -76,6 +81,59 @@ describe('generateMarketResearchBrief', () => {
             },
           },
           marketOverview: 'The market is splitting between broad monitoring and answer-first workflow tools.',
+          marketMap: {
+            segments: [
+              {
+                name: 'Answer-first workflow tools',
+                rationale: 'This wedge is where decisive output with proof feels most distinct.',
+                players: [
+                  {
+                    name: 'Relevant',
+                    logoUrl: null,
+                    domain: 'getrelevant.ai',
+                  },
+                ],
+              },
+            ],
+          },
+          trackedSignals: [
+            {
+              metric: 'Search interest',
+              headline: 'Search interest is rising faster than general category awareness.',
+              unit: ' pts',
+              points: [
+                { t: 'Q1', value: 14 },
+                { t: 'Q2', value: 19 },
+              ],
+            },
+          ],
+          maturity: {
+            stage: 'slope',
+            rationale: {
+              text: 'The market is moving out of novelty and into practical evaluation.',
+              sourceIds: ['s1'],
+            },
+          },
+          quotes: [
+            {
+              quote: 'Teams keep asking whether the system gets them to a conclusion they can defend.',
+              attribution: {
+                name: 'Alicia Ford',
+                role: 'VP Strategy',
+                source: 'Operator interview',
+                date: '2026-04-04',
+              },
+              theme: 'Workflow proof',
+            },
+          ],
+          watchList: [
+            {
+              signal: 'More buyers naming answer plus proof in evaluations',
+              whyItMatters: 'That would confirm the wedge is moving into explicit buying criteria.',
+              nextCheckBy: '2026-05-12T12:00:00.000Z',
+              sources: ['s1'],
+            },
+          ],
           players: [
             {
               name: 'AlphaSense',
@@ -109,6 +167,11 @@ describe('generateMarketResearchBrief', () => {
     expect(brief.answer?.recommendedNext.action).toBe('Define the wedge')
     expect(brief.sections.trendSignals[0]?.priority).toBe('must')
     expect(brief.sections.opportunities[0]?.priority).toBe('should')
+    expect(brief.marketMap?.segments[0]?.name).toBe('Answer-first workflow tools')
+    expect(brief.trackedSignals?.[0]?.metric).toBe('Search interest')
+    expect(brief.maturity?.stage).toBe('slope')
+    expect(brief.quotes?.[0]?.theme).toBe('Workflow proof')
+    expect(brief.watchList?.[0]?.signal).toContain('answer plus proof')
     expect(brief.trust?.sourcedClaimCount).toBeGreaterThan(0)
     expect(brief.trust?.conflicts).toEqual([])
     expect(brief.trust?.knownUnknowns).toEqual([])

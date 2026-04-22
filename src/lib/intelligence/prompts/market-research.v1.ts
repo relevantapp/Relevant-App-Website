@@ -27,6 +27,48 @@ export const MARKET_RESEARCH_SCHEMA_DESC = `{
     "recommendedNext": {"text": "The next move the user should make", "action": "optional short CTA label", "copyable": "optional copy-ready wording"}
   },
   "marketOverview": "2-3 paragraph market overview with key metrics inline",
+  "marketMap": {
+    "segments": [
+      {
+        "name": "Segment name",
+        "rationale": "Why this segment matters",
+        "players": [
+          {
+            "name": "Player name",
+            "logoUrl": "optional logo URL or null",
+            "domain": "optional domain or null"
+          }
+        ]
+      }
+    ]
+  },
+  "trackedSignals": [
+    {
+      "metric": "Signal name",
+      "headline": "Declarative statement of what the trend is doing",
+      "unit": "optional unit suffix",
+      "points": [{"t": "Q1", "value": 12}, {"t": "Q2", "value": 18}]
+    }
+  ],
+  "maturity": {
+    "stage": "innovation-trigger|peak|trough|slope|plateau",
+    "rationale": {"text": "Why the market sits at this stage", "sourceIds": ["s4"], "sourceSnippet": "optional short proof snippet"}
+  },
+  "quotes": [
+    {
+      "quote": "Short verbatim quote",
+      "attribution": {"name": "Source name", "role": "optional role", "source": "Where it came from", "date": "2026-04-09"},
+      "theme": "Theme label"
+    }
+  ],
+  "watchList": [
+    {
+      "signal": "What to monitor next",
+      "whyItMatters": "Why this matters for the market call",
+      "nextCheckBy": "ISO date",
+      "sources": ["s5"]
+    }
+  ],
   "players": [
     {
       "name": "Company Name",
@@ -102,6 +144,8 @@ Every bullet in every section must include priority. Use "must" for category-def
 Every bullet must have at least one sourceId.
 Include all known players: ${(input.knownPlayers ?? []).join(', ') || 'discover relevant players'}.
 When you list players, score scale and momentum from 0 to 1 and include a one-line rationale for each score whenever the evidence supports it.
+Return marketMap, trackedSignals, maturity, quotes, and watchList when the evidence supports them. Use empty arrays instead of filler, and skip trackedSignals entries that do not have at least two usable points.
+Every maturity rationale and every watchList item must cite evidence IDs.
 Focus on ${input.scope === 'global' ? 'global perspective' : input.scope + ' market specifically'}.`)
 
   return parts.join('\n')

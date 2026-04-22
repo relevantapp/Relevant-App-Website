@@ -4,8 +4,13 @@ import type {
   MarketResearchRequest,
   MarketResearchBrief,
   BriefSource,
+  MarketMap,
+  MaturityPosition,
   NormalizedEvidence,
+  PullQuote,
   SearchTask,
+  TrackedSignal,
+  WatchItem,
 } from '../contracts'
 import { MarketResearchSynthesisSchema } from '../contracts'
 import { runStep, generateBriefId, type PipelineContext } from '../pipeline'
@@ -26,12 +31,113 @@ import {
   collectAnswerSourceIds,
   markSourcesUsedInAnswer,
   normalizeAnswerBlock,
+  normalizeCitedSpan,
+  sanitizeMeetingPrepText,
 } from '../meeting-prep-display'
 import {
   buildV2PlanBridge,
   collectV2EvidenceBridge,
   persistV2EvidencePack,
 } from './v2-bridge'
+
+function normalizeMarketMap(marketMap: MarketMap | undefined): MarketMap | undefined {
+  if (!marketMap) return undefined
+
+  const segments = marketMap.segments
+    .map((segment) => ({
+      name: segment.name.trim(),
+      rationale: segment.rationale.trim(),
+      players: segment.players
+        .map((player) => ({
+          name: player.name.trim(),
+          logoUrl: player.logoUrl?.trim() || null,
+          domain: player.domain?.trim() || null,
+        }))
+        .filter((player) => player.name),
+    }))
+    .filter((segment) => segment.name && segment.rationale && segment.players.length)
+
+  return segments.length ? { segments } : undefined
+}
+
+function normalizeTrackedSignals(signals: TrackedSignal[] | undefined): TrackedSignal[] | undefined {
+  if (!signals?.length) return undefined
+
+  const normalized = signals
+    .map((signal) => ({
+      metric: signal.metric.trim(),
+      headline: signal.headline.trim(),
+      unit: sanitizeMeetingPrepText(signal.unit) ?? undefined,
+      points: signal.points
+        .map((point) => ({
+          t: point.t.trim(),
+          value: point.value,
+        }))
+        .filter((point) => point.t),
+    }))
+    .filter((signal) => signal.metric && signal.headline && signal.points.length >= 2)
+
+  return normalized.length ? normalized : undefined
+}
+
+function normalizeMaturity(
+  maturity: MaturityPosition | undefined,
+  sourceIdMap: Map<string, string>,
+): MaturityPosition | undefined {
+  if (!maturity) return undefined
+
+  const rationale = normalizeCitedSpan(maturity.rationale, sourceIdMap)
+  if (!rationale) return undefined
+
+  return {
+    stage: maturity.stage,
+    rationale,
+  }
+}
+
+function normalizeQuotes(quotes: PullQuote[] | undefined): PullQuote[] | undefined {
+  if (!quotes?.length) return undefined
+
+  const normalized = quotes
+    .map((quote) => ({
+      quote: quote.quote.trim(),
+      attribution: {
+        name: quote.attribution.name.trim(),
+        role: sanitizeMeetingPrepText(quote.attribution.role) ?? undefined,
+        source: quote.attribution.source.trim(),
+        date: quote.attribution.date.trim(),
+      },
+      theme: quote.theme.trim(),
+    }))
+    .filter((quote) => quote.quote && quote.attribution.name && quote.attribution.source && quote.attribution.date && quote.theme)
+
+  return normalized.length ? normalized : undefined
+}
+
+function normalizeWatchList(
+  items: WatchItem[] | undefined,
+  sourceIdMap: Map<string, string>,
+): WatchItem[] | undefined {
+  if (!items?.length) return undefined
+
+  const normalized = items
+    .map((item) => ({
+      signal: item.signal.trim(),
+      whyItMatters: item.whyItMatters.trim(),
+      nextCheckBy: item.nextCheckBy.trim(),
+      sources: Array.from(
+        new Set(
+          item.sources
+            .map((id) => sourceIdMap.get(id) ?? id)
+            .map((id) => id.trim())
+            .filter(Boolean),
+        ),
+      ),
+    }))
+    .filter((item) => item.signal && item.whyItMatters && item.nextCheckBy && item.sources.length)
+
+  return normalized.length ? normalized : undefined
+}
 
 export async function generateMarketResearchBrief(
   input: MarketResearchRequest,
@@ -249,14 +355,25 @@ export async function generateMarketResearchBrief(
   /* ── Step 5: assembleBrief ───────────────────────────────── */
   const canonicalSourceIdMap = buildCanonicalSourceIdMap(allSources)
   const normalizedAnswer = normalizeAnswerBlock(synthesis?.data?.answer, canonicalSourceIdMap)
+  const normalizedMarketMap = normalizeMarketMap(synthesis?.data?.marketMap)
+  const normalizedTrackedSignals = normalizeTrackedSignals(synthesis?.data?.trackedSignals)
+  const normalizedMaturity = normalizeMaturity(synthesis?.data?.maturity, canonicalSourceIdMap)
+  const normalizedQuotes = normalizeQuotes(synthesis?.data?.quotes)
+  const normalizedWatchList = normalizeWatchList(synthesis?.data?.watchList, canonicalSourceIdMap)
   const dedupedSources = markSourcesUsedInAnswer(
     deduplicateSources(allSources),
-    collectAnswerSourceIds(normalizedAnswer),
+    [
+      ...collectAnswerSourceIds(normalizedAnswer),
+      ...(normalizedMaturity ? normalizedMaturity.rationale.sourceIds : []),
+      ...(normalizedWatchList?.flatMap((item) => item.sources) ?? []),
+    ],
   )
   const trust = buildTrustLayer({
     sources: dedupedSources,
     sourceIdMap: canonicalSourceIdMap,
     claimSourceGroups: [
+      ...(normalizedMaturity ? [normalizedMaturity.rationale.sourceIds] : []),
+      ...(normalizedWatchList?.map((item) => item.sources) ?? []),
       ...(synthesis?.data?.trendSignals.map((bullet) => bullet.sourceIds) ?? []),
       ...(synthesis?.data?.opportunities.map((bullet) => bullet.sourceIds) ?? []),
       ...(synthesis?.data?.threats.map((bullet) => bullet.sourceIds) ?? []),
@@ -295,6 +412,11 @@ export async function generateMarketResearchBrief(
     confidence: synthesis?.data?.confidence ?? 'low',
     answer: normalizedAnswer,
     marketOverview: synthesis?.data?.marketOverview ?? '',
+    marketMap: normalizedMarketMap,
+    trackedSignals: normalizedTrackedSignals,
+    maturity: normalizedMaturity,
+    quotes: normalizedQuotes,
+    watchList: normalizedWatchList,
     players: synthesis?.data?.players ?? [],
     sections: {
       trendSignals: synthesis?.data?.trendSignals ?? [],
