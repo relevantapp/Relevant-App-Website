@@ -158,6 +158,7 @@ export default function CompetitiveResults({ brief, onNewSearch, savedBriefId }:
                 subhead="The comparison matrix is still the fastest way to see where each platform actually wins."
                 asOf={brief.generatedAt}
                 sources={brief.sources}
+                briefId={brief.id}
                 yourCompany={brief.yourCompany}
               />
             ) : (

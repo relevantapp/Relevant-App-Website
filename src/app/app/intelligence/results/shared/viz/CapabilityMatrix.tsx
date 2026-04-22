@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { BriefSource, ComparisonRow } from '@/lib/intelligence/contracts'
 import ExhibitShell from '../ExhibitShell'
 
@@ -10,10 +10,12 @@ interface CapabilityMatrixProps {
   subhead?: string
   asOf: string
   sources: BriefSource[]
+  briefId?: string | null
   yourCompany?: string | null
 }
 
 const DEFAULT_WEIGHT = 3
+const STORAGE_KEY_PREFIX = 'intel-capability-matrix-weights'
 
 function getMatrixCompanies(matrix: ComparisonRow[], yourCompany?: string | null): string[] {
   const seen = new Set<string>()
@@ -59,11 +61,63 @@ function companyKey(company: string) {
   return company.toLowerCase().replace(/[^a-z0-9]+/g, '-')
 }
 
-export default function CapabilityMatrix({ data, headline, subhead, asOf, sources, yourCompany }: CapabilityMatrixProps) {
-  const companies = getMatrixCompanies(data, yourCompany)
-  const [weights, setWeights] = useState<Record<string, number>>(() =>
-    Object.fromEntries(data.map((row) => [row.dimension, DEFAULT_WEIGHT])),
+function getDefaultWeights(data: ComparisonRow[]) {
+  return Object.fromEntries(data.map((row) => [row.dimension, DEFAULT_WEIGHT]))
+}
+
+function clampWeight(value: unknown) {
+  const numeric = typeof value === 'number' ? value : Number(value)
+
+  if (!Number.isFinite(numeric)) return DEFAULT_WEIGHT
+
+  return Math.max(0, Math.min(5, Math.round(numeric)))
+}
+
+function sanitizeStoredWeights(data: ComparisonRow[], stored: unknown) {
+  const defaults = getDefaultWeights(data)
+  if (!stored || typeof stored !== 'object') return defaults
+
+  const storedWeights = stored as Record<string, unknown>
+
+  return Object.fromEntries(
+    data.map((row) => [row.dimension, clampWeight(storedWeights[row.dimension] ?? DEFAULT_WEIGHT)]),
   )
+}
+
+export function getCapabilityMatrixStorageKey(briefId: string) {
+  return `${STORAGE_KEY_PREFIX}:${briefId}`
+}
+
+function loadPersistedWeights(data: ComparisonRow[], briefId?: string | null) {
+  if (!briefId || typeof window === 'undefined') return getDefaultWeights(data)
+
+  try {
+    const raw = window.localStorage.getItem(getCapabilityMatrixStorageKey(briefId))
+    return sanitizeStoredWeights(data, raw ? JSON.parse(raw) : null)
+  } catch {
+    return getDefaultWeights(data)
+  }
+}
+
+export default function CapabilityMatrix({ data, headline, subhead, asOf, sources, briefId, yourCompany }: CapabilityMatrixProps) {
+  const companies = getMatrixCompanies(data, yourCompany)
+  const dimensionSignature = data.map((row) => row.dimension).join('|')
+  const [weights, setWeights] = useState<Record<string, number>>(() => loadPersistedWeights(data, briefId))
+
+  useEffect(() => {
+    setWeights(loadPersistedWeights(data, briefId))
+  }, [briefId, data, dimensionSignature])
+
+  useEffect(() => {
+    if (!briefId || typeof window === 'undefined') return
+
+    try {
+      window.localStorage.setItem(getCapabilityMatrixStorageKey(briefId), JSON.stringify(weights))
+    } catch {
+      // localStorage can fail in private mode or restricted environments
+    }
+  }, [briefId, weights])
+
   const totals = getWeightedTotals(data, companies, weights)
 
   return (
