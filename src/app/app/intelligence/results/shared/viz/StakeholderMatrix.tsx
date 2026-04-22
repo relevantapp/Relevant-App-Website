@@ -4,6 +4,7 @@ import type { BriefSource, StakeholderRow } from '@/lib/intelligence/contracts'
 import CitedText from '../CitedText'
 import ExhibitShell from '../ExhibitShell'
 import UnknownField from '../UnknownField'
+import DiscChip from './DiscChip'
 
 interface StakeholderMatrixProps {
   rows: StakeholderRow[]
@@ -28,7 +29,12 @@ export default function StakeholderMatrix({ rows, sources, asOf }: StakeholderMa
           <tbody>
             {rows.map((row) => (
               <tr key={row.name}>
-                <td className="border-b border-[var(--border)] px-4 py-4 text-sm font-medium text-[var(--text)]">{row.name}</td>
+                <td className="border-b border-[var(--border)] px-4 py-4 text-sm font-medium text-[var(--text)]">
+                  <div className="flex items-center gap-2">
+                    <span>{row.name}</span>
+                    {row.disc ? <DiscChip disc={row.disc} personName={row.name} commsStyleTag={row.commsStyleTag} /> : null}
+                  </div>
+                </td>
                 <td className="border-b border-[var(--border)] px-4 py-4 text-sm text-[var(--text-muted)]">
                   {row.title ?? (
                     <span data-testid="stakeholder-unknown">

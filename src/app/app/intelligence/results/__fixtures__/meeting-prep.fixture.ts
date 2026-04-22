@@ -266,6 +266,13 @@ export const meetingPrepFixture: MeetingPrepBrief = {
         text: 'Owns the operating rhythm for evaluation discipline and can sponsor the workflow.',
         sourceIds: ['mp-2'],
       },
+      commsStyleTag: 'decisive operator',
+      disc: {
+        d: 81,
+        i: 58,
+        s: 47,
+        c: 64,
+      },
       unknowns: ['How much budget authority Maya directly controls is still unclear.'],
     },
     {
