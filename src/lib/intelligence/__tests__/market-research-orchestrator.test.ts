@@ -7,6 +7,7 @@ const buildResearchSearchPlan = vi.fn()
 const executeSearchPlan = vi.fn()
 const rankEvidence = vi.fn()
 const extractQueryTerms = vi.fn()
+const loadPriorBriefBaseline = vi.fn()
 
 vi.mock('../models', () => ({
   synthesizeWithSchema,
@@ -24,6 +25,10 @@ vi.mock('../search-planner', () => ({
 vi.mock('../ranker', () => ({
   rankEvidence,
   extractQueryTerms,
+}))
+
+vi.mock('../prior-briefs', () => ({
+  loadPriorBriefBaseline,
 }))
 
 vi.mock('../orchestrators/v2-bridge', () => ({
@@ -46,6 +51,11 @@ describe('generateMarketResearchBrief', () => {
     executeSearchPlan.mockResolvedValue({ sources: [], evidence: [] })
     rankEvidence.mockImplementation((evidence: unknown[]) => evidence)
     extractQueryTerms.mockReturnValue(['market', 'research'])
+    loadPriorBriefBaseline.mockResolvedValue(`- Generated at: 2026-03-09T12:00:00.000Z
+- Headline: The wedge was emerging, but category boundaries were still fuzzy.
+- Conclusion: The market was fragmenting, but the answer-first wedge still needed clearer proof.
+- Bottom line: Broad incumbents still controlled awareness while the wedge was forming.
+- Key points: The wedge was emerging. | Category boundaries were still fuzzy.`)
     synthesizeWithSchema.mockImplementation(async (_systemPrompt: string, userPrompt: string) => {
       expect(userPrompt).toContain('"answer"')
       expect(userPrompt).toContain('"priority": "must|should|fyi"')
@@ -54,6 +64,8 @@ describe('generateMarketResearchBrief', () => {
       expect(userPrompt).toContain('"maturity"')
       expect(userPrompt).toContain('"quotes"')
       expect(userPrompt).toContain('"watchList"')
+      expect(userPrompt).toContain('## Prior Brief Baseline')
+      expect(userPrompt).toContain('category boundaries were still fuzzy')
 
       return {
         data: {
@@ -70,7 +82,10 @@ describe('generateMarketResearchBrief', () => {
               text: 'You should own one repeated decision workflow before expanding the category story.',
               sourceIds: ['s1'],
             },
-            whatChanged: null,
+            whatChanged: {
+              text: 'Since the last brief, the answer-first wedge has moved from emerging to practically credible, even though the final category boundaries are still forming.',
+              sourceIds: ['s1'],
+            },
             confidence: {
               level: 'medium',
               driver: 'The direction is clear, but the final category boundaries are still forming.',
@@ -164,6 +179,10 @@ describe('generateMarketResearchBrief', () => {
     const brief = await generateMarketResearchBrief(request)
 
     expect(brief.answer?.conclusion.text).toContain('answer-first wedge')
+    expect(brief.answer?.whatChanged).toEqual({
+      text: 'Since the last brief, the answer-first wedge has moved from emerging to practically credible, even though the final category boundaries are still forming.',
+      sourceIds: ['s1'],
+    })
     expect(brief.answer?.recommendedNext.action).toBe('Define the wedge')
     expect(brief.sections.trendSignals[0]?.priority).toBe('must')
     expect(brief.sections.opportunities[0]?.priority).toBe('should')

@@ -18,6 +18,7 @@ import { synthesizeWithSchema } from '../models'
 import { rankEvidence, extractQueryTerms } from '../ranker'
 import { MARKET_RESEARCH_SYSTEM_PROMPT, MARKET_RESEARCH_SCHEMA_DESC, buildMarketResearchPrompt } from '../prompts/market-research.v1'
 import { searchExaSnapshot } from '../providers/exa'
+import { loadPriorBriefBaseline } from '../prior-briefs'
 import { buildResearchSearchPlan, executeSearchPlan } from '../search-planner'
 import {
   normalizeExaSnapshot,
@@ -312,6 +313,12 @@ export async function generateMarketResearchBrief(
   }, undefined, ctx)
 
   const rankedEvidence = rankStep.data ?? allEvidence
+  const priorBriefBaseline = await loadPriorBriefBaseline({
+    supabase: ctx?.supabase,
+    userId: ctx?.userId,
+    researchType: 'market_research',
+    requestPayload: input,
+  })
 
   const evidencePack = v2Bridge && v2Evidence
     ? persistV2EvidencePack({
@@ -341,6 +348,7 @@ export async function generateMarketResearchBrief(
       userContext: input.userContext,
       evidence: rankedEvidence,
       playerSnapshots: playerSnapshotDescriptions,
+      priorBriefBaseline,
     })
     return synthesizeWithSchema(
       MARKET_RESEARCH_SYSTEM_PROMPT, userPrompt,
@@ -355,6 +363,9 @@ export async function generateMarketResearchBrief(
   /* ── Step 5: assembleBrief ───────────────────────────────── */
   const canonicalSourceIdMap = buildCanonicalSourceIdMap(allSources)
   const normalizedAnswer = normalizeAnswerBlock(synthesis?.data?.answer, canonicalSourceIdMap)
+  const finalAnswer = priorBriefBaseline || !normalizedAnswer
+    ? normalizedAnswer
+    : { ...normalizedAnswer, whatChanged: null }
   const normalizedMarketMap = normalizeMarketMap(synthesis?.data?.marketMap)
   const normalizedTrackedSignals = normalizeTrackedSignals(synthesis?.data?.trackedSignals)
   const normalizedMaturity = normalizeMaturity(synthesis?.data?.maturity, canonicalSourceIdMap)
@@ -363,7 +374,7 @@ export async function generateMarketResearchBrief(
   const dedupedSources = markSourcesUsedInAnswer(
     deduplicateSources(allSources),
     [
-      ...collectAnswerSourceIds(normalizedAnswer),
+      ...collectAnswerSourceIds(finalAnswer),
       ...(normalizedMaturity ? normalizedMaturity.rationale.sourceIds : []),
       ...(normalizedWatchList?.flatMap((item) => item.sources) ?? []),
     ],
@@ -378,10 +389,10 @@ export async function generateMarketResearchBrief(
       ...(synthesis?.data?.opportunities.map((bullet) => bullet.sourceIds) ?? []),
       ...(synthesis?.data?.threats.map((bullet) => bullet.sourceIds) ?? []),
       ...(synthesis?.data?.keyFindings.map((bullet) => bullet.sourceIds) ?? []),
-      ...(normalizedAnswer ? [
-        normalizedAnswer.conclusion.sourceIds,
-        normalizedAnswer.whyItMatters.sourceIds,
-        normalizedAnswer.whatChanged?.sourceIds,
+      ...(finalAnswer ? [
+        finalAnswer.conclusion.sourceIds,
+        finalAnswer.whyItMatters.sourceIds,
+        finalAnswer.whatChanged?.sourceIds,
       ] : []),
     ],
     pack: evidencePack,
@@ -410,7 +421,7 @@ export async function generateMarketResearchBrief(
     bottomLine: synthesis?.data?.bottomLine ?? 'AI synthesis failed. Raw evidence is still available.',
     whyItMatters: synthesis?.data?.whyItMatters ?? null,
     confidence: synthesis?.data?.confidence ?? 'low',
-    answer: normalizedAnswer,
+    answer: finalAnswer,
     marketOverview: synthesis?.data?.marketOverview ?? '',
     marketMap: normalizedMarketMap,
     trackedSignals: normalizedTrackedSignals,

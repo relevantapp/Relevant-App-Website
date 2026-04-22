@@ -121,6 +121,7 @@ export function buildMeetingPrepPrompt(input: {
   snapshot: MeetingPrepSnapshot | null
   evidence: NormalizedEvidence[]
   attendeeProfiles: AttendeeProfile[]
+  priorBriefBaseline?: string | null
 }): string {
   const parts: string[] = []
 
@@ -158,13 +159,19 @@ export function buildMeetingPrepPrompt(input: {
     parts.push(`\n## Attendee Backgrounds\n${profileText}`)
   }
 
+  if (input.priorBriefBaseline) {
+    parts.push(`\n## Prior Brief Baseline\n${input.priorBriefBaseline}`)
+  }
+
   parts.push(`\n## Instructions
 Produce a JSON response matching this exact schema:
 ${MEETING_PREP_SCHEMA_DESC}
 
 Return 3-5 bullets per section. Tag each as "fact" (directly sourced) or "inference" (your analysis based on evidence).
 Populate answer with a five-part block the UI can render directly. Use declarative sentences, not labels. Example conclusion tone: "Acme just created a fresh opening for this meeting because the team is pushing a new rollout motion."
-answer.conclusion, answer.whyItMatters, and answer.whatChanged must cite evidence IDs. If there is no defensible recent change, set answer.whatChanged to null.
+answer.conclusion and answer.whyItMatters must cite evidence IDs.
+If a Prior Brief Baseline section is present, answer.whatChanged must capture the single most important real delta versus that baseline and cite current evidence IDs. Do not use the prior baseline text itself as a citation.
+If no Prior Brief Baseline section is present, answer.whatChanged must be null.
 answer.recommendedNext should tell the user what to do next in plain language, and copyable should be ready to paste into notes or a prep doc when helpful.
 Every bullet in every section must include priority. Use "must" for meeting-critical items, "should" for important support, and "fyi" for background context.
 Every bullet must have at least one sourceId referencing the evidence IDs above.

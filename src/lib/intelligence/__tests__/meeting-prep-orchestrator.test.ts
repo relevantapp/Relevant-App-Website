@@ -9,6 +9,7 @@ const buildResearchSearchPlan = vi.fn()
 const executeSearchPlan = vi.fn()
 const rankEvidence = vi.fn()
 const extractQueryTerms = vi.fn()
+const loadPriorBriefBaseline = vi.fn()
 
 vi.mock('../models', () => ({
   synthesizeWithSchema,
@@ -33,6 +34,10 @@ vi.mock('../ranker', () => ({
   extractQueryTerms,
 }))
 
+vi.mock('../prior-briefs', () => ({
+  loadPriorBriefBaseline,
+}))
+
 vi.mock('../orchestrators/v2-bridge', () => ({
   buildV2PlanBridge: vi.fn(async () => null),
   collectV2EvidenceBridge: vi.fn(),
@@ -55,11 +60,18 @@ describe('generateMeetingPrepBrief', () => {
     executeSearchPlan.mockResolvedValue({ sources: [], evidence: [] })
     rankEvidence.mockImplementation((evidence: unknown[]) => evidence)
     extractQueryTerms.mockReturnValue(['acme', 'meeting'])
+    loadPriorBriefBaseline.mockResolvedValue(`- Generated at: 2026-03-18T12:00:00.000Z
+- Headline: Acme was steady before the rollout push.
+- Conclusion: The team was still evaluating workflow ownership.
+- Bottom line: The meeting needed a clearer forcing function.
+- Key points: The rollout motion was still forming. | Champion depth was still unclear.`)
     synthesizeWithSchema.mockImplementation(async (_systemPrompt: string, userPrompt: string) => {
       expect(userPrompt).toContain('"answer"')
       expect(userPrompt).toContain('"priority": "must|should|fyi"')
       expect(userPrompt).toContain('"signalCards"')
       expect(userPrompt).toContain('"stakeholders"')
+      expect(userPrompt).toContain('## Prior Brief Baseline')
+      expect(userPrompt).toContain('Acme was steady before the rollout push.')
 
       return {
         data: {
@@ -104,7 +116,10 @@ describe('generateMeetingPrepBrief', () => {
               text: 'You have a reason to make the conversation more concrete right now.',
               sourceIds: ['s1'],
             },
-            whatChanged: null,
+            whatChanged: {
+              text: 'Since the last brief, Acme has turned the rollout motion into a concrete launch push, which makes deployment ownership newly urgent for this meeting.',
+              sourceIds: ['s1'],
+            },
             confidence: {
               level: 'high',
               driver: 'The snapshot provides a clear recent milestone and a concrete meeting angle.',
@@ -137,6 +152,10 @@ describe('generateMeetingPrepBrief', () => {
     const brief = await generateMeetingPrepBrief(request)
 
     expect(brief.answer?.conclusion.text).toContain('fresh rollout motion')
+    expect(brief.answer?.whatChanged).toEqual({
+      text: 'Since the last brief, Acme has turned the rollout motion into a concrete launch push, which makes deployment ownership newly urgent for this meeting.',
+      sourceIds: ['s1'],
+    })
     expect(brief.answer?.recommendedNext.copyable).toBe('Lead with the rollout proof point and ask who owns deployment approval.')
     expect(brief.signalCards).toEqual([
       {
@@ -246,5 +265,56 @@ describe('generateMeetingPrepBrief', () => {
     expect(brief.stakeholders?.find((row) => row.name === 'Maya Chen')?.disc).toEqual({ d: 81, i: 58, s: 47, c: 64 })
     expect(brief.stakeholders?.find((row) => row.name === 'Devon Patel')?.commsStyleTag).toBeUndefined()
     expect(brief.stakeholders?.find((row) => row.name === 'Devon Patel')?.disc).toBeUndefined()
+  })
+
+  it('forces whatChanged to null when there is no prior baseline', async () => {
+    loadPriorBriefBaseline.mockResolvedValueOnce(null)
+    synthesizeWithSchema.mockImplementationOnce(async (_systemPrompt: string, userPrompt: string) => {
+      expect(userPrompt).not.toContain('## Prior Brief Baseline')
+
+      return {
+        data: {
+          headline: 'Acme has fresh momentum, but the buying path still needs shaping.',
+          bottomLine: 'Lead with the rollout push, then test champion depth and timing.',
+          whyItMatters: 'You can use the new rollout motion to make this meeting more concrete.',
+          confidence: 'high',
+          answer: {
+            conclusion: {
+              text: 'Acme has a fresh rollout motion, so this meeting should center on adoption risk rather than feature pitch.',
+              sourceIds: ['s1'],
+            },
+            whyItMatters: {
+              text: 'You have a reason to make the conversation more concrete right now.',
+              sourceIds: ['s1'],
+            },
+            whatChanged: {
+              text: 'The model tried to invent a delta without a prior baseline.',
+              sourceIds: ['s1'],
+            },
+            confidence: {
+              level: 'high',
+              driver: 'The snapshot provides a clear recent milestone and a concrete meeting angle.',
+            },
+            recommendedNext: {
+              text: 'Lead with the rollout proof point and ask who owns deployment approval.',
+            },
+          },
+          whatJustHappened: [{ text: 'Acme is pushing a new rollout motion.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
+          talkingPoints: [{ text: 'Tie the rollout to business impact.', sourceIds: ['s1'], tag: 'inference', priority: 'should' }],
+          landmines: [{ text: 'Do not assume deployment is already staffed.', sourceIds: ['s1'], tag: 'inference', priority: 'must' }],
+          questionsToAsk: [{ text: 'Who owns rollout approval?', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
+          competitorContext: [],
+        },
+      }
+    })
+
+    const { generateMeetingPrepBrief } = await import('../orchestrators/meeting-prep')
+    const brief = await generateMeetingPrepBrief({
+      accountName: 'Acme',
+      meetingType: 'sales',
+      goal: 'Get to a pilot',
+    })
+
+    expect(brief.answer?.whatChanged).toBeNull()
   })
 })

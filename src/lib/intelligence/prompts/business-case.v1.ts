@@ -97,6 +97,7 @@ export function buildBusinessCasePrompt(input: {
   userContext?: UserResearchContext | null
   evidence: NormalizedEvidence[]
   comparableSnapshots: Map<string, string>
+  priorBriefBaseline?: string | null
 }): string {
   const parts: string[] = []
 
@@ -127,12 +128,18 @@ export function buildBusinessCasePrompt(input: {
     parts.push(`\n## Evidence\n${evidenceText}`)
   }
 
+  if (input.priorBriefBaseline) {
+    parts.push(`\n## Prior Brief Baseline\n${input.priorBriefBaseline}`)
+  }
+
   parts.push(`\n## Instructions
 Produce a JSON response matching this exact schema:
 ${BUSINESS_CASE_SCHEMA_DESC}
 
 Populate answer with a five-part block the UI can render directly. Use declarative sentences, not labels. Example conclusion tone: "The business case is promising if weekly reuse holds, but it is still fragile on adoption."
-answer.conclusion, answer.whyItMatters, and answer.whatChanged must cite evidence IDs. If no meaningful recent shift is supportable, set answer.whatChanged to null.
+answer.conclusion and answer.whyItMatters must cite evidence IDs.
+If a Prior Brief Baseline section is present, answer.whatChanged must capture the single most important real delta versus that baseline and cite current evidence IDs. Do not use the prior baseline text itself as a citation.
+If no Prior Brief Baseline section is present, answer.whatChanged must be null.
 answer.recommendedNext should tell the user what decision or validation step to take next in plain language.
 Return 3-5 bullets per section. Tag each as "fact" or "inference".
 Every bullet in every section must include priority. Use "must" for decision-critical items, "should" for important support, and "fyi" for background context.

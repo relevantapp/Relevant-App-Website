@@ -92,6 +92,7 @@ export function buildCompetitivePrompt(input: {
   evidence: NormalizedEvidence[]
   competitorSnapshots: Map<string, string>
   yourSnapshot: string | null
+  priorBriefBaseline?: string | null
 }): string {
   const parts: string[] = []
 
@@ -124,13 +125,19 @@ export function buildCompetitivePrompt(input: {
     parts.push(`\n## Evidence\n${evidenceText}`)
   }
 
+  if (input.priorBriefBaseline) {
+    parts.push(`\n## Prior Brief Baseline\n${input.priorBriefBaseline}`)
+  }
+
   parts.push(`\n## Instructions
 Produce a JSON response matching this exact schema:
 ${COMPETITIVE_SCHEMA_DESC}
 
 Include 3-6 comparison dimensions relevant to "${input.focusArea}".
 Populate answer with a five-part block the UI can render directly. Use declarative sentences, not labels. Example conclusion tone: "Relevant wins on direct answers, while AlphaSense still wins on enterprise breadth."
-answer.conclusion, answer.whyItMatters, and answer.whatChanged must cite evidence IDs. If no recent shift is defensible, set answer.whatChanged to null.
+answer.conclusion and answer.whyItMatters must cite evidence IDs.
+If a Prior Brief Baseline section is present, answer.whatChanged must capture the single most important real delta versus that baseline and cite current evidence IDs. Do not use the prior baseline text itself as a citation.
+If no Prior Brief Baseline section is present, answer.whatChanged must be null.
 answer.recommendedNext should be a concrete next move for the user, not a generic suggestion.
 Return 3-5 bullets per section. Tag each as "fact" or "inference".
 Every bullet in every section must include priority. Use "must" for strategy-critical points, "should" for important support, and "fyi" for background context.

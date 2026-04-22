@@ -7,6 +7,7 @@ const buildResearchSearchPlan = vi.fn()
 const executeSearchPlan = vi.fn()
 const rankEvidence = vi.fn()
 const extractQueryTerms = vi.fn()
+const loadPriorBriefBaseline = vi.fn()
 
 vi.mock('../models', () => ({
   synthesizeWithSchema,
@@ -24,6 +25,10 @@ vi.mock('../search-planner', () => ({
 vi.mock('../ranker', () => ({
   rankEvidence,
   extractQueryTerms,
+}))
+
+vi.mock('../prior-briefs', () => ({
+  loadPriorBriefBaseline,
 }))
 
 vi.mock('../orchestrators/v2-bridge', () => ({
@@ -46,6 +51,11 @@ describe('generateBusinessCaseBrief', () => {
     executeSearchPlan.mockResolvedValue({ sources: [], evidence: [] })
     rankEvidence.mockImplementation((evidence: unknown[]) => evidence)
     extractQueryTerms.mockReturnValue(['business', 'case'])
+    loadPriorBriefBaseline.mockResolvedValue(`- Generated at: 2026-03-11T12:00:00.000Z
+- Headline: The case looked promising, but adoption proof was still thin.
+- Conclusion: The business case depended on repeated usage becoming real.
+- Bottom line: The upside was visible, but rollout confidence was still fragile.
+- Key points: Demand looked real. | Adoption proof was still thin.`)
     synthesizeWithSchema.mockImplementation(async (_systemPrompt: string, userPrompt: string) => {
       expect(userPrompt).toContain('"answer"')
       expect(userPrompt).toContain('"priority": "must|should|fyi"')
@@ -54,6 +64,8 @@ describe('generateBusinessCaseBrief', () => {
       expect(userPrompt).toContain('"tornado"')
       expect(userPrompt).toContain('"waterfall"')
       expect(userPrompt).toContain('"assumptions"')
+      expect(userPrompt).toContain('## Prior Brief Baseline')
+      expect(userPrompt).toContain('adoption proof was still thin')
 
       return {
         data: {
@@ -70,7 +82,10 @@ describe('generateBusinessCaseBrief', () => {
               text: 'You should treat reuse and rollout discipline as the real gating assumptions.',
               sourceIds: ['s1'],
             },
-            whatChanged: null,
+            whatChanged: {
+              text: 'Since the last brief, the reuse signal is stronger, but the case is still constrained by rollout discipline rather than raw demand.',
+              sourceIds: ['s1'],
+            },
             confidence: {
               level: 'medium',
               driver: 'The directional signal is good, but the outcome still depends on one critical adoption assumption.',
@@ -185,6 +200,10 @@ describe('generateBusinessCaseBrief', () => {
     const brief = await generateBusinessCaseBrief(request)
 
     expect(brief.answer?.conclusion.text).toContain('weekly reuse')
+    expect(brief.answer?.whatChanged).toEqual({
+      text: 'Since the last brief, the reuse signal is stronger, but the case is still constrained by rollout discipline rather than raw demand.',
+      sourceIds: ['s1'],
+    })
     expect(brief.answer?.recommendedNext.action).toBe('Validate reuse')
     expect(brief.sections.marketEvidence[0]?.priority).toBe('must')
     expect(brief.sections.supportingFactors[0]?.priority).toBe('should')

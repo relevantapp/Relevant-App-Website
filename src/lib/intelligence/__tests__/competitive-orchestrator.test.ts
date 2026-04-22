@@ -7,6 +7,7 @@ const buildResearchSearchPlan = vi.fn()
 const executeSearchPlan = vi.fn()
 const rankEvidence = vi.fn()
 const extractQueryTerms = vi.fn()
+const loadPriorBriefBaseline = vi.fn()
 
 vi.mock('../models', () => ({
   synthesizeWithSchema,
@@ -24,6 +25,10 @@ vi.mock('../search-planner', () => ({
 vi.mock('../ranker', () => ({
   rankEvidence,
   extractQueryTerms,
+}))
+
+vi.mock('../prior-briefs', () => ({
+  loadPriorBriefBaseline,
 }))
 
 vi.mock('../orchestrators/v2-bridge', () => ({
@@ -46,12 +51,19 @@ describe('generateCompetitiveAnalysisBrief', () => {
     executeSearchPlan.mockResolvedValue({ sources: [], evidence: [] })
     rankEvidence.mockImplementation((evidence: unknown[]) => evidence)
     extractQueryTerms.mockReturnValue(['relevant', 'competitive', 'analysis'])
+    loadPriorBriefBaseline.mockResolvedValue(`- Generated at: 2026-03-14T12:00:00.000Z
+- Headline: Relevant still had the cleaner workflow story, but the gap was narrower.
+- Conclusion: Relevant had a workflow edge, while AlphaSense still owned breadth.
+- Bottom line: The story still leaned on workflow clarity, not market breadth.
+- Key points: Relevant still led on directness. | AlphaSense still led on enterprise comfort.`)
     synthesizeWithSchema.mockImplementation(async (_systemPrompt: string, userPrompt: string) => {
       expect(userPrompt).toContain('"answer"')
       expect(userPrompt).toContain('"priority": "must|should|fyi"')
       expect(userPrompt).toContain('"compositeQuadrant"')
       expect(userPrompt).toContain('"whitespace"')
       expect(userPrompt).toContain('Every comparisonMatrix row must include exactly one values entry for Relevant')
+      expect(userPrompt).toContain('## Prior Brief Baseline')
+      expect(userPrompt).toContain('the gap was narrower')
 
       return {
         data: {
@@ -66,7 +78,10 @@ describe('generateCompetitiveAnalysisBrief', () => {
               text: 'You should position against breadth-heavy incumbents by selling the decision layer.',
               sourceIds: ['s1'],
             },
-            whatChanged: null,
+            whatChanged: {
+              text: 'Since the last brief, AlphaSense has widened enterprise packaging, so Relevant now needs to sell workflow speed even more explicitly against breadth.',
+              sourceIds: ['s1'],
+            },
             confidence: {
               level: 'high',
               driver: 'The evidence consistently separates direct answer quality from enterprise breadth.',
@@ -198,6 +213,10 @@ describe('generateCompetitiveAnalysisBrief', () => {
 
     expect(brief.yourCompany).toBe('Relevant')
     expect(brief.answer?.conclusion.text).toBe('Relevant wins on direct answers while AlphaSense still wins on enterprise breadth.')
+    expect(brief.answer?.whatChanged).toEqual({
+      text: 'Since the last brief, AlphaSense has widened enterprise packaging, so Relevant now needs to sell workflow speed even more explicitly against breadth.',
+      sourceIds: ['s1'],
+    })
     expect(brief.answer?.recommendedNext.action).toBe('Refine positioning')
     expect(brief.sections.keyFindings[0]?.priority).toBe('must')
     expect(brief.sections.strategicImplications[0]?.priority).toBe('should')

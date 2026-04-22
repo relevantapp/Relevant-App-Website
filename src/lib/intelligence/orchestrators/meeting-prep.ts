@@ -21,6 +21,7 @@ import { rankEvidence, extractQueryTerms } from '../ranker'
 import { MEETING_PREP_SYSTEM_PROMPT, MEETING_PREP_SCHEMA_DESC, buildMeetingPrepPrompt } from '../prompts/meeting-prep.v1'
 import { searchExaSnapshot, searchExaPerson } from '../providers/exa'
 import { extractTavilySite } from '../providers/tavily'
+import { loadPriorBriefBaseline } from '../prior-briefs'
 import { buildResearchSearchPlan, executeSearchPlan } from '../search-planner'
 import {
   normalizeExaSnapshot,
@@ -564,6 +565,12 @@ export async function generateMeetingPrepBrief(
   }, undefined, ctx)
 
   const rankedEvidence = rankStep.data ?? allEvidence
+  const priorBriefBaseline = await loadPriorBriefBaseline({
+    supabase: ctx?.supabase,
+    userId: ctx?.userId,
+    researchType: 'meeting_prep',
+    requestPayload: request,
+  })
 
   const evidencePack = v2Bridge && v2Evidence
     ? persistV2EvidencePack({
@@ -594,6 +601,7 @@ export async function generateMeetingPrepBrief(
       snapshot: displaySnapshot,
       evidence: rankedEvidence,
       attendeeProfiles,
+      priorBriefBaseline,
     })
     return synthesizeWithSchema(
       MEETING_PREP_SYSTEM_PROMPT, userPrompt,
@@ -624,6 +632,9 @@ export async function generateMeetingPrepBrief(
       ? normalizeCompetitorMatrix(synthesis?.data?.competitorMatrix, canonicalSourceIdMap)
       : undefined
     const normalizedAnswer = normalizeAnswerBlock(synthesis?.data?.answer, canonicalSourceIdMap)
+    const finalAnswer = priorBriefBaseline || !normalizedAnswer
+      ? normalizedAnswer
+      : { ...normalizedAnswer, whatChanged: null }
     const normalizedSections = {
       whatJustHappened: normalizeBulletSections(synthesis?.data?.whatJustHappened, canonicalSourceIdMap),
       talkingPoints: normalizeBulletSections(synthesis?.data?.talkingPoints, canonicalSourceIdMap),
@@ -648,7 +659,7 @@ export async function generateMeetingPrepBrief(
         normalizedSections.landmines.flatMap((bullet) => bullet.sourceIds),
         normalizedSections.questionsToAsk.flatMap((bullet) => bullet.sourceIds),
         normalizedSections.competitorContext.flatMap((bullet) => bullet.sourceIds),
-        collectAnswerSourceIds(normalizedAnswer),
+        collectAnswerSourceIds(finalAnswer),
       ]),
     )
     const sourceCounts = deriveSourceCounts({
@@ -674,10 +685,10 @@ export async function generateMeetingPrepBrief(
         ...normalizedSections.landmines.map((bullet) => bullet.sourceIds),
         ...normalizedSections.questionsToAsk.map((bullet) => bullet.sourceIds),
         ...normalizedSections.competitorContext.map((bullet) => bullet.sourceIds),
-        ...(normalizedAnswer ? [
-          normalizedAnswer.conclusion.sourceIds,
-          normalizedAnswer.whyItMatters.sourceIds,
-          normalizedAnswer.whatChanged?.sourceIds,
+        ...(finalAnswer ? [
+          finalAnswer.conclusion.sourceIds,
+          finalAnswer.whyItMatters.sourceIds,
+          finalAnswer.whatChanged?.sourceIds,
         ] : []),
       ],
       pack: evidencePack,
@@ -701,7 +712,7 @@ export async function generateMeetingPrepBrief(
       bottomLine: synthesis?.data?.bottomLine ?? 'The AI synthesis step failed. The raw evidence is still available below.',
       whyItMatters: synthesis?.data?.whyItMatters ?? null,
       confidence: synthesis?.data?.confidence ?? 'low',
-      answer: normalizedAnswer,
+      answer: finalAnswer,
       snapshot: displaySnapshot,
       attendeeProfiles,
       momentumScore: typeof synthesis?.data?.momentumScore === 'number'

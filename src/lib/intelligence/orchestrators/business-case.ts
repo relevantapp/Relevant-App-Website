@@ -18,6 +18,7 @@ import { synthesizeWithSchema } from '../models'
 import { rankEvidence, extractQueryTerms } from '../ranker'
 import { BUSINESS_CASE_SYSTEM_PROMPT, BUSINESS_CASE_SCHEMA_DESC, buildBusinessCasePrompt } from '../prompts/business-case.v1'
 import { searchExaSnapshot } from '../providers/exa'
+import { loadPriorBriefBaseline } from '../prior-briefs'
 import { buildResearchSearchPlan, executeSearchPlan } from '../search-planner'
 import {
   normalizeExaSnapshot,
@@ -317,6 +318,12 @@ export async function generateBusinessCaseBrief(
   }, undefined, ctx)
 
   const rankedEvidence = rankStep.data ?? allEvidence
+  const priorBriefBaseline = await loadPriorBriefBaseline({
+    supabase: ctx?.supabase,
+    userId: ctx?.userId,
+    researchType: 'business_case',
+    requestPayload: input,
+  })
 
   const evidencePack = v2Bridge && v2Evidence
     ? persistV2EvidencePack({
@@ -347,6 +354,7 @@ export async function generateBusinessCaseBrief(
       userContext: input.userContext,
       evidence: rankedEvidence,
       comparableSnapshots: comparableSnapshotDescriptions,
+      priorBriefBaseline,
     })
     return synthesizeWithSchema(
       BUSINESS_CASE_SYSTEM_PROMPT, userPrompt,
@@ -361,6 +369,9 @@ export async function generateBusinessCaseBrief(
   /* ── Step 5: assembleBrief ───────────────────────────────── */
   const canonicalSourceIdMap = buildCanonicalSourceIdMap(allSources)
   const normalizedAnswer = normalizeAnswerBlock(synthesis?.data?.answer, canonicalSourceIdMap)
+  const finalAnswer = priorBriefBaseline || !normalizedAnswer
+    ? normalizedAnswer
+    : { ...normalizedAnswer, whatChanged: null }
   const normalizedDriverTree = normalizeDriverTree(synthesis?.data?.driverTree, canonicalSourceIdMap)
   const normalizedScenarios = normalizeScenarioBands(synthesis?.data?.scenarios)
   const normalizedTornado = normalizeTornado(synthesis?.data?.tornado)
@@ -369,7 +380,7 @@ export async function generateBusinessCaseBrief(
   const dedupedSources = markSourcesUsedInAnswer(
     deduplicateSources(allSources),
     [
-      ...collectAnswerSourceIds(normalizedAnswer),
+      ...collectAnswerSourceIds(finalAnswer),
       ...(normalizedDriverTree?.branches.flatMap((branch) => branch.children.flatMap((child) => child.evidence.sourceIds)) ?? []),
       ...(normalizedWaterfall?.flatMap((step) => step.assumption.sourceIds) ?? []),
       ...(normalizedAssumptions?.flatMap((assumption) => assumption.evidence.flatMap((span) => span.sourceIds)) ?? []),
@@ -386,10 +397,10 @@ export async function generateBusinessCaseBrief(
       ...(synthesis?.data?.supportingFactors.map((factor) => factor.sourceIds) ?? []),
       ...(synthesis?.data?.riskFactors.map((factor) => factor.sourceIds) ?? []),
       ...(synthesis?.data?.openQuestions.map((bullet) => bullet.sourceIds) ?? []),
-      ...(normalizedAnswer ? [
-        normalizedAnswer.conclusion.sourceIds,
-        normalizedAnswer.whyItMatters.sourceIds,
-        normalizedAnswer.whatChanged?.sourceIds,
+      ...(finalAnswer ? [
+        finalAnswer.conclusion.sourceIds,
+        finalAnswer.whyItMatters.sourceIds,
+        finalAnswer.whatChanged?.sourceIds,
       ] : []),
     ],
     pack: evidencePack,
@@ -418,7 +429,7 @@ export async function generateBusinessCaseBrief(
     bottomLine: synthesis?.data?.bottomLine ?? 'AI synthesis failed. Raw evidence is still available.',
     whyItMatters: synthesis?.data?.whyItMatters ?? null,
     confidence: synthesis?.data?.confidence ?? 'low',
-    answer: normalizedAnswer,
+    answer: finalAnswer,
     verdict: synthesis?.data?.verdict ?? 'insufficient_data',
     verdictRationale: synthesis?.data?.verdictRationale ?? 'Analysis could not be completed.',
     comparables: synthesis?.data?.comparables ?? [],

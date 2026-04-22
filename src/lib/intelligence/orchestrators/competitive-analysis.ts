@@ -14,6 +14,7 @@ import { synthesizeWithSchema } from '../models'
 import { rankEvidence, extractQueryTerms } from '../ranker'
 import { COMPETITIVE_SYSTEM_PROMPT, COMPETITIVE_SCHEMA_DESC, buildCompetitivePrompt } from '../prompts/competitive.v1'
 import { searchExaSnapshot } from '../providers/exa'
+import { loadPriorBriefBaseline } from '../prior-briefs'
 import { buildResearchSearchPlan, executeSearchPlan } from '../search-planner'
 import {
   normalizeExaSnapshot,
@@ -298,6 +299,12 @@ export async function generateCompetitiveAnalysisBrief(
   }, undefined, ctx)
 
   const rankedEvidence = rankStep.data ?? allEvidence
+  const priorBriefBaseline = await loadPriorBriefBaseline({
+    supabase: ctx?.supabase,
+    userId: ctx?.userId,
+    researchType: 'competitive_analysis',
+    requestPayload: input,
+  })
 
   const evidencePack = v2Bridge && v2Evidence
     ? persistV2EvidencePack({
@@ -326,6 +333,7 @@ export async function generateCompetitiveAnalysisBrief(
       evidence: rankedEvidence,
       competitorSnapshots: competitorSnapshotDescriptions,
       yourSnapshot,
+      priorBriefBaseline,
     })
     return synthesizeWithSchema(
       COMPETITIVE_SYSTEM_PROMPT, userPrompt,
@@ -340,12 +348,15 @@ export async function generateCompetitiveAnalysisBrief(
   /* ── Step 5: assembleBrief ───────────────────────────────── */
   const canonicalSourceIdMap = buildCanonicalSourceIdMap(allSources)
   const normalizedAnswer = normalizeAnswerBlock(synthesis?.data?.answer, canonicalSourceIdMap)
+  const finalAnswer = priorBriefBaseline || !normalizedAnswer
+    ? normalizedAnswer
+    : { ...normalizedAnswer, whatChanged: null }
   const normalizedCompositeQuadrant = normalizeCompositeQuadrant(synthesis?.data?.compositeQuadrant, canonicalSourceIdMap)
   const normalizedWhitespace = normalizeWhitespace(synthesis?.data?.whitespace, canonicalSourceIdMap)
   const dedupedSources = markSourcesUsedInAnswer(
     deduplicateSources(allSources),
     [
-      ...collectAnswerSourceIds(normalizedAnswer),
+      ...collectAnswerSourceIds(finalAnswer),
       ...(normalizedCompositeQuadrant?.rendered
         ? [
           ...normalizedCompositeQuadrant.xAxis.rationale.sourceIds,
@@ -371,10 +382,10 @@ export async function generateCompetitiveAnalysisBrief(
       ...(synthesis?.data?.keyFindings.map((bullet) => bullet.sourceIds) ?? []),
       ...(synthesis?.data?.strategicImplications.map((bullet) => bullet.sourceIds) ?? []),
       ...(synthesis?.data?.recommendations.map((bullet) => bullet.sourceIds) ?? []),
-      ...(normalizedAnswer ? [
-        normalizedAnswer.conclusion.sourceIds,
-        normalizedAnswer.whyItMatters.sourceIds,
-        normalizedAnswer.whatChanged?.sourceIds,
+      ...(finalAnswer ? [
+        finalAnswer.conclusion.sourceIds,
+        finalAnswer.whyItMatters.sourceIds,
+        finalAnswer.whatChanged?.sourceIds,
       ] : []),
     ],
     pack: evidencePack,
@@ -403,7 +414,7 @@ export async function generateCompetitiveAnalysisBrief(
     bottomLine: synthesis?.data?.bottomLine ?? 'AI synthesis failed. Raw evidence is still available.',
     whyItMatters: synthesis?.data?.whyItMatters ?? null,
     confidence: synthesis?.data?.confidence ?? 'low',
-    answer: normalizedAnswer,
+    answer: finalAnswer,
     yourCompany: input.yourCompany ?? null,
     competitors: synthesis?.data?.competitors ?? [],
     comparisonMatrix: synthesis?.data?.comparisonMatrix ?? [],
