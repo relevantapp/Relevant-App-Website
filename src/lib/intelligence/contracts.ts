@@ -543,6 +543,13 @@ export const ScenarioBandsSchema = z.object({
 })
 export type ScenarioBands = z.infer<typeof ScenarioBandsSchema>
 
+export const TornadoEntrySchema = z.object({
+  assumption: z.string(),
+  lowImpact: z.number(),
+  highImpact: z.number(),
+})
+export type TornadoEntry = z.infer<typeof TornadoEntrySchema>
+
 export const BusinessCaseSynthesisSchema = z.object({
   headline: z.string(),
   bottomLine: z.string(),
@@ -565,6 +572,7 @@ export interface BusinessCaseBrief extends BriefBase {
   comparables: ComparableCompany[]
   driverTree?: DriverTree
   scenarios?: ScenarioBands
+  tornado?: TornadoEntry[]
   sections: {
     marketEvidence: BriefBullet[]
     supportingFactors: FactorCard[]
@@ -738,6 +746,7 @@ export const BusinessCaseBriefSchema = BriefBaseSchema.extend({
   comparables: z.array(ComparableCompanySchema),
   driverTree: DriverTreeSchema.optional(),
   scenarios: ScenarioBandsSchema.optional(),
+  tornado: z.array(TornadoEntrySchema).optional(),
   sections: z.object({
     marketEvidence: z.array(BriefBulletSchema),
     supportingFactors: z.array(FactorCardSchema),

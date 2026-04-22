@@ -30,6 +30,7 @@ import {
   CompositeQuadrantSchema,
   StakeholderRowSchema,
   SignalCardSchema,
+  TornadoEntrySchema,
   WhitespacePocketSchema,
 } from '../contracts'
 import { businessCaseFixture } from '@/app/app/intelligence/results/__fixtures__/business-case.fixture'
@@ -305,6 +306,18 @@ describe('ScenarioBandsSchema', () => {
     } as const
 
     expect(ScenarioBandsSchema.parse(scenario)).toEqual(scenario)
+  })
+})
+
+describe('TornadoEntrySchema', () => {
+  it('accepts tornado sensitivity entries', () => {
+    const entry = {
+      assumption: 'Workflow reuse rate',
+      lowImpact: -18,
+      highImpact: 22,
+    } as const
+
+    expect(TornadoEntrySchema.parse(entry)).toEqual(entry)
   })
 })
 

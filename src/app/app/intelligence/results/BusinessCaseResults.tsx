@@ -20,6 +20,7 @@ import ExhibitShell from './shared/ExhibitShell'
 import MethodologyDrawer from './shared/MethodologyDrawer'
 import DriverTree from './shared/viz/DriverTree'
 import ScenarioBands from './shared/viz/ScenarioBands'
+import TornadoChart from './shared/viz/TornadoChart'
 import HistoryButton from '../HistoryButton'
 
 interface BusinessCaseResultsProps {
@@ -133,6 +134,18 @@ export default function BusinessCaseResults({ brief, onNewSearch, savedBriefId }
             data={brief.scenarios}
             headline="The base case sits inside a realistic range"
             subhead="The point is not a single magic number. It is the band between what could go right and what could still fail."
+            asOf={brief.generatedAt}
+            sources={brief.sources}
+          />
+        </div>
+      )}
+
+      {INTEL_RESULTS_V2 && brief.tornado && (
+        <div style={{ marginTop: 24 }}>
+          <TornadoChart
+            data={brief.tornado}
+            headline="The business case is most sensitive to a few assumptions"
+            subhead="This view shows which assumptions move the outcome most if they swing up or down."
             asOf={brief.generatedAt}
             sources={brief.sources}
           />

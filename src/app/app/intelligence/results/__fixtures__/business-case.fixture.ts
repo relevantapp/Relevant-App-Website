@@ -277,6 +277,23 @@ export const businessCaseFixture: BusinessCaseBrief = {
       triggers: ['Two workflows reach reuse quickly.', 'Buyers respond to the more defensible output story.'],
     },
   },
+  tornado: [
+    {
+      assumption: 'Implementation burden',
+      lowImpact: -8,
+      highImpact: 10,
+    },
+    {
+      assumption: 'Workflow reuse rate',
+      lowImpact: -18,
+      highImpact: 22,
+    },
+    {
+      assumption: 'Enterprise conversion lift',
+      lowImpact: -12,
+      highImpact: 16,
+    },
+  ],
   comparables: [
     {
       name: 'Tegus',
