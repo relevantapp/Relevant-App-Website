@@ -2,16 +2,29 @@
 
 import { describe, it, expect } from 'vitest'
 import {
+  AnswerBlockSchema,
+  BriefBaseSchema,
   ConfidenceSchema,
   BriefBulletSchema,
   BriefSourceSchema,
   BriefStatusSchema,
+  BusinessCaseBriefSchema,
+  CitedSpanSchema,
+  CompetitiveAnalysisBriefSchema,
+  IntelligenceBriefSchema,
+  MarketResearchBriefSchema,
   NormalizedEvidenceSchema,
+  MeetingPrepBriefSchema,
   TimelineEventSchema,
   RadarMetricSchema,
+  RichBulletSchema,
   CompetitorMatrixRowSchema,
   MeetingPrepSynthesisSchema,
 } from '../contracts'
+import { businessCaseFixture } from '@/app/app/intelligence/results/__fixtures__/business-case.fixture'
+import { competitiveFixture } from '@/app/app/intelligence/results/__fixtures__/competitive.fixture'
+import { marketResearchFixture } from '@/app/app/intelligence/results/__fixtures__/market-research.fixture'
+import { meetingPrepFixture } from '@/app/app/intelligence/results/__fixtures__/meeting-prep.fixture'
 
 describe('ConfidenceSchema', () => {
   it('accepts valid values', () => {
@@ -24,6 +37,27 @@ describe('ConfidenceSchema', () => {
     expect(() => ConfidenceSchema.parse('invalid')).toThrow()
     expect(() => ConfidenceSchema.parse('')).toThrow()
     expect(() => ConfidenceSchema.parse(42)).toThrow()
+  })
+})
+
+describe('CitedSpanSchema', () => {
+  it('accepts a cited span with a source snippet', () => {
+    const span = {
+      text: 'Decision quality is the wedge.',
+      sourceIds: ['s1'],
+      sourceSnippet: 'Decision quality is the wedge.',
+    }
+
+    expect(CitedSpanSchema.parse(span)).toEqual(span)
+  })
+
+  it('accepts a cited span without a source snippet', () => {
+    const span = {
+      text: 'Monitoring breadth still matters.',
+      sourceIds: ['s2'],
+    }
+
+    expect(CitedSpanSchema.parse(span)).toEqual(span)
   })
 })
 
@@ -46,6 +80,48 @@ describe('BriefBulletSchema', () => {
     expect(() =>
       BriefBulletSchema.parse({ text: 'x', sourceIds: [], tag: 'opinion' }),
     ).toThrow()
+  })
+})
+
+describe('AnswerBlockSchema', () => {
+  it('requires all fields except nullable whatChanged', () => {
+    const answer = {
+      conclusion: { text: 'Go now.', sourceIds: ['s1'] },
+      whyItMatters: { text: 'It shortens the cycle.', sourceIds: ['s2'] },
+      whatChanged: null,
+      confidence: {
+        level: 'high',
+        driver: 'Two fresh sources.',
+      },
+      recommendedNext: {
+        text: 'Lead with proof.',
+      },
+    } as const
+
+    expect(AnswerBlockSchema.parse(answer)).toEqual(answer)
+    expect(() => AnswerBlockSchema.parse({
+      conclusion: { text: 'Go now.', sourceIds: ['s1'] },
+      whyItMatters: { text: 'It shortens the cycle.', sourceIds: ['s2'] },
+      confidence: {
+        level: 'high',
+        driver: 'Two fresh sources.',
+      },
+      recommendedNext: {
+        text: 'Lead with proof.',
+      },
+    })).toThrow()
+  })
+})
+
+describe('RichBulletSchema', () => {
+  it('remains backward-compatible with existing BriefBullet data', () => {
+    const legacyBullet = {
+      text: 'Raised a new round.',
+      sourceIds: ['s1'],
+      tag: 'fact',
+    } as const
+
+    expect(RichBulletSchema.parse(legacyBullet)).toEqual(legacyBullet)
   })
 })
 
@@ -327,5 +403,48 @@ describe('MeetingPrepSynthesisSchema', () => {
         sourceIds: ['s2'],
       }],
     })).toThrow()
+  })
+})
+
+describe('BriefBaseSchema', () => {
+  it('accepts a fully populated brief base object with answer, trust, and methodology', () => {
+    const base = {
+      id: meetingPrepFixture.id,
+      researchType: meetingPrepFixture.researchType,
+      generatedAt: meetingPrepFixture.generatedAt,
+      headline: meetingPrepFixture.headline,
+      bottomLine: meetingPrepFixture.bottomLine,
+      whyItMatters: meetingPrepFixture.whyItMatters,
+      confidence: meetingPrepFixture.confidence,
+      sources: meetingPrepFixture.sources,
+      status: meetingPrepFixture.status,
+      researchPlan: meetingPrepFixture.researchPlan,
+      contextUsed: meetingPrepFixture.contextUsed,
+      answer: meetingPrepFixture.answer,
+      trust: meetingPrepFixture.trust,
+      methodology: meetingPrepFixture.methodology,
+    }
+
+    expect(BriefBaseSchema.parse(base)).toEqual(base)
+  })
+})
+
+describe('full brief schemas', () => {
+  const roundTripCases = [
+    ['meeting prep', MeetingPrepBriefSchema, meetingPrepFixture],
+    ['competitive', CompetitiveAnalysisBriefSchema, competitiveFixture],
+    ['business case', BusinessCaseBriefSchema, businessCaseFixture],
+    ['market research', MarketResearchBriefSchema, marketResearchFixture],
+  ] as const
+
+  it.each(roundTripCases)('round-trips %s fixtures with the new universal fields', (_name, schema, fixture) => {
+    const parsed = schema.parse(fixture)
+    const roundTrip = schema.parse(JSON.parse(JSON.stringify(parsed)))
+
+    expect(roundTrip).toEqual(parsed)
+    expect(IntelligenceBriefSchema.parse(roundTrip)).toMatchObject({
+      id: fixture.id,
+      researchType: fixture.researchType,
+    })
   })
 })

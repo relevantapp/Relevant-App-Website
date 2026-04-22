@@ -119,6 +119,86 @@ export const businessCaseFixture: BusinessCaseBrief = {
     country: 'United States',
     contextNote: 'Decision memo for a product investment conversation.',
   },
+  answer: {
+    conclusion: {
+      text: 'There is a strong case to invest if Relevant stays attached to high-stakes workflow decisions.',
+      sourceIds: ['bc-1', 'bc-2', 'bc-5'],
+      sourceSnippet: 'The demand signal is strongest when the output clearly shortens a real operating decision.',
+    },
+    whyItMatters: {
+      text: 'The upgraded results pages can become a budget-worthy surface if they make the product feel more defensible, actionable, and reusable in live work.',
+      sourceIds: ['bc-1', 'bc-3', 'bc-5'],
+      sourceSnippet: 'Comparable cases and internal notes both point to value creation when research turns into repeatable decisions.',
+    },
+    whatChanged: {
+      text: 'Buyer appetite for workflow-specific ROI is strengthening, but tolerance for generic AI productivity claims is weakening.',
+      sourceIds: ['bc-2', 'bc-4'],
+      sourceSnippet: 'Recent evidence shows the wedge is getting clearer at the same time buyer fatigue is rising.',
+    },
+    confidence: {
+      level: 'medium',
+      driver: 'The market signal is coherent, but direct pricing evidence for this exact surface is still limited.',
+    },
+    recommendedNext: {
+      text: 'Ship the results upgrade around one repeat workflow and measure reuse aggressively.',
+      action: 'Prove one repeated job first',
+      copyable: 'The business case is strongest if we treat this as a decision surface for one repeated workflow, prove weekly reuse there, and only then broaden the story.',
+    },
+  },
+  trust: {
+    sourcedClaimCount: 6,
+    freshness: {
+      oldestSourceAt: '2026-01-29T12:15:00.000Z',
+      newestSourceAt: '2026-04-02T09:20:00.000Z',
+    },
+    mostImportantSourceIds: ['bc-1', 'bc-4', 'bc-5'],
+    conflicts: [
+      {
+        claim: 'The opportunity is real, but buyer fatigue makes vague ROI positioning risky.',
+        againstSourceIds: ['bc-4'],
+        supportingSourceIds: ['bc-1', 'bc-2', 'bc-3'],
+      },
+    ],
+    knownUnknowns: [
+      {
+        question: 'How much more buyers will pay for a more defensible result surface is still unknown.',
+        queriesTried: ['research workflow willingness to pay premium for cited output', 'enterprise AI report export ROI survey'],
+      },
+    ],
+  },
+  methodology: {
+    providers: [
+      {
+        name: 'Exa',
+        queriesRun: ['research workflow automation ROI demand enterprise teams 2026'],
+        docsReturned: 8,
+      },
+      {
+        name: 'Tavily',
+        queriesRun: ['enterprise software buyer fatigue ROI proof 2026'],
+        docsReturned: 4,
+      },
+      {
+        name: 'Internal',
+        queriesRun: ['Relevant enterprise evals and ROI objections'],
+        docsReturned: 1,
+      },
+    ],
+    freshnessRange: {
+      oldest: '2026-01-29T12:15:00.000Z',
+      newest: '2026-04-02T09:20:00.000Z',
+    },
+    confidenceDrivers: [
+      'Demand and comparable-outcome signals line up across multiple sources.',
+      'The biggest gap is pricing-specific proof, not general market demand.',
+    ],
+    excluded: [
+      {
+        sourceId: 'bc-3',
+        reason: 'Helpful comparable, but not directly tied to pricing power for this exact product surface.',
+      },
+    ],
+  },
   verdict: 'strong',
   verdictRationale: 'The demand signal is strong when the product is attached to live revenue and strategy decisions, and comparable cases show real analyst time savings. The main risk is buyer fatigue if the ROI story stays abstract.',
   comparables: [

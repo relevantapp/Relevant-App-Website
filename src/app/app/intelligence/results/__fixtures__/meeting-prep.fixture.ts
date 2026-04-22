@@ -130,6 +130,86 @@ export const meetingPrepFixture: MeetingPrepBrief = {
     country: 'Canada',
     contextNote: 'Preparing for a first serious enterprise discovery call with Northstar Health.',
   },
+  answer: {
+    conclusion: {
+      text: 'Northstar is warm, but procurement trust is the real gate for this meeting.',
+      sourceIds: ['mp-1', 'mp-4', 'mp-6'],
+      sourceSnippet: 'Northstar launched EU data residency, but a buyer review still described a long security approval cycle.',
+    },
+    whyItMatters: {
+      text: 'If you lead with proof of safe rollout, you match the buyer’s current decision criteria instead of sounding like another feature pitch.',
+      sourceIds: ['mp-2', 'mp-4', 'mp-6'],
+      sourceSnippet: 'Procurement discipline and implementation proof show up repeatedly in the public and internal signals.',
+    },
+    whatChanged: {
+      text: 'EU data residency and EMEA hiring moved the account forward, but the security-review drag has not disappeared.',
+      sourceIds: ['mp-1', 'mp-3', 'mp-4'],
+      sourceSnippet: 'Recent expansion signals are positive, yet the most concrete buyer-risk signal is still implementation scrutiny.',
+    },
+    confidence: {
+      level: 'high',
+      driver: '3 independent sources; newest signal is 3 days old and the main risk is corroborated by both public and internal evidence.',
+    },
+    recommendedNext: {
+      text: 'Open with rollout proof, then tie Relevant to procurement speed.',
+      action: 'Lead with implementation credibility',
+      copyable: 'We saw Northstar just cleared EU data residency and is scaling enterprise coverage. Before we get into product depth, I can show two rollout examples that shortened procurement review for similar enterprise buyers.',
+    },
+  },
+  trust: {
+    sourcedClaimCount: 8,
+    freshness: {
+      oldestSourceAt: '2026-02-27T15:45:00.000Z',
+      newestSourceAt: '2026-04-18T09:00:00.000Z',
+    },
+    mostImportantSourceIds: ['mp-1', 'mp-4', 'mp-6'],
+    conflicts: [
+      {
+        claim: 'Northstar is moving faster, but rollout scrutiny is still active.',
+        againstSourceIds: ['mp-4'],
+        supportingSourceIds: ['mp-1', 'mp-3'],
+      },
+    ],
+    knownUnknowns: [
+      {
+        question: 'Who else sits on the final vendor approval path?',
+        queriesTried: ['Northstar Health procurement committee members', 'Northstar vendor approval security committee'],
+      },
+    ],
+  },
+  methodology: {
+    providers: [
+      {
+        name: 'Exa',
+        queriesRun: ['Northstar Health enterprise expansion procurement security review 2026'],
+        docsReturned: 9,
+      },
+      {
+        name: 'Tavily',
+        queriesRun: ['Maya Chen Northstar Health revenue operations LinkedIn'],
+        docsReturned: 5,
+      },
+      {
+        name: 'Internal',
+        queriesRun: ['Prior Northstar enterprise evaluation notes'],
+        docsReturned: 1,
+      },
+    ],
+    freshnessRange: {
+      oldest: '2026-02-27T15:45:00.000Z',
+      newest: '2026-04-18T09:00:00.000Z',
+    },
+    confidenceDrivers: [
+      'The account has both fresh company signals and buyer-process evidence.',
+      'Internal memory aligns with the public procurement risk pattern.',
+    ],
+    excluded: [
+      {
+        sourceId: 'mp-5',
+        reason: 'Useful competitor context, but not direct evidence about Northstar’s active buying process.',
+      },
+    ],
+  },
   snapshot: {
     name: 'Northstar Health',
     summary: 'Northstar Health sells care-operations software to large hospital groups and regional care networks.',

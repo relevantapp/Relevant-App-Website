@@ -119,6 +119,86 @@ export const marketResearchFixture: MarketResearchBrief = {
     country: 'United States',
     contextNote: 'Market scan for an answer-first research workflow product.',
   },
+  answer: {
+    conclusion: {
+      text: 'The market is opening for answer-first products, but incumbents still own the broad monitoring category.',
+      sourceIds: ['mr-1', 'mr-2', 'mr-5'],
+      sourceSnippet: 'The repeated-use signal is strongest for decision-support workflows, but awareness still sits with larger platforms.',
+    },
+    whyItMatters: {
+      text: 'Relevant should define itself as a workflow-specific answer layer, not a generic market-monitoring tool.',
+      sourceIds: ['mr-1', 'mr-3', 'mr-5'],
+      sourceSnippet: 'The category is segmenting in a way that rewards more explicit product identity and proof.',
+    },
+    whatChanged: {
+      text: 'The category is moving out of novelty and toward practical workflow evaluation, which raises the premium on trust and product clarity.',
+      sourceIds: ['mr-2', 'mr-3', 'mr-4'],
+      sourceSnippet: 'Recent tracker and market commentary both point to more practical buying behavior.',
+    },
+    confidence: {
+      level: 'medium',
+      driver: 'The directional market signal is strong, but exact category boundaries are still forming.',
+    },
+    recommendedNext: {
+      text: 'Own one concrete workflow category before trying to look like a broad market-intelligence suite.',
+      action: 'Define the wedge narrowly',
+      copyable: 'The market is rewarding tools that are clearly tied to a repeated job. We should act like the answer-first workflow product for a specific decision motion, not like another broad dashboard company.',
+    },
+  },
+  trust: {
+    sourcedClaimCount: 6,
+    freshness: {
+      oldestSourceAt: '2026-02-13T14:00:00.000Z',
+      newestSourceAt: '2026-04-06T11:10:00.000Z',
+    },
+    mostImportantSourceIds: ['mr-1', 'mr-2', 'mr-5'],
+    conflicts: [
+      {
+        claim: 'Workflow specialization is winning, but broad incumbents still control awareness and procurement comfort.',
+        againstSourceIds: ['mr-1'],
+        supportingSourceIds: ['mr-2', 'mr-4'],
+      },
+    ],
+    knownUnknowns: [
+      {
+        question: 'Which buyer segment will adopt answer-first research tooling fastest?',
+        queriesTried: ['answer-first research workflow buyer segment survey', 'decision support tooling adoption by function 2026'],
+      },
+    ],
+  },
+  methodology: {
+    providers: [
+      {
+        name: 'Exa',
+        queriesRun: ['AI research workflow market map decision support 2026'],
+        docsReturned: 10,
+      },
+      {
+        name: 'Tavily',
+        queriesRun: ['knowledge worker AI tracker decision support repeat usage 2026'],
+        docsReturned: 5,
+      },
+      {
+        name: 'Internal',
+        queriesRun: ['Founder conversations about research workflow positioning'],
+        docsReturned: 1,
+      },
+    ],
+    freshnessRange: {
+      oldest: '2026-02-13T14:00:00.000Z',
+      newest: '2026-04-06T11:10:00.000Z',
+    },
+    confidenceDrivers: [
+      'Public category framing and repeat-usage data both support the answer-first wedge.',
+      'The remaining uncertainty is where category boundaries settle, not whether the need exists.',
+    ],
+    excluded: [
+      {
+        sourceId: 'mr-3',
+        reason: 'Helpful stage framing, but not enough on its own to size the immediate adoption segment.',
+      },
+    ],
+  },
   marketOverview: 'The market is splitting between broad monitoring platforms, workflow copilots, and narrower answer-first products. Buyers increasingly reward tools that tie output to a repeated decision motion instead of generic summarization.',
   players: [
     {

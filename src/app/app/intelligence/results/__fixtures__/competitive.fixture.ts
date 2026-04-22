@@ -119,6 +119,86 @@ export const competitiveFixture: CompetitiveAnalysisBrief = {
     country: 'United States',
     contextNote: 'Positioning review for a product and GTM strategy discussion.',
   },
+  answer: {
+    conclusion: {
+      text: 'Relevant wins when the buyer wants an answer-first workflow, while AlphaSense still wins on breadth and enterprise comfort.',
+      sourceIds: ['ca-1', 'ca-2', 'ca-5'],
+      sourceSnippet: 'Buyer evidence and internal win-loss notes both point to actionability as the wedge and breadth as the current gap.',
+    },
+    whyItMatters: {
+      text: 'This is the practical positioning line for sales and product strategy: do not fight the breadth war first, fight for decision quality.',
+      sourceIds: ['ca-1', 'ca-3', 'ca-5'],
+      sourceSnippet: 'The alternatives split between enablement-heavy and monitoring-heavy products, leaving room for a decisive answer layer.',
+    },
+    whatChanged: {
+      text: 'The market is getting sharper about workflow fit, which helps Relevant, but enterprise incumbents are also expanding their surrounding bundles.',
+      sourceIds: ['ca-2', 'ca-3', 'ca-4'],
+      sourceSnippet: 'Recent competitor updates show more packaging depth, not less, even as workflow specialization becomes clearer.',
+    },
+    confidence: {
+      level: 'high',
+      driver: 'Third-party review data plus competitor updates plus internal win-loss evidence all point to the same wedge.',
+    },
+    recommendedNext: {
+      text: 'Position Relevant as the decision layer on top of noisy competitive inputs.',
+      action: 'Anchor on answer quality',
+      copyable: 'We should stop trying to look like the broadest monitoring platform. The stronger story is that Relevant gives the team a conclusion they can act on and defend, while the incumbents still make the user do more synthesis work.',
+    },
+  },
+  trust: {
+    sourcedClaimCount: 7,
+    freshness: {
+      oldestSourceAt: '2026-02-19T16:20:00.000Z',
+      newestSourceAt: '2026-04-08T12:00:00.000Z',
+    },
+    mostImportantSourceIds: ['ca-1', 'ca-2', 'ca-5'],
+    conflicts: [
+      {
+        claim: 'Breadth is still the major enterprise gap even though workflow fit is improving for specialized tools.',
+        againstSourceIds: ['ca-1'],
+        supportingSourceIds: ['ca-2', 'ca-4'],
+      },
+    ],
+    knownUnknowns: [
+      {
+        question: 'How much enterprise willingness-to-switch is driven by price versus workflow fit?',
+        queriesTried: ['enterprise intelligence platform switching cost price survey', 'AlphaSense replacement reasons 2026'],
+      },
+    ],
+  },
+  methodology: {
+    providers: [
+      {
+        name: 'Exa',
+        queriesRun: ['AlphaSense Klue Crayon competitive intelligence product updates 2026'],
+        docsReturned: 11,
+      },
+      {
+        name: 'Tavily',
+        queriesRun: ['competitive intelligence software buyer reviews actionability 2026'],
+        docsReturned: 5,
+      },
+      {
+        name: 'Internal',
+        queriesRun: ['Enterprise win-loss notes for competitive intelligence evaluations'],
+        docsReturned: 1,
+      },
+    ],
+    freshnessRange: {
+      oldest: '2026-02-19T16:20:00.000Z',
+      newest: '2026-04-08T12:00:00.000Z',
+    },
+    confidenceDrivers: [
+      'External buyer evidence aligns with internal win-loss patterns.',
+      'Competitor updates are recent enough to support a current positioning read.',
+    ],
+    excluded: [
+      {
+        sourceId: 'ca-4',
+        reason: 'Useful for market monitoring posture, but weaker evidence on answer-quality differentiation.',
+      },
+    ],
+  },
   yourCompany: 'Relevant',
   competitors: [
     {

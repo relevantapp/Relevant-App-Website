@@ -7,12 +7,83 @@ import { z } from 'zod'
 export const ConfidenceSchema = z.enum(['high', 'medium', 'low'])
 export type Confidence = z.infer<typeof ConfidenceSchema>
 
+export const CitedSpanSchema = z.object({
+  text: z.string(),
+  sourceIds: z.array(z.string()),
+  sourceSnippet: z.string().nullable().optional(),
+})
+export type CitedSpan = z.infer<typeof CitedSpanSchema>
+
 export const BriefBulletSchema = z.object({
   text: z.string(),
   sourceIds: z.array(z.string()),
   tag: z.enum(['fact', 'inference']),
 })
 export type BriefBullet = z.infer<typeof BriefBulletSchema>
+
+export const AnswerBlockSchema = z.object({
+  conclusion: CitedSpanSchema,
+  whyItMatters: CitedSpanSchema,
+  whatChanged: CitedSpanSchema.nullable(),
+  confidence: z.object({
+    level: ConfidenceSchema,
+    driver: z.string(),
+  }),
+  recommendedNext: z.object({
+    text: z.string(),
+    action: z.string().optional(),
+    copyable: z.string().optional(),
+  }),
+})
+export type AnswerBlock = z.infer<typeof AnswerBlockSchema>
+
+export const TrustLayerSchema = z.object({
+  sourcedClaimCount: z.number().int().nonnegative(),
+  freshness: z.object({
+    oldestSourceAt: z.string().nullable(),
+    newestSourceAt: z.string().nullable(),
+  }),
+  mostImportantSourceIds: z.array(z.string()),
+  conflicts: z.array(z.object({
+    claim: z.string(),
+    againstSourceIds: z.array(z.string()),
+    supportingSourceIds: z.array(z.string()),
+  })),
+  knownUnknowns: z.array(z.object({
+    question: z.string(),
+    queriesTried: z.array(z.string()),
+  })),
+})
+export type TrustLayer = z.infer<typeof TrustLayerSchema>
+
+export const MethodologySchema = z.object({
+  providers: z.array(z.object({
+    name: z.string(),
+    queriesRun: z.array(z.string()),
+    docsReturned: z.number().int().nonnegative(),
+  })),
+  freshnessRange: z.object({
+    oldest: z.string().nullable(),
+    newest: z.string().nullable(),
+  }),
+  confidenceDrivers: z.array(z.string()),
+  excluded: z.array(z.object({
+    sourceId: z.string(),
+    reason: z.string(),
+  })),
+})
+export type Methodology = z.infer<typeof MethodologySchema>
+
+export const PrioritySchema = z.enum(['must', 'should', 'fyi'])
+export type Priority = z.infer<typeof PrioritySchema>
+
+export const RichBulletSchema = BriefBulletSchema.extend({
+  priority: PrioritySchema.optional(),
+  confidence: ConfidenceSchema.optional(),
+  confidenceDriver: z.string().optional(),
+  spans: z.array(CitedSpanSchema).optional(),
+})
+export type RichBullet = z.infer<typeof RichBulletSchema>
 
 export const BriefSourceSchema = z.object({
   id: z.string(),
@@ -100,6 +171,9 @@ export interface BriefBase {
   status: BriefStatus
   researchPlan?: ResearchPlan | null
   contextUsed?: UserResearchContext | null
+  answer?: AnswerBlock
+  trust?: TrustLayer
+  methodology?: Methodology
 }
 
 /* ── Company snapshot ──────────────────────────────────────── */
@@ -492,6 +566,9 @@ export const BriefBaseSchema = z.object({
   status: BriefStatusSchema,
   researchPlan: ResearchPlanSchema.nullable().optional(),
   contextUsed: UserResearchContextSchema.nullable().optional(),
+  answer: AnswerBlockSchema.optional(),
+  trust: TrustLayerSchema.optional(),
+  methodology: MethodologySchema.optional(),
 })
 
 export const MeetingPrepBriefSchema = BriefBaseSchema.extend({
