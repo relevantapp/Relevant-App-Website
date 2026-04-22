@@ -175,4 +175,76 @@ describe('generateMeetingPrepBrief', () => {
     expect(brief.methodology?.confidenceDrivers.length).toBeGreaterThan(0)
     expect(brief.sources.find((source) => source.id === 's1')?.usedInAnswer).toBe(true)
   })
+
+  it('only keeps disc inference when linkedin-style attendee evidence exists', async () => {
+    searchExaPerson.mockImplementation(async (name: string) => {
+      if (name === 'Maya Chen') {
+        return [
+          {
+            summary: 'Maya runs RevOps with a direct, numbers-first style.',
+            highlights: ['Leads RevOps'],
+            url: 'https://www.linkedin.com/in/maya-chen',
+          },
+        ]
+      }
+
+      return [
+        {
+          summary: 'Devon owns procurement workflows.',
+          highlights: ['Owns procurement workflows'],
+          url: 'https://northstarhealth.example.com/team/devon-patel',
+        },
+      ]
+    })
+
+    synthesizeWithSchema.mockResolvedValueOnce({
+      data: {
+        headline: 'Attendee styles are partly knowable from profile evidence.',
+        bottomLine: 'Lead Maya with direct proof, but do not pretend Devon has a validated style read.',
+        whyItMatters: 'Only one attendee has enough profile signal to support a comms-style hint.',
+        confidence: 'medium',
+        stakeholders: [
+          {
+            name: 'Maya Chen',
+            title: 'VP Revenue Operations',
+            likelyAgenda: null,
+            pressure: null,
+            leverage: null,
+            unknowns: [],
+            commsStyleTag: 'decisive operator',
+            disc: { d: 81, i: 58, s: 47, c: 64 },
+          },
+          {
+            name: 'Devon Patel',
+            title: 'Director of Procurement Technology',
+            likelyAgenda: null,
+            pressure: null,
+            leverage: null,
+            unknowns: [],
+            commsStyleTag: 'careful evaluator',
+            disc: { d: 22, i: 34, s: 71, c: 84 },
+          },
+        ],
+        whatJustHappened: [{ text: 'Acme is pushing a new rollout motion.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
+        talkingPoints: [{ text: 'Tie the rollout to business impact.', sourceIds: ['s1'], tag: 'inference', priority: 'should' }],
+        landmines: [{ text: 'Do not assume deployment is already staffed.', sourceIds: ['s1'], tag: 'inference', priority: 'must' }],
+        questionsToAsk: [{ text: 'Who owns rollout approval?', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
+        competitorContext: [],
+      },
+    })
+
+    const { generateMeetingPrepBrief } = await import('../orchestrators/meeting-prep')
+
+    const brief = await generateMeetingPrepBrief({
+      accountName: 'Acme',
+      meetingType: 'sales',
+      goal: 'Get to a pilot',
+      attendees: ['Maya Chen', 'Devon Patel'],
+    })
+
+    expect(brief.stakeholders?.find((row) => row.name === 'Maya Chen')?.commsStyleTag).toBe('decisive operator')
+    expect(brief.stakeholders?.find((row) => row.name === 'Maya Chen')?.disc).toEqual({ d: 81, i: 58, s: 47, c: 64 })
+    expect(brief.stakeholders?.find((row) => row.name === 'Devon Patel')?.commsStyleTag).toBeUndefined()
+    expect(brief.stakeholders?.find((row) => row.name === 'Devon Patel')?.disc).toBeUndefined()
+  })
 })

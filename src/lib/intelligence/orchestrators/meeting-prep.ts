@@ -218,6 +218,9 @@ function normalizeStakeholders(
     .map((row) => {
       const name = row.name.trim()
       const fallbackProfile = fallbackProfiles.get(name.toLowerCase())
+      const hasLinkedInStyleEvidence = Boolean(
+        fallbackProfile?.linkedinUrl || fallbackProfile?.sourceUrl?.includes('linkedin.com'),
+      )
 
       return {
         name,
@@ -232,8 +235,10 @@ function normalizeStakeholders(
               .filter(Boolean) as string[],
           ),
         ),
-        commsStyleTag: sanitizeMeetingPrepText(row.commsStyleTag, STAKEHOLDER_TAG_MAX) ?? undefined,
-        disc: row.disc,
+        commsStyleTag: hasLinkedInStyleEvidence
+          ? sanitizeMeetingPrepText(row.commsStyleTag, STAKEHOLDER_TAG_MAX) ?? undefined
+          : undefined,
+        disc: hasLinkedInStyleEvidence ? row.disc : undefined,
       }
     })
     .filter((row) => row.name)

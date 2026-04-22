@@ -86,7 +86,9 @@ export const MEETING_PREP_SCHEMA_DESC = `{
     "likelyAgenda": {"text": "What they likely want from this meeting", "sourceIds": ["s2"], "sourceSnippet": "optional short proof snippet"} or null,
     "pressure": {"text": "What pressure or constraint they seem to be under", "sourceIds": ["s3"], "sourceSnippet": "optional short proof snippet"} or null,
     "leverage": {"text": "What influence they likely have on the outcome", "sourceIds": ["s4"], "sourceSnippet": "optional short proof snippet"} or null,
-    "unknowns": ["Concrete uncertainty that still matters"]
+    "unknowns": ["Concrete uncertainty that still matters"],
+    "commsStyleTag": "Optional short comms-style label, only when profile-style evidence supports it",
+    "disc": {"d": 0, "i": 0, "s": 0, "c": 0}
   }],
   "competitorMatrix": [{
     "name": "Competitor name",
@@ -151,7 +153,7 @@ export function buildMeetingPrepPrompt(input: {
 
   if (input.attendeeProfiles.length) {
     const profileText = input.attendeeProfiles
-      .map((p) => `- ${p.name}: ${p.title || 'Unknown title'} at ${p.company || 'Unknown company'}. ${p.background || ''}`)
+      .map((p) => `- ${p.name}: ${p.title || 'Unknown title'} at ${p.company || 'Unknown company'}. ${p.background || ''} ${p.linkedinUrl ? 'LinkedIn-style profile evidence is available.' : 'LinkedIn-style profile evidence is unavailable.'}`.trim())
       .join('\n')
     parts.push(`\n## Attendee Backgrounds\n${profileText}`)
   }
@@ -170,6 +172,7 @@ Return 4-6 timelineEvents when there is evidence. Each event must be concrete, r
 Return exactly 5 radarMetrics aligned to these categories in this spirit: ${MEETING_PREP_RADAR_CATEGORIES.join(', ')}. If the evidence cannot support a trustworthy five-axis view, return an empty array.
 Return 3-5 signalCards when there is real evidence of fresh movement. Each card must include a concrete date, a declarative headline, a one-sentence whyItMatters, at least one source, and an optional suggestedOpener. If the evidence is thin, return an empty array.
 Return one stakeholder row per named attendee when there is evidence. likelyAgenda, pressure, and leverage must be cited spans or null. unknowns should be concrete open questions, not filler. If there are no attendees, return an empty array.
+Only include stakeholders[].commsStyleTag and stakeholders[].disc when LinkedIn-style or equivalent profile evidence is clearly available for that attendee. If that profile evidence is missing, omit both fields. Do not guess personality from thin evidence.
 Return 3-5 competitorMatrix rows when there is real competitive evidence. If evidence is thin, return an empty array.
 Every timeline event, radar metric, competitor row, and signal card must include evidence IDs.
 Use empty arrays instead of filler whenever evidence is insufficient.

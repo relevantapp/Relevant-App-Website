@@ -731,6 +731,8 @@ describe('MeetingPrepSynthesisSchema', () => {
           sourceIds: ['s3'],
         },
         unknowns: ['Budget authority is still unclear.'],
+        commsStyleTag: 'decisive operator',
+        disc: { d: 81, i: 58, s: 47, c: 64 },
       },
     ],
     competitorMatrix: [
