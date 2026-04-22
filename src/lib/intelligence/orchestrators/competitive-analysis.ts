@@ -97,6 +97,34 @@ function normalizeCompositeQuadrant(
   }
 }
 
+function normalizeWhitespace(
+  pockets: CompetitiveAnalysisBrief['whitespace'] | undefined,
+  sourceIdMap: Map<string, string>,
+): CompetitiveAnalysisBrief['whitespace'] | undefined {
+  if (!pockets?.length) return undefined
+
+  const seen = new Set<string>()
+  const normalized = pockets
+    .map((pocket) => {
+      const evidence = normalizeCitedSpan(pocket.evidence, sourceIdMap)
+      if (!evidence) return null
+
+      return {
+        kind: pocket.kind,
+        headline: pocket.headline.trim(),
+        evidence,
+      }
+    })
+    .filter((pocket): pocket is NonNullable<typeof pocket> => Boolean(pocket))
+    .filter((pocket) => {
+      if (!pocket.headline || seen.has(pocket.kind)) return false
+      seen.add(pocket.kind)
+      return true
+    })
+
+  return normalized.length ? normalized : undefined
+}
+
 export async function generateCompetitiveAnalysisBrief(
   input: CompetitiveAnalysisRequest,
   ctx?: PipelineContext
@@ -313,6 +341,7 @@ export async function generateCompetitiveAnalysisBrief(
   const canonicalSourceIdMap = buildCanonicalSourceIdMap(allSources)
   const normalizedAnswer = normalizeAnswerBlock(synthesis?.data?.answer, canonicalSourceIdMap)
   const normalizedCompositeQuadrant = normalizeCompositeQuadrant(synthesis?.data?.compositeQuadrant, canonicalSourceIdMap)
+  const normalizedWhitespace = normalizeWhitespace(synthesis?.data?.whitespace, canonicalSourceIdMap)
   const dedupedSources = markSourcesUsedInAnswer(
     deduplicateSources(allSources),
     [
@@ -324,12 +353,14 @@ export async function generateCompetitiveAnalysisBrief(
           ...normalizedCompositeQuadrant.points.flatMap((point) => point.rationale.sourceIds),
         ]
         : []),
+      ...(normalizedWhitespace?.flatMap((pocket) => pocket.evidence.sourceIds) ?? []),
     ],
   )
   const trust = buildTrustLayer({
     sources: dedupedSources,
     sourceIdMap: canonicalSourceIdMap,
     claimSourceGroups: [
+      ...(normalizedWhitespace?.map((pocket) => pocket.evidence.sourceIds) ?? []),
       ...(normalizedCompositeQuadrant?.rendered
         ? [
           normalizedCompositeQuadrant.xAxis.rationale.sourceIds,
@@ -377,6 +408,7 @@ export async function generateCompetitiveAnalysisBrief(
     competitors: synthesis?.data?.competitors ?? [],
     comparisonMatrix: synthesis?.data?.comparisonMatrix ?? [],
     compositeQuadrant: normalizedCompositeQuadrant,
+    whitespace: normalizedWhitespace,
     sections: {
       keyFindings: synthesis?.data?.keyFindings ?? [],
       strategicImplications: synthesis?.data?.strategicImplications ?? [],

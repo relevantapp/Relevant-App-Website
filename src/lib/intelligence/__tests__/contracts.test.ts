@@ -798,6 +798,16 @@ describe('flow synthesis schemas', () => {
         rendered: false,
         reason: 'The proposed axes are too mushy to support a reliable quadrant.',
       },
+      whitespace: [
+        {
+          kind: 'segment',
+          headline: 'Relevant can win the answer-first layer.',
+          evidence: {
+            text: 'Buyers still want a decision-ready layer instead of broader monitoring exhaust.',
+            sourceIds: ['s3'],
+          },
+        },
+      ],
       keyFindings: [{ text: 'Relevant leads on direct answers.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
       strategicImplications: [{ text: 'The pitch should stay narrow and sharp.', sourceIds: ['s2'], tag: 'inference', priority: 'should' }],
       recommendations: [{ text: 'Lead with proof of decision speed.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],

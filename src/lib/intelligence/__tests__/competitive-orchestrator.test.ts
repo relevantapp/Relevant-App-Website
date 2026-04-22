@@ -50,6 +50,7 @@ describe('generateCompetitiveAnalysisBrief', () => {
       expect(userPrompt).toContain('"answer"')
       expect(userPrompt).toContain('"priority": "must|should|fyi"')
       expect(userPrompt).toContain('"compositeQuadrant"')
+      expect(userPrompt).toContain('"whitespace"')
       expect(userPrompt).toContain('Every comparisonMatrix row must include exactly one values entry for Relevant')
 
       return {
@@ -158,6 +159,24 @@ describe('generateCompetitiveAnalysisBrief', () => {
               },
             ],
           },
+          whitespace: [
+            {
+              kind: 'segment',
+              headline: 'Relevant can own the answer-first layer for mid-market operating teams.',
+              evidence: {
+                text: 'Mid-market teams still want a decision-ready layer instead of broader monitoring exhaust.',
+                sourceIds: ['s1'],
+              },
+            },
+            {
+              kind: 'pricing',
+              headline: 'There is room to position against enterprise cost and analyst overhead together.',
+              evidence: {
+                text: 'Higher-cost workflows remain part of the incumbent story when the buyer does not need full breadth.',
+                sourceIds: ['s1'],
+              },
+            },
+          ],
           keyFindings: [{ text: 'Relevant leads on directness.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
           strategicImplications: [{ text: 'Position as the decision layer.', sourceIds: ['s1'], tag: 'inference', priority: 'should' }],
           recommendations: [{ text: 'Lead with answer quality.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
@@ -228,6 +247,24 @@ describe('generateCompetitiveAnalysisBrief', () => {
         },
       ],
     })
+    expect(brief.whitespace).toEqual([
+      {
+        kind: 'segment',
+        headline: 'Relevant can own the answer-first layer for mid-market operating teams.',
+        evidence: {
+          text: 'Mid-market teams still want a decision-ready layer instead of broader monitoring exhaust.',
+          sourceIds: ['s1'],
+        },
+      },
+      {
+        kind: 'pricing',
+        headline: 'There is room to position against enterprise cost and analyst overhead together.',
+        evidence: {
+          text: 'Higher-cost workflows remain part of the incumbent story when the buyer does not need full breadth.',
+          sourceIds: ['s1'],
+        },
+      },
+    ])
     brief.comparisonMatrix.forEach((row) => {
       expect(row.values.some((value) => value.company === 'Relevant')).toBe(true)
     })

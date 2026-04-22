@@ -467,6 +467,7 @@ export const CompetitiveSynthesisSchema = z.object({
   competitors: z.array(CompetitorProfileSchema),
   comparisonMatrix: z.array(ComparisonRowSchema),
   compositeQuadrant: CompositeQuadrantSchema.optional(),
+  whitespace: z.array(WhitespacePocketSchema).optional(),
   keyFindings: z.array(RichBulletSchema),
   strategicImplications: z.array(RichBulletSchema),
   recommendations: z.array(RichBulletSchema),
