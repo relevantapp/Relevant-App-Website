@@ -19,6 +19,7 @@ import MethodologyDrawer from './shared/MethodologyDrawer'
 import CapabilityMatrix from './shared/viz/CapabilityMatrix'
 import CompositeQuadrant from './shared/viz/CompositeQuadrant'
 import Timeline from './shared/viz/Timeline'
+import WhitespacePanel from './shared/viz/WhitespacePanel'
 import HistoryButton from '../HistoryButton'
 
 interface CompetitiveResultsProps {
@@ -249,6 +250,18 @@ export default function CompetitiveResults({ brief, onNewSearch, savedBriefId }:
             data={brief.compositeQuadrant}
             headline="The field still splits between breadth and decision velocity"
             subhead="This quadrant only renders when both axes are defensible enough to explain."
+            asOf={brief.generatedAt}
+            sources={brief.sources}
+          />
+        </div>
+      )}
+
+      {INTEL_RESULTS_V2 && (
+        <div style={{ marginTop: 24 }}>
+          <WhitespacePanel
+            data={brief.whitespace ?? []}
+            headline="Relevant still has open pockets to win"
+            subhead="The goal is not to find a gap everywhere. It is to show where the market actually leaves room."
             asOf={brief.generatedAt}
             sources={brief.sources}
           />

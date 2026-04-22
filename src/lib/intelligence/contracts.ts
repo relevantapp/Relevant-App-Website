@@ -448,6 +448,13 @@ export const CompositeQuadrantSchema = z.union([
 ])
 export type CompositeQuadrant = z.infer<typeof CompositeQuadrantSchema>
 
+export const WhitespacePocketSchema = z.object({
+  kind: z.enum(['segment', 'flank', 'pricing', 'capability']),
+  headline: z.string(),
+  evidence: CitedSpanSchema,
+})
+export type WhitespacePocket = z.infer<typeof WhitespacePocketSchema>
+
 export const CompetitiveSynthesisSchema = z.object({
   headline: z.string(),
   bottomLine: z.string(),
@@ -467,6 +474,7 @@ export interface CompetitiveAnalysisBrief extends BriefBase {
   competitors: CompetitorProfile[]
   comparisonMatrix: ComparisonRow[]
   compositeQuadrant?: CompositeQuadrant
+  whitespace?: WhitespacePocket[]
   sections: {
     keyFindings: BriefBullet[]
     strategicImplications: BriefBullet[]
@@ -674,6 +682,7 @@ export const CompetitiveAnalysisBriefSchema = BriefBaseSchema.extend({
   competitors: z.array(CompetitorProfileSchema),
   comparisonMatrix: z.array(ComparisonRowSchema),
   compositeQuadrant: CompositeQuadrantSchema.optional(),
+  whitespace: z.array(WhitespacePocketSchema).optional(),
   sections: z.object({
     keyFindings: z.array(BriefBulletSchema),
     strategicImplications: z.array(BriefBulletSchema),

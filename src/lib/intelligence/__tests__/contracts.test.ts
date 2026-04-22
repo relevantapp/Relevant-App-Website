@@ -28,6 +28,7 @@ import {
   CompositeQuadrantSchema,
   StakeholderRowSchema,
   SignalCardSchema,
+  WhitespacePocketSchema,
 } from '../contracts'
 import { businessCaseFixture } from '@/app/app/intelligence/results/__fixtures__/business-case.fixture'
 import { competitiveFixture } from '@/app/app/intelligence/results/__fixtures__/competitive.fixture'
@@ -256,6 +257,21 @@ describe('CompetitorProfileSchema', () => {
     } as const
 
     expect(CompetitorProfileSchema.parse(competitor)).toEqual(competitor)
+  })
+})
+
+describe('WhitespacePocketSchema', () => {
+  it('accepts whitespace pockets with cited evidence', () => {
+    const pocket = {
+      kind: 'segment',
+      headline: 'Mid-market teams still need an answer-first layer.',
+      evidence: {
+        text: 'The workflow gap is still visible in current buyer evidence.',
+        sourceIds: ['s1'],
+      },
+    } as const
+
+    expect(WhitespacePocketSchema.parse(pocket)).toEqual(pocket)
   })
 })
 

@@ -366,6 +366,32 @@ export const competitiveFixture: CompetitiveAnalysisBrief = {
       },
     ],
   },
+  whitespace: [
+    {
+      kind: 'segment',
+      headline: 'Mid-market operating teams still lack an answer-first research layer.',
+      evidence: {
+        text: 'Mid-market strategy and revenue teams still want a decision-ready layer instead of broader monitoring exhaust.',
+        sourceIds: ['ca-1', 'ca-5'],
+      },
+    },
+    {
+      kind: 'flank',
+      headline: 'Relevant can flank bundle-heavy incumbents by selling speed to first answer.',
+      evidence: {
+        text: 'The broader platforms keep adding packaging depth, which creates room for a faster, more opinionated workflow.',
+        sourceIds: ['ca-2', 'ca-4', 'ca-5'],
+      },
+    },
+    {
+      kind: 'pricing',
+      headline: 'There is room to position against enterprise cost and analyst overhead together.',
+      evidence: {
+        text: 'Higher-cost, heavier workflows remain part of the incumbent story, especially when the buyer does not need full monitoring breadth.',
+        sourceIds: ['ca-2', 'ca-5'],
+      },
+    },
+  ],
   sections: {
     keyFindings: [
       {
