@@ -11,6 +11,9 @@ import {
   BusinessCaseBriefSchema,
   CitedSpanSchema,
   CompetitiveAnalysisBriefSchema,
+  FactorCardSchema,
+  FactorImpactSchema,
+  FactorSeveritySchema,
   IntelligenceBriefSchema,
   MarketResearchBriefSchema,
   NormalizedEvidenceSchema,
@@ -122,6 +125,32 @@ describe('RichBulletSchema', () => {
     } as const
 
     expect(RichBulletSchema.parse(legacyBullet)).toEqual(legacyBullet)
+  })
+})
+
+describe('FactorCardSchema', () => {
+  it('accepts severity and impact tags when present', () => {
+    const factor = {
+      text: 'Immediate workflow value is visible.',
+      sourceIds: ['s1'],
+      tag: 'inference',
+      severity: 'high',
+      impact: 'med',
+    } as const
+
+    expect(FactorCardSchema.parse(factor)).toEqual(factor)
+    expect(FactorSeveritySchema.parse('high')).toBe('high')
+    expect(FactorImpactSchema.parse('med')).toBe('med')
+  })
+
+  it('remains backward-compatible with existing brief bullets', () => {
+    const legacyFactor = {
+      text: 'The ROI story is still soft.',
+      sourceIds: ['s2'],
+      tag: 'fact',
+    } as const
+
+    expect(FactorCardSchema.parse(legacyFactor)).toEqual(legacyFactor)
   })
 })
 

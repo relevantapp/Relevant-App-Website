@@ -3,6 +3,7 @@
 import { useCallback, useRef } from 'react'
 import { TrendingUp, HelpCircle } from 'lucide-react'
 import type { BusinessCaseBrief } from '../types'
+import type { FactorCard } from '@/lib/intelligence/contracts'
 import { INTEL_RESULTS_V2 } from '@/lib/intelligence/feature-flags'
 import AnswerBlock from './shared/AnswerBlock'
 import ResultsHero from './shared/ResultsHero'
@@ -113,15 +114,25 @@ export default function BusinessCaseResults({ brief, onNewSearch, savedBriefId }
       </div>
 
       <div style={{ marginTop: 24 }}>
-        <BalanceView
-          leftTitle="Supporting factors"
-          rightTitle="Risk factors"
-          leftItems={brief.sections.supportingFactors}
-          rightItems={brief.sections.riskFactors}
-          leftColor="green"
-          rightColor="red"
-          onSourceClick={scrollToSource}
-        />
+        {INTEL_RESULTS_V2 ? (
+          <FactorCardsPanel
+            leftTitle="Supporting factors"
+            rightTitle="Risk factors"
+            leftItems={brief.sections.supportingFactors}
+            rightItems={brief.sections.riskFactors}
+            onSourceClick={scrollToSource}
+          />
+        ) : (
+          <BalanceView
+            leftTitle="Supporting factors"
+            rightTitle="Risk factors"
+            leftItems={brief.sections.supportingFactors}
+            rightItems={brief.sections.riskFactors}
+            leftColor="green"
+            rightColor="red"
+            onSourceClick={scrollToSource}
+          />
+        )}
       </div>
 
       {/* Comparable Companies */}
@@ -176,5 +187,112 @@ export default function BusinessCaseResults({ brief, onNewSearch, savedBriefId }
       </div>
       <StatusBar status={brief.status} />
     </div>
+  )
+}
+
+function FactorCardsPanel({
+  leftTitle,
+  rightTitle,
+  leftItems,
+  rightItems,
+  onSourceClick,
+}: {
+  leftTitle: string
+  rightTitle: string
+  leftItems: FactorCard[]
+  rightItems: FactorCard[]
+  onSourceClick?: (id: string) => void
+}) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <FactorColumn title={leftTitle} items={leftItems} accent="var(--accent-teal)" onSourceClick={onSourceClick} />
+      <FactorColumn title={rightTitle} items={rightItems} accent="var(--accent-coral)" onSourceClick={onSourceClick} />
+    </div>
+  )
+}
+
+function FactorColumn({
+  title,
+  items,
+  accent,
+  onSourceClick,
+}: {
+  title: string
+  items: FactorCard[]
+  accent: string
+  onSourceClick?: (id: string) => void
+}) {
+  return (
+    <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden' }}>
+      <div style={{ padding: '10px 16px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{ width: 4, height: 4, borderRadius: '50%', background: accent }} />
+        <span className="kicker" style={{ color: accent }}>{title}</span>
+      </div>
+      <div style={{ padding: 12, display: 'grid', gap: 10 }}>
+        {items.length === 0 ? (
+          <p style={{ fontSize: 12, color: 'var(--text-soft)', padding: '8px 4px' }}>No data</p>
+        ) : (
+          items.map((item, index) => (
+            <div
+              key={`${item.text}-${index}`}
+              style={{
+                border: '1px solid var(--border)',
+                borderRadius: 12,
+                background: 'var(--surface)',
+                padding: '12px 14px',
+              }}
+            >
+              <p style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--text)' }}>{item.text}</p>
+
+              {(item.severity || item.impact) && (
+                <div style={{ marginTop: 10, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {item.severity && <FactorChip label={`S: ${item.severity}`} tone={item.severity} />}
+                  {item.impact && <FactorChip label={`I: ${item.impact}`} tone={item.impact} />}
+                </div>
+              )}
+
+              {item.sourceIds.length > 0 && (
+                <div style={{ marginTop: 10, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                  {item.sourceIds.map((id) => (
+                    <button key={id} onClick={() => onSourceClick?.(id)} className="source-chip">
+                      [{id}]
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  )
+}
+
+function FactorChip({ label, tone }: { label: string; tone: 'high' | 'med' | 'low' }) {
+  const color =
+    tone === 'high'
+      ? 'var(--accent-coral)'
+      : tone === 'med'
+        ? 'var(--accent-amber)'
+        : 'var(--text-soft)'
+
+  return (
+    <span
+      className="mono"
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        borderRadius: 999,
+        border: `1px solid ${color}`,
+        padding: '2px 8px',
+        fontSize: 10,
+        letterSpacing: '0.1em',
+        textTransform: 'uppercase',
+        color,
+        background: `color-mix(in oklch, ${color} 12%, transparent)`,
+      }}
+    >
+      {label}
+    </span>
   )
 }

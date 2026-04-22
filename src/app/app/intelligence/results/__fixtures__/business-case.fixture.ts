@@ -239,11 +239,15 @@ export const businessCaseFixture: BusinessCaseBrief = {
         text: 'Relevant already has multiple workflow entry points where better results presentation can drive immediate perceived value.',
         sourceIds: ['bc-5'],
         tag: 'inference',
+        severity: 'high',
+        impact: 'high',
       },
       {
         text: 'The product’s role-aware framing is differentiated from generic AI productivity tools.',
         sourceIds: ['bc-2', 'bc-5'],
         tag: 'inference',
+        severity: 'med',
+        impact: 'high',
       },
     ],
     riskFactors: [
@@ -251,11 +255,15 @@ export const businessCaseFixture: BusinessCaseBrief = {
         text: 'Finance scrutiny is rising, so an abstract ROI pitch will likely underperform.',
         sourceIds: ['bc-4'],
         tag: 'fact',
+        severity: 'high',
+        impact: 'med',
       },
       {
         text: 'The business case weakens if the team broadens scope before proving one high-frequency workflow.',
         sourceIds: ['bc-5'],
         tag: 'inference',
+        severity: 'med',
+        impact: 'high',
       },
     ],
     openQuestions: [

@@ -30,8 +30,8 @@ export const BUSINESS_CASE_SCHEMA_DESC = `{
     }
   ],
   "marketEvidence": [{"text": "...", "sourceIds": ["s1"], "tag": "fact|inference"}],
-  "supportingFactors": [{"text": "...", "sourceIds": ["s1"], "tag": "fact|inference"}],
-  "riskFactors": [{"text": "...", "sourceIds": ["s2"], "tag": "fact|inference"}],
+  "supportingFactors": [{"text": "...", "sourceIds": ["s1"], "tag": "fact|inference", "severity": "high|med|low", "impact": "high|med|low"}],
+  "riskFactors": [{"text": "...", "sourceIds": ["s2"], "tag": "fact|inference", "severity": "high|med|low", "impact": "high|med|low"}],
   "openQuestions": [{"text": "...", "sourceIds": [], "tag": "inference"}]
 }`
 
@@ -87,6 +87,7 @@ ${BUSINESS_CASE_SCHEMA_DESC}
 
 Return 3-5 bullets per section. Tag each as "fact" or "inference".
 Every bullet must have at least one sourceId (except openQuestions which may have none).
+For every supportingFactors and riskFactors item, include both severity and impact tags. Use only high, med, or low.
 Include all comparables: ${(input.comparableCompanies ?? []).join(', ') || 'none specified'}.`)
 
   return parts.join('\n')

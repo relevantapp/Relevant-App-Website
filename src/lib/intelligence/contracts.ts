@@ -424,6 +424,18 @@ export const ComparableCompanySchema = z.object({
 })
 export type ComparableCompany = z.infer<typeof ComparableCompanySchema>
 
+export const FactorSeveritySchema = z.enum(['high', 'med', 'low'])
+export type FactorSeverity = z.infer<typeof FactorSeveritySchema>
+
+export const FactorImpactSchema = z.enum(['high', 'med', 'low'])
+export type FactorImpact = z.infer<typeof FactorImpactSchema>
+
+export const FactorCardSchema = BriefBulletSchema.extend({
+  severity: FactorSeveritySchema.optional(),
+  impact: FactorImpactSchema.optional(),
+})
+export type FactorCard = z.infer<typeof FactorCardSchema>
+
 export const BusinessCaseSynthesisSchema = z.object({
   headline: z.string(),
   bottomLine: z.string(),
@@ -433,8 +445,8 @@ export const BusinessCaseSynthesisSchema = z.object({
   verdictRationale: z.string(),
   comparables: z.array(ComparableCompanySchema),
   marketEvidence: z.array(BriefBulletSchema),
-  supportingFactors: z.array(BriefBulletSchema),
-  riskFactors: z.array(BriefBulletSchema),
+  supportingFactors: z.array(FactorCardSchema),
+  riskFactors: z.array(FactorCardSchema),
   openQuestions: z.array(BriefBulletSchema),
 })
 export type BusinessCaseSynthesis = z.infer<typeof BusinessCaseSynthesisSchema>
@@ -446,8 +458,8 @@ export interface BusinessCaseBrief extends BriefBase {
   comparables: ComparableCompany[]
   sections: {
     marketEvidence: BriefBullet[]
-    supportingFactors: BriefBullet[]
-    riskFactors: BriefBullet[]
+    supportingFactors: FactorCard[]
+    riskFactors: FactorCard[]
     openQuestions: BriefBullet[]
   }
 }
@@ -609,8 +621,8 @@ export const BusinessCaseBriefSchema = BriefBaseSchema.extend({
   comparables: z.array(ComparableCompanySchema),
   sections: z.object({
     marketEvidence: z.array(BriefBulletSchema),
-    supportingFactors: z.array(BriefBulletSchema),
-    riskFactors: z.array(BriefBulletSchema),
+    supportingFactors: z.array(FactorCardSchema),
+    riskFactors: z.array(FactorCardSchema),
     openQuestions: z.array(BriefBulletSchema),
   }),
 })
