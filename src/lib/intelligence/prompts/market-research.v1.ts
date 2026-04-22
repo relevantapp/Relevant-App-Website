@@ -39,10 +39,10 @@ export const MARKET_RESEARCH_SCHEMA_DESC = `{
       "momentumRationale": "Why this player deserves that momentum score"
     }
   ],
-  "trendSignals": [{"text": "...", "sourceIds": ["s1"], "tag": "fact|inference"}],
-  "opportunities": [{"text": "...", "sourceIds": ["s1"], "tag": "fact|inference"}],
-  "threats": [{"text": "...", "sourceIds": ["s2"], "tag": "fact|inference"}],
-  "keyFindings": [{"text": "...", "sourceIds": ["s3"], "tag": "fact|inference"}]
+  "trendSignals": [{"text": "...", "sourceIds": ["s1"], "tag": "fact|inference", "priority": "must|should|fyi"}],
+  "opportunities": [{"text": "...", "sourceIds": ["s1"], "tag": "fact|inference", "priority": "must|should|fyi"}],
+  "threats": [{"text": "...", "sourceIds": ["s2"], "tag": "fact|inference", "priority": "must|should|fyi"}],
+  "keyFindings": [{"text": "...", "sourceIds": ["s3"], "tag": "fact|inference", "priority": "must|should|fyi"}]
 }`
 
 export function buildMarketResearchPrompt(input: {
@@ -98,6 +98,7 @@ Populate answer with a five-part block the UI can render directly. Use declarati
 answer.conclusion, answer.whyItMatters, and answer.whatChanged must cite evidence IDs. If the evidence does not support a real recent shift, set answer.whatChanged to null.
 answer.recommendedNext should tell the user what to watch or do next in plain language.
 Return 3-5 bullets per section. Tag each as "fact" or "inference".
+Every bullet in every section must include priority. Use "must" for category-defining points, "should" for important support, and "fyi" for background context.
 Every bullet must have at least one sourceId.
 Include all known players: ${(input.knownPlayers ?? []).join(', ') || 'discover relevant players'}.
 When you list players, score scale and momentum from 0 to 1 and include a one-line rationale for each score whenever the evidence supports it.

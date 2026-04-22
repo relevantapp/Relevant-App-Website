@@ -81,11 +81,11 @@ export const MEETING_PREP_SCHEMA_DESC = `{
     "tags": ["tag1", "tag2"],
     "sourceIds": ["s2"]
   }],
-  "whatJustHappened": [{"text": "...", "sourceIds": ["s1"], "tag": "fact|inference"}],
-  "talkingPoints": [{"text": "...", "sourceIds": ["s1"], "tag": "fact|inference"}],
-  "landmines": [{"text": "...", "sourceIds": ["s2"], "tag": "fact|inference"}],
-  "questionsToAsk": [{"text": "...", "sourceIds": ["s3"], "tag": "fact|inference"}],
-  "competitorContext": [{"text": "...", "sourceIds": ["s4"], "tag": "fact|inference"}]
+  "whatJustHappened": [{"text": "...", "sourceIds": ["s1"], "tag": "fact|inference", "priority": "must|should|fyi"}],
+  "talkingPoints": [{"text": "...", "sourceIds": ["s1"], "tag": "fact|inference", "priority": "must|should|fyi"}],
+  "landmines": [{"text": "...", "sourceIds": ["s2"], "tag": "fact|inference", "priority": "must|should|fyi"}],
+  "questionsToAsk": [{"text": "...", "sourceIds": ["s3"], "tag": "fact|inference", "priority": "must|should|fyi"}],
+  "competitorContext": [{"text": "...", "sourceIds": ["s4"], "tag": "fact|inference", "priority": "must|should|fyi"}]
 }`
 
 export function buildMeetingPrepPrompt(input: {
@@ -149,6 +149,7 @@ Return 3-5 bullets per section. Tag each as "fact" (directly sourced) or "infere
 Populate answer with a five-part block the UI can render directly. Use declarative sentences, not labels. Example conclusion tone: "Acme just created a fresh opening for this meeting because the team is pushing a new rollout motion."
 answer.conclusion, answer.whyItMatters, and answer.whatChanged must cite evidence IDs. If there is no defensible recent change, set answer.whatChanged to null.
 answer.recommendedNext should tell the user what to do next in plain language, and copyable should be ready to paste into notes or a prep doc when helpful.
+Every bullet in every section must include priority. Use "must" for meeting-critical items, "should" for important support, and "fyi" for background context.
 Every bullet must have at least one sourceId referencing the evidence IDs above.
 Return 4-6 timelineEvents when there is evidence. Each event must be concrete, recent when possible, and include sourceIds.
 Return exactly 5 radarMetrics aligned to these categories in this spirit: ${MEETING_PREP_RADAR_CATEGORIES.join(', ')}. If the evidence cannot support a trustworthy five-axis view, return an empty array.

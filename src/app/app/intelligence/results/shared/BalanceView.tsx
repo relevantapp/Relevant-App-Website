@@ -1,14 +1,14 @@
 'use client'
 
-import type { BriefBullet, Priority } from '@/lib/intelligence/contracts'
+import type { Priority, RichBullet } from '@/lib/intelligence/contracts'
 import { INTEL_RESULTS_V2 } from '@/lib/intelligence/feature-flags'
 import PriorityStrip from './PriorityStrip'
 
 interface BalanceViewProps {
   leftTitle: string
   rightTitle: string
-  leftItems: BriefBullet[]
-  rightItems: BriefBullet[]
+  leftItems: RichBullet[]
+  rightItems: RichBullet[]
   leftColor?: 'green' | 'amber'
   rightColor?: 'red' | 'amber'
   onSourceClick?: (id: string) => void
@@ -24,6 +24,10 @@ function priorityForIndex(index: number): Priority {
   if (index < 2) return 'must'
   if (index < 4) return 'should'
   return 'fyi'
+}
+
+function resolvePriority(bullet: RichBullet, index: number): Priority {
+  return bullet.priority ?? priorityForIndex(index)
 }
 
 export default function BalanceView({
@@ -46,7 +50,7 @@ export default function BalanceView({
   )
 }
 
-function Column({ title, items, color, onSourceClick }: { title: string; items: BriefBullet[]; color: string; onSourceClick?: (id: string) => void }) {
+function Column({ title, items, color, onSourceClick }: { title: string; items: RichBullet[]; color: string; onSourceClick?: (id: string) => void }) {
   return (
     <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden' }}>
       <div style={{ padding: '10px 16px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -57,7 +61,7 @@ function Column({ title, items, color, onSourceClick }: { title: string; items: 
         {items.map((b, i) => (
           <div key={i} style={{ padding: '8px 0', borderBottom: i < items.length - 1 ? '1px solid var(--border)' : 'none' }}>
             <div style={{ display: 'flex', gap: 10 }}>
-              {INTEL_RESULTS_V2 && <PriorityStrip priority={priorityForIndex(i)} />}
+              {INTEL_RESULTS_V2 && <PriorityStrip priority={resolvePriority(b, i)} />}
               <div style={{ flex: 1 }}>
                 <p style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--text)' }}>{b.text}</p>
                 {b.sourceIds.length > 0 && (

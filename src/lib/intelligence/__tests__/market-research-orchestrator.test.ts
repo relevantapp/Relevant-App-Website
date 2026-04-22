@@ -48,6 +48,7 @@ describe('generateMarketResearchBrief', () => {
     extractQueryTerms.mockReturnValue(['market', 'research'])
     synthesizeWithSchema.mockImplementation(async (_systemPrompt: string, userPrompt: string) => {
       expect(userPrompt).toContain('"answer"')
+      expect(userPrompt).toContain('"priority": "must|should|fyi"')
 
       return {
         data: {
@@ -83,10 +84,10 @@ describe('generateMarketResearchBrief', () => {
               estimatedPosition: 'Strong breadth player.',
             },
           ],
-          trendSignals: [{ text: 'Workflow-specific tools are gaining credibility.', sourceIds: ['s1'], tag: 'fact' }],
-          opportunities: [{ text: 'Own the answer-plus-proof layer.', sourceIds: ['s1'], tag: 'inference' }],
-          threats: [{ text: 'Broad incumbents still own awareness.', sourceIds: ['s1'], tag: 'fact' }],
-          keyFindings: [{ text: 'The wedge is real but narrow.', sourceIds: ['s1'], tag: 'inference' }],
+          trendSignals: [{ text: 'Workflow-specific tools are gaining credibility.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
+          opportunities: [{ text: 'Own the answer-plus-proof layer.', sourceIds: ['s1'], tag: 'inference', priority: 'should' }],
+          threats: [{ text: 'Broad incumbents still own awareness.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
+          keyFindings: [{ text: 'The wedge is real but narrow.', sourceIds: ['s1'], tag: 'inference', priority: 'should' }],
         },
       }
     })
@@ -106,6 +107,8 @@ describe('generateMarketResearchBrief', () => {
 
     expect(brief.answer?.conclusion.text).toContain('answer-first wedge')
     expect(brief.answer?.recommendedNext.action).toBe('Define the wedge')
+    expect(brief.sections.trendSignals[0]?.priority).toBe('must')
+    expect(brief.sections.opportunities[0]?.priority).toBe('should')
     expect(brief.sources.some((source) => source.usedInAnswer)).toBe(true)
   })
 })

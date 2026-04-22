@@ -57,6 +57,7 @@ describe('generateMeetingPrepBrief', () => {
     extractQueryTerms.mockReturnValue(['acme', 'meeting'])
     synthesizeWithSchema.mockImplementation(async (_systemPrompt: string, userPrompt: string) => {
       expect(userPrompt).toContain('"answer"')
+      expect(userPrompt).toContain('"priority": "must|should|fyi"')
 
       return {
         data: {
@@ -83,10 +84,10 @@ describe('generateMeetingPrepBrief', () => {
               copyable: 'Lead with the rollout proof point and ask who owns deployment approval.',
             },
           },
-          whatJustHappened: [{ text: 'Acme is pushing a new rollout motion.', sourceIds: ['s1'], tag: 'fact' }],
-          talkingPoints: [{ text: 'Tie the rollout to business impact.', sourceIds: ['s1'], tag: 'inference' }],
-          landmines: [{ text: 'Do not assume deployment is already staffed.', sourceIds: ['s1'], tag: 'inference' }],
-          questionsToAsk: [{ text: 'Who owns rollout approval?', sourceIds: ['s1'], tag: 'fact' }],
+          whatJustHappened: [{ text: 'Acme is pushing a new rollout motion.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
+          talkingPoints: [{ text: 'Tie the rollout to business impact.', sourceIds: ['s1'], tag: 'inference', priority: 'should' }],
+          landmines: [{ text: 'Do not assume deployment is already staffed.', sourceIds: ['s1'], tag: 'inference', priority: 'must' }],
+          questionsToAsk: [{ text: 'Who owns rollout approval?', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
           competitorContext: [],
         },
       }
@@ -106,6 +107,8 @@ describe('generateMeetingPrepBrief', () => {
 
     expect(brief.answer?.conclusion.text).toContain('fresh rollout motion')
     expect(brief.answer?.recommendedNext.copyable).toBe('Lead with the rollout proof point and ask who owns deployment approval.')
+    expect(brief.sections.whatJustHappened[0]?.priority).toBe('must')
+    expect(brief.sections.talkingPoints[0]?.priority).toBe('should')
     expect(brief.sources.find((source) => source.id === 's1')?.usedInAnswer).toBe(true)
   })
 })

@@ -45,9 +45,9 @@ export const COMPETITIVE_SCHEMA_DESC = `{
       ]
     }
   ],
-  "keyFindings": [{"text": "...", "sourceIds": ["s1"], "tag": "fact|inference"}],
-  "strategicImplications": [{"text": "...", "sourceIds": ["s1"], "tag": "fact|inference"}],
-  "recommendations": [{"text": "...", "sourceIds": ["s2"], "tag": "fact|inference"}]
+  "keyFindings": [{"text": "...", "sourceIds": ["s1"], "tag": "fact|inference", "priority": "must|should|fyi"}],
+  "strategicImplications": [{"text": "...", "sourceIds": ["s1"], "tag": "fact|inference", "priority": "must|should|fyi"}],
+  "recommendations": [{"text": "...", "sourceIds": ["s2"], "tag": "fact|inference", "priority": "must|should|fyi"}]
 }`
 
 export function buildCompetitivePrompt(input: {
@@ -105,6 +105,7 @@ Populate answer with a five-part block the UI can render directly. Use declarati
 answer.conclusion, answer.whyItMatters, and answer.whatChanged must cite evidence IDs. If no recent shift is defensible, set answer.whatChanged to null.
 answer.recommendedNext should be a concrete next move for the user, not a generic suggestion.
 Return 3-5 bullets per section. Tag each as "fact" or "inference".
+Every bullet in every section must include priority. Use "must" for strategy-critical points, "should" for important support, and "fyi" for background context.
 Every bullet must have at least one sourceId.
 Include all competitors: ${input.competitors.join(', ')}${input.yourCompany ? ` and ${input.yourCompany}` : ''} in the comparison matrix.
 ${input.yourCompany ? `Every comparisonMatrix row must include exactly one values entry for ${input.yourCompany}. Do not omit it from any row.` : ''}`.trim())

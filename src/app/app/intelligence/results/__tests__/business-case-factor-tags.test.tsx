@@ -20,6 +20,29 @@ describe('BusinessCaseResults factor cards', () => {
     expect(screen.getAllByText('I: med').length).toBeGreaterThan(0)
   })
 
+  it('renders explicit priority strips when factor priorities are present', () => {
+    const clonedFixture = structuredClone(businessCaseFixture)
+    const prioritizedBrief: BusinessCaseBrief = {
+      ...clonedFixture,
+      sections: {
+        ...clonedFixture.sections,
+        supportingFactors: clonedFixture.sections.supportingFactors.map((item, index) => ({
+          ...item,
+          priority: index === 0 ? 'fyi' : 'should',
+        })),
+        riskFactors: clonedFixture.sections.riskFactors.map((item, index) => ({
+          ...item,
+          priority: index === 0 ? 'must' : 'should',
+        })),
+      },
+    }
+
+    render(<BusinessCaseResults brief={prioritizedBrief} onNewSearch={() => undefined} />)
+
+    expect(screen.getAllByLabelText('Priority fyi').length).toBeGreaterThan(0)
+    expect(screen.getAllByLabelText('Priority must').length).toBeGreaterThan(0)
+  })
+
   it('renders legacy factors without chips when severity and impact are missing', () => {
     const clonedFixture = structuredClone(businessCaseFixture)
     const legacyBrief: BusinessCaseBrief = {

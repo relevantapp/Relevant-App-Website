@@ -36,10 +36,10 @@ export const BUSINESS_CASE_SCHEMA_DESC = `{
       "keyTakeaway": "Main lesson from their experience"
     }
   ],
-  "marketEvidence": [{"text": "...", "sourceIds": ["s1"], "tag": "fact|inference"}],
-  "supportingFactors": [{"text": "...", "sourceIds": ["s1"], "tag": "fact|inference", "severity": "high|med|low", "impact": "high|med|low"}],
-  "riskFactors": [{"text": "...", "sourceIds": ["s2"], "tag": "fact|inference", "severity": "high|med|low", "impact": "high|med|low"}],
-  "openQuestions": [{"text": "...", "sourceIds": [], "tag": "inference"}]
+  "marketEvidence": [{"text": "...", "sourceIds": ["s1"], "tag": "fact|inference", "priority": "must|should|fyi"}],
+  "supportingFactors": [{"text": "...", "sourceIds": ["s1"], "tag": "fact|inference", "priority": "must|should|fyi", "severity": "high|med|low", "impact": "high|med|low"}],
+  "riskFactors": [{"text": "...", "sourceIds": ["s2"], "tag": "fact|inference", "priority": "must|should|fyi", "severity": "high|med|low", "impact": "high|med|low"}],
+  "openQuestions": [{"text": "...", "sourceIds": [], "tag": "inference", "priority": "must|should|fyi"}]
 }`
 
 export function buildBusinessCasePrompt(input: {
@@ -96,6 +96,7 @@ Populate answer with a five-part block the UI can render directly. Use declarati
 answer.conclusion, answer.whyItMatters, and answer.whatChanged must cite evidence IDs. If no meaningful recent shift is supportable, set answer.whatChanged to null.
 answer.recommendedNext should tell the user what decision or validation step to take next in plain language.
 Return 3-5 bullets per section. Tag each as "fact" or "inference".
+Every bullet in every section must include priority. Use "must" for decision-critical items, "should" for important support, and "fyi" for background context.
 Every bullet must have at least one sourceId (except openQuestions which may have none).
 For every supportingFactors and riskFactors item, include both severity and impact tags. Use only high, med, or low.
 Include all comparables: ${(input.comparableCompanies ?? []).join(', ') || 'none specified'}.`)

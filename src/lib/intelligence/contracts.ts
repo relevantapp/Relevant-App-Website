@@ -370,11 +370,11 @@ export const MeetingPrepSynthesisSchema = z.object({
   timelineEvents: z.array(TimelineEventSchema).max(6).optional(),
   radarMetrics: z.array(RadarMetricSchema).max(5).optional(),
   competitorMatrix: z.array(CompetitorMatrixRowSchema).max(5).optional(),
-  whatJustHappened: z.array(BriefBulletSchema),
-  talkingPoints: z.array(BriefBulletSchema),
-  landmines: z.array(BriefBulletSchema),
-  questionsToAsk: z.array(BriefBulletSchema),
-  competitorContext: z.array(BriefBulletSchema),
+  whatJustHappened: z.array(RichBulletSchema),
+  talkingPoints: z.array(RichBulletSchema),
+  landmines: z.array(RichBulletSchema),
+  questionsToAsk: z.array(RichBulletSchema),
+  competitorContext: z.array(RichBulletSchema),
 })
 export type MeetingPrepSynthesis = z.infer<typeof MeetingPrepSynthesisSchema>
 
@@ -391,11 +391,11 @@ export interface MeetingPrepBrief extends BriefBase {
   stakeholders?: StakeholderRow[]
   competitorMatrix?: CompetitorMatrixRow[]
   sections: {
-    whatJustHappened: BriefBullet[]
-    talkingPoints: BriefBullet[]
-    landmines: BriefBullet[]
-    questionsToAsk: BriefBullet[]
-    competitorContext: BriefBullet[]
+    whatJustHappened: RichBullet[]
+    talkingPoints: RichBullet[]
+    landmines: RichBullet[]
+    questionsToAsk: RichBullet[]
+    competitorContext: RichBullet[]
   }
 }
 
@@ -464,9 +464,9 @@ export const CompetitiveSynthesisSchema = z.object({
   answer: AnswerBlockSchema.optional(),
   competitors: z.array(CompetitorProfileSchema),
   comparisonMatrix: z.array(ComparisonRowSchema),
-  keyFindings: z.array(BriefBulletSchema),
-  strategicImplications: z.array(BriefBulletSchema),
-  recommendations: z.array(BriefBulletSchema),
+  keyFindings: z.array(RichBulletSchema),
+  strategicImplications: z.array(RichBulletSchema),
+  recommendations: z.array(RichBulletSchema),
 })
 export type CompetitiveSynthesis = z.infer<typeof CompetitiveSynthesisSchema>
 
@@ -478,9 +478,9 @@ export interface CompetitiveAnalysisBrief extends BriefBase {
   compositeQuadrant?: CompositeQuadrant
   whitespace?: WhitespacePocket[]
   sections: {
-    keyFindings: BriefBullet[]
-    strategicImplications: BriefBullet[]
-    recommendations: BriefBullet[]
+    keyFindings: RichBullet[]
+    strategicImplications: RichBullet[]
+    recommendations: RichBullet[]
   }
 }
 
@@ -500,7 +500,7 @@ export type FactorSeverity = z.infer<typeof FactorSeveritySchema>
 export const FactorImpactSchema = z.enum(['high', 'med', 'low'])
 export type FactorImpact = z.infer<typeof FactorImpactSchema>
 
-export const FactorCardSchema = BriefBulletSchema.extend({
+export const FactorCardSchema = RichBulletSchema.extend({
   severity: FactorSeveritySchema.optional(),
   impact: FactorImpactSchema.optional(),
 })
@@ -577,10 +577,10 @@ export const BusinessCaseSynthesisSchema = z.object({
   verdict: z.enum(['strong', 'moderate', 'weak', 'insufficient_data']),
   verdictRationale: z.string(),
   comparables: z.array(ComparableCompanySchema),
-  marketEvidence: z.array(BriefBulletSchema),
+  marketEvidence: z.array(RichBulletSchema),
   supportingFactors: z.array(FactorCardSchema),
   riskFactors: z.array(FactorCardSchema),
-  openQuestions: z.array(BriefBulletSchema),
+  openQuestions: z.array(RichBulletSchema),
 })
 export type BusinessCaseSynthesis = z.infer<typeof BusinessCaseSynthesisSchema>
 
@@ -595,10 +595,10 @@ export interface BusinessCaseBrief extends BriefBase {
   waterfall?: WaterfallStep[]
   assumptions?: Assumption[]
   sections: {
-    marketEvidence: BriefBullet[]
+    marketEvidence: RichBullet[]
     supportingFactors: FactorCard[]
     riskFactors: FactorCard[]
-    openQuestions: BriefBullet[]
+    openQuestions: RichBullet[]
   }
 }
 
@@ -685,10 +685,10 @@ export const MarketResearchSynthesisSchema = z.object({
   answer: AnswerBlockSchema.optional(),
   marketOverview: z.string(),
   players: z.array(MarketPlayerSchema),
-  trendSignals: z.array(BriefBulletSchema),
-  opportunities: z.array(BriefBulletSchema),
-  threats: z.array(BriefBulletSchema),
-  keyFindings: z.array(BriefBulletSchema),
+  trendSignals: z.array(RichBulletSchema),
+  opportunities: z.array(RichBulletSchema),
+  threats: z.array(RichBulletSchema),
+  keyFindings: z.array(RichBulletSchema),
 })
 export type MarketResearchSynthesis = z.infer<typeof MarketResearchSynthesisSchema>
 
@@ -702,10 +702,10 @@ export interface MarketResearchBrief extends BriefBase {
   watchList?: WatchItem[]
   players: MarketPlayer[]
   sections: {
-    trendSignals: BriefBullet[]
-    opportunities: BriefBullet[]
-    threats: BriefBullet[]
-    keyFindings: BriefBullet[]
+    trendSignals: RichBullet[]
+    opportunities: RichBullet[]
+    threats: RichBullet[]
+    keyFindings: RichBullet[]
   }
 }
 
@@ -805,11 +805,11 @@ export const MeetingPrepBriefSchema = BriefBaseSchema.extend({
   stakeholders: z.array(StakeholderRowSchema).optional(),
   competitorMatrix: z.array(CompetitorMatrixRowSchema).optional(),
   sections: z.object({
-    whatJustHappened: z.array(BriefBulletSchema),
-    talkingPoints: z.array(BriefBulletSchema),
-    landmines: z.array(BriefBulletSchema),
-    questionsToAsk: z.array(BriefBulletSchema),
-    competitorContext: z.array(BriefBulletSchema),
+    whatJustHappened: z.array(RichBulletSchema),
+    talkingPoints: z.array(RichBulletSchema),
+    landmines: z.array(RichBulletSchema),
+    questionsToAsk: z.array(RichBulletSchema),
+    competitorContext: z.array(RichBulletSchema),
   }),
 })
 
@@ -821,9 +821,9 @@ export const CompetitiveAnalysisBriefSchema = BriefBaseSchema.extend({
   compositeQuadrant: CompositeQuadrantSchema.optional(),
   whitespace: z.array(WhitespacePocketSchema).optional(),
   sections: z.object({
-    keyFindings: z.array(BriefBulletSchema),
-    strategicImplications: z.array(BriefBulletSchema),
-    recommendations: z.array(BriefBulletSchema),
+    keyFindings: z.array(RichBulletSchema),
+    strategicImplications: z.array(RichBulletSchema),
+    recommendations: z.array(RichBulletSchema),
   }),
 })
 
@@ -838,10 +838,10 @@ export const BusinessCaseBriefSchema = BriefBaseSchema.extend({
   waterfall: z.array(WaterfallStepSchema).optional(),
   assumptions: z.array(AssumptionSchema).optional(),
   sections: z.object({
-    marketEvidence: z.array(BriefBulletSchema),
+    marketEvidence: z.array(RichBulletSchema),
     supportingFactors: z.array(FactorCardSchema),
     riskFactors: z.array(FactorCardSchema),
-    openQuestions: z.array(BriefBulletSchema),
+    openQuestions: z.array(RichBulletSchema),
   }),
 })
 
@@ -855,10 +855,10 @@ export const MarketResearchBriefSchema = BriefBaseSchema.extend({
   watchList: z.array(WatchItemSchema).optional(),
   players: z.array(MarketPlayerSchema),
   sections: z.object({
-    trendSignals: z.array(BriefBulletSchema),
-    opportunities: z.array(BriefBulletSchema),
-    threats: z.array(BriefBulletSchema),
-    keyFindings: z.array(BriefBulletSchema),
+    trendSignals: z.array(RichBulletSchema),
+    opportunities: z.array(RichBulletSchema),
+    threats: z.array(RichBulletSchema),
+    keyFindings: z.array(RichBulletSchema),
   }),
 })
 

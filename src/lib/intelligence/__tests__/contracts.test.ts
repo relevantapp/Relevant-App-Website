@@ -148,6 +148,17 @@ describe('RichBulletSchema', () => {
 
     expect(RichBulletSchema.parse(legacyBullet)).toEqual(legacyBullet)
   })
+
+  it('accepts priority tags when present', () => {
+    const prioritizedBullet = {
+      text: 'The launch window is still narrow.',
+      sourceIds: ['s2'],
+      tag: 'inference',
+      priority: 'must',
+    } as const
+
+    expect(RichBulletSchema.parse(prioritizedBullet)).toEqual(prioritizedBullet)
+  })
 })
 
 describe('FactorCardSchema', () => {
@@ -156,6 +167,7 @@ describe('FactorCardSchema', () => {
       text: 'Immediate workflow value is visible.',
       sourceIds: ['s1'],
       tag: 'inference',
+      priority: 'must',
       severity: 'high',
       impact: 'med',
     } as const
@@ -703,11 +715,11 @@ describe('MeetingPrepSynthesisSchema', () => {
         sourceIds: ['s3'],
       },
     ],
-    whatJustHappened: [{ text: 'Raised a new round.', sourceIds: ['s1'], tag: 'fact' }],
-    talkingPoints: [{ text: 'Tie the launch to revenue impact.', sourceIds: ['s2'], tag: 'inference' }],
-    landmines: [{ text: 'Do not overpromise deployment speed.', sourceIds: ['s2'], tag: 'inference' }],
-    questionsToAsk: [{ text: 'Who owns rollout approval?', sourceIds: ['s3'], tag: 'fact' }],
-    competitorContext: [{ text: 'Acme AI is already in the conversation.', sourceIds: ['s3'], tag: 'fact' }],
+    whatJustHappened: [{ text: 'Raised a new round.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
+    talkingPoints: [{ text: 'Tie the launch to revenue impact.', sourceIds: ['s2'], tag: 'inference', priority: 'should' }],
+    landmines: [{ text: 'Do not overpromise deployment speed.', sourceIds: ['s2'], tag: 'inference', priority: 'must' }],
+    questionsToAsk: [{ text: 'Who owns rollout approval?', sourceIds: ['s3'], tag: 'fact', priority: 'must' }],
+    competitorContext: [{ text: 'Acme AI is already in the conversation.', sourceIds: ['s3'], tag: 'fact', priority: 'fyi' }],
   } as const
 
   it('accepts valid structured dashboard data', () => {
@@ -752,9 +764,9 @@ describe('flow synthesis schemas', () => {
       answer,
       competitors: [],
       comparisonMatrix: [],
-      keyFindings: [],
-      strategicImplications: [],
-      recommendations: [],
+      keyFindings: [{ text: 'Relevant leads on direct answers.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
+      strategicImplications: [{ text: 'The pitch should stay narrow and sharp.', sourceIds: ['s2'], tag: 'inference', priority: 'should' }],
+      recommendations: [{ text: 'Lead with proof of decision speed.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
     } as const
 
     expect(CompetitiveSynthesisSchema.parse(synthesis)).toEqual(synthesis)
@@ -770,10 +782,10 @@ describe('flow synthesis schemas', () => {
       verdict: 'moderate',
       verdictRationale: 'Adoption still decides the outcome.',
       comparables: [],
-      marketEvidence: [],
-      supportingFactors: [],
-      riskFactors: [],
-      openQuestions: [],
+      marketEvidence: [{ text: 'Buyers already value faster decisions.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
+      supportingFactors: [{ text: 'The workflow fits repeated founder needs.', sourceIds: ['s1'], tag: 'inference', priority: 'should' }],
+      riskFactors: [{ text: 'Reuse may still be too occasional.', sourceIds: ['s2'], tag: 'inference', priority: 'must' }],
+      openQuestions: [{ text: 'Will reuse stay weekly?', sourceIds: [], tag: 'inference', priority: 'must' }],
     } as const
 
     expect(BusinessCaseSynthesisSchema.parse(synthesis)).toEqual(synthesis)
@@ -788,10 +800,10 @@ describe('flow synthesis schemas', () => {
       answer,
       marketOverview: 'The market is moving toward repeated workflow use cases.',
       players: [],
-      trendSignals: [],
-      opportunities: [],
-      threats: [],
-      keyFindings: [],
+      trendSignals: [{ text: 'Specialized workflows are gaining credibility.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
+      opportunities: [{ text: 'Own the answer-plus-proof layer.', sourceIds: ['s2'], tag: 'inference', priority: 'should' }],
+      threats: [{ text: 'Broad incumbents still control awareness.', sourceIds: ['s3'], tag: 'fact', priority: 'must' }],
+      keyFindings: [{ text: 'The wedge is real but still narrow.', sourceIds: ['s1'], tag: 'inference', priority: 'should' }],
     } as const
 
     expect(MarketResearchSynthesisSchema.parse(synthesis)).toEqual(synthesis)

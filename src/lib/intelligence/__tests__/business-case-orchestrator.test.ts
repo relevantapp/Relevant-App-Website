@@ -48,6 +48,7 @@ describe('generateBusinessCaseBrief', () => {
     extractQueryTerms.mockReturnValue(['business', 'case'])
     synthesizeWithSchema.mockImplementation(async (_systemPrompt: string, userPrompt: string) => {
       expect(userPrompt).toContain('"answer"')
+      expect(userPrompt).toContain('"priority": "must|should|fyi"')
 
       return {
         data: {
@@ -84,10 +85,10 @@ describe('generateBusinessCaseBrief', () => {
               keyTakeaway: 'Adoption pace determined the result.',
             },
           ],
-          marketEvidence: [{ text: 'Decision support demand exists.', sourceIds: ['s1'], tag: 'fact' }],
-          supportingFactors: [{ text: 'Output quality is differentiated.', sourceIds: ['s1'], tag: 'fact' }],
-          riskFactors: [{ text: 'Adoption may stay occasional.', sourceIds: ['s1'], tag: 'inference' }],
-          openQuestions: [{ text: 'Will weekly reuse happen?', sourceIds: [], tag: 'inference' }],
+          marketEvidence: [{ text: 'Decision support demand exists.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
+          supportingFactors: [{ text: 'Output quality is differentiated.', sourceIds: ['s1'], tag: 'fact', priority: 'should' }],
+          riskFactors: [{ text: 'Adoption may stay occasional.', sourceIds: ['s1'], tag: 'inference', priority: 'must' }],
+          openQuestions: [{ text: 'Will weekly reuse happen?', sourceIds: [], tag: 'inference', priority: 'must' }],
         },
       }
     })
@@ -106,6 +107,9 @@ describe('generateBusinessCaseBrief', () => {
 
     expect(brief.answer?.conclusion.text).toContain('weekly reuse')
     expect(brief.answer?.recommendedNext.action).toBe('Validate reuse')
+    expect(brief.sections.marketEvidence[0]?.priority).toBe('must')
+    expect(brief.sections.supportingFactors[0]?.priority).toBe('should')
+    expect(brief.sections.riskFactors[0]?.priority).toBe('must')
     expect(brief.sources.some((source) => source.usedInAnswer)).toBe(true)
   })
 })

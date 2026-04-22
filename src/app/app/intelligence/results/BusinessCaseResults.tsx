@@ -3,13 +3,14 @@
 import { useCallback, useRef } from 'react'
 import { TrendingUp, HelpCircle } from 'lucide-react'
 import type { BusinessCaseBrief } from '../types'
-import type { FactorCard } from '@/lib/intelligence/contracts'
+import type { FactorCard, Priority } from '@/lib/intelligence/contracts'
 import { INTEL_RESULTS_V2 } from '@/lib/intelligence/feature-flags'
 import AnswerBlock from './shared/AnswerBlock'
 import ResultsHero from './shared/ResultsHero'
 import VerdictBadge from './shared/VerdictBadge'
 import BalanceView from './shared/BalanceView'
 import InsightSection from './shared/InsightSection'
+import PriorityStrip from './shared/PriorityStrip'
 import SourcesStrip from './shared/SourcesStrip'
 import StatusBar from './shared/StatusBar'
 import CopyModePicker from './shared/CopyModePicker'
@@ -35,6 +36,16 @@ const OUTCOME_COLOR: Record<string, string> = {
   success: 'var(--accent-teal)',
   mixed: 'var(--accent-amber)',
   failure: 'var(--accent-coral)',
+}
+
+function priorityForIndex(index: number): Priority {
+  if (index < 2) return 'must'
+  if (index < 4) return 'should'
+  return 'fyi'
+}
+
+function resolvePriority(item: FactorCard, index: number): Priority {
+  return item.priority ?? priorityForIndex(index)
 }
 
 export default function BusinessCaseResults({ brief, onNewSearch, savedBriefId }: BusinessCaseResultsProps) {
@@ -307,24 +318,29 @@ function FactorColumn({
                 padding: '12px 14px',
               }}
             >
-              <p style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--text)' }}>{item.text}</p>
+              <div style={{ display: 'flex', gap: 10 }}>
+                <PriorityStrip priority={resolvePriority(item, index)} />
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--text)' }}>{item.text}</p>
 
-              {(item.severity || item.impact) && (
-                <div style={{ marginTop: 10, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                  {item.severity && <FactorChip label={`S: ${item.severity}`} tone={item.severity} />}
-                  {item.impact && <FactorChip label={`I: ${item.impact}`} tone={item.impact} />}
-                </div>
-              )}
+                  {(item.severity || item.impact) && (
+                    <div style={{ marginTop: 10, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                      {item.severity && <FactorChip label={`S: ${item.severity}`} tone={item.severity} />}
+                      {item.impact && <FactorChip label={`I: ${item.impact}`} tone={item.impact} />}
+                    </div>
+                  )}
 
-              {item.sourceIds.length > 0 && (
-                <div style={{ marginTop: 10, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-                  {item.sourceIds.map((id) => (
-                    <button key={id} onClick={() => onSourceClick?.(id)} className="source-chip">
-                      [{id}]
-                    </button>
-                  ))}
+                  {item.sourceIds.length > 0 && (
+                    <div style={{ marginTop: 10, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                      {item.sourceIds.map((id) => (
+                        <button key={id} onClick={() => onSourceClick?.(id)} className="source-chip">
+                          [{id}]
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
           ))
         )}

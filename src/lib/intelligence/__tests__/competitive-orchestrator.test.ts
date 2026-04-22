@@ -48,6 +48,7 @@ describe('generateCompetitiveAnalysisBrief', () => {
     extractQueryTerms.mockReturnValue(['relevant', 'competitive', 'analysis'])
     synthesizeWithSchema.mockImplementation(async (_systemPrompt: string, userPrompt: string) => {
       expect(userPrompt).toContain('"answer"')
+      expect(userPrompt).toContain('"priority": "must|should|fyi"')
       expect(userPrompt).toContain('Every comparisonMatrix row must include exactly one values entry for Relevant')
 
       return {
@@ -117,9 +118,9 @@ describe('generateCompetitiveAnalysisBrief', () => {
               ],
             },
           ],
-          keyFindings: [{ text: 'Relevant leads on directness.', sourceIds: ['s1'], tag: 'fact' }],
-          strategicImplications: [{ text: 'Position as the decision layer.', sourceIds: ['s1'], tag: 'inference' }],
-          recommendations: [{ text: 'Lead with answer quality.', sourceIds: ['s1'], tag: 'fact' }],
+          keyFindings: [{ text: 'Relevant leads on directness.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
+          strategicImplications: [{ text: 'Position as the decision layer.', sourceIds: ['s1'], tag: 'inference', priority: 'should' }],
+          recommendations: [{ text: 'Lead with answer quality.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
         },
       }
     })
@@ -139,6 +140,8 @@ describe('generateCompetitiveAnalysisBrief', () => {
     expect(brief.yourCompany).toBe('Relevant')
     expect(brief.answer?.conclusion.text).toBe('Relevant wins on direct answers while AlphaSense still wins on enterprise breadth.')
     expect(brief.answer?.recommendedNext.action).toBe('Refine positioning')
+    expect(brief.sections.keyFindings[0]?.priority).toBe('must')
+    expect(brief.sections.strategicImplications[0]?.priority).toBe('should')
     expect(brief.sources.some((source) => source.usedInAnswer)).toBe(true)
     expect(brief.comparisonMatrix).toHaveLength(2)
     brief.comparisonMatrix.forEach((row) => {

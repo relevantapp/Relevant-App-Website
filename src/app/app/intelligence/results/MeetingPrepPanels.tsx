@@ -23,7 +23,6 @@ import type { ReactNode } from 'react'
 import { MEETING_PREP_RADAR_CATEGORIES } from '@/lib/intelligence/contracts'
 import type {
   AttendeeProfile,
-  BriefBullet,
   Priority,
   CompanySnapshot,
   CompetitorMatrixRow,
@@ -31,6 +30,7 @@ import type {
   MeetingPrepSnapshot,
   MeetingPrepRadarCategory,
   RadarMetric,
+  RichBullet,
   SignalCard,
   TimelineEvent,
 } from '@/lib/intelligence/contracts'
@@ -131,7 +131,7 @@ function BulletList({
   variant,
   onSourceClick,
 }: {
-  bullets: BriefBullet[]
+  bullets: RichBullet[]
   variant: SectionVariant
   onSourceClick: (id: string) => void
 }) {
@@ -147,7 +147,7 @@ function BulletList({
         <div key={`${bullet.text}-${index}`} className="rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3">
           <div className="flex gap-3">
             <span className="mono pt-0.5 text-[10px] text-[var(--text-soft)]">{String(index + 1).padStart(2, '0')}</span>
-            {INTEL_RESULTS_V2 && <PriorityStrip priority={priorityForIndex(index)} />}
+            {INTEL_RESULTS_V2 && <PriorityStrip priority={resolvePriority(bullet, index)} />}
             <div className="min-w-0 flex-1">
               <p className="text-sm leading-relaxed text-[var(--text)]">{bullet.text}</p>
               <div className="mt-2 flex flex-wrap items-center gap-1.5">
@@ -177,6 +177,10 @@ function priorityForIndex(index: number): Priority {
   return 'fyi'
 }
 
+function resolvePriority(bullet: RichBullet, index: number): Priority {
+  return bullet.priority ?? priorityForIndex(index)
+}
+
 export function BentoSection({
   title,
   icon,
@@ -186,7 +190,7 @@ export function BentoSection({
 }: {
   title: string
   icon: ReactNode
-  bullets: BriefBullet[]
+  bullets: RichBullet[]
   variant: SectionVariant
   onSourceClick: (id: string) => void
 }) {
@@ -828,7 +832,7 @@ export function DeepDivePanels({
   sources: MeetingPrepBrief['sources']
   onSourceClick: (id: string) => void
 }) {
-  const configs: Array<{ key: keyof MeetingPrepBrief['sections']; title: string; icon: ReactNode; variant: SectionVariant; bullets: BriefBullet[] }> = [
+  const configs: Array<{ key: keyof MeetingPrepBrief['sections']; title: string; icon: ReactNode; variant: SectionVariant; bullets: RichBullet[] }> = [
     {
       key: 'whatJustHappened' as const,
       title: 'What just happened',
