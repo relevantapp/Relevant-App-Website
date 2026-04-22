@@ -268,6 +268,41 @@ export const marketResearchFixture: MarketResearchBrief = {
       },
     ],
   },
+  trackedSignals: [
+    {
+      metric: 'Search interest',
+      headline: 'Search interest is rising faster than general awareness of the category.',
+      unit: ' pts',
+      points: [
+        { t: 'Q3', value: 14 },
+        { t: 'Q4', value: 19 },
+        { t: 'Q1', value: 27 },
+        { t: 'Q2', value: 36 },
+      ],
+    },
+    {
+      metric: 'Workflow funding pace',
+      headline: 'Workflow-specific funding is still small, but it is moving upward.',
+      unit: ' deals',
+      points: [
+        { t: 'Q3', value: 4 },
+        { t: 'Q4', value: 5 },
+        { t: 'Q1', value: 7 },
+        { t: 'Q2', value: 9 },
+      ],
+    },
+    {
+      metric: 'Earnings mentions',
+      headline: 'Earnings-call mentions are rising as the market becomes more concrete.',
+      unit: ' mentions',
+      points: [
+        { t: 'Q3', value: 2 },
+        { t: 'Q4', value: 4 },
+        { t: 'Q1', value: 7 },
+        { t: 'Q2', value: 11 },
+      ],
+    },
+  ],
   players: [
     {
       name: 'AlphaSense',

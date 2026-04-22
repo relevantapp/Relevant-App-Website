@@ -22,6 +22,7 @@ import {
   MarketPlayerSchema,
   MarketPlayerTileSchema,
   MarketSegmentSchema,
+  TrackedSignalSchema,
   NormalizedEvidenceSchema,
   MeetingPrepBriefSchema,
   TimelineEventSchema,
@@ -204,6 +205,22 @@ describe('MarketMapSchema', () => {
     expect(MarketPlayerTileSchema.parse(tile)).toEqual(tile)
     expect(MarketSegmentSchema.parse(segment)).toEqual(segment)
     expect(MarketMapSchema.parse(marketMap)).toEqual(marketMap)
+  })
+})
+
+describe('TrackedSignalSchema', () => {
+  it('accepts tracked signals with at least two points', () => {
+    const signal = {
+      metric: 'Search interest',
+      headline: 'Search interest is rising faster than awareness of the category.',
+      unit: ' pts',
+      points: [
+        { t: 'Q1', value: 14 },
+        { t: 'Q2', value: 22 },
+      ],
+    } as const
+
+    expect(TrackedSignalSchema.parse(signal)).toEqual(signal)
   })
 })
 

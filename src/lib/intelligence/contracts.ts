@@ -632,6 +632,19 @@ export const MarketMapSchema = z.object({
 })
 export type MarketMap = z.infer<typeof MarketMapSchema>
 
+export const TrackedSignalSchema = z.object({
+  metric: z.string(),
+  headline: z.string(),
+  unit: z.string().optional(),
+  points: z.array(
+    z.object({
+      t: z.string(),
+      value: z.number(),
+    }),
+  ).min(2),
+})
+export type TrackedSignal = z.infer<typeof TrackedSignalSchema>
+
 export const MarketResearchSynthesisSchema = z.object({
   headline: z.string(),
   bottomLine: z.string(),
@@ -650,6 +663,7 @@ export interface MarketResearchBrief extends BriefBase {
   researchType: 'market_research'
   marketOverview: string
   marketMap?: MarketMap
+  trackedSignals?: TrackedSignal[]
   players: MarketPlayer[]
   sections: {
     trendSignals: BriefBullet[]
@@ -799,6 +813,7 @@ export const MarketResearchBriefSchema = BriefBaseSchema.extend({
   researchType: z.literal('market_research'),
   marketOverview: z.string(),
   marketMap: MarketMapSchema.optional(),
+  trackedSignals: z.array(TrackedSignalSchema).optional(),
   players: z.array(MarketPlayerSchema),
   sections: z.object({
     trendSignals: z.array(BriefBulletSchema),

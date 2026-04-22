@@ -19,6 +19,7 @@ import ExhibitShell from './shared/ExhibitShell'
 import MethodologyDrawer from './shared/MethodologyDrawer'
 import LogoMarketMap from './shared/viz/LogoMarketMap'
 import Quadrant from './shared/viz/Quadrant'
+import TrendTracker from './shared/viz/TrendTracker'
 import HistoryButton from '../HistoryButton'
 
 interface MarketResearchResultsProps {
@@ -107,6 +108,12 @@ export default function MarketResearchResults({ brief, onNewSearch, savedBriefId
             asOf={brief.generatedAt}
             sources={brief.sources}
           />
+        </div>
+      ) : null}
+
+      {INTEL_RESULTS_V2 && brief.trackedSignals?.length ? (
+        <div style={{ marginTop: 24 }}>
+          <TrendTracker data={brief.trackedSignals} asOf={brief.generatedAt} sources={brief.sources} />
         </div>
       ) : null}
 
