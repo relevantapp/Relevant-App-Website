@@ -1,6 +1,8 @@
 'use client'
 
-import type { BriefBullet } from '@/lib/intelligence/contracts'
+import type { BriefBullet, Priority } from '@/lib/intelligence/contracts'
+import { INTEL_RESULTS_V2 } from '@/lib/intelligence/feature-flags'
+import PriorityStrip from './PriorityStrip'
 
 interface InsightSectionProps {
   title: string
@@ -8,6 +10,12 @@ interface InsightSectionProps {
   bullets: BriefBullet[]
   borderColor?: string
   onSourceClick?: (id: string) => void
+}
+
+function priorityForIndex(index: number): Priority {
+  if (index < 2) return 'must'
+  if (index < 4) return 'should'
+  return 'fyi'
 }
 
 export default function InsightSection({ title, icon, bullets, onSourceClick }: InsightSectionProps) {
@@ -33,6 +41,7 @@ export default function InsightSection({ title, icon, bullets, onSourceClick }: 
             <span className="mono tnum" style={{ fontSize: 10, color: 'var(--text-soft)', paddingTop: 3, minWidth: 16 }}>
               {String(i + 1).padStart(2, '0')}
             </span>
+            {INTEL_RESULTS_V2 && <PriorityStrip priority={priorityForIndex(i)} />}
             <div style={{ flex: 1 }}>
               <p style={{ fontSize: 13.5, color: 'var(--text)', lineHeight: 1.5 }}>{bullet.text}</p>
               <div style={{ marginTop: 6, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 4 }}>

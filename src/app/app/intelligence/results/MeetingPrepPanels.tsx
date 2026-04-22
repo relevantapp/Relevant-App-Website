@@ -24,6 +24,7 @@ import { MEETING_PREP_RADAR_CATEGORIES } from '@/lib/intelligence/contracts'
 import type {
   AttendeeProfile,
   BriefBullet,
+  Priority,
   CompanySnapshot,
   CompetitorMatrixRow,
   MeetingPrepBrief,
@@ -32,7 +33,10 @@ import type {
   RadarMetric,
   TimelineEvent,
 } from '@/lib/intelligence/contracts'
+import { INTEL_RESULTS_V2 } from '@/lib/intelligence/feature-flags'
 import { buildMeetingPrepSnapshot } from '@/lib/intelligence/meeting-prep-display'
+import PriorityStrip from './shared/PriorityStrip'
+import UnknownField from './shared/UnknownField'
 
 /* ── Bento Section Card ──────────────────────────────────────── */
 
@@ -138,6 +142,7 @@ function BulletList({
         <div key={`${bullet.text}-${index}`} className="rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3">
           <div className="flex gap-3">
             <span className="mono pt-0.5 text-[10px] text-[var(--text-soft)]">{String(index + 1).padStart(2, '0')}</span>
+            {INTEL_RESULTS_V2 && <PriorityStrip priority={priorityForIndex(index)} />}
             <div className="min-w-0 flex-1">
               <p className="text-sm leading-relaxed text-[var(--text)]">{bullet.text}</p>
               <div className="mt-2 flex flex-wrap items-center gap-1.5">
@@ -159,6 +164,12 @@ function BulletList({
       ))}
     </div>
   )
+}
+
+function priorityForIndex(index: number): Priority {
+  if (index < 2) return 'must'
+  if (index < 4) return 'should'
+  return 'fyi'
 }
 
 export function BentoSection({
@@ -325,8 +336,22 @@ export function PeopleCard({ profiles }: { profiles: AttendeeProfile[] }) {
                   {[person.title, person.company].filter(Boolean).join(' · ')}
                 </div>
               )}
-              {person.background && (
+              {!person.title && !person.company && INTEL_RESULTS_V2 && (
+                <div className="mt-2">
+                  <UnknownField label="Role" />
+                </div>
+              )}
+              {person.background ? (
                 <p className="mt-2 text-sm leading-relaxed text-[var(--text-soft)]">{person.background}</p>
+              ) : INTEL_RESULTS_V2 ? (
+                <div className="mt-2">
+                  <UnknownField label="Background" />
+                </div>
+              ) : null}
+              {!person.linkedinUrl && INTEL_RESULTS_V2 && (
+                <div className="mt-2">
+                  <UnknownField label="LinkedIn" />
+                </div>
               )}
             </div>
           </div>

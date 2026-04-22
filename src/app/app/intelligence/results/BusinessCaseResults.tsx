@@ -3,6 +3,8 @@
 import { useCallback, useRef } from 'react'
 import { TrendingUp, HelpCircle } from 'lucide-react'
 import type { BusinessCaseBrief } from '../types'
+import { INTEL_RESULTS_V2 } from '@/lib/intelligence/feature-flags'
+import AnswerBlock from './shared/AnswerBlock'
 import ResultsHero from './shared/ResultsHero'
 import VerdictBadge from './shared/VerdictBadge'
 import BalanceView from './shared/BalanceView'
@@ -13,6 +15,8 @@ import CopyModePicker from './shared/CopyModePicker'
 import DegradedBanner from './shared/DegradedBanner'
 import ShareButton from './shared/ShareButton'
 import SearchPlanPanel from './shared/SearchPlanPanel'
+import ExhibitShell from './shared/ExhibitShell'
+import MethodologyDrawer from './shared/MethodologyDrawer'
 import HistoryButton from '../HistoryButton'
 
 interface BusinessCaseResultsProps {
@@ -55,6 +59,33 @@ export default function BusinessCaseResults({ brief, onNewSearch, savedBriefId }
       </div>
 
       <div ref={exportRef}>
+      {INTEL_RESULTS_V2 && (
+        <div style={{ marginBottom: 16 }}>
+          <MethodologyDrawer
+            methodology={brief.methodology}
+            trust={brief.trust}
+            status={brief.status}
+            sources={brief.sources}
+            inputSummary={brief.researchPlan?.summary}
+          />
+        </div>
+      )}
+
+      {INTEL_RESULTS_V2 && (
+        <div style={{ marginBottom: 24 }}>
+          <AnswerBlock
+            answer={brief.answer}
+            fallback={{
+              headline: brief.headline,
+              bottomLine: brief.bottomLine,
+              confidence: brief.confidence,
+              whyItMatters: brief.whyItMatters,
+            }}
+            sources={brief.sources}
+          />
+        </div>
+      )}
+
       <ResultsHero
         headline={brief.headline}
         bottomLine={brief.bottomLine}
@@ -67,7 +98,18 @@ export default function BusinessCaseResults({ brief, onNewSearch, savedBriefId }
       {brief.status.degraded && <DegradedBanner reasons={brief.status.reasons} />}
 
       <div style={{ marginTop: 24 }}>
-        <VerdictBadge verdict={brief.verdict} rationale={brief.verdictRationale} />
+        {INTEL_RESULTS_V2 ? (
+          <ExhibitShell
+            headline={`${brief.headline} - verdict`}
+            subhead="This verdict should read like a decision memo, not a decorative label."
+            asOf={brief.generatedAt}
+            sources={brief.sources}
+          >
+            <VerdictBadge verdict={brief.verdict} rationale={brief.verdictRationale} />
+          </ExhibitShell>
+        ) : (
+          <VerdictBadge verdict={brief.verdict} rationale={brief.verdictRationale} />
+        )}
       </div>
 
       <div style={{ marginTop: 24 }}>

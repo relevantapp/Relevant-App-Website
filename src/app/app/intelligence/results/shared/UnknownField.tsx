@@ -29,7 +29,7 @@ export default function UnknownField({ label, queriesTried }: UnknownFieldProps)
         }}
       >
         <span className="font-medium text-[var(--text-soft)]">{label}:</span>
-        <span>unknown - we couldn't verify</span>
+        <span>unknown - we couldn&apos;t verify</span>
       </button>
 
       {open && (

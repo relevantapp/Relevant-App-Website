@@ -3,6 +3,8 @@
 import { useCallback, useRef } from 'react'
 import { TrendingUp, Target } from 'lucide-react'
 import type { MarketResearchBrief } from '../types'
+import { INTEL_RESULTS_V2 } from '@/lib/intelligence/feature-flags'
+import AnswerBlock from './shared/AnswerBlock'
 import ResultsHero from './shared/ResultsHero'
 import PlayerCard from './shared/PlayerCard'
 import BalanceView from './shared/BalanceView'
@@ -13,6 +15,8 @@ import CopyModePicker from './shared/CopyModePicker'
 import DegradedBanner from './shared/DegradedBanner'
 import ShareButton from './shared/ShareButton'
 import SearchPlanPanel from './shared/SearchPlanPanel'
+import ExhibitShell from './shared/ExhibitShell'
+import MethodologyDrawer from './shared/MethodologyDrawer'
 import HistoryButton from '../HistoryButton'
 
 interface MarketResearchResultsProps {
@@ -54,6 +58,33 @@ export default function MarketResearchResults({ brief, onNewSearch, savedBriefId
       </div>
 
       <div ref={exportRef}>
+      {INTEL_RESULTS_V2 && (
+        <div style={{ marginBottom: 16 }}>
+          <MethodologyDrawer
+            methodology={brief.methodology}
+            trust={brief.trust}
+            status={brief.status}
+            sources={brief.sources}
+            inputSummary={brief.researchPlan?.summary}
+          />
+        </div>
+      )}
+
+      {INTEL_RESULTS_V2 && (
+        <div style={{ marginBottom: 24 }}>
+          <AnswerBlock
+            answer={brief.answer}
+            fallback={{
+              headline: brief.headline,
+              bottomLine: brief.bottomLine,
+              confidence: brief.confidence,
+              whyItMatters: brief.whyItMatters,
+            }}
+            sources={brief.sources}
+          />
+        </div>
+      )}
+
       <ResultsHero
         headline={brief.headline}
         bottomLine={brief.bottomLine}
@@ -80,20 +111,43 @@ export default function MarketResearchResults({ brief, onNewSearch, savedBriefId
       {/* Player Landscape */}
       {sortedPlayers.length > 0 && (
         <div style={{ marginTop: 24 }}>
-          <div style={{ marginBottom: 12 }}>
-            <span className="kicker">Player landscape</span>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 14 }}>
-            {sortedPlayers.map((p) => (
-              <PlayerCard
-                key={p.name}
-                name={p.name}
-                category={p.category}
-                description={p.description}
-                estimatedPosition={p.estimatedPosition}
-              />
-            ))}
-          </div>
+          {INTEL_RESULTS_V2 ? (
+            <ExhibitShell
+              headline={`${brief.headline} - player landscape`}
+              subhead="The player grid is the fast read on who leads, who challenges, and where the wedge is opening."
+              asOf={brief.generatedAt}
+              sources={brief.sources}
+            >
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 14 }}>
+                {sortedPlayers.map((p) => (
+                  <PlayerCard
+                    key={p.name}
+                    name={p.name}
+                    category={p.category}
+                    description={p.description}
+                    estimatedPosition={p.estimatedPosition}
+                  />
+                ))}
+              </div>
+            </ExhibitShell>
+          ) : (
+            <>
+              <div style={{ marginBottom: 12 }}>
+                <span className="kicker">Player landscape</span>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 14 }}>
+                {sortedPlayers.map((p) => (
+                  <PlayerCard
+                    key={p.name}
+                    name={p.name}
+                    category={p.category}
+                    description={p.description}
+                    estimatedPosition={p.estimatedPosition}
+                  />
+                ))}
+              </div>
+            </>
+          )}
         </div>
       )}
 

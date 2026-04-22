@@ -3,6 +3,8 @@
 import { useCallback, useRef } from 'react'
 import { Target, TrendingUp, Lightbulb } from 'lucide-react'
 import type { CompetitiveAnalysisBrief } from '../types'
+import { INTEL_RESULTS_V2 } from '@/lib/intelligence/feature-flags'
+import AnswerBlock from './shared/AnswerBlock'
 import ResultsHero from './shared/ResultsHero'
 import InsightSection from './shared/InsightSection'
 import ScoreBar from './shared/ScoreBar'
@@ -12,6 +14,8 @@ import CopyModePicker from './shared/CopyModePicker'
 import DegradedBanner from './shared/DegradedBanner'
 import ShareButton from './shared/ShareButton'
 import SearchPlanPanel from './shared/SearchPlanPanel'
+import ExhibitShell from './shared/ExhibitShell'
+import MethodologyDrawer from './shared/MethodologyDrawer'
 import HistoryButton from '../HistoryButton'
 
 interface CompetitiveResultsProps {
@@ -48,6 +52,33 @@ export default function CompetitiveResults({ brief, onNewSearch, savedBriefId }:
       </div>
 
       <div ref={exportRef}>
+      {INTEL_RESULTS_V2 && (
+        <div style={{ marginBottom: 16 }}>
+          <MethodologyDrawer
+            methodology={brief.methodology}
+            trust={brief.trust}
+            status={brief.status}
+            sources={brief.sources}
+            inputSummary={brief.researchPlan?.summary}
+          />
+        </div>
+      )}
+
+      {INTEL_RESULTS_V2 && (
+        <div style={{ marginBottom: 24 }}>
+          <AnswerBlock
+            answer={brief.answer}
+            fallback={{
+              headline: brief.headline,
+              bottomLine: brief.bottomLine,
+              confidence: brief.confidence,
+              whyItMatters: brief.whyItMatters,
+            }}
+            sources={brief.sources}
+          />
+        </div>
+      )}
+
       <ResultsHero
         headline={brief.headline}
         bottomLine={brief.bottomLine}
@@ -99,44 +130,90 @@ export default function CompetitiveResults({ brief, onNewSearch, savedBriefId }:
 
       {/* Comparison Matrix */}
       {brief.comparisonMatrix.length > 0 && (
-        <div style={{ marginTop: 24, background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden' }}>
-          <div style={{ padding: '10px 18px', borderBottom: '1px solid var(--border)' }}>
-            <span className="kicker">Comparison matrix</span>
-          </div>
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', fontSize: 13, borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid var(--border)' }}>
-                  <th className="kicker" style={{ textAlign: 'left', padding: '10px 18px', fontSize: 10 }}>Dimension</th>
-                  {getUniqueCompanies(brief.comparisonMatrix).map((c) => (
-                    <th key={c} className="kicker" style={{ textAlign: 'left', padding: '10px 18px', fontSize: 10 }}>{c}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {brief.comparisonMatrix.map((row) => (
-                  <tr key={row.dimension} style={{ borderBottom: '1px solid var(--border)' }}>
-                    <td style={{ padding: '10px 18px', fontSize: 13, fontWeight: 500, color: 'var(--text)' }}>{row.dimension}</td>
-                    {getUniqueCompanies(brief.comparisonMatrix).map((company) => {
-                      const val = row.values.find((v) => v.company === company)
-                      return (
-                        <td key={company} style={{ padding: '10px 18px' }}>
-                          {val ? (
-                            <div>
-                              <ScoreBar score={val.score} />
-                              <p style={{ marginTop: 4, fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.4 }}>{val.position}</p>
-                            </div>
-                          ) : (
-                            <span style={{ fontSize: 12, color: 'var(--text-soft)' }}>—</span>
-                          )}
-                        </td>
-                      )
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div style={{ marginTop: 24 }}>
+          {INTEL_RESULTS_V2 ? (
+            <ExhibitShell
+              headline={`${brief.headline} - capability comparison`}
+              subhead="The comparison matrix is still the fastest way to see where each platform actually wins."
+              asOf={brief.generatedAt}
+              sources={brief.sources}
+            >
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', fontSize: 13, borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                      <th className="kicker" style={{ textAlign: 'left', padding: '10px 18px', fontSize: 10 }}>Dimension</th>
+                      {getUniqueCompanies(brief.comparisonMatrix).map((c) => (
+                        <th key={c} className="kicker" style={{ textAlign: 'left', padding: '10px 18px', fontSize: 10 }}>{c}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {brief.comparisonMatrix.map((row) => (
+                      <tr key={row.dimension} style={{ borderBottom: '1px solid var(--border)' }}>
+                        <td style={{ padding: '10px 18px', fontSize: 13, fontWeight: 500, color: 'var(--text)' }}>{row.dimension}</td>
+                        {getUniqueCompanies(brief.comparisonMatrix).map((company) => {
+                          const val = row.values.find((v) => v.company === company)
+                          return (
+                            <td key={company} style={{ padding: '10px 18px' }}>
+                              {val ? (
+                                <div>
+                                  <ScoreBar score={val.score} />
+                                  <p style={{ marginTop: 4, fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.4 }}>{val.position}</p>
+                                </div>
+                              ) : (
+                                <span style={{ fontSize: 12, color: 'var(--text-soft)' }}>—</span>
+                              )}
+                            </td>
+                          )
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </ExhibitShell>
+          ) : (
+            <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden' }}>
+              <div style={{ padding: '10px 18px', borderBottom: '1px solid var(--border)' }}>
+                <span className="kicker">Comparison matrix</span>
+              </div>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', fontSize: 13, borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                      <th className="kicker" style={{ textAlign: 'left', padding: '10px 18px', fontSize: 10 }}>Dimension</th>
+                      {getUniqueCompanies(brief.comparisonMatrix).map((c) => (
+                        <th key={c} className="kicker" style={{ textAlign: 'left', padding: '10px 18px', fontSize: 10 }}>{c}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {brief.comparisonMatrix.map((row) => (
+                      <tr key={row.dimension} style={{ borderBottom: '1px solid var(--border)' }}>
+                        <td style={{ padding: '10px 18px', fontSize: 13, fontWeight: 500, color: 'var(--text)' }}>{row.dimension}</td>
+                        {getUniqueCompanies(brief.comparisonMatrix).map((company) => {
+                          const val = row.values.find((v) => v.company === company)
+                          return (
+                            <td key={company} style={{ padding: '10px 18px' }}>
+                              {val ? (
+                                <div>
+                                  <ScoreBar score={val.score} />
+                                  <p style={{ marginTop: 4, fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.4 }}>{val.position}</p>
+                                </div>
+                              ) : (
+                                <span style={{ fontSize: 12, color: 'var(--text-soft)' }}>—</span>
+                              )}
+                            </td>
+                          )
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

@@ -3,7 +3,11 @@
 
 import { useCallback, useRef } from 'react'
 import type { MeetingPrepBrief } from '@/lib/intelligence/contracts'
+import { INTEL_RESULTS_V2 } from '@/lib/intelligence/feature-flags'
 import IntelligenceSources from './IntelligenceSources'
+import AnswerBlock from './results/shared/AnswerBlock'
+import ExhibitShell from './results/shared/ExhibitShell'
+import MethodologyDrawer from './results/shared/MethodologyDrawer'
 import ResultsHero from './results/shared/ResultsHero'
 import StatusBar from './results/shared/StatusBar'
 import CopyModePicker from './results/shared/CopyModePicker'
@@ -101,6 +105,33 @@ export default function IntelligenceResults({ brief, onNewSearch, savedBriefId }
 
       {/* Exportable area */}
       <div ref={exportRef}>
+        {INTEL_RESULTS_V2 && (
+          <div style={{ marginBottom: 16 }}>
+            <MethodologyDrawer
+              methodology={displayBrief.methodology}
+              trust={displayBrief.trust}
+              status={displayBrief.status}
+              sources={displayBrief.sources}
+              inputSummary={displayBrief.researchPlan?.summary}
+            />
+          </div>
+        )}
+
+        {INTEL_RESULTS_V2 && (
+          <div style={{ marginBottom: 24 }}>
+            <AnswerBlock
+              answer={displayBrief.answer}
+              fallback={{
+                headline: displayBrief.headline,
+                bottomLine: displayBrief.bottomLine,
+                confidence: displayBrief.confidence,
+                whyItMatters: displayBrief.whyItMatters,
+              }}
+              sources={displayBrief.sources}
+            />
+          </div>
+        )}
+
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1.55fr)_minmax(320px,380px)] xl:items-start">
           <ResultsHero
             headline={displayBrief.headline}
@@ -130,12 +161,45 @@ export default function IntelligenceResults({ brief, onNewSearch, savedBriefId }
             </div>
           )}
 
-          <VisualTimeline events={displayBrief.timelineEvents} onSourceClick={scrollToSource} />
+          {INTEL_RESULTS_V2 ? (
+            <ExhibitShell
+              headline={`${displayBrief.headline} - recent timeline`}
+              subhead="Use the timeline to see what actually changed before the meeting."
+              asOf={displayBrief.generatedAt}
+              sources={displayBrief.sources}
+            >
+              <VisualTimeline events={displayBrief.timelineEvents} onSourceClick={scrollToSource} />
+            </ExhibitShell>
+          ) : (
+            <VisualTimeline events={displayBrief.timelineEvents} onSourceClick={scrollToSource} />
+          )}
         </div>
 
         <div className="mt-4 grid gap-4 xl:grid-cols-2">
-          <RiskRadar metrics={displayBrief.radarMetrics} onSourceClick={scrollToSource} />
-          <CompetitorMatrix rows={displayBrief.competitorMatrix} onSourceClick={scrollToSource} />
+          {INTEL_RESULTS_V2 ? (
+            <ExhibitShell
+              headline={`${displayBrief.headline} - risk radar`}
+              subhead="The fixed five-axis rubric keeps the risk read comparable across briefs."
+              asOf={displayBrief.generatedAt}
+              sources={displayBrief.sources}
+            >
+              <RiskRadar metrics={displayBrief.radarMetrics} onSourceClick={scrollToSource} />
+            </ExhibitShell>
+          ) : (
+            <RiskRadar metrics={displayBrief.radarMetrics} onSourceClick={scrollToSource} />
+          )}
+          {INTEL_RESULTS_V2 ? (
+            <ExhibitShell
+              headline={`${displayBrief.headline} - competitor context`}
+              subhead="This matrix is the quick read on who overlaps, who threatens, and what edge still holds."
+              asOf={displayBrief.generatedAt}
+              sources={displayBrief.sources}
+            >
+              <CompetitorMatrix rows={displayBrief.competitorMatrix} onSourceClick={scrollToSource} />
+            </ExhibitShell>
+          ) : (
+            <CompetitorMatrix rows={displayBrief.competitorMatrix} onSourceClick={scrollToSource} />
+          )}
         </div>
 
         <div className="mt-4">
