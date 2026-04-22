@@ -75,6 +75,7 @@ export function useIntelligenceStream(): UseIntelligenceStreamReturn {
 
       const decoder = new TextDecoder()
       let buffer = ''
+      let receivedTerminalEvent = false
 
       while (true) {
         const { done, value } = await reader.read()
@@ -89,6 +90,9 @@ export function useIntelligenceStream(): UseIntelligenceStreamReturn {
           if (!dataLine.startsWith('data: ')) continue
           try {
             const event = JSON.parse(dataLine.slice(6)) as SSEEvent
+            if (event.type === 'brief_ready' || event.type === 'stream_error') {
+              receivedTerminalEvent = true
+            }
             dispatch(event)
           } catch {
             // Skip malformed events
@@ -100,10 +104,20 @@ export function useIntelligenceStream(): UseIntelligenceStreamReturn {
       if (buffer.trim().startsWith('data: ')) {
         try {
           const event = JSON.parse(buffer.trim().slice(6)) as SSEEvent
+          if (event.type === 'brief_ready' || event.type === 'stream_error') {
+            receivedTerminalEvent = true
+          }
           dispatch(event)
         } catch {
           // Skip
         }
+      }
+
+      if (!receivedTerminalEvent && !controller.signal.aborted) {
+        dispatch({
+          type: 'stream_error',
+          error: 'The analysis stream ended before a final result arrived. Please retry.',
+        })
       }
     } catch (err) {
       if (err instanceof DOMException && err.name === 'AbortError') return

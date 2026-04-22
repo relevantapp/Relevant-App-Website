@@ -19,7 +19,10 @@ import { createRun, patchRunAsync } from '@/lib/intelligence/runs/store'
 import { intelligenceFlags } from '@/lib/intelligence/feature-flags'
 import { repairUnsupportedCitations } from '@/lib/intelligence/verifier/repair'
 
-export const maxDuration = 60
+// Competitive retries can legitimately take longer than the original 60s budget.
+// Give streaming runs enough headroom so Vercel does not cut the SSE connection
+// mid-flight and strand the client in a perpetual loading state.
+export const maxDuration = 180
 
 const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? '').replace(/^=+/, '').trim()
 const anonKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '').replace(/^=+/, '').trim()
