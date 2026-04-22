@@ -826,6 +826,62 @@ describe('flow synthesis schemas', () => {
       verdict: 'moderate',
       verdictRationale: 'Adoption still decides the outcome.',
       comparables: [],
+      driverTree: {
+        branches: [
+          {
+            name: 'demand',
+            score: 4.4,
+            confidence: 'high',
+            children: [
+              {
+                label: 'Buyer pull',
+                evidence: {
+                  text: 'Teams already value faster decision support.',
+                  sourceIds: ['s1'],
+                },
+              },
+            ],
+          },
+        ],
+      },
+      scenarios: {
+        metric: 'Gross-margin payback',
+        unit: '%',
+        downside: { value: 80, triggers: ['Adoption stays shallow.'] },
+        base: { value: 120, drivers: ['One workflow reaches weekly reuse.'] },
+        upside: { value: 150, triggers: ['Two workflows reach reuse quickly.'] },
+      },
+      tornado: [
+        {
+          assumption: 'Workflow reuse rate',
+          lowImpact: -18,
+          highImpact: 22,
+        },
+      ],
+      waterfall: [
+        {
+          label: 'Baseline',
+          delta: 100,
+          kind: 'baseline',
+          assumption: {
+            text: 'The baseline assumes today’s conversion and reuse profile.',
+            sourceIds: ['s1'],
+          },
+        },
+      ],
+      assumptions: [
+        {
+          text: 'Weekly reuse will become real.',
+          mustBeTrueBecause: 'The case weakens fast if the workflow stays occasional.',
+          confidence: 'med',
+          evidence: [
+            {
+              text: 'Comparable wins come from repeated workflow usage.',
+              sourceIds: ['s1'],
+            },
+          ],
+        },
+      ],
       marketEvidence: [{ text: 'Buyers already value faster decisions.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
       supportingFactors: [{ text: 'The workflow fits repeated founder needs.', sourceIds: ['s1'], tag: 'inference', priority: 'should' }],
       riskFactors: [{ text: 'Reuse may still be too occasional.', sourceIds: ['s2'], tag: 'inference', priority: 'must' }],

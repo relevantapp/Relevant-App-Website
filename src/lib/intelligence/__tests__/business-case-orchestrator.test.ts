@@ -49,6 +49,11 @@ describe('generateBusinessCaseBrief', () => {
     synthesizeWithSchema.mockImplementation(async (_systemPrompt: string, userPrompt: string) => {
       expect(userPrompt).toContain('"answer"')
       expect(userPrompt).toContain('"priority": "must|should|fyi"')
+      expect(userPrompt).toContain('"driverTree"')
+      expect(userPrompt).toContain('"scenarios"')
+      expect(userPrompt).toContain('"tornado"')
+      expect(userPrompt).toContain('"waterfall"')
+      expect(userPrompt).toContain('"assumptions"')
 
       return {
         data: {
@@ -85,6 +90,80 @@ describe('generateBusinessCaseBrief', () => {
               keyTakeaway: 'Adoption pace determined the result.',
             },
           ],
+          driverTree: {
+            branches: [
+              {
+                name: 'demand',
+                score: 4.4,
+                confidence: 'high',
+                children: [
+                  {
+                    label: 'Buyer pull',
+                    evidence: {
+                      text: 'Teams already value faster decision support.',
+                      sourceIds: ['s1'],
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+          scenarios: {
+            metric: 'Gross-margin payback',
+            unit: '%',
+            downside: {
+              value: 80,
+              triggers: ['Adoption stays shallow.'],
+            },
+            base: {
+              value: 120,
+              drivers: ['One workflow reaches weekly reuse.'],
+            },
+            upside: {
+              value: 150,
+              triggers: ['Two workflows reach reuse quickly.'],
+            },
+          },
+          tornado: [
+            {
+              assumption: 'Workflow reuse rate',
+              lowImpact: -18,
+              highImpact: 22,
+            },
+          ],
+          waterfall: [
+            {
+              label: 'Baseline',
+              delta: 100,
+              kind: 'baseline',
+              assumption: {
+                text: 'The baseline assumes today’s conversion and reuse profile.',
+                sourceIds: ['s1'],
+              },
+            },
+            {
+              label: 'Target',
+              delta: 0,
+              kind: 'total',
+              assumption: {
+                text: 'The target depends on maintaining reuse gains.',
+                sourceIds: ['s1'],
+              },
+            },
+          ],
+          assumptions: [
+            {
+              text: 'Weekly reuse will become real.',
+              mustBeTrueBecause: 'The case weakens fast if the workflow stays occasional.',
+              confidence: 'med',
+              evidence: [
+                {
+                  text: 'Comparable wins come from repeated workflow usage.',
+                  sourceIds: ['s1'],
+                },
+              ],
+            },
+          ],
           marketEvidence: [{ text: 'Decision support demand exists.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
           supportingFactors: [{ text: 'Output quality is differentiated.', sourceIds: ['s1'], tag: 'fact', priority: 'should' }],
           riskFactors: [{ text: 'Adoption may stay occasional.', sourceIds: ['s1'], tag: 'inference', priority: 'must' }],
@@ -110,6 +189,11 @@ describe('generateBusinessCaseBrief', () => {
     expect(brief.sections.marketEvidence[0]?.priority).toBe('must')
     expect(brief.sections.supportingFactors[0]?.priority).toBe('should')
     expect(brief.sections.riskFactors[0]?.priority).toBe('must')
+    expect(brief.driverTree?.branches[0]?.name).toBe('demand')
+    expect(brief.scenarios?.metric).toBe('Gross-margin payback')
+    expect(brief.tornado?.[0]?.assumption).toBe('Workflow reuse rate')
+    expect(brief.waterfall?.[0]?.label).toBe('Baseline')
+    expect(brief.assumptions?.[0]?.confidence).toBe('med')
     expect(brief.trust?.sourcedClaimCount).toBeGreaterThan(0)
     expect(brief.trust?.conflicts).toEqual([])
     expect(brief.trust?.knownUnknowns).toEqual([])

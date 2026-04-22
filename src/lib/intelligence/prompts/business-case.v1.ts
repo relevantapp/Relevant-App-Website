@@ -36,6 +36,45 @@ export const BUSINESS_CASE_SCHEMA_DESC = `{
       "keyTakeaway": "Main lesson from their experience"
     }
   ],
+  "driverTree": {
+    "branches": [
+      {
+        "name": "demand|economics|strategic-fit|execution-risk",
+        "score": 3.5,
+        "confidence": "high|med|low",
+        "children": [
+          {
+            "label": "Short driver label",
+            "evidence": {"text": "Why this branch score is what it is", "sourceIds": ["s1"], "sourceSnippet": "optional short proof snippet"}
+          }
+        ]
+      }
+    ]
+  },
+  "scenarios": {
+    "metric": "Primary outcome metric",
+    "unit": "optional unit like % or months",
+    "downside": {"value": 80, "triggers": ["What drives the downside"]},
+    "base": {"value": 120, "drivers": ["What supports the base case"]},
+    "upside": {"value": 150, "triggers": ["What unlocks the upside"]}
+  },
+  "tornado": [{"assumption": "Named sensitivity", "lowImpact": -8, "highImpact": 12}],
+  "waterfall": [
+    {
+      "label": "Baseline",
+      "delta": 100,
+      "kind": "baseline|driver|subtotal|total",
+      "assumption": {"text": "Why this step exists", "sourceIds": ["s2"], "sourceSnippet": "optional short proof snippet"}
+    }
+  ],
+  "assumptions": [
+    {
+      "text": "What must be true",
+      "mustBeTrueBecause": "Why this matters to the decision",
+      "confidence": "high|med|low",
+      "evidence": [{"text": "What supports this assumption", "sourceIds": ["s3"], "sourceSnippet": "optional short proof snippet"}]
+    }
+  ],
   "marketEvidence": [{"text": "...", "sourceIds": ["s1"], "tag": "fact|inference", "priority": "must|should|fyi"}],
   "supportingFactors": [{"text": "...", "sourceIds": ["s1"], "tag": "fact|inference", "priority": "must|should|fyi", "severity": "high|med|low", "impact": "high|med|low"}],
   "riskFactors": [{"text": "...", "sourceIds": ["s2"], "tag": "fact|inference", "priority": "must|should|fyi", "severity": "high|med|low", "impact": "high|med|low"}],
@@ -99,6 +138,9 @@ Return 3-5 bullets per section. Tag each as "fact" or "inference".
 Every bullet in every section must include priority. Use "must" for decision-critical items, "should" for important support, and "fyi" for background context.
 Every bullet must have at least one sourceId (except openQuestions which may have none).
 For every supportingFactors and riskFactors item, include both severity and impact tags. Use only high, med, or low.
+Return driverTree with these exact branch names: demand, economics, strategic-fit, execution-risk. Omit a branch only if the evidence is truly missing.
+Return one scenarios object, a tornado list, a waterfall sequence, and explicit assumptions when the evidence supports them. Use empty arrays instead of filler when needed.
+Every driverTree child, waterfall step, and assumption evidence item must cite evidence IDs.
 Include all comparables: ${(input.comparableCompanies ?? []).join(', ') || 'none specified'}.`)
 
   return parts.join('\n')

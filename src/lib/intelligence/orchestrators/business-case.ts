@@ -1,11 +1,16 @@
 /* ── Business Case Orchestrator — staged pipeline ─────────── */
 
 import type {
+  Assumption,
   BusinessCaseRequest,
   BusinessCaseBrief,
   BriefSource,
+  DriverTree,
   NormalizedEvidence,
+  ScenarioBands,
   SearchTask,
+  TornadoEntry,
+  WaterfallStep,
 } from '../contracts'
 import { BusinessCaseSynthesisSchema } from '../contracts'
 import { runStep, generateBriefId, type PipelineContext } from '../pipeline'
@@ -26,12 +31,134 @@ import {
   collectAnswerSourceIds,
   markSourcesUsedInAnswer,
   normalizeAnswerBlock,
+  normalizeCitedSpan,
+  sanitizeMeetingPrepText,
 } from '../meeting-prep-display'
 import {
   buildV2PlanBridge,
   collectV2EvidenceBridge,
   persistV2EvidencePack,
 } from './v2-bridge'
+
+function normalizeDriverTree(
+  tree: DriverTree | undefined,
+  sourceIdMap: Map<string, string>,
+): DriverTree | undefined {
+  if (!tree) return undefined
+
+  const seen = new Set<string>()
+  const branches = tree.branches
+    .map((branch) => ({
+      name: branch.name,
+      score: Math.min(5, Math.max(0, branch.score)),
+      confidence: branch.confidence,
+      children: branch.children
+        .map((child) => {
+          const evidence = normalizeCitedSpan(child.evidence, sourceIdMap)
+          if (!evidence) return null
+
+          return {
+            label: child.label.trim(),
+            evidence,
+          }
+        })
+        .filter((child): child is NonNullable<typeof child> => Boolean(child))
+        .filter((child) => child.label),
+    }))
+    .filter((branch) => {
+      if (seen.has(branch.name)) return false
+      seen.add(branch.name)
+      return true
+    })
+
+  return branches.length ? { branches } : undefined
+}
+
+function normalizeScenarioBands(scenarios: ScenarioBands | undefined): ScenarioBands | undefined {
+  if (!scenarios) return undefined
+
+  const metric = scenarios.metric.trim()
+  if (!metric) return undefined
+
+  return {
+    metric,
+    unit: sanitizeMeetingPrepText(scenarios.unit) ?? undefined,
+    downside: {
+      value: scenarios.downside.value,
+      triggers: scenarios.downside.triggers.map((item) => item.trim()).filter(Boolean),
+    },
+    base: {
+      value: scenarios.base.value,
+      drivers: scenarios.base.drivers.map((item) => item.trim()).filter(Boolean),
+    },
+    upside: {
+      value: scenarios.upside.value,
+      triggers: scenarios.upside.triggers.map((item) => item.trim()).filter(Boolean),
+    },
+  }
+}
+
+function normalizeTornado(entries: TornadoEntry[] | undefined): TornadoEntry[] | undefined {
+  if (!entries?.length) return undefined
+
+  const normalized = entries
+    .map((entry) => ({
+      assumption: entry.assumption.trim(),
+      lowImpact: entry.lowImpact,
+      highImpact: entry.highImpact,
+    }))
+    .filter((entry) => entry.assumption)
+
+  return normalized.length ? normalized : undefined
+}
+
+function normalizeWaterfall(
+  steps: WaterfallStep[] | undefined,
+  sourceIdMap: Map<string, string>,
+): WaterfallStep[] | undefined {
+  if (!steps?.length) return undefined
+
+  const normalized = steps
+    .map((step) => {
+      const assumption = normalizeCitedSpan(step.assumption, sourceIdMap)
+      if (!assumption) return null
+
+      return {
+        label: step.label.trim(),
+        delta: step.delta,
+        kind: step.kind,
+        assumption,
+      }
+    })
+    .filter((step): step is NonNullable<typeof step> => Boolean(step))
+    .filter((step) => step.label)
+
+  return normalized.length ? normalized : undefined
+}
+
+function normalizeAssumptions(
+  assumptions: Assumption[] | undefined,
+  sourceIdMap: Map<string, string>,
+): Assumption[] | undefined {
+  if (!assumptions?.length) return undefined
+
+  const normalized = assumptions
+    .map((assumption) => {
+      const evidence = assumption.evidence
+        .map((span) => normalizeCitedSpan(span, sourceIdMap))
+        .filter((span): span is NonNullable<typeof span> => Boolean(span))
+
+      return {
+        text: assumption.text.trim(),
+        mustBeTrueBecause: assumption.mustBeTrueBecause.trim(),
+        confidence: assumption.confidence,
+        evidence,
+      }
+    })
+    .filter((assumption) => assumption.text && assumption.mustBeTrueBecause && assumption.evidence.length)
+
+  return normalized.length ? normalized : undefined
+}
 
 export async function generateBusinessCaseBrief(
   input: BusinessCaseRequest,
@@ -234,14 +361,27 @@ export async function generateBusinessCaseBrief(
   /* ── Step 5: assembleBrief ───────────────────────────────── */
   const canonicalSourceIdMap = buildCanonicalSourceIdMap(allSources)
   const normalizedAnswer = normalizeAnswerBlock(synthesis?.data?.answer, canonicalSourceIdMap)
+  const normalizedDriverTree = normalizeDriverTree(synthesis?.data?.driverTree, canonicalSourceIdMap)
+  const normalizedScenarios = normalizeScenarioBands(synthesis?.data?.scenarios)
+  const normalizedTornado = normalizeTornado(synthesis?.data?.tornado)
+  const normalizedWaterfall = normalizeWaterfall(synthesis?.data?.waterfall, canonicalSourceIdMap)
+  const normalizedAssumptions = normalizeAssumptions(synthesis?.data?.assumptions, canonicalSourceIdMap)
   const dedupedSources = markSourcesUsedInAnswer(
     deduplicateSources(allSources),
-    collectAnswerSourceIds(normalizedAnswer),
+    [
+      ...collectAnswerSourceIds(normalizedAnswer),
+      ...(normalizedDriverTree?.branches.flatMap((branch) => branch.children.flatMap((child) => child.evidence.sourceIds)) ?? []),
+      ...(normalizedWaterfall?.flatMap((step) => step.assumption.sourceIds) ?? []),
+      ...(normalizedAssumptions?.flatMap((assumption) => assumption.evidence.flatMap((span) => span.sourceIds)) ?? []),
+    ],
   )
   const trust = buildTrustLayer({
     sources: dedupedSources,
     sourceIdMap: canonicalSourceIdMap,
     claimSourceGroups: [
+      ...(normalizedDriverTree?.branches.flatMap((branch) => branch.children.map((child) => child.evidence.sourceIds)) ?? []),
+      ...(normalizedWaterfall?.map((step) => step.assumption.sourceIds) ?? []),
+      ...(normalizedAssumptions?.flatMap((assumption) => assumption.evidence.map((span) => span.sourceIds)) ?? []),
       ...(synthesis?.data?.marketEvidence.map((bullet) => bullet.sourceIds) ?? []),
       ...(synthesis?.data?.supportingFactors.map((factor) => factor.sourceIds) ?? []),
       ...(synthesis?.data?.riskFactors.map((factor) => factor.sourceIds) ?? []),
@@ -282,6 +422,11 @@ export async function generateBusinessCaseBrief(
     verdict: synthesis?.data?.verdict ?? 'insufficient_data',
     verdictRationale: synthesis?.data?.verdictRationale ?? 'Analysis could not be completed.',
     comparables: synthesis?.data?.comparables ?? [],
+    driverTree: normalizedDriverTree,
+    scenarios: normalizedScenarios,
+    tornado: normalizedTornado,
+    waterfall: normalizedWaterfall,
+    assumptions: normalizedAssumptions,
     sections: {
       marketEvidence: synthesis?.data?.marketEvidence ?? [],
       supportingFactors: synthesis?.data?.supportingFactors ?? [],
