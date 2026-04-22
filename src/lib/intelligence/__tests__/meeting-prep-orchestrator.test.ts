@@ -58,6 +58,7 @@ describe('generateMeetingPrepBrief', () => {
     synthesizeWithSchema.mockImplementation(async (_systemPrompt: string, userPrompt: string) => {
       expect(userPrompt).toContain('"answer"')
       expect(userPrompt).toContain('"priority": "must|should|fyi"')
+      expect(userPrompt).toContain('"signalCards"')
 
       return {
         data: {
@@ -65,6 +66,15 @@ describe('generateMeetingPrepBrief', () => {
           bottomLine: 'Lead with the rollout push, then test champion depth and timing.',
           whyItMatters: 'You can use the new rollout motion to make this meeting more concrete.',
           confidence: 'high',
+          signalCards: [
+            {
+              date: '2026-04-18',
+              headline: 'Acme just launched a new rollout motion for enterprise teams.',
+              whyItMatters: 'That gives you a concrete reason to push on adoption ownership instead of staying at the feature layer.',
+              suggestedOpener: 'I saw the new rollout push. Who actually owns deployment sign-off on your side?',
+              sources: ['s1'],
+            },
+          ],
           answer: {
             conclusion: {
               text: 'Acme has a fresh rollout motion, so this meeting should center on adoption risk rather than feature pitch.',
@@ -107,6 +117,15 @@ describe('generateMeetingPrepBrief', () => {
 
     expect(brief.answer?.conclusion.text).toContain('fresh rollout motion')
     expect(brief.answer?.recommendedNext.copyable).toBe('Lead with the rollout proof point and ask who owns deployment approval.')
+    expect(brief.signalCards).toEqual([
+      {
+        date: '2026-04-18',
+        headline: 'Acme just launched a new rollout motion for enterprise teams.',
+        whyItMatters: 'That gives you a concrete reason to push on adoption ownership instead of staying at the feature layer.',
+        suggestedOpener: 'I saw the new rollout push. Who actually owns deployment sign-off on your side?',
+        sources: ['s1'],
+      },
+    ])
     expect(brief.sections.whatJustHappened[0]?.priority).toBe('must')
     expect(brief.sections.talkingPoints[0]?.priority).toBe('should')
     expect(brief.trust?.sourcedClaimCount).toBeGreaterThan(0)

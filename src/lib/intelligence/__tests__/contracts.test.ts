@@ -705,6 +705,15 @@ describe('MeetingPrepSynthesisSchema', () => {
         sourceIds: ['s2'],
       },
     ],
+    signalCards: [
+      {
+        date: '2026-03-18',
+        headline: 'The team launched an enterprise workflow that changes the meeting context.',
+        whyItMatters: 'You can anchor the conversation in a real rollout instead of a generic value pitch.',
+        suggestedOpener: 'I saw the new workflow launch and wanted to ask how deployment ownership works now.',
+        sources: ['s1'],
+      },
+    ],
     competitorMatrix: [
       {
         name: 'Acme AI',

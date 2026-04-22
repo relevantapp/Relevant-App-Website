@@ -73,6 +73,13 @@ export const MEETING_PREP_SCHEMA_DESC = `{
     "details": "Why this axis matters for the meeting",
     "sourceIds": ["s1"]
   }],
+  "signalCards": [{
+    "date": "Specific ISO date or precise date label tied to the signal",
+    "headline": "Declarative statement of what moved",
+    "whyItMatters": "One-sentence reason this changes the meeting",
+    "suggestedOpener": "Optional opener the user can say out loud",
+    "sources": ["s1"]
+  }],
   "competitorMatrix": [{
     "name": "Competitor name",
     "threatLevel": "integer 0-4",
@@ -153,8 +160,9 @@ Every bullet in every section must include priority. Use "must" for meeting-crit
 Every bullet must have at least one sourceId referencing the evidence IDs above.
 Return 4-6 timelineEvents when there is evidence. Each event must be concrete, recent when possible, and include sourceIds.
 Return exactly 5 radarMetrics aligned to these categories in this spirit: ${MEETING_PREP_RADAR_CATEGORIES.join(', ')}. If the evidence cannot support a trustworthy five-axis view, return an empty array.
+Return 3-5 signalCards when there is real evidence of fresh movement. Each card must include a concrete date, a declarative headline, a one-sentence whyItMatters, at least one source, and an optional suggestedOpener. If the evidence is thin, return an empty array.
 Return 3-5 competitorMatrix rows when there is real competitive evidence. If evidence is thin, return an empty array.
-Every timeline event, radar metric, and competitor row must include at least one sourceId.
+Every timeline event, radar metric, competitor row, and signal card must include evidence IDs.
 Use empty arrays instead of filler whenever evidence is insufficient.
 If a section has no evidence, return an empty array — do not fill with generic advice.
 ${!input.competitors?.length ? 'competitorContext and competitorMatrix should both be empty arrays since no competitors were provided.' : ''}`)

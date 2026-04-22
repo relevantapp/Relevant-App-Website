@@ -10,6 +10,7 @@ import type {
   SearchTask,
   TimelineEvent,
   RadarMetric,
+  SignalCard,
   CompetitorMatrixRow,
   BriefBullet,
 } from '../contracts'
@@ -53,7 +54,11 @@ import {
 } from '../contracts'
 
 const TIMELINE_EVENT_LIMIT = 6
+const SIGNAL_CARD_LIMIT = 5
 const COMPETITOR_MATRIX_LIMIT = 5
+const SIGNAL_CARD_HEADLINE_MAX = 120
+const SIGNAL_CARD_REASON_MAX = 160
+const SIGNAL_CARD_OPENER_MAX = 140
 
 const MONTH_INDEX: Record<string, number> = {
   jan: 0,
@@ -166,6 +171,33 @@ function normalizeRadarMetrics(
   if (byCategory.size !== MEETING_PREP_RADAR_CATEGORIES.length) return undefined
 
   return MEETING_PREP_RADAR_CATEGORIES.map((category) => byCategory.get(category)!)
+}
+
+function normalizeSignalCards(
+  cards: SignalCard[] | undefined,
+  sourceIdMap: Map<string, string>,
+): SignalCard[] | undefined {
+  if (!cards?.length) return undefined
+
+  const seen = new Set<string>()
+  const normalized = cards
+    .map((card) => ({
+      date: card.date.trim(),
+      headline: sanitizeMeetingPrepText(card.headline, SIGNAL_CARD_HEADLINE_MAX) ?? '',
+      whyItMatters: sanitizeMeetingPrepText(card.whyItMatters, SIGNAL_CARD_REASON_MAX) ?? '',
+      suggestedOpener: sanitizeMeetingPrepText(card.suggestedOpener, SIGNAL_CARD_OPENER_MAX) ?? undefined,
+      sources: canonicalizeSourceIds(card.sources, sourceIdMap),
+    }))
+    .filter((card) => {
+      if (!card.date || !card.headline || !card.whyItMatters || !card.sources.length) return false
+      const key = `${card.date.toLowerCase()}::${card.headline.toLowerCase()}`
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+
+  if (!normalized.length) return undefined
+  return normalized.slice(0, SIGNAL_CARD_LIMIT)
 }
 
 function normalizeCompetitorMatrix(
@@ -513,6 +545,7 @@ export async function generateMeetingPrepBrief(
     const canonicalSourceIdMap = buildCanonicalSourceIdMap(allSources)
     const normalizedTimelineEvents = normalizeTimelineEvents(synthesis?.data?.timelineEvents, canonicalSourceIdMap)
     const normalizedRadarMetrics = normalizeRadarMetrics(synthesis?.data?.radarMetrics, canonicalSourceIdMap)
+    const normalizedSignalCards = normalizeSignalCards(synthesis?.data?.signalCards, canonicalSourceIdMap)
     const normalizedCompetitorMatrix = request.competitors?.length
       ? normalizeCompetitorMatrix(synthesis?.data?.competitorMatrix, canonicalSourceIdMap)
       : undefined
@@ -529,6 +562,7 @@ export async function generateMeetingPrepBrief(
       collectUsedSourceIds([
         normalizedTimelineEvents?.flatMap((event) => event.sourceIds),
         normalizedRadarMetrics?.flatMap((metric) => metric.sourceIds),
+        normalizedSignalCards?.flatMap((card) => card.sources),
         normalizedCompetitorMatrix?.flatMap((row) => row.sourceIds),
         normalizedSections.whatJustHappened.flatMap((bullet) => bullet.sourceIds),
         normalizedSections.talkingPoints.flatMap((bullet) => bullet.sourceIds),
@@ -549,6 +583,7 @@ export async function generateMeetingPrepBrief(
       claimSourceGroups: [
         ...(normalizedTimelineEvents?.map((event) => event.sourceIds) ?? []),
         ...(normalizedRadarMetrics?.map((metric) => metric.sourceIds) ?? []),
+        ...(normalizedSignalCards?.map((card) => card.sources) ?? []),
         ...(normalizedCompetitorMatrix?.map((row) => row.sourceIds) ?? []),
         ...normalizedSections.whatJustHappened.map((bullet) => bullet.sourceIds),
         ...normalizedSections.talkingPoints.map((bullet) => bullet.sourceIds),
@@ -592,6 +627,7 @@ export async function generateMeetingPrepBrief(
       sentiment: synthesis?.data?.sentiment,
       timelineEvents: normalizedTimelineEvents,
       radarMetrics: normalizedRadarMetrics,
+      signalCards: normalizedSignalCards,
       competitorMatrix: normalizedCompetitorMatrix,
       sections: normalizedSections,
       sources: dedupedSources,
