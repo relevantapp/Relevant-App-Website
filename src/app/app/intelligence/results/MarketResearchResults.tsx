@@ -17,6 +17,7 @@ import ShareButton from './shared/ShareButton'
 import SearchPlanPanel from './shared/SearchPlanPanel'
 import ExhibitShell from './shared/ExhibitShell'
 import MethodologyDrawer from './shared/MethodologyDrawer'
+import LogoMarketMap from './shared/viz/LogoMarketMap'
 import Quadrant from './shared/viz/Quadrant'
 import HistoryButton from '../HistoryButton'
 
@@ -97,6 +98,18 @@ export default function MarketResearchResults({ brief, onNewSearch, savedBriefId
 
       {brief.status.degraded && <DegradedBanner reasons={brief.status.reasons} />}
 
+      {INTEL_RESULTS_V2 && brief.marketMap ? (
+        <div style={{ marginTop: 24 }}>
+          <LogoMarketMap
+            data={brief.marketMap}
+            headline="The market is fragmenting into a few distinct product shapes, and the wedge is the answer-first layer."
+            subhead="This map shows where the category clusters today before you decide which segment to attack."
+            asOf={brief.generatedAt}
+            sources={brief.sources}
+          />
+        </div>
+      ) : null}
+
       {/* Market Overview */}
       {brief.marketOverview && (
         <div style={{ marginTop: 24, background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden' }}>
@@ -114,8 +127,8 @@ export default function MarketResearchResults({ brief, onNewSearch, savedBriefId
         <div style={{ marginTop: 24 }}>
           {INTEL_RESULTS_V2 ? (
             <ExhibitShell
-              headline={`${brief.headline} - player landscape`}
-              subhead="The player grid is the fast read on who leads, who challenges, and where the wedge is opening."
+              headline="Scale and momentum still separate incumbents from the answer-first wedge."
+              subhead="Use this positioning view to see who already owns the broad market and where newer workflow products can still move fast."
               asOf={brief.generatedAt}
               sources={brief.sources}
             >

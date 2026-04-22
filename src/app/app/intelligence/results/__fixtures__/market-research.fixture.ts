@@ -200,6 +200,74 @@ export const marketResearchFixture: MarketResearchBrief = {
     ],
   },
   marketOverview: 'The market is splitting between broad monitoring platforms, workflow copilots, and narrower answer-first products. Buyers increasingly reward tools that tie output to a repeated decision motion instead of generic summarization.',
+  marketMap: {
+    segments: [
+      {
+        name: 'Monitoring and market intelligence',
+        rationale: 'Broad awareness and procurement comfort still sit with the larger monitoring layer.',
+        players: [
+          {
+            name: 'AlphaSense',
+            logoUrl: 'https://logo.clearbit.com/alphasense.com',
+            domain: 'alphasense.com',
+          },
+          {
+            name: 'CB Insights',
+            logoUrl: null,
+            domain: 'cbinsights.com',
+          },
+        ],
+      },
+      {
+        name: 'Enterprise knowledge and search',
+        rationale: 'Horizontal retrieval products still intercept a large share of the initial buyer demand.',
+        players: [
+          {
+            name: 'Glean',
+            logoUrl: 'https://logo.clearbit.com/glean.com',
+            domain: 'glean.com',
+          },
+          {
+            name: 'Hebbia',
+            logoUrl: null,
+            domain: 'hebbia.com',
+          },
+        ],
+      },
+      {
+        name: 'Enablement and GTM intelligence',
+        rationale: 'These products own narrower revenue and enablement workflows, but they are part of the same buying set.',
+        players: [
+          {
+            name: 'Klue',
+            logoUrl: 'https://logo.clearbit.com/klue.com',
+            domain: 'klue.com',
+          },
+          {
+            name: 'Crayon',
+            logoUrl: null,
+            domain: 'crayon.co',
+          },
+        ],
+      },
+      {
+        name: 'Answer-first workflow tools',
+        rationale: 'This wedge is where a decisive output with proof can feel most distinct from generic monitoring.',
+        players: [
+          {
+            name: 'Relevant',
+            logoUrl: null,
+            domain: 'getrelevant.ai',
+          },
+          {
+            name: 'Stealth Workflow Co',
+            logoUrl: null,
+            domain: null,
+          },
+        ],
+      },
+    ],
+  },
   players: [
     {
       name: 'AlphaSense',

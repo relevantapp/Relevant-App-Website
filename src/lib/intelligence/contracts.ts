@@ -613,6 +613,25 @@ export const MarketPlayerSchema = z.object({
 })
 export type MarketPlayer = z.infer<typeof MarketPlayerSchema>
 
+export const MarketPlayerTileSchema = z.object({
+  name: z.string(),
+  logoUrl: z.string().nullable(),
+  domain: z.string().nullable(),
+})
+export type MarketPlayerTile = z.infer<typeof MarketPlayerTileSchema>
+
+export const MarketSegmentSchema = z.object({
+  name: z.string(),
+  rationale: z.string(),
+  players: z.array(MarketPlayerTileSchema),
+})
+export type MarketSegment = z.infer<typeof MarketSegmentSchema>
+
+export const MarketMapSchema = z.object({
+  segments: z.array(MarketSegmentSchema),
+})
+export type MarketMap = z.infer<typeof MarketMapSchema>
+
 export const MarketResearchSynthesisSchema = z.object({
   headline: z.string(),
   bottomLine: z.string(),
@@ -630,6 +649,7 @@ export type MarketResearchSynthesis = z.infer<typeof MarketResearchSynthesisSche
 export interface MarketResearchBrief extends BriefBase {
   researchType: 'market_research'
   marketOverview: string
+  marketMap?: MarketMap
   players: MarketPlayer[]
   sections: {
     trendSignals: BriefBullet[]
@@ -778,6 +798,7 @@ export const BusinessCaseBriefSchema = BriefBaseSchema.extend({
 export const MarketResearchBriefSchema = BriefBaseSchema.extend({
   researchType: z.literal('market_research'),
   marketOverview: z.string(),
+  marketMap: MarketMapSchema.optional(),
   players: z.array(MarketPlayerSchema),
   sections: z.object({
     trendSignals: z.array(BriefBulletSchema),

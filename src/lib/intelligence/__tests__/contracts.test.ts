@@ -18,7 +18,10 @@ import {
   FactorSeveritySchema,
   IntelligenceBriefSchema,
   MarketResearchBriefSchema,
+  MarketMapSchema,
   MarketPlayerSchema,
+  MarketPlayerTileSchema,
+  MarketSegmentSchema,
   NormalizedEvidenceSchema,
   MeetingPrepBriefSchema,
   TimelineEventSchema,
@@ -179,6 +182,28 @@ describe('MarketPlayerSchema', () => {
     } as const
 
     expect(MarketPlayerSchema.parse(player)).toEqual(player)
+  })
+})
+
+describe('MarketMapSchema', () => {
+  it('accepts segmented market-map tiles with nullable logo and domain fields', () => {
+    const tile = {
+      name: 'Relevant',
+      logoUrl: null,
+      domain: 'getrelevant.ai',
+    } as const
+    const segment = {
+      name: 'Answer-first workflow tools',
+      rationale: 'This wedge is where proof plus decisive output matters most.',
+      players: [tile],
+    } as const
+    const marketMap = {
+      segments: [segment],
+    } as const
+
+    expect(MarketPlayerTileSchema.parse(tile)).toEqual(tile)
+    expect(MarketSegmentSchema.parse(segment)).toEqual(segment)
+    expect(MarketMapSchema.parse(marketMap)).toEqual(marketMap)
   })
 })
 
