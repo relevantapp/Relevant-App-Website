@@ -504,6 +504,27 @@ export const FactorCardSchema = BriefBulletSchema.extend({
 })
 export type FactorCard = z.infer<typeof FactorCardSchema>
 
+export const DriverBranchNameSchema = z.enum(['demand', 'economics', 'strategic-fit', 'execution-risk'])
+export type DriverBranchName = z.infer<typeof DriverBranchNameSchema>
+
+export const DriverBranchSchema = z.object({
+  name: DriverBranchNameSchema,
+  score: z.number().min(0).max(5),
+  confidence: z.enum(['high', 'med', 'low']),
+  children: z.array(
+    z.object({
+      label: z.string(),
+      evidence: CitedSpanSchema,
+    }),
+  ),
+})
+export type DriverBranch = z.infer<typeof DriverBranchSchema>
+
+export const DriverTreeSchema = z.object({
+  branches: z.array(DriverBranchSchema),
+})
+export type DriverTree = z.infer<typeof DriverTreeSchema>
+
 export const BusinessCaseSynthesisSchema = z.object({
   headline: z.string(),
   bottomLine: z.string(),
@@ -524,6 +545,7 @@ export interface BusinessCaseBrief extends BriefBase {
   verdict: 'strong' | 'moderate' | 'weak' | 'insufficient_data'
   verdictRationale: string
   comparables: ComparableCompany[]
+  driverTree?: DriverTree
   sections: {
     marketEvidence: BriefBullet[]
     supportingFactors: FactorCard[]
@@ -695,6 +717,7 @@ export const BusinessCaseBriefSchema = BriefBaseSchema.extend({
   verdict: z.enum(['strong', 'moderate', 'weak', 'insufficient_data']),
   verdictRationale: z.string(),
   comparables: z.array(ComparableCompanySchema),
+  driverTree: DriverTreeSchema.optional(),
   sections: z.object({
     marketEvidence: z.array(BriefBulletSchema),
     supportingFactors: z.array(FactorCardSchema),

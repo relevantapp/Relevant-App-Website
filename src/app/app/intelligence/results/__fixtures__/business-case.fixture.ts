@@ -201,6 +201,66 @@ export const businessCaseFixture: BusinessCaseBrief = {
   },
   verdict: 'strong',
   verdictRationale: 'The demand signal is strong when the product is attached to live revenue and strategy decisions, and comparable cases show real analyst time savings. The main risk is buyer fatigue if the ROI story stays abstract.',
+  driverTree: {
+    branches: [
+      {
+        name: 'strategic-fit',
+        score: 4.3,
+        confidence: 'high',
+        children: [
+          {
+            label: 'Differentiation',
+            evidence: {
+              text: 'The role-aware framing is more defensible than a generic AI productivity layer.',
+              sourceIds: ['bc-2', 'bc-5'],
+            },
+          },
+        ],
+      },
+      {
+        name: 'demand',
+        score: 4.6,
+        confidence: 'high',
+        children: [
+          {
+            label: 'Buyer pull',
+            evidence: {
+              text: 'Workflow-specific demand is strongest when teams need decision-ready output for active revenue and strategy work.',
+              sourceIds: ['bc-1', 'bc-2'],
+            },
+          },
+        ],
+      },
+      {
+        name: 'execution-risk',
+        score: 2.7,
+        confidence: 'med',
+        children: [
+          {
+            label: 'Scope discipline',
+            evidence: {
+              text: 'The risk rises quickly if the team broadens the story before proving one repeat workflow.',
+              sourceIds: ['bc-4', 'bc-5'],
+            },
+          },
+        ],
+      },
+      {
+        name: 'economics',
+        score: 3.6,
+        confidence: 'med',
+        children: [
+          {
+            label: 'Leverage',
+            evidence: {
+              text: 'Comparable cases show real analyst-load reduction when the workflow replaces manual synthesis instead of adding another output step.',
+              sourceIds: ['bc-1', 'bc-3'],
+            },
+          },
+        ],
+      },
+    ],
+  },
   comparables: [
     {
       name: 'Tegus',

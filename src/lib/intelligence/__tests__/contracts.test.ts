@@ -12,6 +12,7 @@ import {
   CitedSpanSchema,
   CompetitorProfileSchema,
   CompetitiveAnalysisBriefSchema,
+  DriverTreeSchema,
   FactorCardSchema,
   FactorImpactSchema,
   FactorSeveritySchema,
@@ -272,6 +273,23 @@ describe('WhitespacePocketSchema', () => {
     } as const
 
     expect(WhitespacePocketSchema.parse(pocket)).toEqual(pocket)
+  })
+})
+
+describe('DriverTreeSchema', () => {
+  it('accepts a driver tree with scored branches', () => {
+    const driverTree = {
+      branches: [
+        {
+          name: 'demand',
+          score: 4.5,
+          confidence: 'high',
+          children: [{ label: 'Buyer pull', evidence: { text: 'Demand evidence.', sourceIds: ['s1'] } }],
+        },
+      ],
+    } as const
+
+    expect(DriverTreeSchema.parse(driverTree)).toEqual(driverTree)
   })
 })
 

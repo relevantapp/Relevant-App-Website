@@ -18,6 +18,7 @@ import ShareButton from './shared/ShareButton'
 import SearchPlanPanel from './shared/SearchPlanPanel'
 import ExhibitShell from './shared/ExhibitShell'
 import MethodologyDrawer from './shared/MethodologyDrawer'
+import DriverTree from './shared/viz/DriverTree'
 import HistoryButton from '../HistoryButton'
 
 interface BusinessCaseResultsProps {
@@ -112,6 +113,18 @@ export default function BusinessCaseResults({ brief, onNewSearch, savedBriefId }
           <VerdictBadge verdict={brief.verdict} rationale={brief.verdictRationale} />
         )}
       </div>
+
+      {INTEL_RESULTS_V2 && brief.driverTree && (
+        <div style={{ marginTop: 24 }}>
+          <DriverTree
+            data={brief.driverTree}
+            headline="The business case rests on four decision branches"
+            subhead="Demand alone is not enough. The economics, fit, and execution branches need to hold too."
+            asOf={brief.generatedAt}
+            sources={brief.sources}
+          />
+        </div>
+      )}
 
       <div style={{ marginTop: 24 }}>
         {INTEL_RESULTS_V2 ? (
