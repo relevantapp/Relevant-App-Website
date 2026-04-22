@@ -110,6 +110,7 @@ export default function MarketResearchResults({ brief, onNewSearch, savedBriefId
             subhead="This map shows where the category clusters today before you decide which segment to attack."
             asOf={brief.generatedAt}
             sources={brief.sources}
+            playerDetails={brief.players}
           />
         </div>
       ) : null}

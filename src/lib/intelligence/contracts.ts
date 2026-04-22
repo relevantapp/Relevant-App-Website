@@ -629,6 +629,7 @@ export const MarketPlayerTileSchema = z.object({
   name: z.string(),
   logoUrl: z.string().nullable(),
   domain: z.string().nullable(),
+  geography: z.array(z.string()).optional(),
 })
 export type MarketPlayerTile = z.infer<typeof MarketPlayerTileSchema>
 
