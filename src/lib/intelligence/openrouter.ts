@@ -327,10 +327,11 @@ async function attemptSynthesizeWithSchema<T>(
   logTag: string,
   model: ModelPreference,
   strictSchema: boolean,
+  timeoutMs: number,
 ): Promise<SynthesisResult<T>> {
   const resolvedModel = normalizeModelPreference(model)
   const controller = new AbortController()
-  const timeout = setTimeout(() => controller.abort(), SYNTHESIS_TIMEOUT)
+  const timeout = setTimeout(() => controller.abort(), timeoutMs)
 
   try {
     const response = await callOpenRouterPrompt(
@@ -366,7 +367,7 @@ async function attemptSynthesizeWithSchema<T>(
     console.warn(`[intel:${logTag}:synthesize]`, `Schema validation failed for openrouter/${response.model}:`, validation.issues)
     const repairPrompt = generateRepairPrompt(validation.issues!, schemaDescription)
     const repairController = new AbortController()
-    const repairTimeout = setTimeout(() => repairController.abort(), SYNTHESIS_TIMEOUT)
+    const repairTimeout = setTimeout(() => repairController.abort(), timeoutMs)
 
     try {
       const repair = await callOpenRouterPrompt(
@@ -455,6 +456,10 @@ export async function synthesizeWithSchema<T>(
   schemaDescription: string,
   logTag: string,
   preferredModel?: ModelPreference,
+  options?: {
+    disableModelFallback?: boolean
+    timeoutMs?: number
+  },
 ): Promise<SynthesisResult<T>> {
   if (!process.env.OPENROUTER_API_KEY) {
     return {
@@ -467,7 +472,10 @@ export async function synthesizeWithSchema<T>(
     }
   }
 
-  const candidates = getSynthesisModelCandidates(logTag, preferredModel)
+  const candidates = options?.disableModelFallback
+    ? [normalizeModelPreference(preferredModel)]
+    : getSynthesisModelCandidates(logTag, preferredModel)
+  const timeoutMs = options?.timeoutMs ?? SYNTHESIS_TIMEOUT
   let lastFailure: SynthesisResult<T> = {
     data: null,
     model: null,
@@ -493,6 +501,7 @@ export async function synthesizeWithSchema<T>(
         logTag,
         candidate,
         strictSchema,
+        timeoutMs,
       )
       if (result.data) return result
       lastFailure = result

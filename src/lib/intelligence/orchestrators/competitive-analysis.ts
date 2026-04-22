@@ -37,8 +37,10 @@ import {
   persistV2EvidencePack,
 } from './v2-bridge'
 
-const COMPETITIVE_ALIGNMENT_RETRY_MODEL: ModelPreference = 'openai/gpt-5.4'
-const COMPETITIVE_ALIGNMENT_SECONDARY_MODEL: ModelPreference = 'anthropic/claude-sonnet-4.6'
+// Keep the alignment retry on providers that reliably accept our structured-output params.
+const COMPETITIVE_ALIGNMENT_RETRY_MODEL: ModelPreference = 'anthropic/claude-sonnet-4.6'
+const COMPETITIVE_ALIGNMENT_SECONDARY_MODEL: ModelPreference = 'google/gemini-3.1-flash-lite-preview'
+const COMPETITIVE_ALIGNMENT_RETRY_TIMEOUT_MS = 12_000
 
 function clampUnit(value: number): number {
   return Math.min(1, Math.max(0, value))
@@ -139,6 +141,8 @@ async function synthesizeCompetitiveBrief(
   yourSnapshot: string | null,
   priorBriefBaseline: string | null,
   preferredModel?: ModelPreference,
+  disableModelFallback = false,
+  timeoutMs?: number,
 ): Promise<SynthesisResult<CompetitiveSynthesis>> {
   const userPrompt = buildCompetitivePrompt({
     competitors: input.competitors,
@@ -164,6 +168,7 @@ async function synthesizeCompetitiveBrief(
     COMPETITIVE_SCHEMA_DESC,
     'competitive_analysis',
     preferredModel,
+    { disableModelFallback, timeoutMs },
   )
 }
 
@@ -472,6 +477,8 @@ export async function generateCompetitiveAnalysisBrief(
       yourSnapshot,
       null,
       retryModel,
+      true,
+      COMPETITIVE_ALIGNMENT_RETRY_TIMEOUT_MS,
     )
     const retryAlignment = validateCompetitiveAlignment(retryAttempt.data, input)
     if (retryAttempt.data && retryAlignment.ok) return retryAttempt

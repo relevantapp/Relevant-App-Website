@@ -540,7 +540,8 @@ describe('generateCompetitiveAnalysisBrief', () => {
     })
 
     expect(synthesizeWithSchema).toHaveBeenCalledTimes(2)
-    expect(synthesizeWithSchema.mock.calls[1]?.[5]).toBe('openai/gpt-5.4')
+    expect(synthesizeWithSchema.mock.calls[1]?.[5]).toBe('anthropic/claude-sonnet-4.6')
+    expect(synthesizeWithSchema.mock.calls[1]?.[6]).toEqual({ disableModelFallback: true, timeoutMs: 12000 })
     expect(brief.headline).toContain('Purolator')
     expect(brief.competitors.map((competitor: { name: string }) => competitor.name)).toEqual(['UPS'])
   })
