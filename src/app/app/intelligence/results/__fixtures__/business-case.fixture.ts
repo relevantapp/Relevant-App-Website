@@ -341,6 +341,41 @@ export const businessCaseFixture: BusinessCaseBrief = {
       },
     },
   ],
+  assumptions: [
+    {
+      text: 'Decision-specific output will feel more premium than generic AI summarization.',
+      mustBeTrueBecause: 'The product only earns budget if buyers see the result as more defensible than a commodity summary.',
+      confidence: 'high',
+      evidence: [
+        {
+          text: 'Role-aware output and methodology transparency matter more as buyers evaluate practical workflow tools.',
+          sourceIds: ['bc-2', 'bc-5'],
+        },
+      ],
+    },
+    {
+      text: 'Adoption must become weekly, not occasional.',
+      mustBeTrueBecause: 'The business case weakens if the upgraded surface is impressive but not reused in a weekly operating rhythm.',
+      confidence: 'low',
+      evidence: [
+        {
+          text: 'Comparable wins come from repeat workflow usage rather than one-off research novelty.',
+          sourceIds: ['bc-1', 'bc-3'],
+        },
+      ],
+    },
+    {
+      text: 'Scope discipline will hold while the first workflow is proven.',
+      mustBeTrueBecause: 'Execution drag can erase the upside if the team broadens the story before the repeat use case is proven.',
+      confidence: 'med',
+      evidence: [
+        {
+          text: 'Finance scrutiny and internal eval notes both point to the need for tighter ROI proof.',
+          sourceIds: ['bc-4', 'bc-5'],
+        },
+      ],
+    },
+  ],
   comparables: [
     {
       name: 'Tegus',

@@ -558,6 +558,14 @@ export const WaterfallStepSchema = z.object({
 })
 export type WaterfallStep = z.infer<typeof WaterfallStepSchema>
 
+export const AssumptionSchema = z.object({
+  text: z.string(),
+  mustBeTrueBecause: z.string(),
+  confidence: z.enum(['high', 'med', 'low']),
+  evidence: z.array(CitedSpanSchema),
+})
+export type Assumption = z.infer<typeof AssumptionSchema>
+
 export const BusinessCaseSynthesisSchema = z.object({
   headline: z.string(),
   bottomLine: z.string(),
@@ -582,6 +590,7 @@ export interface BusinessCaseBrief extends BriefBase {
   scenarios?: ScenarioBands
   tornado?: TornadoEntry[]
   waterfall?: WaterfallStep[]
+  assumptions?: Assumption[]
   sections: {
     marketEvidence: BriefBullet[]
     supportingFactors: FactorCard[]
@@ -757,6 +766,7 @@ export const BusinessCaseBriefSchema = BriefBaseSchema.extend({
   scenarios: ScenarioBandsSchema.optional(),
   tornado: z.array(TornadoEntrySchema).optional(),
   waterfall: z.array(WaterfallStepSchema).optional(),
+  assumptions: z.array(AssumptionSchema).optional(),
   sections: z.object({
     marketEvidence: z.array(BriefBulletSchema),
     supportingFactors: z.array(FactorCardSchema),

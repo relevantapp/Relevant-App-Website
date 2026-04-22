@@ -30,6 +30,7 @@ import {
   CompositeQuadrantSchema,
   StakeholderRowSchema,
   SignalCardSchema,
+  AssumptionSchema,
   WaterfallStepSchema,
   TornadoEntrySchema,
   WhitespacePocketSchema,
@@ -335,6 +336,19 @@ describe('WaterfallStepSchema', () => {
     } as const
 
     expect(WaterfallStepSchema.parse(step)).toEqual(step)
+  })
+})
+
+describe('AssumptionSchema', () => {
+  it('accepts assumptions with confidence and cited evidence', () => {
+    const assumption = {
+      text: 'Adoption must become weekly.',
+      mustBeTrueBecause: 'Weekly reuse creates the durable ROI.',
+      confidence: 'med',
+      evidence: [{ text: 'Repeat workflow usage matters.', sourceIds: ['s1'] }],
+    } as const
+
+    expect(AssumptionSchema.parse(assumption)).toEqual(assumption)
   })
 })
 

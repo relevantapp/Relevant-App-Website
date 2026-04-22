@@ -1,5 +1,6 @@
 export { default as BulletChart } from './BulletChart'
 export { default as CapabilityMatrix } from './CapabilityMatrix'
+export { default as AssumptionsRegister } from './AssumptionsRegister'
 export { default as CompositeQuadrant } from './CompositeQuadrant'
 export { default as DiscChip } from './DiscChip'
 export { default as DriverTree } from './DriverTree'

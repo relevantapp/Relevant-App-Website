@@ -18,6 +18,7 @@ import ShareButton from './shared/ShareButton'
 import SearchPlanPanel from './shared/SearchPlanPanel'
 import ExhibitShell from './shared/ExhibitShell'
 import MethodologyDrawer from './shared/MethodologyDrawer'
+import AssumptionsRegister from './shared/viz/AssumptionsRegister'
 import DriverTree from './shared/viz/DriverTree'
 import ScenarioBands from './shared/viz/ScenarioBands'
 import TornadoChart from './shared/viz/TornadoChart'
@@ -159,6 +160,18 @@ export default function BusinessCaseResults({ brief, onNewSearch, savedBriefId }
             data={brief.waterfall}
             headline="A few drivers build the case from baseline to target"
             subhead="This keeps the business case grounded in the handful of drivers that actually move the number."
+            asOf={brief.generatedAt}
+            sources={brief.sources}
+          />
+        </div>
+      )}
+
+      {INTEL_RESULTS_V2 && brief.assumptions && (
+        <div style={{ marginTop: 24 }}>
+          <AssumptionsRegister
+            data={brief.assumptions}
+            headline="A small set of assumptions still decides the outcome"
+            subhead="This makes the hidden assumptions explicit so the decision does not pretend to be more certain than it is."
             asOf={brief.generatedAt}
             sources={brief.sources}
           />
