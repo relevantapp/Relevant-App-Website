@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
     .from('intelligence_chat_messages')
     .select('role, content')
     .eq('brief_id', briefId)
-    .order('created_at', { ascending: true })
+    .order('created_at', { ascending: false })
     .limit(MAX_HISTORY)
 
   await supabase.from('intelligence_chat_messages').insert({
@@ -109,7 +109,7 @@ ${Array.isArray(brief.sources) ? brief.sources.slice(0, 10).map((s: Record<strin
 
   const messages: ChatMessage[] = []
   if (history) {
-    for (const msg of history) {
+    for (const msg of [...history].reverse()) {
       if (msg.role === 'user' || msg.role === 'assistant') {
         messages.push({ role: msg.role, content: msg.content })
       }

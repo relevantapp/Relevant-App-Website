@@ -13,6 +13,7 @@ import CopyModePicker from './shared/CopyModePicker'
 import DegradedBanner from './shared/DegradedBanner'
 import ShareButton from './shared/ShareButton'
 import SearchPlanPanel from './shared/SearchPlanPanel'
+import HistoryButton from '../HistoryButton'
 
 interface BusinessCaseResultsProps {
   brief: BusinessCaseBrief
@@ -47,6 +48,7 @@ export default function BusinessCaseResults({ brief, onNewSearch, savedBriefId }
           ← New search
         </button>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <HistoryButton compact />
           <ShareButton briefId={savedBriefId ?? null} />
           <CopyModePicker brief={brief} exportRef={exportRef} />
         </div>

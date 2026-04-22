@@ -1,14 +1,14 @@
 export type ModelPreference = string
 
-export const DEFAULT_MODEL_PREFERENCE: ModelPreference = 'openai/gpt-5.4-mini'
+export const DEFAULT_MODEL_PREFERENCE: ModelPreference = 'google/gemini-3.1-flash-lite-preview'
 export const MODEL_STORAGE_KEY = 'relevant-intelligence-model'
 
 export const CURATED_MODEL_IDS = [
+  'google/gemini-3.1-flash-lite-preview',
+  'google/gemini-2.5-pro',
   'openai/gpt-5.4-mini',
   'openai/gpt-5.4',
   'openai/gpt-5.1',
-  'google/gemini-2.5-pro',
-  'google/gemini-3.1-flash-lite-preview',
   'anthropic/claude-sonnet-4.6',
   'z-ai/glm-5.1',
   'qwen/qwen3.6-plus',

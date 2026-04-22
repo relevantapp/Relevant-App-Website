@@ -95,6 +95,11 @@ describe('BriefStatusSchema', () => {
     const status = {
       degraded: false,
       reasons: [],
+      internalMs: 0,
+      plannerMs: 200,
+      exaMs: 1200,
+      tavilyMs: 800,
+      verifierMs: 0,
       exaSearchMs: 1200,
       tavilySearchMs: 800,
       synthesisMs: 3000,
@@ -110,6 +115,11 @@ describe('BriefStatusSchema', () => {
     const status = {
       degraded: true,
       reasons: ['Exa search failed', 'Low source count'],
+      internalMs: 0,
+      plannerMs: 100,
+      exaMs: 0,
+      tavilyMs: 800,
+      verifierMs: 0,
       exaSearchMs: 0,
       tavilySearchMs: 800,
       synthesisMs: 3000,

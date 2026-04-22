@@ -7,54 +7,92 @@ interface SourcesStripProps {
   sources: BriefSource[]
 }
 
+interface LedgerGroup {
+  key: 'used' | 'supporting' | 'internal'
+  title: string
+  description: string
+  sources: BriefSource[]
+}
+
 function formatDate(iso: string | null): string {
   if (!iso) return ''
   try {
-    return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
   } catch {
     return ''
   }
 }
 
-function SourceRow({ source, isLast }: { source: BriefSource; isLast: boolean }) {
+function isFreshSource(source: BriefSource): boolean {
+  if (source.sourceRole === 'fresh_news') return true
+  if (!source.publishedAt) return false
+
+  const published = new Date(source.publishedAt).getTime()
+  if (Number.isNaN(published)) return false
+
+  const ageMs = Date.now() - published
+  return ageMs >= 0 && ageMs <= 1000 * 60 * 60 * 24 * 45
+}
+
+function sourceBadges(source: BriefSource): Array<{ label: string; tone: string }> {
+  const badges: Array<{ label: string; tone: string }> = []
+
+  if (source.usedInAnswer) badges.push({ label: 'Used', tone: 'var(--accent-teal)' })
+  if (source.provider === 'internal' || source.sourceRole === 'internal_memory') {
+    badges.push({ label: 'Internal', tone: 'var(--accent-lime, var(--accent-teal))' })
+  }
+  if (source.sourceRole === 'primary') badges.push({ label: 'Primary', tone: 'var(--accent-amber)' })
+  if (isFreshSource(source)) badges.push({ label: 'Fresh', tone: 'var(--accent-amber)' })
+  if (source.sourceRole === 'counter_evidence') badges.push({ label: 'Counterpoint', tone: 'var(--accent-coral)' })
+
+  return badges
+}
+
+function groupSources(sources: BriefSource[]): LedgerGroup[] {
+  const used = sources.filter((source) => source.usedInAnswer)
+  const internal = sources.filter((source) => !source.usedInAnswer && (source.provider === 'internal' || source.sourceRole === 'internal_memory'))
+  const supporting = sources.filter((source) => !source.usedInAnswer && !internal.includes(source))
+
+  const groups: LedgerGroup[] = [
+    {
+      key: 'used',
+      title: 'Used in answer',
+      description: 'These sources were cited directly in the brief output.',
+      sources: used,
+    },
+    {
+      key: 'supporting',
+      title: 'Supporting but unused',
+      description: 'Relevant evidence gathered for the run, but not cited in the final answer.',
+      sources: supporting,
+    },
+    {
+      key: 'internal',
+      title: 'Internal memory',
+      description: 'Relevant context from prior memory or internal corpus retrieval.',
+      sources: internal,
+    },
+  ]
+
+  return groups.filter((group) => group.sources.length > 0)
+}
+
+function SourceRow({ source }: { source: BriefSource }) {
   const [expanded, setExpanded] = useState(false)
   const hasSnippet = !!source.snippet
   const visualUrl = source.imageUrl || source.faviconUrl || null
+  const badges = sourceBadges(source)
+  const hasLongSnippet = (source.snippet?.length ?? 0) > 220
+  const snippet = hasLongSnippet && !expanded
+    ? `${source.snippet?.slice(0, 220).trim().replace(/[\s,.;:!?-]+$/, '')}…`
+    : source.snippet
 
   return (
-    <div
-      id={`source-${source.id}`}
-      style={{
-        borderBottom: isLast ? 'none' : '1px solid var(--border)',
-      }}
-    >
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: visualUrl ? '24px 34px 1fr auto' : '24px 1fr auto',
-          gap: 10,
-          alignItems: 'center',
-          padding: '10px 18px',
-          cursor: hasSnippet ? 'pointer' : 'default',
-          transition: 'background 150ms',
-        }}
-        onClick={() => hasSnippet && setExpanded(!expanded)}
-        onMouseOver={(e) => { e.currentTarget.style.background = 'var(--surface)' }}
-        onMouseOut={(e) => { e.currentTarget.style.background = 'transparent' }}
-      >
-        <span className="mono tnum" style={{ fontSize: 10, color: 'var(--text-soft)' }}>
-          [{source.id}]
-        </span>
+    <article id={`source-${source.id}`} className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-4 transition-colors hover:bg-[var(--bg-elevated)]/80">
+      <div className="flex items-start gap-3">
         {visualUrl && (
           <div
-            style={{
-              width: 34,
-              height: 34,
-              borderRadius: 6,
-              overflow: 'hidden',
-              border: '1px solid var(--border)',
-              background: 'var(--bg)',
-            }}
+            className="mt-0.5 h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg)]"
           >
             <img
               src={visualUrl}
@@ -64,107 +102,97 @@ function SourceRow({ source, isLast }: { source: BriefSource; isLast: boolean })
             />
           </div>
         )}
-        <div style={{ minWidth: 0 }}>
-          <div style={{ fontSize: 13, color: 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {source.title}
+
+        <div className="min-w-0 flex-1">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-sm font-medium leading-relaxed text-[var(--text)]">{source.title}</p>
+              <p className="mono mt-1 text-[10px] uppercase tracking-[0.16em] text-[var(--text-soft)]">
+                {source.domain}
+                {source.publishedAt ? ` · ${formatDate(source.publishedAt)}` : ''}
+                {` · ${source.provider}`}
+              </p>
+            </div>
+
+            <a
+              href={source.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mono shrink-0 rounded-full border border-[var(--border)] px-3 py-1.5 text-[10px] uppercase tracking-[0.16em] text-[var(--accent)] transition-colors hover:border-[var(--accent)]"
+            >
+              Open ↗
+            </a>
           </div>
-          <div className="mono" style={{ fontSize: 10, color: 'var(--text-soft)', marginTop: 2 }}>
-            {source.domain}{source.publishedAt ? ` · ${formatDate(source.publishedAt)}` : ''}
+
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            {badges.map((badge) => (
+              <span
+                key={`${source.id}-${badge.label}`}
+                className="rounded-full border px-2.5 py-1 text-[10px] uppercase tracking-[0.16em]"
+                style={{
+                  color: badge.tone,
+                  borderColor: `color-mix(in oklch, ${badge.tone} 35%, var(--border))`,
+                  background: `color-mix(in oklch, ${badge.tone} 12%, transparent)`,
+                }}
+              >
+                {badge.label}
+              </span>
+            ))}
+            <span className="mono text-[10px] uppercase tracking-[0.16em] text-[var(--text-soft)]">[{source.id}]</span>
           </div>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          {hasSnippet && (
-            <span className="mono" style={{ fontSize: 10, color: 'var(--text-soft)' }}>
-              {expanded ? '▾' : '▸'}
-            </span>
+
+          {hasSnippet && snippet && (
+            <div className="mt-3">
+              <p className="text-sm leading-relaxed text-[var(--text-muted)]">{snippet}</p>
+              {hasLongSnippet && (
+                <button
+                  type="button"
+                  onClick={() => setExpanded((value) => !value)}
+                  className="mono mt-2 text-[10px] uppercase tracking-[0.16em] text-[var(--accent)]"
+                >
+                  {expanded ? 'Show less' : 'Expand snippet'}
+                </button>
+              )}
+            </div>
           )}
-          <span className="mono" style={{ fontSize: 10, color: 'var(--text-soft)', textTransform: 'uppercase' }}>
-            {source.provider}
-          </span>
-          <a
-            href={source.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mono"
-            style={{ fontSize: 10, color: 'var(--accent)', textDecoration: 'none' }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            ↗
-          </a>
         </div>
       </div>
-      {expanded && source.snippet && (
-        <div
-          style={{
-            padding: '0 18px 12px 52px',
-            fontSize: 12,
-            lineHeight: 1.5,
-            color: 'var(--text-muted)',
-          }}
-        >
-          {source.snippet}
-        </div>
-      )}
-    </div>
+    </article>
   )
 }
 
 export default function SourcesStrip({ sources }: SourcesStripProps) {
   if (!sources.length) return null
-  const imageSources = sources.filter((source) => source.imageUrl).slice(0, 5)
+  const groups = groupSources(sources)
 
   return (
-    <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden' }}>
-      <div style={{ padding: '10px 18px', borderBottom: '1px solid var(--border)' }}>
-        <span className="kicker">Sources · {sources.length}</span>
+    <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)]">
+      <div className="border-b border-[var(--border)] px-5 py-4">
+        <span className="kicker">Evidence ledger · {sources.length}</span>
+        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--text-muted)]">
+          Used sources were cited in the answer. Supporting sources were gathered for ranking but not cited. Internal memory reflects Relevant&apos;s own prior context or internal retrieval.
+        </p>
       </div>
-      {imageSources.length > 0 && (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-            gap: 8,
-            padding: 12,
-            borderBottom: '1px solid var(--border)',
-          }}
-        >
-          {imageSources.map((source) => (
-            <a
-              key={`image-${source.id}`}
-              href={source.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                display: 'block',
-                minHeight: 92,
-                borderRadius: 8,
-                overflow: 'hidden',
-                border: '1px solid var(--border)',
-                background: 'var(--surface)',
-                textDecoration: 'none',
-              }}
-            >
-              <img
-                src={source.imageUrl ?? ''}
-                alt=""
-                loading="lazy"
-                style={{ width: '100%', height: 92, objectFit: 'cover', display: 'block' }}
-              />
-              <div style={{ padding: '7px 8px' }}>
-                <p style={{ margin: 0, color: 'var(--text)', fontSize: 11, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {source.title}
-                </p>
-                <p className="mono" style={{ margin: '2px 0 0', color: 'var(--text-soft)', fontSize: 9 }}>
-                  {source.domain}
-                </p>
+
+      <div className="space-y-6 px-5 py-5">
+        {groups.map((group) => (
+          <section key={group.key}>
+            <div className="mb-3 flex items-baseline justify-between gap-3">
+              <div>
+                <p className="kicker">{group.title}</p>
+                <p className="mt-1 text-sm leading-relaxed text-[var(--text-muted)]">{group.description}</p>
               </div>
-            </a>
-          ))}
-        </div>
-      )}
-      <div>
-        {sources.map((source, i) => (
-          <SourceRow key={source.id} source={source} isLast={i === sources.length - 1} />
+              <span className="mono shrink-0 text-[10px] uppercase tracking-[0.16em] text-[var(--text-soft)]">
+                {group.sources.length} source{group.sources.length === 1 ? '' : 's'}
+              </span>
+            </div>
+
+            <div className="space-y-3">
+              {group.sources.map((source) => (
+                <SourceRow key={source.id} source={source} />
+              ))}
+            </div>
+          </section>
         ))}
       </div>
     </div>

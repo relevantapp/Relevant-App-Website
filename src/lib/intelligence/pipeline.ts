@@ -1,6 +1,7 @@
 /* ── Pipeline Framework — Step-level execution with timing + logging ── */
 
 import { z, type ZodSchema } from 'zod'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import type { SSEEmitter } from './sse-emitter'
 import type { ModelPreference } from './models'
 
@@ -10,6 +11,9 @@ export interface PipelineContext {
   emitter?: SSEEmitter
   signal?: AbortSignal
   preferredModel?: ModelPreference
+  supabase?: SupabaseClient
+  userId?: string
+  runId?: string
 }
 
 /* ── Step result ───────────────────────────────────────────── */

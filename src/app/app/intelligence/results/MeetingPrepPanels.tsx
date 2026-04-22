@@ -18,18 +18,21 @@ import {
   TrendingUp,
   Users,
 } from 'lucide-react'
-import { useId, type ReactNode } from 'react'
-import {
-  MEETING_PREP_RADAR_CATEGORIES,
-  type AttendeeProfile,
-  type BriefBullet,
-  type CompanySnapshot,
-  type CompetitorMatrixRow,
-  type MeetingPrepBrief,
-  type MeetingPrepRadarCategory,
-  type RadarMetric,
-  type TimelineEvent,
+import { useId } from 'react'
+import type { ReactNode } from 'react'
+import { MEETING_PREP_RADAR_CATEGORIES } from '@/lib/intelligence/contracts'
+import type {
+  AttendeeProfile,
+  BriefBullet,
+  CompanySnapshot,
+  CompetitorMatrixRow,
+  MeetingPrepBrief,
+  MeetingPrepSnapshot,
+  MeetingPrepRadarCategory,
+  RadarMetric,
+  TimelineEvent,
 } from '@/lib/intelligence/contracts'
+import { buildMeetingPrepSnapshot } from '@/lib/intelligence/meeting-prep-display'
 
 /* ── Bento Section Card ──────────────────────────────────────── */
 
@@ -76,7 +79,7 @@ function SourceChipRow({ sourceIds, onSourceClick }: { sourceIds: string[]; onSo
     <div className="mt-3 flex flex-wrap items-center gap-1.5">
       {sourceIds.map((id) => (
         <button key={id} onClick={() => onSourceClick(id)} className="source-chip">
-          [{id}]
+          {`[${id}]`}
         </button>
       ))}
     </div>
@@ -146,7 +149,7 @@ function BulletList({
                 </span>
                 {bullet.sourceIds.map((id) => (
                   <button key={id} onClick={() => onSourceClick(id)} className="source-chip">
-                    [{id}]
+                    {`[${id}]`}
                   </button>
                 ))}
               </div>
@@ -188,35 +191,103 @@ export function BentoSection({
 
 /* ── Snapshot Card ───────────────────────────────────────────── */
 
-export function SnapshotCard({ snapshot }: { snapshot: CompanySnapshot }) {
+function SnapshotFact({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="bg-[var(--bg-elevated)] px-4 py-4">
+      <p className="kicker text-[9px] text-[var(--text-soft)]">{label}</p>
+      <p className="mt-2 text-sm leading-relaxed text-[var(--text)]">{value}</p>
+    </div>
+  )
+}
+
+function isMeetingPrepSnapshot(snapshot: MeetingPrepSnapshot | CompanySnapshot): snapshot is MeetingPrepSnapshot {
+  return 'summary' in snapshot && Array.isArray(snapshot.knownUnknowns)
+}
+
+export function SnapshotCard({ snapshot }: { snapshot: MeetingPrepSnapshot | CompanySnapshot }) {
+  const displaySnapshot = isMeetingPrepSnapshot(snapshot)
+    ? snapshot
+    : buildMeetingPrepSnapshot(snapshot, snapshot.website)
+
+  if (!displaySnapshot) return null
+
   const facts = [
-    snapshot.industry && ['Industry', snapshot.industry],
-    snapshot.headquarters && ['HQ', snapshot.headquarters],
-    snapshot.employeeCount && ['Size', snapshot.employeeCount],
-    snapshot.fundingStage && ['Funding', snapshot.fundingStage],
-    snapshot.lastFundingAmount && ['Last Round', snapshot.lastFundingAmount],
-    snapshot.ceo && ['CEO', snapshot.ceo],
+    displaySnapshot.whatTheyDo && ['What they do', displaySnapshot.whatTheyDo],
+    displaySnapshot.industry && ['Industry', displaySnapshot.industry],
+    displaySnapshot.headquarters && ['HQ', displaySnapshot.headquarters],
+    displaySnapshot.employeeRange && ['Size', displaySnapshot.employeeRange],
+    displaySnapshot.funding && ['Funding', displaySnapshot.funding],
+    displaySnapshot.ceo && ['CEO', displaySnapshot.ceo],
+    displaySnapshot.website && ['Website', displaySnapshot.website.replace(/^https?:\/\//, '').replace(/\/$/, '')],
   ].filter(Boolean) as Array<[string, string]>
 
   return (
     <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)]">
-      <div className="border-b border-[var(--border)] px-4 py-3">
-        <span className="kicker">Company snapshot</span>
-        <p className="mt-1 text-sm font-medium text-[var(--text)]">{snapshot.name}</p>
-        <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted)]">{snapshot.description}</p>
-      </div>
-      <div className="grid-bordered grid grid-cols-1 sm:grid-cols-2" style={{ borderRadius: 0, border: 'none' }}>
-        {facts.map(([label, value]) => (
-          <div key={label} className="px-4 py-3">
-            <span className="kicker" style={{ fontSize: 9, color: 'var(--text-soft)' }}>{label}</span>
-            <p className="mono mt-1 text-sm text-[var(--text)]">{value}</p>
+      <div className="border-b border-[var(--border)] px-5 py-4">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <span className="kicker">Company snapshot</span>
+            <p className="mt-1 text-base font-semibold text-[var(--text)]">{displaySnapshot.name}</p>
           </div>
-        ))}
+          {displaySnapshot.website && (
+            <a
+              href={displaySnapshot.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mono shrink-0 rounded-full border border-[var(--border)] px-3 py-1.5 text-[10px] uppercase tracking-[0.16em] text-[var(--accent)] transition-colors hover:border-[var(--accent)]"
+            >
+              Site ↗
+            </a>
+          )}
+        </div>
+
+        <div className="mt-4 rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-4">
+          <p className="text-sm leading-relaxed text-[var(--text)]">{displaySnapshot.summary}</p>
+        </div>
       </div>
-      {snapshot.recentMilestone && (
-        <div className="border-t border-[var(--border)] px-4 py-3" style={{ borderLeft: '2px solid var(--accent-amber)' }}>
-          <span className="kicker" style={{ color: 'var(--accent-amber)' }}>Recent milestone</span>
-          <p className="mt-2 text-sm leading-relaxed text-[var(--text)]">{snapshot.recentMilestone}</p>
+
+      {facts.length > 0 && (
+        <div className="grid gap-px bg-[var(--border)] sm:grid-cols-2 xl:grid-cols-3">
+          {facts.map(([label, value]) => (
+            <SnapshotFact key={label} label={label} value={value} />
+          ))}
+        </div>
+      )}
+
+      {(displaySnapshot.recentMilestone || displaySnapshot.knownUnknowns.length > 0) && (
+        <div className="space-y-px bg-[var(--border)]">
+          {displaySnapshot.recentMilestone && (
+            <div className="bg-[var(--bg-elevated)] px-5 py-4">
+              <div className="flex items-start gap-3">
+                <span className="mt-0.5 h-8 w-1 shrink-0 rounded-full bg-[var(--accent-amber)]" />
+                <div>
+                  <p className="kicker text-[var(--accent-amber)]">Recent milestone</p>
+                  <p className="mt-2 text-sm leading-relaxed text-[var(--text)]">{displaySnapshot.recentMilestone}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {displaySnapshot.knownUnknowns.length > 0 && (
+            <div className="bg-[var(--bg-elevated)] px-5 py-4">
+              <div className="flex items-start gap-3">
+                <span className="mt-0.5 h-8 w-1 shrink-0 rounded-full bg-[var(--accent-violet)]" />
+                <div>
+                  <p className="kicker text-[var(--accent-violet)]">Known unknowns</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {displaySnapshot.knownUnknowns.map((item) => (
+                      <span
+                        key={item}
+                        className="rounded-full border border-[var(--accent-violet)]/35 bg-[color-mix(in_oklch,var(--accent-violet)_12%,transparent)] px-3 py-1.5 text-xs text-[var(--text-muted)]"
+                      >
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -445,56 +516,48 @@ export function VisualTimeline({
       </div>
 
       <div className="mt-5 hidden md:block">
-        <div className="relative">
-          <div className="absolute left-0 right-0 top-[4.35rem] h-px bg-[var(--border)]" />
-          <div
-            className="grid gap-3"
-            style={{ gridTemplateColumns: `repeat(${events.length}, minmax(0, 1fr))` }}
-          >
+        <div className="overflow-x-auto pb-2">
+          <div className="flex min-w-max gap-4 pr-2">
             {events.map((event, index) => {
               const Icon = getTimelineIcon(event.type)
               const tone = getTimelineTone(event.impact)
 
               return (
-                <div key={`${event.date}-${index}`} className="group relative min-w-0 px-2">
-                  <div className="min-h-[4rem] text-center">
-                    <p className="mono text-[10px] uppercase tracking-[0.16em] text-[var(--text-soft)]">{event.date}</p>
-                    <div className="mt-2 inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)]">
-                      <Icon className="h-4 w-4" style={{ color: tone }} />
+                <article
+                  key={`${event.date}-${index}`}
+                  className="flex w-[280px] shrink-0 flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)]"
+                >
+                  <div className="border-b border-[var(--border)] px-4 py-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="mono text-[10px] uppercase tracking-[0.16em] text-[var(--text-soft)]">{event.date}</p>
+                        <div className="mt-2 flex items-center gap-2">
+                          <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-elevated)]">
+                            <Icon className="h-4 w-4" style={{ color: tone }} />
+                          </span>
+                          <span
+                            className="rounded-full border px-2.5 py-1 text-[10px] uppercase tracking-[0.16em]"
+                            style={{
+                              color: tone,
+                              borderColor: `color-mix(in oklch, ${tone} 35%, var(--border))`,
+                              background: getToneBackground(tone),
+                            }}
+                          >
+                            {event.type}
+                          </span>
+                        </div>
+                      </div>
+                      <span className="mt-1 h-3 w-3 shrink-0 rounded-full" style={{ background: tone }} />
                     </div>
                   </div>
 
-                  <div className="relative mt-4 flex justify-center">
-                    <button
-                      type="button"
-                      className="relative z-10 flex h-4 w-4 items-center justify-center rounded-full border-2 border-[var(--bg-elevated)]"
-                      style={{ background: tone }}
-                      aria-label={`View detail for ${event.text}`}
-                    >
-                      <span className="sr-only">Open event detail</span>
-                    </button>
+                  <div className="flex flex-1 flex-col px-4 py-4">
+                    <p className="text-sm leading-relaxed text-[var(--text)]">{event.text}</p>
+                    <div className="mt-auto pt-4">
+                      <SourceChipRow sourceIds={event.sourceIds} onSourceClick={onSourceClick} />
+                    </div>
                   </div>
-
-                  <div className="mt-5 min-h-[3.5rem] text-center">
-                    <p
-                      className="mx-auto max-w-[11rem] text-sm leading-5 text-[var(--text)]"
-                      style={{
-                        display: '-webkit-box',
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: 'vertical',
-                        overflow: 'hidden',
-                      }}
-                    >
-                      {event.text}
-                    </p>
-                  </div>
-
-                  <div className="pointer-events-none absolute left-1/2 top-0 z-20 hidden w-64 -translate-x-1/2 -translate-y-[calc(100%+0.5rem)] rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-3 shadow-[var(--shadow)] group-hover:block group-focus-within:block">
-                    <p className="mono text-[10px] uppercase tracking-[0.16em]" style={{ color: tone }}>{event.type}</p>
-                    <p className="mt-2 text-sm leading-relaxed text-[var(--text)]">{event.text}</p>
-                    <SourceChipRow sourceIds={event.sourceIds} onSourceClick={onSourceClick} />
-                  </div>
-                </div>
+                </article>
               )
             })}
           </div>
@@ -575,7 +638,7 @@ export function CompetitorMatrix({
         Compare who matters, how directly they overlap, and what edge they hold in the account.
       </p>
 
-      <div className="mt-5 hidden md:grid md:grid-cols-[minmax(0,1.3fr)_0.8fr_0.8fr_minmax(0,1fr)] md:gap-3">
+      <div className="mt-5 hidden lg:grid lg:grid-cols-[minmax(0,1.25fr)_140px_140px_minmax(0,1fr)] lg:gap-3">
         <span className="kicker">Competitor</span>
         <span className="kicker">Threat</span>
         <span className="kicker">Overlap</span>
@@ -585,7 +648,7 @@ export function CompetitorMatrix({
       <div className="mt-3 space-y-3">
         {rows.map((row) => (
           <div key={row.name} className="rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-4">
-            <div className="grid gap-4 md:grid-cols-[minmax(0,1.3fr)_0.8fr_0.8fr_minmax(0,1fr)] md:items-center">
+            <div className="grid gap-4 lg:grid-cols-[minmax(0,1.25fr)_140px_140px_minmax(0,1fr)] lg:items-stretch">
               <div className="min-w-0">
                 <div className="flex items-center gap-3">
                   <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)]">
@@ -606,17 +669,23 @@ export function CompetitorMatrix({
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
-                <HarveyBall value={row.threatLevel} tone="var(--accent-coral)" />
-                <span className="mono text-[11px] uppercase tracking-[0.14em]">{row.threatLevel}/4</span>
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-3">
+                <p className="kicker">Threat</p>
+                <div className="mt-3 flex items-center gap-2 text-sm text-[var(--text-muted)]">
+                  <HarveyBall value={row.threatLevel} tone="var(--accent-coral)" />
+                  <span className="mono text-[11px] uppercase tracking-[0.14em]">{row.threatLevel}/4</span>
+                </div>
               </div>
 
-              <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
-                <HarveyBall value={row.marketOverlap} tone="var(--accent-amber)" />
-                <span className="mono text-[11px] uppercase tracking-[0.14em]">{row.marketOverlap}/4</span>
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-3">
+                <p className="kicker">Overlap</p>
+                <div className="mt-3 flex items-center gap-2 text-sm text-[var(--text-muted)]">
+                  <HarveyBall value={row.marketOverlap} tone="var(--accent-amber)" />
+                  <span className="mono text-[11px] uppercase tracking-[0.14em]">{row.marketOverlap}/4</span>
+                </div>
               </div>
 
-              <div>
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-3">
                 <span className="inline-flex rounded-full border border-[var(--border)] px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-[var(--accent-teal)]" style={{ background: getToneBackground('var(--accent-teal)') }}>
                   Advantage
                 </span>
@@ -765,13 +834,21 @@ export function RiskRadar({
             if (!metric) return null
 
             return (
-              <div key={category} className="rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3">
+              <div key={category} className="flex min-h-[168px] h-full flex-col rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-4">
                 <div className="flex items-center justify-between gap-3">
                   <p className="kicker">{RADAR_CATEGORY_LABELS[category]}</p>
                   <span className="mono text-[11px] uppercase tracking-[0.14em] text-[var(--accent-coral)]">{metric.severity}/5</span>
                 </div>
-                <p className="mt-2 text-sm leading-relaxed text-[var(--text)]">{metric.details}</p>
-                <SourceChipRow sourceIds={metric.sourceIds} onSourceClick={onSourceClick} />
+                <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[var(--surface-strong)]">
+                  <div
+                    className="h-full rounded-full bg-[var(--accent-coral)]"
+                    style={{ width: `${Math.max(0, Math.min(5, metric.severity)) * 20}%` }}
+                  />
+                </div>
+                <p className="mt-3 flex-1 text-sm leading-relaxed text-[var(--text)]">{metric.details}</p>
+                <div className="pt-3">
+                  <SourceChipRow sourceIds={metric.sourceIds} onSourceClick={onSourceClick} />
+                </div>
               </div>
             )
           })}

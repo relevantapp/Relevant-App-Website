@@ -4,12 +4,30 @@ import {
   MEETING_PREP_RADAR_CATEGORIES,
   MEETING_PREP_TIMELINE_EVENT_TYPES,
   MEETING_PREP_TIMELINE_IMPACTS,
-  type CompanySnapshot,
   type AttendeeProfile,
+  type MeetingPrepSnapshot,
   type NormalizedEvidence,
   type UserResearchContext,
 } from '../contracts'
 import { RELEVANT_RESEARCH_STANDARD, formatUserContext } from './common'
+
+function formatSnapshotForPrompt(snapshot: MeetingPrepSnapshot): string {
+  const lines = [
+    `- Name: ${snapshot.name}`,
+    `- Summary: ${snapshot.summary}`,
+    snapshot.whatTheyDo ? `- What they do: ${snapshot.whatTheyDo}` : null,
+    snapshot.industry ? `- Industry: ${snapshot.industry}` : null,
+    snapshot.headquarters ? `- Headquarters: ${snapshot.headquarters}` : null,
+    snapshot.employeeRange ? `- Employee range: ${snapshot.employeeRange}` : null,
+    snapshot.funding ? `- Funding: ${snapshot.funding}` : null,
+    snapshot.ceo ? `- CEO: ${snapshot.ceo}` : null,
+    snapshot.website ? `- Website: ${snapshot.website}` : null,
+    snapshot.recentMilestone ? `- Recent milestone: ${snapshot.recentMilestone}` : null,
+    snapshot.knownUnknowns.length ? `- Known unknowns: ${snapshot.knownUnknowns.join('; ')}` : null,
+  ].filter(Boolean)
+
+  return lines.join('\n')
+}
 
 export const MEETING_PREP_SYSTEM_PROMPT = `You are a meeting intelligence analyst for a professional preparing for a business meeting.
 
@@ -76,7 +94,7 @@ export function buildMeetingPrepPrompt(input: {
   painPoints?: string[]
   steering?: string
   userContext?: UserResearchContext | null
-  snapshot: CompanySnapshot | null
+  snapshot: MeetingPrepSnapshot | null
   evidence: NormalizedEvidence[]
   attendeeProfiles: AttendeeProfile[]
 }): string {
@@ -99,7 +117,7 @@ export function buildMeetingPrepPrompt(input: {
   parts.push(`\n## User Profile Context\n${formatUserContext(input.userContext)}`)
 
   if (input.snapshot) {
-    parts.push(`\n## Company Snapshot\n${JSON.stringify(input.snapshot, null, 2)}`)
+    parts.push(`\n## Company Snapshot\n${formatSnapshotForPrompt(input.snapshot)}`)
   }
 
   if (input.evidence.length) {

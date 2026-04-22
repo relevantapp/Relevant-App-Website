@@ -27,4 +27,21 @@ export type {
   CompetitiveAnalysisRequest,
   BusinessCaseRequest,
   MarketResearchRequest,
+  ResearchDepth,
+  ResearchIntentPacket,
+  UserLens,
+  PriorMemorySummary,
+  ResearchPlanV2,
+  ResearchLane,
+  SourceRole,
+  EvidenceItem,
+  EvidencePack,
 } from './contracts'
+
+export { buildResearchIntentPacket } from './context/intent-packet'
+export { buildUserLens } from './context/user-lens'
+export { planLanes } from './planner/plan'
+export { buildFallbackPlanV2 } from './planner/fallbacks'
+export { runRetrieval, scoreCoverage } from './retrieval/controller'
+export { buildEvidencePack } from './evidence/pack'
+export { checkBriefCitations } from './verifier/citation-check'

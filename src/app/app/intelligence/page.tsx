@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useCallback, useEffect, useRef } from 'react'
+import { useState, useCallback, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
 import { Loader2, Briefcase, AlertCircle, ArrowLeft } from 'lucide-react'
 import ResearchTypeSelector from './ResearchTypeSelector'
@@ -15,6 +16,7 @@ import BusinessCaseResults from './results/BusinessCaseResults'
 import MarketResearchResults from './results/MarketResearchResults'
 import FollowUpChat from './results/shared/FollowUpChat'
 import ActivityRail from './ActivityRail'
+import HistoryButton from './HistoryButton'
 import { useIntelligenceStream } from '@/hooks/useIntelligenceStream'
 import { MODEL_STORAGE_KEY, normalizeModelPreference } from '@/lib/intelligence/models'
 import type {
@@ -22,6 +24,7 @@ import type {
   CompetitiveAnalysisBrief,
   BusinessCaseBrief,
   MarketResearchBrief,
+  IntelligenceBrief,
 } from '@/lib/intelligence/contracts'
 import type {
   ResearchType,
@@ -48,36 +51,75 @@ const INITIAL_FORM_STATES: FormStates = {
 
 export default function IntelligencePage() {
   const { isAuthenticated, isLoading: authLoading } = useAuth()
+  const router = useRouter()
+  const searchParams = useSearchParams()
   const [selectedType, setSelectedType] = useState<ResearchType | null>(null)
   const [formStates, setFormStates] = useState<FormStates>({ ...INITIAL_FORM_STATES })
   const [pendingInput, setPendingInput] = useState<IntelligenceInput | null>(null)
   const [lastRequestPayload, setLastRequestPayload] = useState<IntelligenceInput | null>(null)
   const { state: streamState, generate, abort, reset } = useIntelligenceStream()
   const [savedBriefId, setSavedBriefId] = useState<string | null>(null)
-  const savingRef = useRef(false)
+  const [loadedBrief, setLoadedBrief] = useState<IntelligenceBrief | null>(null)
+  const [loadingSavedBrief, setLoadingSavedBrief] = useState(false)
+  const [savedBriefError, setSavedBriefError] = useState<string | null>(null)
 
-  const brief = streamState.brief
-  const loading = streamState.isStreaming
-  const error = streamState.error
+  const brief = loadedBrief ?? streamState.brief
+  const loading = streamState.isStreaming || loadingSavedBrief
+  const error = streamState.error ?? savedBriefError
+  const briefParam = searchParams.get('brief')
 
-  // Auto-save brief when ready
   useEffect(() => {
-    if (!brief || savingRef.current || savedBriefId) return
-    savingRef.current = true
+    if (streamState.brief?.id) setSavedBriefId(streamState.brief.id)
+  }, [streamState.brief])
+
+  useEffect(() => {
+    if (!streamState.brief?.id || briefParam === streamState.brief.id) return
+
+    const nextParams = new URLSearchParams(searchParams.toString())
+    nextParams.set('brief', streamState.brief.id)
+    router.replace(`/app/intelligence?${nextParams.toString()}`, { scroll: false })
+  }, [briefParam, router, searchParams, streamState.brief?.id])
+
+  useEffect(() => {
+    if (!briefParam || authLoading || !isAuthenticated) return
+
+    let cancelled = false
+    setLoadingSavedBrief(true)
+    setSavedBriefError(null)
+    reset()
+
     import('@/lib/supabase').then(({ getValidAccessToken }) =>
       getValidAccessToken(180).then((token) =>
         fetch('/api/intelligence/briefs', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ action: 'save', researchType: brief.researchType, requestPayload: lastRequestPayload ?? {}, brief }),
+          body: JSON.stringify({ action: 'get', briefId: briefParam }),
         })
-          .then((r) => r.json())
-          .then((d) => { if (d.id) setSavedBriefId(d.id) })
-          .catch(() => {})
-          .finally(() => { savingRef.current = false }),
+          .then(async (response) => {
+            const payload = await response.json().catch(() => ({}))
+            if (!response.ok) throw new Error(payload.error || 'Brief not found')
+            return payload.brief
+          })
+          .then((saved) => {
+            if (cancelled) return
+            const synthesis = saved?.synthesis as IntelligenceBrief | undefined
+            if (!synthesis) throw new Error('Saved brief is missing content')
+            setLoadedBrief({ ...synthesis, id: saved.id })
+            setSavedBriefId(saved.id)
+          })
+          .catch((err) => {
+            if (!cancelled) setSavedBriefError(err instanceof Error ? err.message : 'Brief not found')
+          })
+          .finally(() => {
+            if (!cancelled) setLoadingSavedBrief(false)
+          }),
       ),
     )
-  }, [brief, lastRequestPayload, savedBriefId])
+
+    return () => {
+      cancelled = true
+    }
+  }, [briefParam, authLoading, isAuthenticated, reset])
 
   const handleSubmit = useCallback((input: IntelligenceInput) => {
     setPendingInput(input)
@@ -86,6 +128,8 @@ export default function IntelligencePage() {
   const handleConfirm = useCallback(async () => {
     if (!pendingInput) return
     const input = pendingInput
+    setLoadedBrief(null)
+    setSavedBriefId(null)
     setLastRequestPayload(input)
     setPendingInput(null)
 
@@ -165,13 +209,22 @@ export default function IntelligencePage() {
   const handleNewSearch = useCallback(() => {
     reset()
     setSavedBriefId(null)
+    setLoadedBrief(null)
+    setSavedBriefError(null)
     setPendingInput(null)
     setLastRequestPayload(null)
-  }, [reset])
+    if (briefParam) {
+      const nextParams = new URLSearchParams(searchParams.toString())
+      nextParams.delete('brief')
+      const nextQuery = nextParams.toString()
+      router.replace(nextQuery ? `/app/intelligence?${nextQuery}` : '/app/intelligence', { scroll: false })
+    }
+  }, [briefParam, reset, router, searchParams])
 
   const handleBack = useCallback(() => {
     setSelectedType(null)
     setPendingInput(null)
+    setLoadedBrief(null)
     reset()
   }, [reset])
 
@@ -231,6 +284,10 @@ export default function IntelligencePage() {
   return (
     <div data-intel="v4" className="intel-shell">
       <div className="intel-stage min-h-[60vh]">
+        <div className="mb-5 flex justify-end sm:mb-6">
+          <HistoryButton />
+        </div>
+
         {/* Error */}
         {error && (
           <div className="mx-auto mb-6 max-w-3xl rounded-xl border border-[var(--accent-coral)]/30 bg-[var(--accent-coral)]/10 p-4">

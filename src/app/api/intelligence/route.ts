@@ -13,6 +13,11 @@ import type { UserResearchContext } from '@/lib/intelligence/contracts'
 import { createSSEEmitter } from '@/lib/intelligence/sse-emitter'
 import type { PipelineContext } from '@/lib/intelligence/pipeline'
 import { normalizeModelPreference, type ModelPreference } from '@/lib/intelligence/models'
+import { saveBrief } from '@/lib/intelligence/db'
+import type { IntelligenceBrief, ResearchType } from '@/lib/intelligence/contracts'
+import { createRun, patchRunAsync } from '@/lib/intelligence/runs/store'
+import { intelligenceFlags } from '@/lib/intelligence/feature-flags'
+import { repairUnsupportedCitations } from '@/lib/intelligence/verifier/repair'
 
 export const maxDuration = 60
 
@@ -54,6 +59,18 @@ function nullableString(value: unknown, maxLen: number): string | null {
   return sanitized || null
 }
 
+function coerceResearchType(value: string): ResearchType {
+  if (
+    value === 'meeting_prep' ||
+    value === 'competitive_analysis' ||
+    value === 'business_case' ||
+    value === 'market_research'
+  ) {
+    return value
+  }
+  return 'meeting_prep'
+}
+
 async function loadUserResearchContext(
   supabase: any,
   user: { id: string; user_metadata?: Record<string, unknown> | null },
@@ -88,6 +105,70 @@ async function loadUserResearchContext(
   }
 
   return Object.values(context).some(Boolean) ? context : null
+}
+
+async function persistGeneratedBrief(
+  supabase: any,
+  userId: string,
+  researchType: string,
+  requestPayload: Record<string, unknown>,
+  brief: IntelligenceBrief,
+  runId?: string,
+): Promise<IntelligenceBrief> {
+  const verifier = intelligenceFlags.verifier() ? repairUnsupportedCitations(brief) : null
+  const briefToSave = verifier
+    ? {
+      ...verifier.brief,
+      status: {
+        ...verifier.brief.status,
+        degraded: verifier.brief.status.degraded || !verifier.verifierResult.ok,
+        reasons: verifier.verifierResult.ok
+          ? verifier.brief.status.reasons
+          : Array.from(new Set([...verifier.brief.status.reasons, 'Citation verification found unsupported citations'])),
+        verifierMs: verifier.brief.status.verifierMs,
+      },
+    } as IntelligenceBrief
+    : brief
+
+  const result = await saveBrief(supabase, userId, researchType, requestPayload, briefToSave)
+  if (!result.error && result.id) {
+    if (runId) {
+      patchRunAsync({
+        supabase,
+        runId,
+        fields: {
+          brief_id: result.id,
+          status: briefToSave.status.degraded ? 'degraded' : 'ok',
+          degraded_reasons: briefToSave.status.reasons,
+          model: briefToSave.status.synthesisModel,
+          timings: briefToSave.status,
+          verifier_result: verifier?.verifierResult ?? null,
+          claim_map: verifier?.verifierResult.claimMap ?? null,
+        },
+      })
+    }
+    return { ...briefToSave, id: result.id } as IntelligenceBrief
+  }
+
+  console.error('[api/intelligence] Server-side brief save failed:', result.error)
+  if (runId) {
+    patchRunAsync({
+      supabase,
+      runId,
+      fields: {
+        status: 'degraded',
+        degraded_reasons: ['Brief save failed'],
+      },
+    })
+  }
+  return {
+    ...brief,
+    status: {
+      ...briefToSave.status,
+      degraded: true,
+      reasons: Array.from(new Set([...briefToSave.status.reasons, 'Brief save failed'])),
+    },
+  } as IntelligenceBrief
 }
 
 export async function POST(request: NextRequest) {
@@ -131,31 +212,46 @@ export async function POST(request: NextRequest) {
   }
 
   const researchType = sanitizeString(body.researchType, 30) || 'meeting_prep'
+  const effectiveResearchType = coerceResearchType(researchType)
   const rawModel = sanitizeString(body.preferredModel, 160)
   const preferredModel = normalizeModelPreference(rawModel)
   const userContext = await loadUserResearchContext(supabase, user)
+  const runId = await createRun({
+    supabase,
+    userId: user.id,
+    researchType: effectiveResearchType,
+    depth: 'standard',
+  })
 
   // ── Check if client wants SSE streaming ──
   const wantsStream = request.headers.get('accept')?.includes('text/event-stream')
 
   if (wantsStream) {
-    return handleStreaming(body, researchType, preferredModel, userContext)
+    return handleStreaming(body, effectiveResearchType, preferredModel, userContext, supabase, user.id, runId)
   }
 
   // ── Branch by research type (JSON fallback) ──
   try {
-    if (researchType === 'competitive_analysis') {
-      return await handleCompetitiveAnalysis(body, userContext, preferredModel)
+    if (effectiveResearchType === 'competitive_analysis') {
+      return await handleCompetitiveAnalysis(body, userContext, preferredModel, supabase, user.id, runId)
     }
-    if (researchType === 'business_case') {
-      return await handleBusinessCase(body, userContext, preferredModel)
+    if (effectiveResearchType === 'business_case') {
+      return await handleBusinessCase(body, userContext, preferredModel, supabase, user.id, runId)
     }
-    if (researchType === 'market_research') {
-      return await handleMarketResearch(body, userContext, preferredModel)
+    if (effectiveResearchType === 'market_research') {
+      return await handleMarketResearch(body, userContext, preferredModel, supabase, user.id, runId)
     }
-    return await handleMeetingPrep(body, userContext, preferredModel)
+    return await handleMeetingPrep(body, userContext, preferredModel, supabase, user.id, runId)
   } catch (err) {
-    console.error(`[api/intelligence] ${researchType} generation failed:`, err)
+    patchRunAsync({
+      supabase,
+      runId,
+      fields: {
+        status: 'failed',
+        degraded_reasons: [err instanceof Error ? err.message : String(err)],
+      },
+    })
+    console.error(`[api/intelligence] ${effectiveResearchType} generation failed:`, err)
     return NextResponse.json(
       { error: 'Failed to generate intelligence brief. Please try again.' },
       { status: 500 }
@@ -169,6 +265,9 @@ async function handleMeetingPrep(
   body: Record<string, unknown>,
   userContext: UserResearchContext | null,
   preferredModel: ModelPreference,
+  supabase: any,
+  userId: string,
+  runId: string,
 ) {
   const accountName = sanitizeString(body.accountName, 200)
   if (!accountName) {
@@ -202,7 +301,7 @@ async function handleMeetingPrep(
     return NextResponse.json({ error: 'Invalid website URL' }, { status: 400 })
   }
 
-  const brief = await generateMeetingPrepBrief({
+  const requestPayload = {
     accountName,
     meetingType,
     goal,
@@ -217,8 +316,11 @@ async function handleMeetingPrep(
     steering,
     userContext,
     lookbackDays,
-  }, { preferredModel })
-  return NextResponse.json(brief)
+  }
+
+  const brief = await generateMeetingPrepBrief(requestPayload, { preferredModel, supabase, userId, runId })
+  const savedBrief = await persistGeneratedBrief(supabase, userId, 'meeting_prep', requestPayload, brief, runId)
+  return NextResponse.json(savedBrief)
 }
 
 /* ── Competitive Analysis ────────────────────────────────────── */
@@ -227,6 +329,9 @@ async function handleCompetitiveAnalysis(
   body: Record<string, unknown>,
   userContext: UserResearchContext | null,
   preferredModel: ModelPreference,
+  supabase: any,
+  userId: string,
+  runId: string,
 ) {
   const competitors = sanitizeStringArray(body.competitors, 200, 3)
   if (competitors.length === 0) {
@@ -242,7 +347,7 @@ async function handleCompetitiveAnalysis(
   const useCasePreset = sanitizeString(body.useCasePreset, 100) || undefined
   const steering = sanitizeString(body.steering, 1500) || undefined
 
-  const brief = await generateCompetitiveAnalysisBrief({
+  const requestPayload = {
     competitors,
     yourCompany,
     focusArea,
@@ -253,8 +358,11 @@ async function handleCompetitiveAnalysis(
     useCasePreset,
     steering,
     userContext,
-  }, { preferredModel })
-  return NextResponse.json(brief)
+  }
+
+  const brief = await generateCompetitiveAnalysisBrief(requestPayload, { preferredModel, supabase, userId, runId })
+  const savedBrief = await persistGeneratedBrief(supabase, userId, 'competitive_analysis', requestPayload, brief, runId)
+  return NextResponse.json(savedBrief)
 }
 
 /* ── Business Case ───────────────────────────────────────────── */
@@ -263,6 +371,9 @@ async function handleBusinessCase(
   body: Record<string, unknown>,
   userContext: UserResearchContext | null,
   preferredModel: ModelPreference,
+  supabase: any,
+  userId: string,
+  runId: string,
 ) {
   const initiativeName = sanitizeString(body.initiativeName, 200)
   if (!initiativeName) {
@@ -285,7 +396,7 @@ async function handleBusinessCase(
   const roiFrame = sanitizeStringArray(body.roiFrame, 100, 6)
   const steering = sanitizeString(body.steering, 1500) || undefined
 
-  const brief = await generateBusinessCaseBrief({
+  const requestPayload = {
     initiativeName,
     hypothesis,
     targetMarket,
@@ -299,8 +410,11 @@ async function handleBusinessCase(
     roiFrame: roiFrame.length ? roiFrame : undefined,
     steering,
     userContext,
-  }, { preferredModel })
-  return NextResponse.json(brief)
+  }
+
+  const brief = await generateBusinessCaseBrief(requestPayload, { preferredModel, supabase, userId, runId })
+  const savedBrief = await persistGeneratedBrief(supabase, userId, 'business_case', requestPayload, brief, runId)
+  return NextResponse.json(savedBrief)
 }
 
 /* ── Market Research ─────────────────────────────────────────── */
@@ -309,6 +423,9 @@ async function handleMarketResearch(
   body: Record<string, unknown>,
   userContext: UserResearchContext | null,
   preferredModel: ModelPreference,
+  supabase: any,
+  userId: string,
+  runId: string,
 ) {
   const marketOrTrend = sanitizeString(body.marketOrTrend, 300)
   if (!marketOrTrend) {
@@ -326,7 +443,7 @@ async function handleMarketResearch(
   const depth = sanitizeString(body.depth, 50) || undefined
   const steering = sanitizeString(body.steering, 1500) || undefined
 
-  const brief = await generateMarketResearchBrief({
+  const requestPayload = {
     marketOrTrend,
     scope,
     keyQuestions,
@@ -339,8 +456,11 @@ async function handleMarketResearch(
     depth,
     steering,
     userContext,
-  }, { preferredModel })
-  return NextResponse.json(brief)
+  }
+
+  const brief = await generateMarketResearchBrief(requestPayload, { preferredModel, supabase, userId, runId })
+  const savedBrief = await persistGeneratedBrief(supabase, userId, 'market_research', requestPayload, brief, runId)
+  return NextResponse.json(savedBrief)
 }
 
 /* ── SSE Streaming Handler ───────────────────────────────────── */
@@ -350,14 +470,18 @@ function handleStreaming(
   researchType: string,
   preferredModel: ModelPreference,
   userContext: UserResearchContext | null,
+  supabase: any,
+  userId: string,
+  runId: string,
 ): Response {
   const emitter = createSSEEmitter()
-  const ctx: PipelineContext = { emitter, signal: emitter.signal, preferredModel }
+  const ctx: PipelineContext = { emitter, signal: emitter.signal, preferredModel, supabase, userId, runId }
 
   // Run generation in background, stream events
   const generateAsync = async () => {
     try {
       let brief: unknown
+      let requestPayload: any = {}
 
       if (researchType === 'competitive_analysis') {
         const competitors = sanitizeStringArray(body.competitors, 200, 3)
@@ -366,7 +490,7 @@ function handleStreaming(
           emitter.close()
           return
         }
-        brief = await generateCompetitiveAnalysisBrief({
+        requestPayload = {
           competitors,
           yourCompany: sanitizeString(body.yourCompany, 200) || undefined,
           focusArea: sanitizeString(body.focusArea, 50) || 'overall',
@@ -377,7 +501,8 @@ function handleStreaming(
           useCasePreset: sanitizeString(body.useCasePreset, 100) || undefined,
           steering: sanitizeString(body.steering, 1500) || undefined,
           userContext,
-        }, ctx)
+        }
+        brief = await generateCompetitiveAnalysisBrief(requestPayload, ctx)
       } else if (researchType === 'business_case') {
         const initiativeName = sanitizeString(body.initiativeName, 200)
         const hypothesis = sanitizeString(body.hypothesis, 500)
@@ -386,7 +511,7 @@ function handleStreaming(
           emitter.close()
           return
         }
-        brief = await generateBusinessCaseBrief({
+        requestPayload = {
           initiativeName,
           hypothesis,
           targetMarket: sanitizeString(body.targetMarket, 200) || undefined,
@@ -400,7 +525,8 @@ function handleStreaming(
           roiFrame: sanitizeStringArray(body.roiFrame, 100, 6).length ? sanitizeStringArray(body.roiFrame, 100, 6) : undefined,
           steering: sanitizeString(body.steering, 1500) || undefined,
           userContext,
-        }, ctx)
+        }
+        brief = await generateBusinessCaseBrief(requestPayload, ctx)
       } else if (researchType === 'market_research') {
         const marketOrTrend = sanitizeString(body.marketOrTrend, 300)
         if (!marketOrTrend) {
@@ -408,7 +534,7 @@ function handleStreaming(
           emitter.close()
           return
         }
-        brief = await generateMarketResearchBrief({
+        requestPayload = {
           marketOrTrend,
           scope: sanitizeString(body.scope, 50) || 'global',
           keyQuestions: sanitizeString(body.keyQuestions, 1000) || undefined,
@@ -421,7 +547,8 @@ function handleStreaming(
           depth: sanitizeString(body.depth, 50) || undefined,
           steering: sanitizeString(body.steering, 1500) || undefined,
           userContext,
-        }, ctx)
+        }
+        brief = await generateMarketResearchBrief(requestPayload, ctx)
       } else {
         const accountName = sanitizeString(body.accountName, 200)
         const meetingType = sanitizeString(body.meetingType, 20) as MeetingType
@@ -432,7 +559,7 @@ function handleStreaming(
           return
         }
         const website = sanitizeString(body.website, 500)
-        brief = await generateMeetingPrepBrief({
+        requestPayload = {
           accountName,
           meetingType: VALID_MEETING_TYPES.has(meetingType) ? meetingType : 'general',
           goal,
@@ -447,12 +574,29 @@ function handleStreaming(
           steering: sanitizeString(body.steering, 1500) || undefined,
           userContext,
           lookbackDays: typeof body.lookbackDays === 'number' ? Math.min(Math.max(body.lookbackDays, 7), 90) : 30,
-        }, ctx)
+        }
+        brief = await generateMeetingPrepBrief(requestPayload, ctx)
       }
 
       const typedBrief = brief as import('@/lib/intelligence/contracts').IntelligenceBrief
-      emitter.send({ type: 'brief_ready', brief: typedBrief })
+      const savedBrief = await persistGeneratedBrief(
+        supabase,
+        userId,
+        typedBrief.researchType,
+        requestPayload,
+        typedBrief,
+        runId,
+      )
+      emitter.send({ type: 'brief_ready', brief: savedBrief })
     } catch (err) {
+      patchRunAsync({
+        supabase,
+        runId,
+        fields: {
+          status: 'failed',
+          degraded_reasons: [err instanceof Error ? err.message : String(err)],
+        },
+      })
       console.error(`[api/intelligence] SSE ${researchType} failed:`, err)
       emitter.send({ type: 'stream_error', error: 'Failed to generate brief. Please try again.' })
     } finally {

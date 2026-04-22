@@ -20,21 +20,33 @@ export const BriefSourceSchema = z.object({
   title: z.string(),
   domain: z.string(),
   publishedAt: z.string().nullable(),
-  provider: z.enum(['exa', 'tavily', 'internal']),
+  provider: z.enum(['exa', 'tavily', 'internal', 'perplexity', 'proxycurl', 'reddit', 'youtube']),
   snippet: z.string().nullable(),
   imageUrl: z.string().nullable().optional(),
   faviconUrl: z.string().nullable().optional(),
+  sourceRole: z.string().optional(),
+  usedInAnswer: z.boolean().optional(),
 })
 export type BriefSource = z.infer<typeof BriefSourceSchema>
 
 export const BriefStatusSchema = z.object({
   degraded: z.boolean(),
   reasons: z.array(z.string()),
+  internalMs: z.number(),
+  plannerMs: z.number(),
+  exaMs: z.number(),
+  tavilyMs: z.number(),
+  verifierMs: z.number(),
   exaSearchMs: z.number(),
   tavilySearchMs: z.number(),
   synthesisMs: z.number(),
   totalMs: z.number(),
   sourceCount: z.number(),
+  sourceCounts: z.object({
+    found: z.number().int().min(0),
+    ranked: z.number().int().min(0),
+    used: z.number().int().min(0),
+  }).optional(),
   cached: z.boolean(),
   synthesisModel: z.string().nullable(),
 })
@@ -47,8 +59,9 @@ export const NormalizedEvidenceSchema = z.object({
   title: z.string(),
   domain: z.string(),
   publishedAt: z.string().nullable(),
-  provider: z.enum(['exa', 'tavily']),
+  provider: z.enum(['exa', 'tavily', 'internal', 'perplexity', 'proxycurl', 'reddit', 'youtube']),
   imageUrl: z.string().nullable().optional(),
+  sourceRole: z.string().optional(),
 })
 export type NormalizedEvidence = z.infer<typeof NormalizedEvidenceSchema>
 
@@ -93,6 +106,21 @@ export interface CompanySnapshot {
   ceo: string | null
   keyPeople: Array<{ name: string; title: string }> | null
   recentMilestone: string | null
+  sourceUrl: string | null
+}
+
+export interface MeetingPrepSnapshot {
+  name: string
+  summary: string
+  website: string | null
+  whatTheyDo: string | null
+  industry: string | null
+  headquarters: string | null
+  employeeRange: string | null
+  funding: string | null
+  ceo: string | null
+  recentMilestone: string | null
+  knownUnknowns: string[]
   sourceUrl: string | null
 }
 
@@ -200,7 +228,7 @@ export type MeetingPrepSynthesis = z.infer<typeof MeetingPrepSynthesisSchema>
 
 export interface MeetingPrepBrief extends BriefBase {
   researchType: 'meeting_prep'
-  snapshot: CompanySnapshot | null
+  snapshot: MeetingPrepSnapshot | null
   attendeeProfiles: AttendeeProfile[]
   momentumScore?: number
   riskLevel?: MeetingPrepRiskLevel
@@ -350,7 +378,7 @@ export type IntelligenceBrief =
 export interface SearchTask {
   type: 'snapshot' | 'news' | 'person' | 'competitor' | 'tavily_news' | 'tavily_extract'
   query: string
-  provider: 'exa' | 'tavily'
+  provider: 'exa' | 'tavily' | 'internal'
   purpose?: string
   lookbackDays?: number
   category?: 'company' | 'research paper' | 'news' | 'pdf' | 'personal site' | 'financial report' | 'people'
@@ -359,6 +387,7 @@ export interface SearchTask {
   includeImages?: boolean
   includeDomains?: string[]
   excludeDomains?: string[]
+  sourceRole?: SourceRole
   meta?: Record<string, string>
 }
 
@@ -366,6 +395,209 @@ export interface ResearchPlan {
   summary?: string
   intent?: string[]
   searches: SearchTask[]
+  v2?: ResearchPlanV2 | null
+}
+
+/* ── Intelligence V2 contracts ────────────────────────────── */
+
+export type ResearchDepth = 'fast' | 'standard' | 'deep'
+
+export type IntelligenceProvider =
+  | 'internal'
+  | 'exa'
+  | 'tavily'
+  | 'perplexity'
+  | 'proxycurl'
+  | 'reddit'
+  | 'youtube'
+
+export type SourceRole =
+  | 'internal_memory'
+  | 'primary'
+  | 'fresh_news'
+  | 'financial'
+  | 'people'
+  | 'customer_voice'
+  | 'market_data'
+  | 'counter_evidence'
+  | 'gap_fill'
+
+export interface EntityRef {
+  name: string
+  kind: 'company' | 'person' | 'market' | 'topic' | 'unknown'
+  url?: string | null
+}
+
+export interface ResearchIntentPacket {
+  runId: string
+  researchType: ResearchType
+  user: {
+    id: string
+    role: string | null
+    industry: string | null
+    company: string | null
+    country: string | null
+    seniority?: string | null
+    function?: string | null
+  }
+  decision: {
+    statedGoal: string
+    impliedDecision: string
+    timeHorizon: 'today' | 'week' | 'quarter' | 'year' | 'strategic'
+    audience: string[]
+    desiredOutput: string[]
+  }
+  entities: {
+    primary: EntityRef[]
+    competitors: EntityRef[]
+    people: EntityRef[]
+    marketTerms: string[]
+  }
+  constraints: {
+    steering: string | null
+    mustInclude: string[]
+    mustAvoid: string[]
+    geography: string[]
+  }
+  qualityTargets: {
+    minPrimarySources: number
+    minIndependentSources: number
+    minCounterEvidence: number
+    freshnessRequired: boolean
+    internalMemoryRequired: boolean
+  }
+  depth: ResearchDepth
+}
+
+export interface UserLens {
+  roleFrame: string
+  likelyConcerns: string[]
+  companyContext: string | null
+  industryFrame: string | null
+  pastMentions: Array<{
+    topic: string
+    entity: string
+    count: number
+    lastSeenAt: string
+    lastTakeaway: string
+  }>
+  recentRelevantSignals: Array<{
+    signalId: string
+    title: string
+    deltaSummary: string | null
+    sourceCount: number
+    updatedAt: string
+  }>
+}
+
+export interface PriorMemorySummary {
+  hasPriorCoverage: boolean
+  totalMentions: number
+  lastMentionedAt: string | null
+  lastKnownTakeaway: string | null
+  changedSinceThen: string[]
+  recurringThemes: string[]
+  staleAssumptions: string[]
+}
+
+export interface ResearchPlanV2 {
+  planId: string
+  intentSummary: string
+  lanes: ResearchLane[]
+  expectedSourceMix: {
+    internal: number
+    primary: number
+    freshWeb: number
+    semanticWeb: number
+    counterEvidence: number
+  }
+  stopRules: {
+    enoughEvidenceScore: number
+    maxExternalSearches: number
+    maxProviderMs: number
+  }
+}
+
+export interface ResearchLane {
+  id: string
+  purpose: string
+  providerPreference: IntelligenceProvider[]
+  sourceRole: SourceRole
+  questions: string[]
+  queryTemplates: string[]
+  freshnessDays?: number
+  required: boolean
+  budget: {
+    maxQueries: number
+    maxResults: number
+    maxContentChars: number
+  }
+}
+
+export interface EvidenceItem {
+  id: string
+  sourceId: string
+  provider: IntelligenceProvider
+  laneId: string
+  sourceRole: SourceRole
+  title: string
+  url: string | null
+  domain: string | null
+  publishedAt: string | null
+  capturedAt: string
+  excerpt: string
+  facts: string[]
+  entities: string[]
+  topicKeys: string[]
+  quality: {
+    authority: number
+    freshness: number
+    relevance: number
+    independence: number
+    primarySource: boolean
+  }
+  clusterId?: string
+  payload?: Record<string, unknown>
+}
+
+export interface EvidencePack {
+  run: {
+    runId: string
+    researchType: ResearchType
+    generatedAt: string
+  }
+  intent: ResearchIntentPacket
+  userLens: UserLens
+  priorMemory: PriorMemorySummary
+  planSummary: {
+    lanesRun: string[]
+    lanesSkipped: string[]
+    knownGaps: string[]
+  }
+  sourceLedger: Array<{
+    sourceId: string
+    role: SourceRole
+    title: string
+    domain: string | null
+    url: string | null
+    provider: IntelligenceProvider
+    qualityLabel: 'primary' | 'strong' | 'useful' | 'weak'
+  }>
+  evidence: EvidenceItem[]
+  clusters: Array<{
+    clusterId: string
+    label: string
+    whatChanged: string
+    evidenceIds: string[]
+  }>
+  contradictions: Array<{
+    issue: string
+    evidenceIds: string[]
+  }>
+  unknowns: Array<{
+    question: string
+    reasonMissing: string
+  }>
 }
 
 /* ── Request types (input from frontend) ───────────────────── */

@@ -25,16 +25,24 @@ describe('rankEvidence', () => {
     expect(result).toHaveLength(3)
   })
 
-  it('deduplicates by domain — keeps highest scored', () => {
+  it('does not hard-drop same-domain evidence when URLs differ', () => {
     const old = new Date(Date.now() - 120 * 86400000).toISOString()
     const evidence = [
-      makeEvidence({ id: 'a', domain: 'reuters.com', publishedAt: old }),
-      makeEvidence({ id: 'b', domain: 'reuters.com', publishedAt: new Date().toISOString() }),
+      makeEvidence({ id: 'a', domain: 'reuters.com', url: 'https://reuters.com/a', publishedAt: old }),
+      makeEvidence({ id: 'b', domain: 'reuters.com', url: 'https://reuters.com/b', publishedAt: new Date().toISOString() }),
+    ]
+    const result = rankEvidence(evidence, { topN: 5, queryTerms: [] })
+    expect(result).toHaveLength(2)
+    expect(result[0].id).toBe('b')
+  })
+
+  it('deduplicates exact canonical URL duplicates', () => {
+    const evidence = [
+      makeEvidence({ id: 'a', domain: 'reuters.com', url: 'https://reuters.com/a?utm_source=x' }),
+      makeEvidence({ id: 'b', domain: 'reuters.com', url: 'https://reuters.com/a' }),
     ]
     const result = rankEvidence(evidence, { topN: 5, queryTerms: [] })
     expect(result).toHaveLength(1)
-    // Recent one should win
-    expect(result[0].id).toBe('b')
   })
 
   it('ranks high-authority domains higher', () => {

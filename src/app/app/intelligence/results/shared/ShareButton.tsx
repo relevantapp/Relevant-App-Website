@@ -29,7 +29,7 @@ export default function ShareButton({ briefId }: ShareButtonProps) {
 
       if (res.ok) {
         const data = await res.json()
-        const shareUrl = `${window.location.origin}/share/intelligence/${data.slug}`
+        const shareUrl = `${window.location.origin}/intelligence/share/${data.slug}`
         await navigator.clipboard.writeText(shareUrl)
         setState('copied')
         setTimeout(() => setState('idle'), 2000)

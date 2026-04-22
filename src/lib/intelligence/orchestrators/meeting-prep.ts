@@ -11,6 +11,7 @@ import type {
   TimelineEvent,
   RadarMetric,
   CompetitorMatrixRow,
+  BriefBullet,
 } from '../contracts'
 import { runStep, generateBriefId, type PipelineContext } from '../pipeline'
 import { synthesizeWithSchema } from '../models'
@@ -25,6 +26,23 @@ import {
   deduplicateSources,
   resetSourceCounter,
 } from '../normalize'
+import {
+  buildV2PlanBridge,
+  collectV2EvidenceBridge,
+  persistV2EvidencePack,
+} from './v2-bridge'
+import {
+  buildCanonicalSourceIdMap,
+  buildMeetingPrepSnapshot,
+  canonicalizeSourceIds,
+  COMPETITOR_ADVANTAGE_MAX,
+  COMPETITOR_TAG_LIMIT,
+  deriveSourceCounts,
+  markSourcesUsedInAnswer,
+  RADAR_DETAIL_MAX,
+  sanitizeMeetingPrepText,
+  TIMELINE_EVENT_TEXT_MAX,
+} from '../meeting-prep-display'
 import {
   MEETING_PREP_RADAR_CATEGORIES,
   MeetingPrepSynthesisSchema as SynthesisSchema,
@@ -73,10 +91,6 @@ function clampInt(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, Math.round(value)))
 }
 
-function normalizeSourceIds(sourceIds: string[] | undefined): string[] {
-  return Array.from(new Set((sourceIds ?? []).map((id) => id.trim()).filter(Boolean)))
-}
-
 function getTimelineSortValue(label: string): number {
   const direct = Date.parse(label)
   if (!Number.isNaN(direct)) return direct
@@ -101,15 +115,18 @@ function getTimelineSortValue(label: string): number {
   return Number.MAX_SAFE_INTEGER
 }
 
-function normalizeTimelineEvents(events: TimelineEvent[] | undefined): TimelineEvent[] | undefined {
+function normalizeTimelineEvents(
+  events: TimelineEvent[] | undefined,
+  sourceIdMap: Map<string, string>,
+): TimelineEvent[] | undefined {
   if (!events?.length) return undefined
 
   const normalized = events
     .map((event) => ({
       ...event,
       date: event.date.trim(),
-      text: event.text.trim(),
-      sourceIds: normalizeSourceIds(event.sourceIds),
+      text: sanitizeMeetingPrepText(event.text, TIMELINE_EVENT_TEXT_MAX) ?? '',
+      sourceIds: canonicalizeSourceIds(event.sourceIds, sourceIdMap),
     }))
     .filter((event) => event.date && event.text && event.sourceIds.length)
     .sort((a, b) => getTimelineSortValue(a.date) - getTimelineSortValue(b.date))
@@ -118,20 +135,26 @@ function normalizeTimelineEvents(events: TimelineEvent[] | undefined): TimelineE
   return normalized.slice(-TIMELINE_EVENT_LIMIT)
 }
 
-function normalizeRadarMetrics(metrics: RadarMetric[] | undefined): RadarMetric[] | undefined {
+function normalizeRadarMetrics(
+  metrics: RadarMetric[] | undefined,
+  sourceIdMap: Map<string, string>,
+): RadarMetric[] | undefined {
   if (!metrics?.length) return undefined
 
   const byCategory = new Map<RadarMetric['category'], RadarMetric>()
 
   for (const metric of metrics) {
-    const sourceIds = normalizeSourceIds(metric.sourceIds)
+    const sourceIds = canonicalizeSourceIds(metric.sourceIds, sourceIdMap)
     if (!sourceIds.length) continue
     if (byCategory.has(metric.category)) continue
+
+    const details = sanitizeMeetingPrepText(metric.details, RADAR_DETAIL_MAX)
+    if (!details) continue
 
     byCategory.set(metric.category, {
       ...metric,
       severity: clampInt(metric.severity, 0, 5),
-      details: metric.details.trim(),
+      details,
       sourceIds,
     })
   }
@@ -141,7 +164,10 @@ function normalizeRadarMetrics(metrics: RadarMetric[] | undefined): RadarMetric[
   return MEETING_PREP_RADAR_CATEGORIES.map((category) => byCategory.get(category)!)
 }
 
-function normalizeCompetitorMatrix(rows: CompetitorMatrixRow[] | undefined): CompetitorMatrixRow[] | undefined {
+function normalizeCompetitorMatrix(
+  rows: CompetitorMatrixRow[] | undefined,
+  sourceIdMap: Map<string, string>,
+): CompetitorMatrixRow[] | undefined {
   if (!rows?.length) return undefined
 
   const seen = new Set<string>()
@@ -151,9 +177,9 @@ function normalizeCompetitorMatrix(rows: CompetitorMatrixRow[] | undefined): Com
       name: row.name.trim(),
       threatLevel: clampInt(row.threatLevel, 0, 4),
       marketOverlap: clampInt(row.marketOverlap, 0, 4),
-      advantage: row.advantage.trim(),
-      tags: row.tags.map((tag) => tag.trim()).filter(Boolean),
-      sourceIds: normalizeSourceIds(row.sourceIds),
+      advantage: sanitizeMeetingPrepText(row.advantage, COMPETITOR_ADVANTAGE_MAX) ?? '',
+      tags: row.tags.map((tag) => tag.trim()).filter(Boolean).slice(0, COMPETITOR_TAG_LIMIT),
+      sourceIds: canonicalizeSourceIds(row.sourceIds, sourceIdMap),
     }))
     .filter((row) => {
       if (!row.name || !row.advantage || !row.sourceIds.length) return false
@@ -165,6 +191,23 @@ function normalizeCompetitorMatrix(rows: CompetitorMatrixRow[] | undefined): Com
 
   if (!normalized.length) return undefined
   return normalized.slice(0, COMPETITOR_MATRIX_LIMIT)
+}
+
+function normalizeBulletSections(bullets: BriefBullet[] | undefined, sourceIdMap: Map<string, string>): BriefBullet[] {
+  return (bullets ?? [])
+    .map((bullet) => {
+      const text = sanitizeMeetingPrepText(bullet.text)
+      return {
+        ...bullet,
+        text: text ?? '',
+        sourceIds: canonicalizeSourceIds(bullet.sourceIds, sourceIdMap),
+      }
+    })
+    .filter((bullet) => bullet.text && bullet.sourceIds.length)
+}
+
+function collectUsedSourceIds(groups: Array<string[] | undefined>): string[] {
+  return Array.from(new Set(groups.flatMap((group) => group ?? []).filter(Boolean)))
 }
 
 export async function generateMeetingPrepBrief(
@@ -200,6 +243,7 @@ export async function generateMeetingPrepBrief(
 
   const snapshot = entityStep.data
   if (!snapshot) degradedReasons.push('Company snapshot unavailable')
+  const displaySnapshot = buildMeetingPrepSnapshot(snapshot, safeWebsite)
 
   /* ── Step 2: planSearches ───────────────────────────────── */
   const fallbackSearches: SearchTask[] = [
@@ -263,16 +307,38 @@ export async function generateMeetingPrepBrief(
     })
   }
 
-  const planStep = await runStep('meeting_prep', 'planSearches', async () => (
-    buildResearchSearchPlan('meeting_prep', request, fallbackSearches, ctx)
-  ), undefined, ctx)
+  const planStep = await runStep('meeting_prep', 'planSearches', async () => {
+    const v2Bridge = await buildV2PlanBridge({
+      researchType: 'meeting_prep',
+      request,
+      ctx,
+    })
 
-  const researchPlan = planStep.data
+    if (v2Bridge) {
+      return {
+        researchPlan: v2Bridge.researchPlan,
+        v2Bridge,
+      }
+    }
+
+    return {
+      researchPlan: await buildResearchSearchPlan('meeting_prep', request, fallbackSearches, ctx),
+      v2Bridge: null,
+    }
+  }, undefined, ctx)
+
+  const researchPlan = planStep.data?.researchPlan ?? null
+  const v2Bridge = planStep.data?.v2Bridge ?? null
 
   /* ── Step 3: gatherEvidence ──────────────────────────────── */
   const evidenceStep = await runStep('meeting_prep', 'gatherEvidence', async () => {
     const allSources: BriefSource[] = []
     const allEvidence: NormalizedEvidence[] = []
+    let v2Evidence: Awaited<ReturnType<typeof collectV2EvidenceBridge>> | null = null
+    const providerMs = {
+      exaMs: 0,
+      tavilyMs: 0,
+    }
 
     // Snapshot source
     if (snapshot?.sourceUrl) {
@@ -289,21 +355,35 @@ export async function generateMeetingPrepBrief(
         recentMilestone: snapshot.recentMilestone ?? undefined,
         raw: null,
       })
-      if (source) allSources.push(source)
-      if (evidence) allEvidence.push(evidence)
+      if (source) allSources.push({ ...source, sourceRole: 'primary' })
+      if (evidence) allEvidence.push({ ...evidence, sourceRole: 'primary' })
     }
 
-    const planned = researchPlan ? await executeSearchPlan(researchPlan) : { sources: [], evidence: [] }
-    allSources.push(...planned.sources)
-    allEvidence.push(...planned.evidence)
+    if (v2Bridge) {
+      v2Evidence = await collectV2EvidenceBridge({ bridge: v2Bridge, ctx })
+      providerMs.exaMs += v2Evidence.retrieval.timings.exaMs
+      providerMs.tavilyMs += v2Evidence.retrieval.timings.tavilyMs
+      allSources.push(...v2Evidence.sources)
+      allEvidence.push(...v2Evidence.evidence)
+    } else {
+      const planned = researchPlan ? await executeSearchPlan(researchPlan) : { sources: [], evidence: [] }
+      allSources.push(...planned.sources)
+      allEvidence.push(...planned.evidence)
+    }
 
     // Website and attendee enrichment.
-    const [siteResult, ...attendeeResults] = await Promise.allSettled([
-      safeWebsite ? extractTavilySite(safeWebsite) : Promise.resolve(null),
-      ...(request.attendees || []).slice(0, 5).map((name) =>
-        searchExaPerson(name, request.accountName)
-      ),
+    const siteStart = performance.now()
+    const sitePromise = safeWebsite ? extractTavilySite(safeWebsite) : Promise.resolve(null)
+    const attendeeStart = performance.now()
+    const attendeePromises = (request.attendees || []).slice(0, 5).map((name) => searchExaPerson(name, request.accountName))
+
+    const [siteResult, attendeeResults] = await Promise.all([
+      sitePromise.then((value) => ({ status: 'fulfilled' as const, value })).catch((reason) => ({ status: 'rejected' as const, reason })),
+      Promise.allSettled(attendeePromises),
     ])
+
+    if (safeWebsite) providerMs.tavilyMs += Math.round(performance.now() - siteStart)
+    if (attendeePromises.length) providerMs.exaMs += Math.round(performance.now() - attendeeStart)
 
     if (siteResult.status === 'fulfilled' && siteResult.value) {
       const extracted = siteResult.value
@@ -315,8 +395,9 @@ export async function generateMeetingPrepBrief(
           title: `${request.accountName} website`,
           domain: new URL(extracted.url).hostname.replace(/^www\./, ''),
           publishedAt: null,
-          provider: 'internal',
+          provider: 'tavily',
           snippet: extracted.rawContent.slice(0, 300),
+          sourceRole: 'primary',
         })
         allEvidence.push({
           id,
@@ -326,6 +407,7 @@ export async function generateMeetingPrepBrief(
           domain: new URL(extracted.url).hostname.replace(/^www\./, ''),
           publishedAt: null,
           provider: 'tavily',
+          sourceRole: 'primary',
         })
       }
     }
@@ -339,8 +421,8 @@ export async function generateMeetingPrepBrief(
       if (result?.status === 'fulfilled' && result.value.length > 0) {
         const top = result.value[0]
         const { sources, evidence } = normalizeExaResults(result.value)
-        allSources.push(...sources)
-        allEvidence.push(...evidence)
+        allSources.push(...sources.map((source) => ({ ...source, sourceRole: 'people' })))
+        allEvidence.push(...evidence.map((item) => ({ ...item, sourceRole: 'people' })))
         attendeeProfiles.push({
           name: attendeeNames[i],
           title: null,
@@ -357,20 +439,33 @@ export async function generateMeetingPrepBrief(
       }
     }
 
-    return { sources: allSources, evidence: allEvidence, attendeeProfiles }
+    return { sources: allSources, evidence: allEvidence, attendeeProfiles, v2Evidence, providerMs }
   }, undefined, ctx)
 
   const allSources = evidenceStep.data?.sources ?? []
   const allEvidence = evidenceStep.data?.evidence ?? []
   const attendeeProfiles = evidenceStep.data?.attendeeProfiles ?? []
+  const v2Evidence = evidenceStep.data?.v2Evidence ?? null
+  const providerMs = evidenceStep.data?.providerMs ?? { exaMs: 0, tavilyMs: 0 }
 
   /* ── Step 3: rankEvidence ────────────────────────────────── */
+  const queryTerms = extractQueryTerms(`${request.accountName} ${request.goal}`)
   const rankStep = await runStep('meeting_prep', 'rankEvidence', async () => {
-    const queryTerms = extractQueryTerms(`${request.accountName} ${request.goal}`)
-    return rankEvidence(allEvidence, { topN: 8, queryTerms })
+    return rankEvidence(allEvidence, { topN: 24, queryTerms })
   }, undefined, ctx)
 
   const rankedEvidence = rankStep.data ?? allEvidence
+
+  if (v2Bridge && v2Evidence) {
+    persistV2EvidencePack({
+      bridge: v2Bridge,
+      retrieval: v2Evidence.retrieval,
+      priorMemory: v2Evidence.priorMemory,
+      evidence: allEvidence,
+      queryTerms,
+      ctx,
+    })
+  }
 
   /* ── Step 4: synthesize ──────────────────────────────────── */
   const synthesisStep = await runStep('meeting_prep', 'synthesize', async () => {
@@ -387,7 +482,7 @@ export async function generateMeetingPrepBrief(
       painPoints: request.painPoints,
       steering: request.steering,
       userContext: request.userContext,
-      snapshot,
+      snapshot: displaySnapshot,
       evidence: rankedEvidence,
       attendeeProfiles,
     })
@@ -406,12 +501,42 @@ export async function generateMeetingPrepBrief(
   if (dedupedSources.length < 4) degradedReasons.push('Low source count')
   const totalMs = Math.round(performance.now() - totalStart)
 
+  const internalMs = v2Evidence?.retrieval.timings.internalMs ?? 0
+  const exaMs = entityStep.timings.durationMs + providerMs.exaMs
+  const tavilyMs = providerMs.tavilyMs
+
   const assembleStep = await runStep('meeting_prep', 'assembleBrief', async () => {
-    const normalizedTimelineEvents = normalizeTimelineEvents(synthesis?.data?.timelineEvents)
-    const normalizedRadarMetrics = normalizeRadarMetrics(synthesis?.data?.radarMetrics)
+    const canonicalSourceIdMap = buildCanonicalSourceIdMap(allSources)
+    const normalizedTimelineEvents = normalizeTimelineEvents(synthesis?.data?.timelineEvents, canonicalSourceIdMap)
+    const normalizedRadarMetrics = normalizeRadarMetrics(synthesis?.data?.radarMetrics, canonicalSourceIdMap)
     const normalizedCompetitorMatrix = request.competitors?.length
-      ? normalizeCompetitorMatrix(synthesis?.data?.competitorMatrix)
+      ? normalizeCompetitorMatrix(synthesis?.data?.competitorMatrix, canonicalSourceIdMap)
       : undefined
+    const normalizedSections = {
+      whatJustHappened: normalizeBulletSections(synthesis?.data?.whatJustHappened, canonicalSourceIdMap),
+      talkingPoints: normalizeBulletSections(synthesis?.data?.talkingPoints, canonicalSourceIdMap),
+      landmines: normalizeBulletSections(synthesis?.data?.landmines, canonicalSourceIdMap),
+      questionsToAsk: normalizeBulletSections(synthesis?.data?.questionsToAsk, canonicalSourceIdMap),
+      competitorContext: normalizeBulletSections(synthesis?.data?.competitorContext, canonicalSourceIdMap),
+    }
+    const dedupedSources = markSourcesUsedInAnswer(
+      deduplicateSources(allSources),
+      collectUsedSourceIds([
+        normalizedTimelineEvents?.flatMap((event) => event.sourceIds),
+        normalizedRadarMetrics?.flatMap((metric) => metric.sourceIds),
+        normalizedCompetitorMatrix?.flatMap((row) => row.sourceIds),
+        normalizedSections.whatJustHappened.flatMap((bullet) => bullet.sourceIds),
+        normalizedSections.talkingPoints.flatMap((bullet) => bullet.sourceIds),
+        normalizedSections.landmines.flatMap((bullet) => bullet.sourceIds),
+        normalizedSections.questionsToAsk.flatMap((bullet) => bullet.sourceIds),
+        normalizedSections.competitorContext.flatMap((bullet) => bullet.sourceIds),
+      ]),
+    )
+    const sourceCounts = deriveSourceCounts({
+      sources: dedupedSources,
+      rankedSourceIds: canonicalizeSourceIds(rankedEvidence.map((item) => item.id), canonicalSourceIdMap),
+      usedSourceIds: dedupedSources.filter((source) => source.usedInAnswer).map((source) => source.id),
+    })
 
     return {
       id: generateBriefId(),
@@ -421,7 +546,7 @@ export async function generateMeetingPrepBrief(
       bottomLine: synthesis?.data?.bottomLine ?? 'The AI synthesis step failed. The raw evidence is still available below.',
       whyItMatters: synthesis?.data?.whyItMatters ?? null,
       confidence: synthesis?.data?.confidence ?? 'low',
-      snapshot,
+      snapshot: displaySnapshot,
       attendeeProfiles,
       momentumScore: typeof synthesis?.data?.momentumScore === 'number'
         ? clampInt(synthesis.data.momentumScore, 0, 100)
@@ -431,24 +556,24 @@ export async function generateMeetingPrepBrief(
       timelineEvents: normalizedTimelineEvents,
       radarMetrics: normalizedRadarMetrics,
       competitorMatrix: normalizedCompetitorMatrix,
-      sections: {
-        whatJustHappened: synthesis?.data?.whatJustHappened ?? [],
-        talkingPoints: synthesis?.data?.talkingPoints ?? [],
-        landmines: synthesis?.data?.landmines ?? [],
-        questionsToAsk: synthesis?.data?.questionsToAsk ?? [],
-        competitorContext: synthesis?.data?.competitorContext ?? [],
-      },
+      sections: normalizedSections,
       sources: dedupedSources,
       researchPlan,
       contextUsed: request.userContext ?? null,
       status: {
         degraded: degradedReasons.length > 0,
         reasons: degradedReasons,
-        exaSearchMs: entityStep.timings.durationMs,
-        tavilySearchMs: planStep.timings.durationMs + evidenceStep.timings.durationMs,
+        internalMs,
+        plannerMs: planStep.timings.durationMs,
+        exaMs,
+        tavilyMs,
+        verifierMs: 0,
+        exaSearchMs: exaMs,
+        tavilySearchMs: tavilyMs,
         synthesisMs: synthesisStep.timings.durationMs,
         totalMs,
         sourceCount: dedupedSources.length,
+        sourceCounts,
         cached: false,
         synthesisModel: synthesis?.model ?? null,
       },
@@ -463,7 +588,7 @@ export async function generateMeetingPrepBrief(
     bottomLine: 'The final assembly step failed. The raw evidence is still available below.',
     whyItMatters: null,
     confidence: 'low',
-    snapshot,
+    snapshot: displaySnapshot,
     attendeeProfiles,
     sections: {
       whatJustHappened: [],
@@ -478,11 +603,21 @@ export async function generateMeetingPrepBrief(
     status: {
       degraded: true,
       reasons: [...degradedReasons, 'Final brief assembly failed'],
-      exaSearchMs: entityStep.timings.durationMs,
-      tavilySearchMs: planStep.timings.durationMs + evidenceStep.timings.durationMs,
+      internalMs,
+      plannerMs: planStep.timings.durationMs,
+      exaMs,
+      tavilyMs,
+      verifierMs: 0,
+      exaSearchMs: exaMs,
+      tavilySearchMs: tavilyMs,
       synthesisMs: synthesisStep.timings.durationMs,
       totalMs,
       sourceCount: dedupedSources.length,
+      sourceCounts: {
+        found: dedupedSources.length,
+        ranked: 0,
+        used: 0,
+      },
       cached: false,
       synthesisModel: synthesis?.model ?? null,
     },

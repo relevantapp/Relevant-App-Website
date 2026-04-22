@@ -15,10 +15,24 @@ import { generateRepairPrompt, validateSchema } from './pipeline'
 
 const OPENROUTER_CHAT_URL = 'https://openrouter.ai/api/v1/chat/completions'
 const OPENROUTER_MODELS_URL = 'https://openrouter.ai/api/v1/models'
-const SYNTHESIS_TIMEOUT = 45_000
+const SYNTHESIS_TIMEOUT = 20_000
+const SYNTHESIS_FALLBACK_MODEL: ModelPreference = 'google/gemini-3.1-flash-lite-preview'
+const SYNTHESIS_UNSTABLE_PRIMARY_MODELS = new Set<ModelPreference>([
+  'openai/gpt-5.4-mini',
+])
 const MODEL_CATALOG_TTL_MS = 30 * 60 * 1000
 
 type ChatMessage = { role: 'user' | 'assistant'; content: string }
+type JsonObjectResponseFormat = { type: 'json_object' }
+type JsonSchemaResponseFormat = {
+  type: 'json_schema'
+  json_schema: {
+    name: string
+    strict: boolean
+    schema: Record<string, unknown>
+  }
+}
+type ResponseFormat = JsonObjectResponseFormat | JsonSchemaResponseFormat
 
 interface OpenRouterModelRecord {
   id: string
@@ -45,6 +59,7 @@ export interface SynthesisResult<T> {
   responseTokens: number
   parseSuccess: boolean
   errorClass: string | null
+  fallbackReason?: string | null
 }
 
 let modelCatalogCache: { expiresAt: number; data: ModelCatalogResponse } | null = null
@@ -202,8 +217,9 @@ export async function callOpenRouterMessages(
   options?: {
     maxTokens?: number
     temperature?: number
-    responseFormat?: { type: 'json_object' }
+    responseFormat?: ResponseFormat
     reasoning?: { effort?: 'minimal' | 'low' | 'medium' | 'high' | 'xhigh'; exclude?: boolean; enabled?: boolean; max_tokens?: number }
+    provider?: { require_parameters?: boolean }
   },
 ): Promise<{ content: string; model: string; promptTokens: number; responseTokens: number }> {
   const selectedModel = normalizeModelPreference(model)
@@ -221,6 +237,7 @@ export async function callOpenRouterMessages(
       max_tokens: options?.maxTokens ?? 4096,
       ...(options?.responseFormat ? { response_format: options.responseFormat } : {}),
       ...(options?.reasoning ? { reasoning: options.reasoning } : {}),
+      ...(options?.provider ? { provider: options.provider } : {}),
     }),
     signal,
   })
@@ -250,8 +267,9 @@ export async function callOpenRouterPrompt(
   options?: {
     maxTokens?: number
     temperature?: number
-    responseFormat?: { type: 'json_object' }
+    responseFormat?: ResponseFormat
     reasoning?: { effort?: 'minimal' | 'low' | 'medium' | 'high' | 'xhigh'; exclude?: boolean; enabled?: boolean; max_tokens?: number }
+    provider?: { require_parameters?: boolean }
   },
 ): Promise<{ content: string; model: string; promptTokens: number; responseTokens: number }> {
   return callOpenRouterMessages(
@@ -263,34 +281,54 @@ export async function callOpenRouterPrompt(
   )
 }
 
-function cleanJsonContent(raw: string): string {
-  let cleaned = raw.trim()
-  if (cleaned.startsWith('```')) {
-    cleaned = cleaned.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '')
+function getSynthesisModelCandidates(logTag: string, preferredModel?: ModelPreference): ModelPreference[] {
+  const primaryModel = normalizeModelPreference(preferredModel)
+
+  if (SYNTHESIS_UNSTABLE_PRIMARY_MODELS.has(primaryModel)) {
+    return [SYNTHESIS_FALLBACK_MODEL, primaryModel]
   }
-  return cleaned
+
+  if (logTag === 'market_research' && primaryModel === DEFAULT_MODEL_PREFERENCE) {
+    return [SYNTHESIS_FALLBACK_MODEL, primaryModel]
+  }
+
+  return primaryModel === SYNTHESIS_FALLBACK_MODEL
+    ? [primaryModel]
+    : [primaryModel, SYNTHESIS_FALLBACK_MODEL]
 }
 
-export async function synthesizeWithSchema<T>(
+async function modelSupportsJsonSchema(model: ModelPreference): Promise<boolean> {
+  const normalized = normalizeModelPreference(model)
+  const catalog = await listSelectableOpenRouterModels()
+  const item = catalog.families.flatMap((family) => family.models).find((candidate) => candidate.id === normalized)
+  const supported = item?.supportedParameters ?? []
+  return supported.includes('response_format') || supported.includes('structured_outputs')
+}
+
+function genericJsonSchemaFormat(logTag: string): JsonSchemaResponseFormat {
+  return {
+    type: 'json_schema',
+    json_schema: {
+      name: `${logTag}_brief`,
+      strict: true,
+      schema: {
+        type: 'object',
+        additionalProperties: true,
+      },
+    },
+  }
+}
+
+async function attemptSynthesizeWithSchema<T>(
   systemPrompt: string,
   userPrompt: string,
   schema: ZodSchema<T>,
   schemaDescription: string,
   logTag: string,
-  preferredModel?: ModelPreference,
+  model: ModelPreference,
+  strictSchema: boolean,
 ): Promise<SynthesisResult<T>> {
-  if (!process.env.OPENROUTER_API_KEY) {
-    return {
-      data: null,
-      model: null,
-      promptTokens: 0,
-      responseTokens: 0,
-      parseSuccess: false,
-      errorClass: 'no_provider',
-    }
-  }
-
-  const model = normalizeModelPreference(preferredModel)
+  const resolvedModel = normalizeModelPreference(model)
   const controller = new AbortController()
   const timeout = setTimeout(() => controller.abort(), SYNTHESIS_TIMEOUT)
 
@@ -298,12 +336,13 @@ export async function synthesizeWithSchema<T>(
     const response = await callOpenRouterPrompt(
       systemPrompt,
       userPrompt,
-      model,
+      resolvedModel,
       controller.signal,
       {
         maxTokens: 8192,
         temperature: 0.2,
-        responseFormat: { type: 'json_object' },
+        responseFormat: strictSchema ? genericJsonSchemaFormat(logTag) : { type: 'json_object' },
+        ...(strictSchema ? { provider: { require_parameters: true } } : {}),
         reasoning: { effort: 'medium', exclude: true },
       },
     )
@@ -333,14 +372,14 @@ export async function synthesizeWithSchema<T>(
       const repair = await callOpenRouterPrompt(
         systemPrompt,
         repairPrompt,
-        model,
+        resolvedModel,
         repairController.signal,
         {
-          maxTokens: 8192,
-          temperature: 0.1,
-          responseFormat: { type: 'json_object' },
-          reasoning: { effort: 'medium', exclude: true },
-        },
+        maxTokens: 8192,
+        temperature: 0.1,
+        responseFormat: { type: 'json_object' },
+        reasoning: { effort: 'medium', exclude: true },
+      },
       )
       clearTimeout(repairTimeout)
 
@@ -354,9 +393,10 @@ export async function synthesizeWithSchema<T>(
           model: `openrouter/${repair.model}`,
           promptTokens: response.promptTokens + repair.promptTokens,
           responseTokens: response.responseTokens + repair.responseTokens,
-          parseSuccess: true,
-          errorClass: null,
-        }
+        parseSuccess: true,
+        errorClass: null,
+        fallbackReason: strictSchema ? null : 'json_object_repair',
+      }
       }
 
       return {
@@ -366,6 +406,7 @@ export async function synthesizeWithSchema<T>(
         responseTokens: response.responseTokens + repair.responseTokens,
         parseSuccess: false,
         errorClass: 'schema_validation_failed',
+        fallbackReason: strictSchema ? 'strict_schema_validation_failed' : 'json_object_validation_failed',
       }
     } catch (repairErr) {
       clearTimeout(repairTimeout)
@@ -386,7 +427,7 @@ export async function synthesizeWithSchema<T>(
     const errorClass = err instanceof DOMException && err.name === 'AbortError'
       ? 'timeout'
       : 'provider_error'
-    console.error(`[intel:${logTag}:synthesize]`, `${errorClass} for openrouter/${model}:`, err)
+    console.error(`[intel:${logTag}:synthesize]`, `${errorClass} for openrouter/${resolvedModel}:`, err)
     return {
       data: null,
       model: null,
@@ -394,6 +435,77 @@ export async function synthesizeWithSchema<T>(
       responseTokens: 0,
       parseSuccess: false,
       errorClass,
+      fallbackReason: strictSchema ? 'strict_schema_provider_error' : 'json_object_provider_error',
     }
   }
+}
+
+function cleanJsonContent(raw: string): string {
+  let cleaned = raw.trim()
+  if (cleaned.startsWith('```')) {
+    cleaned = cleaned.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '')
+  }
+  return cleaned
+}
+
+export async function synthesizeWithSchema<T>(
+  systemPrompt: string,
+  userPrompt: string,
+  schema: ZodSchema<T>,
+  schemaDescription: string,
+  logTag: string,
+  preferredModel?: ModelPreference,
+): Promise<SynthesisResult<T>> {
+  if (!process.env.OPENROUTER_API_KEY) {
+    return {
+      data: null,
+      model: null,
+      promptTokens: 0,
+      responseTokens: 0,
+      parseSuccess: false,
+      errorClass: 'no_provider',
+    }
+  }
+
+  const candidates = getSynthesisModelCandidates(logTag, preferredModel)
+  let lastFailure: SynthesisResult<T> = {
+    data: null,
+    model: null,
+    promptTokens: 0,
+    responseTokens: 0,
+    parseSuccess: false,
+    errorClass: 'provider_error',
+    fallbackReason: null,
+  }
+
+  for (let index = 0; index < candidates.length; index++) {
+    const candidate = candidates[index]
+    const strictSupported = await modelSupportsJsonSchema(candidate).catch(() => false)
+    const attempts = strictSupported ? [true, false] : [false]
+
+    let result: SynthesisResult<T> | null = null
+    for (const strictSchema of attempts) {
+      result = await attemptSynthesizeWithSchema(
+        systemPrompt,
+        userPrompt,
+        schema,
+        schemaDescription,
+        logTag,
+        candidate,
+        strictSchema,
+      )
+      if (result.data) return result
+      lastFailure = result
+    }
+
+    const nextCandidate = candidates[index + 1]
+    if (nextCandidate) {
+      console.warn(
+        `[intel:${logTag}:synthesize]`,
+        `Retrying with openrouter/${nextCandidate} after ${result?.errorClass ?? 'schema_validation_failed'} on openrouter/${candidate}`,
+      )
+    }
+  }
+
+  return lastFailure
 }

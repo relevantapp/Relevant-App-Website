@@ -19,6 +19,11 @@ import {
   deduplicateSources,
   resetSourceCounter,
 } from '../normalize'
+import {
+  buildV2PlanBridge,
+  collectV2EvidenceBridge,
+  persistV2EvidencePack,
+} from './v2-bridge'
 
 export async function generateMarketResearchBrief(
   input: MarketResearchRequest,
@@ -31,7 +36,7 @@ export async function generateMarketResearchBrief(
 
   /* ── Step 1: resolveEntity ───────────────────────────────── */
   const entityStep = await runStep('market_research', 'resolveEntity', async () => {
-    const playerSnapshots = new Map<string, string>()
+    const playerSnapshots = new Map<string, { description: string; sourceUrl: string | null }>()
 
     if (input.knownPlayers?.length) {
       const results = await Promise.allSettled(
@@ -40,7 +45,10 @@ export async function generateMarketResearchBrief(
       for (let i = 0; i < input.knownPlayers.length && i < 5; i++) {
         const r = results[i]
         if (r.status === 'fulfilled' && r.value) {
-          playerSnapshots.set(input.knownPlayers[i], r.value.description || input.knownPlayers[i])
+          playerSnapshots.set(input.knownPlayers[i], {
+            description: r.value.description || input.knownPlayers[i],
+            sourceUrl: r.value.sourceUrl,
+          })
         }
       }
     }
@@ -48,7 +56,10 @@ export async function generateMarketResearchBrief(
     return { playerSnapshots }
   }, undefined, ctx)
 
-  const playerSnapshots = entityStep.data?.playerSnapshots ?? new Map<string, string>()
+  const playerSnapshots = entityStep.data?.playerSnapshots ?? new Map<string, { description: string; sourceUrl: string | null }>()
+  const playerSnapshotDescriptions = new Map(
+    Array.from(playerSnapshots.entries()).map(([name, snapshot]) => [name, snapshot.description]),
+  )
 
   /* ── Step 2: planSearches ───────────────────────────────── */
   const scopeStr = input.scope === 'global' ? '' : ` ${input.region || input.scope}`
@@ -116,48 +127,88 @@ export async function generateMarketResearchBrief(
     })
   }
 
-  const planStep = await runStep('market_research', 'planSearches', async () => (
-    buildResearchSearchPlan('market_research', input, fallbackSearches, ctx)
-  ), undefined, ctx)
+  const planStep = await runStep('market_research', 'planSearches', async () => {
+    const v2Bridge = await buildV2PlanBridge({
+      researchType: 'market_research',
+      request: input,
+      ctx,
+    })
 
-  const researchPlan = planStep.data
+    if (v2Bridge) {
+      return {
+        researchPlan: v2Bridge.researchPlan,
+        v2Bridge,
+      }
+    }
+
+    return {
+      researchPlan: await buildResearchSearchPlan('market_research', input, fallbackSearches, ctx),
+      v2Bridge: null,
+    }
+  }, undefined, ctx)
+
+  const researchPlan = planStep.data?.researchPlan ?? null
+  const v2Bridge = planStep.data?.v2Bridge ?? null
 
   /* ── Step 3: gatherEvidence ──────────────────────────────── */
   const evidenceStep = await runStep('market_research', 'gatherEvidence', async () => {
     const allSources: BriefSource[] = []
     const allEvidence: NormalizedEvidence[] = []
+    let v2Evidence: Awaited<ReturnType<typeof collectV2EvidenceBridge>> | null = null
+    const providerMs = { exaMs: 0, tavilyMs: 0 }
 
-    const planned = researchPlan ? await executeSearchPlan(researchPlan) : { sources: [], evidence: [] }
-    allSources.push(...planned.sources)
-    allEvidence.push(...planned.evidence)
+    if (v2Bridge) {
+      v2Evidence = await collectV2EvidenceBridge({ bridge: v2Bridge, ctx })
+      providerMs.exaMs += v2Evidence.retrieval.timings.exaMs
+      providerMs.tavilyMs += v2Evidence.retrieval.timings.tavilyMs
+      allSources.push(...v2Evidence.sources)
+      allEvidence.push(...v2Evidence.evidence)
+    } else {
+      const planned = researchPlan ? await executeSearchPlan(researchPlan) : { sources: [], evidence: [] }
+      allSources.push(...planned.sources)
+      allEvidence.push(...planned.evidence)
+    }
 
     // Add player snapshots as evidence
-    for (const [name, desc] of Array.from(playerSnapshots)) {
+    for (const [name, snapshot] of Array.from(playerSnapshots)) {
       const { source, evidence } = normalizeExaSnapshot({
-        name, description: desc, sourceUrl: null,
+        name, description: snapshot.description, sourceUrl: snapshot.sourceUrl,
         industry: undefined, headquarters: undefined, employeeCount: undefined,
         fundingStage: undefined, lastFundingAmount: undefined, ceo: undefined, recentMilestone: undefined,
         raw: null,
       })
-      if (source) allSources.push(source)
-      if (evidence) allEvidence.push(evidence)
+      if (source) allSources.push({ ...source, sourceRole: 'primary' })
+      if (evidence) allEvidence.push({ ...evidence, sourceRole: 'primary' })
     }
 
-    return { sources: allSources, evidence: allEvidence }
+    return { sources: allSources, evidence: allEvidence, v2Evidence, providerMs }
   }, undefined, ctx)
 
   const allSources = evidenceStep.data?.sources ?? []
   const allEvidence = evidenceStep.data?.evidence ?? []
+  const v2Evidence = evidenceStep.data?.v2Evidence ?? null
+  const providerMs = evidenceStep.data?.providerMs ?? { exaMs: 0, tavilyMs: 0 }
 
   /* ── Step 3: rankEvidence ────────────────────────────────── */
+  const queryTerms = extractQueryTerms(
+    `${input.marketOrTrend} ${input.scope} ${input.keyQuestions ?? ''}`
+  )
   const rankStep = await runStep('market_research', 'rankEvidence', async () => {
-    const queryTerms = extractQueryTerms(
-      `${input.marketOrTrend} ${input.scope} ${input.keyQuestions ?? ''}`
-    )
-    return rankEvidence(allEvidence, { topN: 8, queryTerms })
+    return rankEvidence(allEvidence, { topN: 24, queryTerms })
   }, undefined, ctx)
 
   const rankedEvidence = rankStep.data ?? allEvidence
+
+  if (v2Bridge && v2Evidence) {
+    persistV2EvidencePack({
+      bridge: v2Bridge,
+      retrieval: v2Evidence.retrieval,
+      priorMemory: v2Evidence.priorMemory,
+      evidence: allEvidence,
+      queryTerms,
+      ctx,
+    })
+  }
 
   /* ── Step 4: synthesize ──────────────────────────────────── */
   const synthesisStep = await runStep('market_research', 'synthesize', async () => {
@@ -175,7 +226,7 @@ export async function generateMarketResearchBrief(
       steering: input.steering,
       userContext: input.userContext,
       evidence: rankedEvidence,
-      playerSnapshots,
+      playerSnapshots: playerSnapshotDescriptions,
     })
     return synthesizeWithSchema(
       MARKET_RESEARCH_SYSTEM_PROMPT, userPrompt,
@@ -191,6 +242,9 @@ export async function generateMarketResearchBrief(
   const dedupedSources = deduplicateSources(allSources)
   if (dedupedSources.length < 4) degradedReasons.push('Low source count')
   const totalMs = Math.round(performance.now() - totalStart)
+  const internalMs = v2Evidence?.retrieval.timings.internalMs ?? 0
+  const exaMs = entityStep.timings.durationMs + providerMs.exaMs
+  const tavilyMs = providerMs.tavilyMs
 
   return {
     id: generateBriefId(),
@@ -214,8 +268,13 @@ export async function generateMarketResearchBrief(
     status: {
       degraded: degradedReasons.length > 0,
       reasons: degradedReasons,
-      exaSearchMs: entityStep.timings.durationMs,
-      tavilySearchMs: planStep.timings.durationMs + evidenceStep.timings.durationMs,
+      internalMs,
+      plannerMs: planStep.timings.durationMs,
+      exaMs,
+      tavilyMs,
+      verifierMs: 0,
+      exaSearchMs: exaMs,
+      tavilySearchMs: tavilyMs,
       synthesisMs: synthesisStep.timings.durationMs,
       totalMs,
       sourceCount: dedupedSources.length,

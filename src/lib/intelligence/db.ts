@@ -41,6 +41,10 @@ function generateShareSlug(): string {
   return slug
 }
 
+function isUuid(value: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value)
+}
+
 export async function saveBrief(
   supabase: SupabaseClient,
   userId: string,
@@ -48,22 +52,26 @@ export async function saveBrief(
   requestPayload: Record<string, unknown>,
   brief: IntelligenceBrief,
 ): Promise<{ id: string; error: string | null }> {
+  const id = isUuid(brief.id) ? brief.id : crypto.randomUUID()
+  const storedBrief = { ...brief, id }
+
   const { data, error } = await supabase
     .from('intelligence_briefs')
     .insert({
+      id,
       user_id: userId,
       research_type: researchType,
       request_payload: requestPayload,
-      synthesis: brief,
-      sources: brief.sources,
-      evidence_count: brief.sources.length,
-      confidence: brief.confidence,
-      is_degraded: brief.status.degraded,
-      degraded_reasons: brief.status.reasons,
-      search_ms: brief.status.exaSearchMs + brief.status.tavilySearchMs,
-      synthesis_ms: brief.status.synthesisMs,
-      total_ms: brief.status.totalMs,
-      synthesis_model: brief.status.synthesisModel,
+      synthesis: storedBrief,
+      sources: storedBrief.sources,
+      evidence_count: storedBrief.sources.length,
+      confidence: storedBrief.confidence,
+      is_degraded: storedBrief.status.degraded,
+      degraded_reasons: storedBrief.status.reasons,
+      search_ms: storedBrief.status.exaSearchMs + storedBrief.status.tavilySearchMs,
+      synthesis_ms: storedBrief.status.synthesisMs,
+      total_ms: storedBrief.status.totalMs,
+      synthesis_model: storedBrief.status.synthesisModel,
     })
     .select('id')
     .single()

@@ -19,6 +19,11 @@ import {
   deduplicateSources,
   resetSourceCounter,
 } from '../normalize'
+import {
+  buildV2PlanBridge,
+  collectV2EvidenceBridge,
+  persistV2EvidencePack,
+} from './v2-bridge'
 
 export async function generateCompetitiveAnalysisBrief(
   input: CompetitiveAnalysisRequest,
@@ -32,7 +37,7 @@ export async function generateCompetitiveAnalysisBrief(
 
   /* ── Step 1: resolveEntity ───────────────────────────────── */
   const entityStep = await runStep('competitive_analysis', 'resolveEntity', async () => {
-    const snapshots = new Map<string, string>()
+    const snapshots = new Map<string, { description: string; sourceUrl: string | null }>()
     let yourSnapshot: string | null = null
 
     const jobs = [
@@ -51,7 +56,10 @@ export async function generateCompetitiveAnalysisBrief(
         if (job.type === 'your') {
           yourSnapshot = result.value.description || job.name
         } else {
-          snapshots.set(job.name, result.value.description || job.name)
+          snapshots.set(job.name, {
+            description: result.value.description || job.name,
+            sourceUrl: result.value.sourceUrl,
+          })
         }
       }
     }
@@ -59,7 +67,10 @@ export async function generateCompetitiveAnalysisBrief(
     return { snapshots, yourSnapshot }
   }, undefined, ctx)
 
-  const competitorSnapshots = entityStep.data?.snapshots ?? new Map<string, string>()
+  const competitorSnapshots = entityStep.data?.snapshots ?? new Map<string, { description: string; sourceUrl: string | null }>()
+  const competitorSnapshotDescriptions = new Map(
+    Array.from(competitorSnapshots.entries()).map(([name, snapshot]) => [name, snapshot.description]),
+  )
   const yourSnapshot = entityStep.data?.yourSnapshot ?? null
 
   /* ── Step 2: planSearches ───────────────────────────────── */
@@ -114,51 +125,90 @@ export async function generateCompetitiveAnalysisBrief(
     })
   }
 
-  const planStep = await runStep('competitive_analysis', 'planSearches', async () => (
-    buildResearchSearchPlan('competitive_analysis', input, fallbackSearches, ctx)
-  ), undefined, ctx)
+  const planStep = await runStep('competitive_analysis', 'planSearches', async () => {
+    const v2Bridge = await buildV2PlanBridge({
+      researchType: 'competitive_analysis',
+      request: input,
+      ctx,
+    })
 
-  const researchPlan = planStep.data
+    if (v2Bridge) {
+      return {
+        researchPlan: v2Bridge.researchPlan,
+        v2Bridge,
+      }
+    }
+
+    return {
+      researchPlan: await buildResearchSearchPlan('competitive_analysis', input, fallbackSearches, ctx),
+      v2Bridge: null,
+    }
+  }, undefined, ctx)
+
+  const researchPlan = planStep.data?.researchPlan ?? null
+  const v2Bridge = planStep.data?.v2Bridge ?? null
 
   /* ── Step 3: gatherEvidence ──────────────────────────────── */
   const evidenceStep = await runStep('competitive_analysis', 'gatherEvidence', async () => {
     const allSources: BriefSource[] = []
     const allEvidence: NormalizedEvidence[] = []
+    let v2Evidence: Awaited<ReturnType<typeof collectV2EvidenceBridge>> | null = null
+    const providerMs = { exaMs: 0, tavilyMs: 0 }
 
-    const planned = researchPlan ? await executeSearchPlan(researchPlan) : { sources: [], evidence: [] }
-    allSources.push(...planned.sources)
-    allEvidence.push(...planned.evidence)
+    if (v2Bridge) {
+      v2Evidence = await collectV2EvidenceBridge({ bridge: v2Bridge, ctx })
+      providerMs.exaMs += v2Evidence.retrieval.timings.exaMs
+      providerMs.tavilyMs += v2Evidence.retrieval.timings.tavilyMs
+      allSources.push(...v2Evidence.sources)
+      allEvidence.push(...v2Evidence.evidence)
+    } else {
+      const planned = researchPlan ? await executeSearchPlan(researchPlan) : { sources: [], evidence: [] }
+      allSources.push(...planned.sources)
+      allEvidence.push(...planned.evidence)
+    }
 
     // Also add snapshot sources
-    for (const [name] of Array.from(competitorSnapshots)) {
-      const snap = entityStep.data?.snapshots.get(name)
+    for (const [name, snap] of Array.from(competitorSnapshots)) {
       if (snap) {
         const { source, evidence } = normalizeExaSnapshot({
-          name, description: snap, sourceUrl: null,
+          name, description: snap.description, sourceUrl: snap.sourceUrl,
           industry: undefined, headquarters: undefined, employeeCount: undefined,
           fundingStage: undefined, lastFundingAmount: undefined, ceo: undefined, recentMilestone: undefined,
           raw: null,
         })
-        if (source) allSources.push(source)
-        if (evidence) allEvidence.push(evidence)
+        if (source) allSources.push({ ...source, sourceRole: 'primary' })
+        if (evidence) allEvidence.push({ ...evidence, sourceRole: 'primary' })
       }
     }
 
-    return { sources: allSources, evidence: allEvidence }
+    return { sources: allSources, evidence: allEvidence, v2Evidence, providerMs }
   }, undefined, ctx)
 
   const allSources = evidenceStep.data?.sources ?? []
   const allEvidence = evidenceStep.data?.evidence ?? []
+  const v2Evidence = evidenceStep.data?.v2Evidence ?? null
+  const providerMs = evidenceStep.data?.providerMs ?? { exaMs: 0, tavilyMs: 0 }
 
   /* ── Step 3: rankEvidence ────────────────────────────────── */
+  const queryTerms = extractQueryTerms(
+    `${limitedCompetitors.join(' ')} ${input.focusArea} ${input.yourCompany ?? ''}`
+  )
   const rankStep = await runStep('competitive_analysis', 'rankEvidence', async () => {
-    const queryTerms = extractQueryTerms(
-      `${limitedCompetitors.join(' ')} ${input.focusArea} ${input.yourCompany ?? ''}`
-    )
-    return rankEvidence(allEvidence, { topN: 8, queryTerms })
+    return rankEvidence(allEvidence, { topN: 24, queryTerms })
   }, undefined, ctx)
 
   const rankedEvidence = rankStep.data ?? allEvidence
+
+  if (v2Bridge && v2Evidence) {
+    persistV2EvidencePack({
+      bridge: v2Bridge,
+      retrieval: v2Evidence.retrieval,
+      priorMemory: v2Evidence.priorMemory,
+      evidence: allEvidence,
+      queryTerms,
+      ctx,
+    })
+  }
 
   /* ── Step 4: synthesize ──────────────────────────────────── */
   const synthesisStep = await runStep('competitive_analysis', 'synthesize', async () => {
@@ -174,7 +224,7 @@ export async function generateCompetitiveAnalysisBrief(
       steering: input.steering,
       userContext: input.userContext,
       evidence: rankedEvidence,
-      competitorSnapshots,
+      competitorSnapshots: competitorSnapshotDescriptions,
       yourSnapshot,
     })
     return synthesizeWithSchema(
@@ -191,6 +241,9 @@ export async function generateCompetitiveAnalysisBrief(
   const dedupedSources = deduplicateSources(allSources)
   if (dedupedSources.length < 4) degradedReasons.push('Low source count')
   const totalMs = Math.round(performance.now() - totalStart)
+  const internalMs = v2Evidence?.retrieval.timings.internalMs ?? 0
+  const exaMs = entityStep.timings.durationMs + providerMs.exaMs
+  const tavilyMs = providerMs.tavilyMs
 
   return {
     id: generateBriefId(),
@@ -214,8 +267,13 @@ export async function generateCompetitiveAnalysisBrief(
     status: {
       degraded: degradedReasons.length > 0,
       reasons: degradedReasons,
-      exaSearchMs: entityStep.timings.durationMs,
-      tavilySearchMs: planStep.timings.durationMs + evidenceStep.timings.durationMs,
+      internalMs,
+      plannerMs: planStep.timings.durationMs,
+      exaMs,
+      tavilyMs,
+      verifierMs: 0,
+      exaSearchMs: exaMs,
+      tavilySearchMs: tavilyMs,
       synthesisMs: synthesisStep.timings.durationMs,
       totalMs,
       sourceCount: dedupedSources.length,

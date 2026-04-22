@@ -9,6 +9,7 @@ export type {
   BriefSource,
   BriefStatus,
   CompanySnapshot,
+  MeetingPrepSnapshot,
   AttendeeProfile,
   MeetingPrepBrief,
   CompetitiveAnalysisBrief,

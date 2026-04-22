@@ -1,0 +1,80 @@
+
+> relevant-website@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.35
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+
+./src/app/app/intelligence/results/shared/SourcesStrip.tsx
+97:13  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/app/app/meeting-prep/page.tsx
+132:5  Warning: React Hook useCallback has a missing dependency: 'purpose'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/app/search/page.tsx
+585:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+858:23  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/app/app/signal/[id]/page.tsx
+345:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+573:11  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/app/SignalCard.tsx
+111:11  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
+   Collecting page data ...
+   Generating static pages (0/31) ...
+   Generating static pages (7/31)
+Supabase request failed: 404 Not Found
+   Generating static pages (15/31)
+   Generating static pages (23/31)
+ ✓ Generating static pages (31/31)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+┌ ○ /                                    6.39 kB         108 kB
+├ ○ /_not-found                          873 B          88.2 kB
+├ ƒ /api/contact                         0 B                0 B
+├ ƒ /api/dossier                         0 B                0 B
+├ ƒ /api/intelligence                    0 B                0 B
+├ ƒ /api/intelligence/briefs             0 B                0 B
+├ ƒ /api/intelligence/chat               0 B                0 B
+├ ○ /api/intelligence/models             0 B                0 B
+├ ƒ /api/intelligence/refine-goal        0 B                0 B
+├ ○ /api/public-signals                  0 B                0 B
+├ ƒ /api/topics                          0 B                0 B
+├ ƒ /api/waitlist                        0 B                0 B
+├ ○ /app/building                        1.73 kB         195 kB
+├ ○ /app/feed                            13.1 kB         209 kB
+├ ○ /app/intelligence                    51.1 kB         257 kB
+├ ○ /app/intelligence/history            4.08 kB         154 kB
+├ ○ /app/journal                         6.51 kB         200 kB
+├ ○ /app/meeting-prep                    8.67 kB         162 kB
+├ ○ /app/profile                         4.41 kB         198 kB
+├ ○ /app/search                          8.34 kB         204 kB
+├ ƒ /app/signal/[id]                     13 kB           205 kB
+├ ○ /intelligence/architecture           7.52 kB        94.9 kB
+├ ƒ /intelligence/share/[slug]           799 B           101 kB
+├ ○ /login                               3.9 kB          211 kB
+├ ○ /onboarding                          8.01 kB         201 kB
+├ ○ /privacy                             188 B           101 kB
+├ ○ /robots.txt                          0 B                0 B
+├ ƒ /signal/[id]                         367 B           102 kB
+├ ○ /signup                              3.44 kB         210 kB
+├ ○ /sitemap.xml                         0 B                0 B
+├ ○ /terms                               188 B           101 kB
+└ ○ /verify-email                        2.45 kB         195 kB
++ First Load JS shared by all            87.3 kB
+  ├ chunks/117-c33ef684e97f7857.js       31.7 kB
+  ├ chunks/fd9d1056-a7129889b45a2c4a.js  53.6 kB
+  └ other shared chunks (total)          1.96 kB
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand

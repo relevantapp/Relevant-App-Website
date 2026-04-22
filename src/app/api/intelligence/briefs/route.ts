@@ -2,7 +2,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { saveBrief, listBriefs, toggleShare } from '@/lib/intelligence/db'
+import { saveBrief, listBriefs, toggleShare, getBrief } from '@/lib/intelligence/db'
 
 const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? '').replace(/^=+/, '').trim()
 const anonKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '').replace(/^=+/, '').trim()
@@ -44,6 +44,18 @@ export async function POST(request: NextRequest) {
     const result = await listBriefs(auth.client, user.id, limit, offset)
     if (result.error) return NextResponse.json({ error: result.error }, { status: 500 })
     return NextResponse.json({ briefs: result.data })
+  }
+
+  if (action === 'get') {
+    const { briefId } = body
+    if (!briefId || typeof briefId !== 'string') {
+      return NextResponse.json({ error: 'Missing briefId' }, { status: 400 })
+    }
+    const result = await getBrief(auth.client, briefId)
+    if (result.error || !result.data) {
+      return NextResponse.json({ error: result.error ?? 'Brief not found' }, { status: 404 })
+    }
+    return NextResponse.json({ brief: result.data })
   }
 
   if (action === 'share') {
