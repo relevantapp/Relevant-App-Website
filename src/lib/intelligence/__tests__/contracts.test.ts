@@ -24,6 +24,7 @@ import {
   RichBulletSchema,
   CompetitorMatrixRowSchema,
   MeetingPrepSynthesisSchema,
+  StakeholderRowSchema,
   SignalCardSchema,
 } from '../contracts'
 import { businessCaseFixture } from '@/app/app/intelligence/results/__fixtures__/business-case.fixture'
@@ -192,6 +193,21 @@ describe('SignalCardSchema', () => {
         sources: ['s2'],
       }),
     ).toBeTruthy()
+  })
+})
+
+describe('StakeholderRowSchema', () => {
+  it('accepts stakeholder rows with nullable cited fields', () => {
+    const stakeholder = {
+      name: 'Maya Chen',
+      title: 'VP Revenue Operations',
+      likelyAgenda: { text: 'Reduce evaluation drag.', sourceIds: ['s1'] },
+      pressure: null,
+      leverage: { text: 'Owns process discipline.', sourceIds: ['s2'] },
+      unknowns: ['Budget owner still unclear.'],
+    } as const
+
+    expect(StakeholderRowSchema.parse(stakeholder)).toEqual(stakeholder)
   })
 })
 

@@ -41,6 +41,7 @@ import UnknownField from './shared/UnknownField'
 import BulletChart from './shared/viz/BulletChart'
 import Radar from './shared/viz/Radar'
 import SignalCardGrid from './shared/viz/SignalCardGrid'
+import StakeholderMatrix from './shared/viz/StakeholderMatrix'
 
 /* ── Bento Section Card ──────────────────────────────────────── */
 
@@ -311,7 +312,21 @@ export function SnapshotCard({ snapshot }: { snapshot: MeetingPrepSnapshot | Com
 
 /* ── People Card ─────────────────────────────────────────────── */
 
-export function PeopleCard({ profiles }: { profiles: AttendeeProfile[] }) {
+export function PeopleCard({
+  profiles,
+  stakeholders,
+  sources,
+  generatedAt,
+}: {
+  profiles: AttendeeProfile[]
+  stakeholders?: MeetingPrepBrief['stakeholders']
+  sources: MeetingPrepBrief['sources']
+  generatedAt: string
+}) {
+  if (INTEL_RESULTS_V2 && stakeholders?.length) {
+    return <StakeholderMatrix rows={stakeholders} sources={sources} asOf={generatedAt} />
+  }
+
   if (!profiles.length) return null
 
   return (

@@ -250,6 +250,44 @@ export const meetingPrepFixture: MeetingPrepBrief = {
       sourceUrl: 'https://www.northstarhealth.com/company/team/rina-gomez',
     },
   ],
+  stakeholders: [
+    {
+      name: 'Maya Chen',
+      title: 'VP Revenue Operations',
+      likelyAgenda: {
+        text: 'Shorten evaluation cycles without creating more analyst overhead.',
+        sourceIds: ['mp-2', 'mp-6'],
+      },
+      pressure: {
+        text: 'Needs a cleaner buying process after recent procurement drag.',
+        sourceIds: ['mp-2', 'mp-4'],
+      },
+      leverage: {
+        text: 'Owns the operating rhythm for evaluation discipline and can sponsor the workflow.',
+        sourceIds: ['mp-2'],
+      },
+      unknowns: ['How much budget authority Maya directly controls is still unclear.'],
+    },
+    {
+      name: 'Devon Patel',
+      title: 'Director of Procurement Technology',
+      likelyAgenda: null,
+      pressure: {
+        text: 'Security and rollout evidence need to be strong enough to survive procurement review.',
+        sourceIds: ['mp-4', 'mp-6'],
+      },
+      leverage: null,
+      unknowns: ['Whether Devon sees this as a strategic workflow or another vendor checkpoint.'],
+    },
+    {
+      name: 'Rina Gomez',
+      title: null,
+      likelyAgenda: null,
+      pressure: null,
+      leverage: null,
+      unknowns: ['Her exact decision role is unclear.', 'We still do not know how much rollout authority she carries.'],
+    },
+  ],
   momentumScore: 74,
   riskLevel: 'medium',
   sentiment: 'positive',

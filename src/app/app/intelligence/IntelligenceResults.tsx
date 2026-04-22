@@ -158,7 +158,14 @@ export default function IntelligenceResults({ brief, onNewSearch, savedBriefId }
           {hasOverviewColumn && (
             <div className="space-y-4">
               {displayBrief.snapshot && <SnapshotCard snapshot={displayBrief.snapshot} />}
-              {displayBrief.attendeeProfiles.length > 0 && <PeopleCard profiles={displayBrief.attendeeProfiles} />}
+              {(displayBrief.attendeeProfiles.length > 0 || displayBrief.stakeholders?.length) && (
+                <PeopleCard
+                  profiles={displayBrief.attendeeProfiles}
+                  stakeholders={displayBrief.stakeholders}
+                  sources={displayBrief.sources}
+                  generatedAt={displayBrief.generatedAt}
+                />
+              )}
             </div>
           )}
 

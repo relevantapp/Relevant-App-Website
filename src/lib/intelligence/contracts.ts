@@ -314,6 +314,25 @@ export const SignalCardSchema = z.object({
 })
 export type SignalCard = z.infer<typeof SignalCardSchema>
 
+export const StakeholderRowSchema = z.object({
+  name: z.string(),
+  title: z.string().nullable(),
+  likelyAgenda: CitedSpanSchema.nullable(),
+  pressure: CitedSpanSchema.nullable(),
+  leverage: CitedSpanSchema.nullable(),
+  unknowns: z.array(z.string()),
+  commsStyleTag: z.string().optional(),
+  disc: z
+    .object({
+      d: z.number().min(0).max(100),
+      i: z.number().min(0).max(100),
+      s: z.number().min(0).max(100),
+      c: z.number().min(0).max(100),
+    })
+    .optional(),
+})
+export type StakeholderRow = z.infer<typeof StakeholderRowSchema>
+
 export const CompetitorMatrixRowSchema = z.object({
   name: z.string().min(1),
   threatLevel: z.number().int().min(0).max(4),
@@ -368,6 +387,7 @@ export interface MeetingPrepBrief extends BriefBase {
   timelineEvents?: TimelineEvent[]
   radarMetrics?: RadarMetric[]
   signalCards?: SignalCard[]
+  stakeholders?: StakeholderRow[]
   competitorMatrix?: CompetitorMatrixRow[]
   sections: {
     whatJustHappened: BriefBullet[]
@@ -607,6 +627,7 @@ export const MeetingPrepBriefSchema = BriefBaseSchema.extend({
   timelineEvents: z.array(TimelineEventSchema).optional(),
   radarMetrics: z.array(RadarMetricSchema).optional(),
   signalCards: z.array(SignalCardSchema).optional(),
+  stakeholders: z.array(StakeholderRowSchema).optional(),
   competitorMatrix: z.array(CompetitorMatrixRowSchema).optional(),
   sections: z.object({
     whatJustHappened: z.array(BriefBulletSchema),
