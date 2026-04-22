@@ -14,3 +14,6 @@ export const intelligenceFlags = {
   depthTiers: () => isIntelFlagEnabled('INTELLIGENCE_DEPTH_TIERS_ENABLED'),
   newProviders: () => isIntelFlagEnabled('INTELLIGENCE_NEW_PROVIDERS_ENABLED'),
 }
+
+export const INTEL_RESULTS_V2 =
+  process.env.NEXT_PUBLIC_INTEL_RESULTS_V2 === 'true' || process.env.NODE_ENV !== 'production'

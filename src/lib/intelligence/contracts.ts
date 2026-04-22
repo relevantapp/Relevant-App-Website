@@ -66,6 +66,7 @@ export const NormalizedEvidenceSchema = z.object({
 export type NormalizedEvidence = z.infer<typeof NormalizedEvidenceSchema>
 
 export type ResearchType = 'meeting_prep' | 'competitive_analysis' | 'business_case' | 'market_research'
+export const ResearchTypeSchema = z.enum(['meeting_prep', 'competitive_analysis', 'business_case', 'market_research'])
 
 export interface UserResearchContext {
   profileKind: string | null
@@ -75,6 +76,15 @@ export interface UserResearchContext {
   country: string | null
   contextNote: string | null
 }
+
+export const UserResearchContextSchema = z.object({
+  profileKind: z.string().nullable(),
+  industry: z.string().nullable(),
+  role: z.string().nullable(),
+  company: z.string().nullable(),
+  country: z.string().nullable(),
+  contextNote: z.string().nullable(),
+})
 
 /* ── Shared brief base ─────────────────────────────────────── */
 
@@ -109,6 +119,21 @@ export interface CompanySnapshot {
   sourceUrl: string | null
 }
 
+export const CompanySnapshotSchema = z.object({
+  name: z.string(),
+  description: z.string(),
+  website: z.string().nullable(),
+  industry: z.string().nullable(),
+  headquarters: z.string().nullable(),
+  employeeCount: z.string().nullable(),
+  fundingStage: z.string().nullable(),
+  lastFundingAmount: z.string().nullable(),
+  ceo: z.string().nullable(),
+  keyPeople: z.array(z.object({ name: z.string(), title: z.string() })).nullable(),
+  recentMilestone: z.string().nullable(),
+  sourceUrl: z.string().nullable(),
+})
+
 export interface MeetingPrepSnapshot {
   name: string
   summary: string
@@ -124,6 +149,21 @@ export interface MeetingPrepSnapshot {
   sourceUrl: string | null
 }
 
+export const MeetingPrepSnapshotSchema = z.object({
+  name: z.string(),
+  summary: z.string(),
+  website: z.string().nullable(),
+  whatTheyDo: z.string().nullable(),
+  industry: z.string().nullable(),
+  headquarters: z.string().nullable(),
+  employeeRange: z.string().nullable(),
+  funding: z.string().nullable(),
+  ceo: z.string().nullable(),
+  recentMilestone: z.string().nullable(),
+  knownUnknowns: z.array(z.string()),
+  sourceUrl: z.string().nullable(),
+})
+
 export interface AttendeeProfile {
   name: string
   title: string | null
@@ -132,6 +172,15 @@ export interface AttendeeProfile {
   linkedinUrl: string | null
   sourceUrl: string | null
 }
+
+export const AttendeeProfileSchema = z.object({
+  name: z.string(),
+  title: z.string().nullable(),
+  company: z.string().nullable(),
+  background: z.string().nullable(),
+  linkedinUrl: z.string().nullable(),
+  sourceUrl: z.string().nullable(),
+})
 
 export const MEETING_PREP_TIMELINE_EVENT_TYPES = [
   'funding',
@@ -391,12 +440,122 @@ export interface SearchTask {
   meta?: Record<string, string>
 }
 
+export const SearchTaskSchema = z.object({
+  type: z.enum(['snapshot', 'news', 'person', 'competitor', 'tavily_news', 'tavily_extract']),
+  query: z.string(),
+  provider: z.enum(['exa', 'tavily', 'internal']),
+  purpose: z.string().optional(),
+  lookbackDays: z.number().int().optional(),
+  category: z.enum(['company', 'research paper', 'news', 'pdf', 'personal site', 'financial report', 'people']).optional(),
+  topic: z.enum(['general', 'news', 'finance']).optional(),
+  timeRange: z.enum(['day', 'week', 'month', 'year']).optional(),
+  includeImages: z.boolean().optional(),
+  includeDomains: z.array(z.string()).optional(),
+  excludeDomains: z.array(z.string()).optional(),
+  sourceRole: z.enum([
+    'internal_memory',
+    'primary',
+    'fresh_news',
+    'financial',
+    'people',
+    'customer_voice',
+    'market_data',
+    'counter_evidence',
+    'gap_fill',
+  ]).optional(),
+  meta: z.record(z.string()).optional(),
+})
+
 export interface ResearchPlan {
   summary?: string
   intent?: string[]
   searches: SearchTask[]
   v2?: ResearchPlanV2 | null
 }
+
+export const ResearchPlanSchema = z.object({
+  summary: z.string().optional(),
+  intent: z.array(z.string()).optional(),
+  searches: z.array(SearchTaskSchema),
+  v2: z.unknown().nullable().optional(),
+})
+
+export const BriefBaseSchema = z.object({
+  id: z.string(),
+  researchType: ResearchTypeSchema,
+  generatedAt: z.string(),
+  headline: z.string(),
+  bottomLine: z.string(),
+  whyItMatters: z.string().nullable(),
+  confidence: ConfidenceSchema,
+  sources: z.array(BriefSourceSchema),
+  status: BriefStatusSchema,
+  researchPlan: ResearchPlanSchema.nullable().optional(),
+  contextUsed: UserResearchContextSchema.nullable().optional(),
+})
+
+export const MeetingPrepBriefSchema = BriefBaseSchema.extend({
+  researchType: z.literal('meeting_prep'),
+  snapshot: MeetingPrepSnapshotSchema.nullable(),
+  attendeeProfiles: z.array(AttendeeProfileSchema),
+  momentumScore: z.number().min(0).max(100).optional(),
+  riskLevel: MeetingPrepRiskLevelSchema.optional(),
+  sentiment: MeetingPrepSentimentSchema.optional(),
+  timelineEvents: z.array(TimelineEventSchema).optional(),
+  radarMetrics: z.array(RadarMetricSchema).optional(),
+  competitorMatrix: z.array(CompetitorMatrixRowSchema).optional(),
+  sections: z.object({
+    whatJustHappened: z.array(BriefBulletSchema),
+    talkingPoints: z.array(BriefBulletSchema),
+    landmines: z.array(BriefBulletSchema),
+    questionsToAsk: z.array(BriefBulletSchema),
+    competitorContext: z.array(BriefBulletSchema),
+  }),
+})
+
+export const CompetitiveAnalysisBriefSchema = BriefBaseSchema.extend({
+  researchType: z.literal('competitive_analysis'),
+  yourCompany: z.string().nullable(),
+  competitors: z.array(CompetitorProfileSchema),
+  comparisonMatrix: z.array(ComparisonRowSchema),
+  sections: z.object({
+    keyFindings: z.array(BriefBulletSchema),
+    strategicImplications: z.array(BriefBulletSchema),
+    recommendations: z.array(BriefBulletSchema),
+  }),
+})
+
+export const BusinessCaseBriefSchema = BriefBaseSchema.extend({
+  researchType: z.literal('business_case'),
+  verdict: z.enum(['strong', 'moderate', 'weak', 'insufficient_data']),
+  verdictRationale: z.string(),
+  comparables: z.array(ComparableCompanySchema),
+  sections: z.object({
+    marketEvidence: z.array(BriefBulletSchema),
+    supportingFactors: z.array(BriefBulletSchema),
+    riskFactors: z.array(BriefBulletSchema),
+    openQuestions: z.array(BriefBulletSchema),
+  }),
+})
+
+export const MarketResearchBriefSchema = BriefBaseSchema.extend({
+  researchType: z.literal('market_research'),
+  marketOverview: z.string(),
+  players: z.array(MarketPlayerSchema),
+  sections: z.object({
+    trendSignals: z.array(BriefBulletSchema),
+    opportunities: z.array(BriefBulletSchema),
+    threats: z.array(BriefBulletSchema),
+    keyFindings: z.array(BriefBulletSchema),
+  }),
+})
+
+export const IntelligenceBriefSchema = z.discriminatedUnion('researchType', [
+  MeetingPrepBriefSchema,
+  CompetitiveAnalysisBriefSchema,
+  BusinessCaseBriefSchema,
+  MarketResearchBriefSchema,
+])
 
 /* ── Intelligence V2 contracts ────────────────────────────── */
 
