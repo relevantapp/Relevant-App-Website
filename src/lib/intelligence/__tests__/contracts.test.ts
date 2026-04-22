@@ -10,6 +10,7 @@ import {
   BriefStatusSchema,
   BusinessCaseBriefSchema,
   CitedSpanSchema,
+  CompetitorProfileSchema,
   CompetitiveAnalysisBriefSchema,
   FactorCardSchema,
   FactorImpactSchema,
@@ -232,6 +233,29 @@ describe('CompositeQuadrantSchema', () => {
 
     expect(CompositeQuadrantSchema.parse(rendered)).toEqual(rendered)
     expect(CompositeQuadrantSchema.parse(gated)).toEqual(gated)
+  })
+})
+
+describe('CompetitorProfileSchema', () => {
+  it('accepts recent moves typed events when present', () => {
+    const competitor = {
+      name: 'AlphaSense',
+      description: 'Enterprise platform.',
+      strengths: ['breadth'],
+      weaknesses: ['heavier workflow'],
+      recentMoves: ['Expanded transcript workflows'],
+      recentMovesTyped: [
+        {
+          date: '2026-03-28',
+          type: 'product',
+          impact: 'positive',
+          text: 'Expanded transcript workflows.',
+          sourceIds: ['s1'],
+        },
+      ],
+    } as const
+
+    expect(CompetitorProfileSchema.parse(competitor)).toEqual(competitor)
   })
 })
 

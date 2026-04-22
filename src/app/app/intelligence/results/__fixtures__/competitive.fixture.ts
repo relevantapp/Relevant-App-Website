@@ -207,6 +207,22 @@ export const competitiveFixture: CompetitiveAnalysisBrief = {
       strengths: ['breadth of content', 'enterprise procurement comfort', 'monitoring depth'],
       weaknesses: ['less guided output', 'heavier workflow', 'higher cost perception'],
       recentMoves: ['Expanded transcript workflows for research teams', 'Pushed deeper enterprise monitoring bundles'],
+      recentMovesTyped: [
+        {
+          date: '2026-03-28',
+          type: 'product',
+          impact: 'positive',
+          text: 'Expanded transcript workflows for research teams.',
+          sourceIds: ['ca-2'],
+        },
+        {
+          date: '2026-04-08',
+          type: 'market',
+          impact: 'positive',
+          text: 'Bundled deeper monitoring coverage into the enterprise pitch.',
+          sourceIds: ['ca-2'],
+        },
+      ],
     },
     {
       name: 'Klue',
@@ -214,6 +230,22 @@ export const competitiveFixture: CompetitiveAnalysisBrief = {
       strengths: ['battlecards', 'enablement adoption', 'seller workflow'],
       weaknesses: ['shallower research synthesis', 'less analyst-style output'],
       recentMoves: ['Refreshed enablement templates', 'Added more field-facing launch workflows'],
+      recentMovesTyped: [
+        {
+          date: '2026-02-22',
+          type: 'leadership',
+          impact: 'neutral',
+          text: 'Refreshed enablement templates for launch managers and seller workflows.',
+          sourceIds: ['ca-3'],
+        },
+        {
+          date: '2026-04-04',
+          type: 'product',
+          impact: 'positive',
+          text: 'Added more field-facing launch workflows for revenue enablement teams.',
+          sourceIds: ['ca-3'],
+        },
+      ],
     },
     {
       name: 'Crayon',
@@ -221,6 +253,22 @@ export const competitiveFixture: CompetitiveAnalysisBrief = {
       strengths: ['monitoring breadth', 'alerts', 'competitive change tracking'],
       weaknesses: ['less decisive answer layer', 'more analyst lift required'],
       recentMoves: ['Published more market monitoring customer stories', 'Leaned into larger enterprise monitoring programs'],
+      recentMovesTyped: [
+        {
+          date: '2026-02-19',
+          type: 'customer',
+          impact: 'positive',
+          text: 'Published a new enterprise customer story centered on monitoring depth.',
+          sourceIds: ['ca-4'],
+        },
+        {
+          date: '2026-03-12',
+          type: 'market',
+          impact: 'mixed',
+          text: 'Leaned harder into larger monitoring programs instead of a more decisive answer layer.',
+          sourceIds: ['ca-4', 'ca-5'],
+        },
+      ],
     },
   ],
   comparisonMatrix: [

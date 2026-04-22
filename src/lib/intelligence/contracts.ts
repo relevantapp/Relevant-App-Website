@@ -406,6 +406,7 @@ export const CompetitorProfileSchema = z.object({
   strengths: z.array(z.string()),
   weaknesses: z.array(z.string()),
   recentMoves: z.array(z.string()),
+  recentMovesTyped: z.array(TimelineEventSchema).optional(),
 })
 export type CompetitorProfile = z.infer<typeof CompetitorProfileSchema>
 

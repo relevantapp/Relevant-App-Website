@@ -18,6 +18,7 @@ import ExhibitShell from './shared/ExhibitShell'
 import MethodologyDrawer from './shared/MethodologyDrawer'
 import CapabilityMatrix from './shared/viz/CapabilityMatrix'
 import CompositeQuadrant from './shared/viz/CompositeQuadrant'
+import Timeline from './shared/viz/Timeline'
 import HistoryButton from '../HistoryButton'
 
 interface CompetitiveResultsProps {
@@ -28,6 +29,7 @@ interface CompetitiveResultsProps {
 
 export default function CompetitiveResults({ brief, onNewSearch, savedBriefId }: CompetitiveResultsProps) {
   const exportRef = useRef<HTMLDivElement>(null)
+  const hasTypedRecentMoves = brief.competitors.some((competitor) => (competitor.recentMovesTyped?.length ?? 0) > 0)
 
   const scrollToSource = useCallback((id: string) => {
     const el = document.getElementById(`source-${id}`)
@@ -118,7 +120,7 @@ export default function CompetitiveResults({ brief, onNewSearch, savedBriefId }:
                   ))}
                 </div>
               )}
-              {comp.recentMoves.length > 0 && (
+              {comp.recentMoves.length > 0 && (!INTEL_RESULTS_V2 || !hasTypedRecentMoves) && (
                 <div style={{ marginTop: 8, borderTop: '1px solid var(--border)', paddingTop: 8 }}>
                   {comp.recentMoves.map((move, i) => (
                     <p key={i} style={{ fontSize: 11, lineHeight: 1.45, color: 'var(--text-soft)', marginTop: i > 0 ? 4 : 0 }}>• {move}</p>
@@ -127,6 +129,18 @@ export default function CompetitiveResults({ brief, onNewSearch, savedBriefId }:
               )}
             </div>
           ))}
+        </div>
+      )}
+
+      {INTEL_RESULTS_V2 && brief.competitors.length > 0 && (
+        <div style={{ marginTop: 24 }}>
+          <Timeline
+            competitors={brief.competitors}
+            headline="Competitor moves are clustering around workflow packaging"
+            subhead="Recent moves become more useful when they are dated, typed, and viewable across the whole set."
+            asOf={brief.generatedAt}
+            sources={brief.sources}
+          />
         </div>
       )}
 
