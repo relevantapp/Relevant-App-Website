@@ -1,4 +1,5 @@
 export { default as BulletChart } from './BulletChart'
+export { default as CapabilityMatrix } from './CapabilityMatrix'
 export { default as DiscChip } from './DiscChip'
 export { default as Quadrant } from './Quadrant'
 export { default as Radar } from './Radar'
