@@ -294,6 +294,53 @@ export const businessCaseFixture: BusinessCaseBrief = {
       highImpact: 16,
     },
   ],
+  waterfall: [
+    {
+      label: 'Baseline',
+      delta: 100,
+      kind: 'baseline',
+      assumption: {
+        text: 'The baseline assumes the current product keeps today’s conversion and reuse profile.',
+        sourceIds: ['bc-5'],
+      },
+    },
+    {
+      label: 'Reuse',
+      delta: 12,
+      kind: 'driver',
+      assumption: {
+        text: 'Higher weekly reuse lifts the outcome materially when one workflow becomes habitual.',
+        sourceIds: ['bc-1', 'bc-5'],
+      },
+    },
+    {
+      label: 'Trust',
+      delta: 10,
+      kind: 'driver',
+      assumption: {
+        text: 'A more defensible result surface increases trust in live buying and strategy conversations.',
+        sourceIds: ['bc-2', 'bc-5'],
+      },
+    },
+    {
+      label: 'Scope drag',
+      delta: -3,
+      kind: 'driver',
+      assumption: {
+        text: 'The gain erodes if implementation scope expands before the repeat workflow is proven.',
+        sourceIds: ['bc-4', 'bc-5'],
+      },
+    },
+    {
+      label: 'Target',
+      delta: 0,
+      kind: 'total',
+      assumption: {
+        text: 'The target state depends on maintaining the reuse and trust gains while containing execution drag.',
+        sourceIds: ['bc-1', 'bc-2', 'bc-5'],
+      },
+    },
+  ],
   comparables: [
     {
       name: 'Tegus',

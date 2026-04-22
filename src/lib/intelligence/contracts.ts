@@ -550,6 +550,14 @@ export const TornadoEntrySchema = z.object({
 })
 export type TornadoEntry = z.infer<typeof TornadoEntrySchema>
 
+export const WaterfallStepSchema = z.object({
+  label: z.string(),
+  delta: z.number(),
+  kind: z.enum(['baseline', 'driver', 'subtotal', 'total']),
+  assumption: CitedSpanSchema,
+})
+export type WaterfallStep = z.infer<typeof WaterfallStepSchema>
+
 export const BusinessCaseSynthesisSchema = z.object({
   headline: z.string(),
   bottomLine: z.string(),
@@ -573,6 +581,7 @@ export interface BusinessCaseBrief extends BriefBase {
   driverTree?: DriverTree
   scenarios?: ScenarioBands
   tornado?: TornadoEntry[]
+  waterfall?: WaterfallStep[]
   sections: {
     marketEvidence: BriefBullet[]
     supportingFactors: FactorCard[]
@@ -747,6 +756,7 @@ export const BusinessCaseBriefSchema = BriefBaseSchema.extend({
   driverTree: DriverTreeSchema.optional(),
   scenarios: ScenarioBandsSchema.optional(),
   tornado: z.array(TornadoEntrySchema).optional(),
+  waterfall: z.array(WaterfallStepSchema).optional(),
   sections: z.object({
     marketEvidence: z.array(BriefBulletSchema),
     supportingFactors: z.array(FactorCardSchema),

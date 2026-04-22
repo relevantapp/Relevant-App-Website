@@ -30,6 +30,7 @@ import {
   CompositeQuadrantSchema,
   StakeholderRowSchema,
   SignalCardSchema,
+  WaterfallStepSchema,
   TornadoEntrySchema,
   WhitespacePocketSchema,
 } from '../contracts'
@@ -318,6 +319,22 @@ describe('TornadoEntrySchema', () => {
     } as const
 
     expect(TornadoEntrySchema.parse(entry)).toEqual(entry)
+  })
+})
+
+describe('WaterfallStepSchema', () => {
+  it('accepts waterfall steps with cited assumptions', () => {
+    const step = {
+      label: 'Baseline',
+      delta: 100,
+      kind: 'baseline',
+      assumption: {
+        text: 'Baseline assumption.',
+        sourceIds: ['s1'],
+      },
+    } as const
+
+    expect(WaterfallStepSchema.parse(step)).toEqual(step)
   })
 })
 
