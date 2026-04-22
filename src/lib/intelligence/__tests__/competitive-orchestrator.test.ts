@@ -145,6 +145,8 @@ describe('generateCompetitiveAnalysisBrief', () => {
     expect(brief.trust?.sourcedClaimCount).toBeGreaterThan(0)
     expect(brief.trust?.conflicts).toEqual([])
     expect(brief.trust?.knownUnknowns).toEqual([])
+    expect(brief.methodology?.providers.length).toBeGreaterThan(0)
+    expect(brief.methodology?.confidenceDrivers.length).toBeGreaterThan(0)
     expect(brief.sources.some((source) => source.usedInAnswer)).toBe(true)
     expect(brief.comparisonMatrix).toHaveLength(2)
     brief.comparisonMatrix.forEach((row) => {

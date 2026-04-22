@@ -5,9 +5,14 @@ import type {
   CompanySnapshot,
   EvidencePack,
   MeetingPrepSnapshot,
+  Methodology,
+  NormalizedEvidence,
+  ResearchPlan,
   ResearchPlanV2,
+  SearchTask,
   TrustLayer,
 } from './contracts'
+import type { RetrievalResult } from './retrieval/controller'
 
 export const SNAPSHOT_SUMMARY_MAX = 220
 export const SNAPSHOT_MILESTONE_MAX = 140
@@ -403,6 +408,164 @@ export function buildTrustLayer(args: {
     knownUnknowns: buildKnownUnknowns({
       pack: args.pack,
       plan: args.plan,
+    }),
+  }
+}
+
+function providerLabel(provider: SearchTask['provider'] | BriefSource['provider']): string {
+  if (provider === 'internal') return 'Internal'
+  if (provider === 'exa') return 'Exa'
+  if (provider === 'tavily') return 'Tavily'
+  return provider[0].toUpperCase() + provider.slice(1)
+}
+
+function buildMethodologyProviders(args: {
+  researchPlan?: ResearchPlan | null
+  allEvidence: NormalizedEvidence[]
+  sources: BriefSource[]
+}): Methodology['providers'] {
+  const queriesByProvider = new Map<string, string[]>()
+  const evidenceCounts = new Map<string, number>()
+
+  for (const search of args.researchPlan?.searches ?? []) {
+    const provider = providerLabel(search.provider)
+    const existing = queriesByProvider.get(provider) ?? []
+    if (!existing.includes(search.query)) existing.push(search.query)
+    queriesByProvider.set(provider, existing)
+  }
+
+  for (const item of args.allEvidence) {
+    const provider = providerLabel(item.provider)
+    evidenceCounts.set(provider, (evidenceCounts.get(provider) ?? 0) + 1)
+  }
+
+  const providerOrder = [
+    ...Array.from(queriesByProvider.keys()),
+    ...Array.from(evidenceCounts.keys()).filter((provider) => !queriesByProvider.has(provider)),
+  ]
+
+  if (providerOrder.length === 0) {
+    const fallbackProviders = Array.from(new Set(args.sources.map((source) => providerLabel(source.provider))))
+    providerOrder.push(...fallbackProviders)
+  }
+
+  return providerOrder.map((provider) => ({
+    name: provider,
+    queriesRun: queriesByProvider.get(provider) ?? [`${provider} query telemetry was not captured for this run.`],
+    docsReturned: evidenceCounts.get(provider) ?? 0,
+  }))
+}
+
+function daysOld(value: string): number {
+  const ms = Date.now() - new Date(value).getTime()
+  return Math.max(0, Math.floor(ms / (1000 * 60 * 60 * 24)))
+}
+
+function buildMethodologyConfidenceDrivers(args: {
+  trust: TrustLayer
+  retrieval?: RetrievalResult | null
+}): string[] {
+  const drivers: string[] = []
+
+  if (args.trust.sourcedClaimCount > 0) {
+    drivers.push(`${args.trust.sourcedClaimCount} sourced claims survived into the final brief.`)
+  }
+
+  if (args.trust.freshness.newestSourceAt) {
+    const newestDaysOld = daysOld(args.trust.freshness.newestSourceAt)
+    drivers.push(
+      newestDaysOld === 0
+        ? 'The newest cited source is from today.'
+        : `The newest cited source is ${newestDaysOld} day${newestDaysOld === 1 ? '' : 's'} old.`,
+    )
+  }
+
+  if (args.retrieval) {
+    drivers.push(
+      args.retrieval.coverage.enoughToSynthesize
+        ? 'Required research lanes returned enough evidence to synthesize.'
+        : 'Coverage stayed thin in one or more required research lanes.',
+    )
+
+    if (!args.retrieval.coverage.needsCounterEvidence) {
+      drivers.push('Counter-evidence was included in the retrieval mix.')
+    } else if (args.retrieval.coverage.needsCounterEvidence) {
+      drivers.push('Counter-evidence coverage remained weak in this run.')
+    }
+  }
+
+  if (args.trust.knownUnknowns.length > 0) {
+    drivers.push(`${args.trust.knownUnknowns.length} known unknown${args.trust.knownUnknowns.length === 1 ? '' : 's'} remain after search.`)
+  }
+
+  if (args.trust.conflicts.length > 0) {
+    drivers.push('At least one live contradiction was preserved instead of being hidden.')
+  }
+
+  return drivers.slice(0, 4)
+}
+
+function exclusionReason(source: BriefSource): string {
+  switch (source.sourceRole) {
+    case 'counter_evidence':
+      return 'Retrieved as counter-evidence, but ranked below the sources that made the final brief.'
+    case 'people':
+      return 'Useful background, but not direct enough to survive ranking into the final brief.'
+    case 'competitor':
+      return 'Useful context, but weaker evidence for the core question than the sources that made the final brief.'
+    default:
+      return 'Retrieved, but ranked below more direct evidence for this brief.'
+  }
+}
+
+function buildMethodologyExclusions(args: {
+  sources: BriefSource[]
+  sourceIdMap: Map<string, string>
+  allEvidence: NormalizedEvidence[]
+  rankedEvidence: NormalizedEvidence[]
+}): Methodology['excluded'] {
+  const displayedSourceIds = new Set(args.sources.map((source) => source.id))
+  const allEvidenceSourceIds = new Set(canonicalizeSourceIds(args.allEvidence.map((item) => item.id), args.sourceIdMap))
+  const rankedSourceIds = new Set(canonicalizeSourceIds(args.rankedEvidence.map((item) => item.id), args.sourceIdMap))
+
+  return args.sources
+    .filter((source) => displayedSourceIds.has(source.id) && allEvidenceSourceIds.has(source.id) && !rankedSourceIds.has(source.id))
+    .filter((source) => !source.usedInAnswer)
+    .slice(0, 3)
+    .map((source) => ({
+      sourceId: source.id,
+      reason: exclusionReason(source),
+    }))
+}
+
+export function buildMethodology(args: {
+  sources: BriefSource[]
+  sourceIdMap: Map<string, string>
+  trust: TrustLayer
+  researchPlan?: ResearchPlan | null
+  allEvidence: NormalizedEvidence[]
+  rankedEvidence: NormalizedEvidence[]
+  retrieval?: RetrievalResult | null
+}): Methodology {
+  return {
+    providers: buildMethodologyProviders({
+      researchPlan: args.researchPlan,
+      allEvidence: args.allEvidence,
+      sources: args.sources,
+    }),
+    freshnessRange: {
+      oldest: args.trust.freshness.oldestSourceAt,
+      newest: args.trust.freshness.newestSourceAt,
+    },
+    confidenceDrivers: buildMethodologyConfidenceDrivers({
+      trust: args.trust,
+      retrieval: args.retrieval,
+    }),
+    excluded: buildMethodologyExclusions({
+      sources: args.sources,
+      sourceIdMap: args.sourceIdMap,
+      allEvidence: args.allEvidence,
+      rankedEvidence: args.rankedEvidence,
     }),
   }
 }

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   buildCanonicalSourceIdMap,
+  buildMethodology,
   buildTrustLayer,
   buildMeetingPrepSnapshot,
   canonicalizeSourceIds,
@@ -9,7 +10,15 @@ import {
   SNAPSHOT_MILESTONE_MAX,
   SNAPSHOT_SUMMARY_MAX,
 } from '../meeting-prep-display'
-import type { BriefSource, CompanySnapshot, EvidencePack, ResearchPlanV2 } from '../contracts'
+import type {
+  BriefSource,
+  CompanySnapshot,
+  EvidencePack,
+  NormalizedEvidence,
+  ResearchPlan,
+  ResearchPlanV2,
+} from '../contracts'
+import type { RetrievalResult } from '../retrieval/controller'
 
 describe('buildMeetingPrepSnapshot', () => {
   it('sanitizes markdown artifacts, caps expensive fields, and records known unknowns', () => {
@@ -188,6 +197,106 @@ describe('buildTrustLayer', () => {
           'procurement sign-off workflow owner',
           'final procurement approver enterprise rollout',
         ],
+      },
+    ])
+  })
+})
+
+describe('buildMethodology', () => {
+  it('groups provider telemetry, mirrors freshness, and records ranked-out exclusions', () => {
+    const sources: BriefSource[] = [
+      {
+        id: 's1',
+        url: 'https://example.com/one',
+        title: 'Source one',
+        domain: 'example.com',
+        publishedAt: '2026-04-10T00:00:00.000Z',
+        provider: 'exa',
+        snippet: 'One',
+        sourceRole: 'primary',
+      },
+      {
+        id: 's2',
+        url: 'https://example.com/two',
+        title: 'Source two',
+        domain: 'example.com',
+        publishedAt: '2026-04-12T00:00:00.000Z',
+        provider: 'tavily',
+        snippet: 'Two',
+        sourceRole: 'counter_evidence',
+      },
+      {
+        id: 's3',
+        url: 'internal://memo-1',
+        title: 'Internal memo',
+        domain: 'internal',
+        publishedAt: '2026-04-18T00:00:00.000Z',
+        provider: 'internal',
+        snippet: 'Three',
+        sourceRole: 'internal_memory',
+      },
+    ]
+
+    const trust = buildTrustLayer({
+      sources,
+      sourceIdMap: buildCanonicalSourceIdMap(sources),
+      claimSourceGroups: [['s1'], ['s1', 's3']],
+    })
+
+    const researchPlan = {
+      searches: [
+        { provider: 'exa', type: 'news', query: 'workflow rollout timeline' },
+        { provider: 'tavily', type: 'tavily_news', query: 'procurement sign-off workflow' },
+        { provider: 'internal', type: 'news', query: 'prior account notes' },
+      ],
+    } as unknown as ResearchPlan
+
+    const allEvidence = [
+      { id: 's1', provider: 'exa' },
+      { id: 's2', provider: 'tavily' },
+      { id: 's3', provider: 'internal' },
+    ] as unknown as NormalizedEvidence[]
+
+    const rankedEvidence = [
+      { id: 's1', provider: 'exa' },
+      { id: 's3', provider: 'internal' },
+    ] as unknown as NormalizedEvidence[]
+
+    const retrieval = {
+      coverage: {
+        enoughToSynthesize: true,
+        missingQuestions: [],
+        weakSourceRoles: [],
+        needsFreshness: false,
+        needsCounterEvidence: false,
+        score: 1,
+      },
+    } as unknown as RetrievalResult
+
+    const methodology = buildMethodology({
+      sources,
+      sourceIdMap: buildCanonicalSourceIdMap(sources),
+      trust,
+      researchPlan,
+      allEvidence,
+      rankedEvidence,
+      retrieval,
+    })
+
+    expect(methodology.providers).toEqual([
+      { name: 'Exa', queriesRun: ['workflow rollout timeline'], docsReturned: 1 },
+      { name: 'Tavily', queriesRun: ['procurement sign-off workflow'], docsReturned: 1 },
+      { name: 'Internal', queriesRun: ['prior account notes'], docsReturned: 1 },
+    ])
+    expect(methodology.freshnessRange).toEqual({
+      oldest: '2026-04-10T00:00:00.000Z',
+      newest: '2026-04-18T00:00:00.000Z',
+    })
+    expect(methodology.confidenceDrivers).toContain('Required research lanes returned enough evidence to synthesize.')
+    expect(methodology.excluded).toEqual([
+      {
+        sourceId: 's2',
+        reason: 'Retrieved as counter-evidence, but ranked below the sources that made the final brief.',
       },
     ])
   })

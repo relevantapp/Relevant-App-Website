@@ -33,6 +33,7 @@ import {
 } from './v2-bridge'
 import {
   buildCanonicalSourceIdMap,
+  buildMethodology,
   buildMeetingPrepSnapshot,
   buildTrustLayer,
   collectAnswerSourceIds,
@@ -563,6 +564,15 @@ export async function generateMeetingPrepBrief(
       pack: evidencePack,
       plan: v2Bridge?.planV2,
     })
+    const methodology = buildMethodology({
+      sources: dedupedSources,
+      sourceIdMap: canonicalSourceIdMap,
+      trust,
+      researchPlan,
+      allEvidence,
+      rankedEvidence,
+      retrieval: v2Evidence?.retrieval,
+    })
 
     return {
       id: generateBriefId(),
@@ -586,6 +596,7 @@ export async function generateMeetingPrepBrief(
       sections: normalizedSections,
       sources: dedupedSources,
       trust,
+      methodology,
       researchPlan,
       contextUsed: request.userContext ?? null,
       status: {

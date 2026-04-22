@@ -21,6 +21,7 @@ import {
 } from '../normalize'
 import {
   buildCanonicalSourceIdMap,
+  buildMethodology,
   buildTrustLayer,
   collectAnswerSourceIds,
   markSourcesUsedInAnswer,
@@ -269,6 +270,15 @@ export async function generateMarketResearchBrief(
     pack: evidencePack,
     plan: v2Bridge?.planV2,
   })
+  const methodology = buildMethodology({
+    sources: dedupedSources,
+    sourceIdMap: canonicalSourceIdMap,
+    trust,
+    researchPlan,
+    allEvidence,
+    rankedEvidence,
+    retrieval: v2Evidence?.retrieval,
+  })
   if (dedupedSources.length < 4) degradedReasons.push('Low source count')
   const totalMs = Math.round(performance.now() - totalStart)
   const internalMs = v2Evidence?.retrieval.timings.internalMs ?? 0
@@ -294,6 +304,7 @@ export async function generateMarketResearchBrief(
     },
     sources: dedupedSources,
     trust,
+    methodology,
     researchPlan,
     contextUsed: input.userContext ?? null,
     status: {
