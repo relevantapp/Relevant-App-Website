@@ -261,6 +261,22 @@ export const businessCaseFixture: BusinessCaseBrief = {
       },
     ],
   },
+  scenarios: {
+    metric: 'Gross-margin payback',
+    unit: '%',
+    downside: {
+      value: 80,
+      triggers: ['Adoption stays shallow outside one workflow.', 'Finance pushes back on expansion spend.'],
+    },
+    base: {
+      value: 120,
+      drivers: ['One repeat workflow proves weekly reuse.', 'Exportable output improves stakeholder confidence.'],
+    },
+    upside: {
+      value: 150,
+      triggers: ['Two workflows reach reuse quickly.', 'Buyers respond to the more defensible output story.'],
+    },
+  },
   comparables: [
     {
       name: 'Tegus',

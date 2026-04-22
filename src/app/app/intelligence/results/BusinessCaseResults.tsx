@@ -19,6 +19,7 @@ import SearchPlanPanel from './shared/SearchPlanPanel'
 import ExhibitShell from './shared/ExhibitShell'
 import MethodologyDrawer from './shared/MethodologyDrawer'
 import DriverTree from './shared/viz/DriverTree'
+import ScenarioBands from './shared/viz/ScenarioBands'
 import HistoryButton from '../HistoryButton'
 
 interface BusinessCaseResultsProps {
@@ -120,6 +121,18 @@ export default function BusinessCaseResults({ brief, onNewSearch, savedBriefId }
             data={brief.driverTree}
             headline="The business case rests on four decision branches"
             subhead="Demand alone is not enough. The economics, fit, and execution branches need to hold too."
+            asOf={brief.generatedAt}
+            sources={brief.sources}
+          />
+        </div>
+      )}
+
+      {INTEL_RESULTS_V2 && brief.scenarios && (
+        <div style={{ marginTop: 24 }}>
+          <ScenarioBands
+            data={brief.scenarios}
+            headline="The base case sits inside a realistic range"
+            subhead="The point is not a single magic number. It is the band between what could go right and what could still fail."
             asOf={brief.generatedAt}
             sources={brief.sources}
           />

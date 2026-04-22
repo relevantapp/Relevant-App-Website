@@ -525,6 +525,24 @@ export const DriverTreeSchema = z.object({
 })
 export type DriverTree = z.infer<typeof DriverTreeSchema>
 
+export const ScenarioBandsSchema = z.object({
+  metric: z.string(),
+  unit: z.string().optional(),
+  base: z.object({
+    value: z.number(),
+    drivers: z.array(z.string()),
+  }),
+  upside: z.object({
+    value: z.number(),
+    triggers: z.array(z.string()),
+  }),
+  downside: z.object({
+    value: z.number(),
+    triggers: z.array(z.string()),
+  }),
+})
+export type ScenarioBands = z.infer<typeof ScenarioBandsSchema>
+
 export const BusinessCaseSynthesisSchema = z.object({
   headline: z.string(),
   bottomLine: z.string(),
@@ -546,6 +564,7 @@ export interface BusinessCaseBrief extends BriefBase {
   verdictRationale: string
   comparables: ComparableCompany[]
   driverTree?: DriverTree
+  scenarios?: ScenarioBands
   sections: {
     marketEvidence: BriefBullet[]
     supportingFactors: FactorCard[]
@@ -718,6 +737,7 @@ export const BusinessCaseBriefSchema = BriefBaseSchema.extend({
   verdictRationale: z.string(),
   comparables: z.array(ComparableCompanySchema),
   driverTree: DriverTreeSchema.optional(),
+  scenarios: ScenarioBandsSchema.optional(),
   sections: z.object({
     marketEvidence: z.array(BriefBulletSchema),
     supportingFactors: z.array(FactorCardSchema),

@@ -24,6 +24,7 @@ import {
   TimelineEventSchema,
   RadarMetricSchema,
   RichBulletSchema,
+  ScenarioBandsSchema,
   CompetitorMatrixRowSchema,
   MeetingPrepSynthesisSchema,
   CompositeQuadrantSchema,
@@ -290,6 +291,20 @@ describe('DriverTreeSchema', () => {
     } as const
 
     expect(DriverTreeSchema.parse(driverTree)).toEqual(driverTree)
+  })
+})
+
+describe('ScenarioBandsSchema', () => {
+  it('accepts downside, base, and upside scenario bands', () => {
+    const scenario = {
+      metric: 'Payback period',
+      unit: 'mo',
+      downside: { value: 18, triggers: ['Budget freeze'] },
+      base: { value: 12, drivers: ['Current plan'] },
+      upside: { value: 9, triggers: ['Fast rollout'] },
+    } as const
+
+    expect(ScenarioBandsSchema.parse(scenario)).toEqual(scenario)
   })
 })
 
