@@ -49,6 +49,80 @@ const INITIAL_FORM_STATES: FormStates = {
   market_research: {},
 }
 
+function buildApiBodyFromInput(input: IntelligenceInput): Record<string, unknown> {
+  if (input.researchType === 'meeting_prep') {
+    return {
+      researchType: 'meeting_prep',
+      accountName: input.accountName,
+      website: input.website || undefined,
+      attendees: input.attendees?.map((attendee) => attendee.name) || undefined,
+      meetingType: mapMeetingType(input.meetingType),
+      goal: input.goal,
+      notes: input.context || undefined,
+      competitors: input.competitors?.length ? input.competitors : undefined,
+      relationshipStage: input.relationshipStage || undefined,
+      whatYoureSelling: input.whatYoureSelling || undefined,
+      desiredNextStep: input.desiredNextStep || undefined,
+      painPoints: input.painPoints?.length ? input.painPoints : undefined,
+      steering: input.steering || undefined,
+    }
+  }
+
+  if (input.researchType === 'competitive_analysis') {
+    return {
+      researchType: 'competitive_analysis',
+      competitors: input.competitors,
+      yourCompany: input.yourCompany,
+      focusArea: input.focusArea,
+      specificQuestions: input.specificQuestions || undefined,
+      marketSegment: input.marketSegment || undefined,
+      geography: input.geography || undefined,
+      customerType: input.customerType || undefined,
+      useCasePreset: input.useCasePreset || undefined,
+      steering: input.steering || undefined,
+    }
+  }
+
+  if (input.researchType === 'business_case') {
+    return {
+      researchType: 'business_case',
+      initiativeName: input.initiativeName,
+      hypothesis: input.hypothesis,
+      targetMarket: input.targetMarket || undefined,
+      successMetrics: input.successMetrics?.length ? input.successMetrics : undefined,
+      keyQuestions: input.keyQuestions || undefined,
+      comparableCompanies: input.comparableCompanies?.length ? input.comparableCompanies : undefined,
+      decisionType: input.decisionType || undefined,
+      decisionAudience: input.decisionAudience || undefined,
+      timeHorizon: input.timeHorizon || undefined,
+      investmentLevel: input.investmentLevel || undefined,
+      roiFrame: input.roiFrame?.length ? input.roiFrame : undefined,
+      steering: input.steering || undefined,
+    }
+  }
+
+  return {
+    researchType: 'market_research',
+    marketOrTrend: input.marketOrTrend,
+    scope: input.scope,
+    keyQuestions: input.keyQuestions || undefined,
+    knownPlayers: input.knownPlayers?.length ? input.knownPlayers : undefined,
+    timeHorizon: input.timeHorizon || '90d',
+    objective: input.objective || undefined,
+    region: input.region || undefined,
+    customerSegment: input.customerSegment || undefined,
+    useCase: input.useCase || undefined,
+    depth: input.depth || undefined,
+    steering: input.steering || undefined,
+  }
+}
+
+function getStoredPreferredModel() {
+  return typeof window !== 'undefined'
+    ? normalizeModelPreference(localStorage.getItem(MODEL_STORAGE_KEY))
+    : undefined
+}
+
 export default function IntelligencePage() {
   const { isAuthenticated, isLoading: authLoading } = useAuth()
   const router = useRouter()
@@ -56,7 +130,7 @@ export default function IntelligencePage() {
   const [selectedType, setSelectedType] = useState<ResearchType | null>(null)
   const [formStates, setFormStates] = useState<FormStates>({ ...INITIAL_FORM_STATES })
   const [pendingInput, setPendingInput] = useState<IntelligenceInput | null>(null)
-  const [lastRequestPayload, setLastRequestPayload] = useState<IntelligenceInput | null>(null)
+  const [lastRequestPayload, setLastRequestPayload] = useState<Record<string, unknown> | null>(null)
   const { state: streamState, generate, abort, reset } = useIntelligenceStream()
   const [savedBriefId, setSavedBriefId] = useState<string | null>(null)
   const [loadedBrief, setLoadedBrief] = useState<IntelligenceBrief | null>(null)
@@ -106,6 +180,10 @@ export default function IntelligencePage() {
             if (!synthesis) throw new Error('Saved brief is missing content')
             setLoadedBrief({ ...synthesis, id: saved.id })
             setSavedBriefId(saved.id)
+            setLastRequestPayload({
+              researchType: saved.research_type,
+              ...((saved.request_payload as Record<string, unknown> | undefined) ?? {}),
+            })
           })
           .catch((err) => {
             if (!cancelled) setSavedBriefError(err instanceof Error ? err.message : 'Brief not found')
@@ -130,81 +208,36 @@ export default function IntelligencePage() {
     const input = pendingInput
     setLoadedBrief(null)
     setSavedBriefId(null)
-    setLastRequestPayload(input)
+    const apiBody = buildApiBodyFromInput(input)
+    setLastRequestPayload(apiBody)
     setPendingInput(null)
-
-    // Build request body based on research type
-    let apiBody: Record<string, unknown>
-
-    if (input.researchType === 'meeting_prep') {
-      apiBody = {
-        researchType: 'meeting_prep',
-        accountName: input.accountName,
-        website: input.website || undefined,
-        attendees: input.attendees?.map((a) => a.name) || undefined,
-        meetingType: mapMeetingType(input.meetingType),
-        goal: input.goal,
-        notes: input.context || undefined,
-        competitors: input.competitors?.length ? input.competitors : undefined,
-        relationshipStage: input.relationshipStage || undefined,
-        whatYoureSelling: input.whatYoureSelling || undefined,
-        desiredNextStep: input.desiredNextStep || undefined,
-        painPoints: input.painPoints?.length ? input.painPoints : undefined,
-        steering: input.steering || undefined,
-      }
-    } else if (input.researchType === 'competitive_analysis') {
-      apiBody = {
-        researchType: 'competitive_analysis',
-        competitors: input.competitors,
-        yourCompany: input.yourCompany,
-        focusArea: input.focusArea,
-        specificQuestions: input.specificQuestions || undefined,
-        marketSegment: input.marketSegment || undefined,
-        geography: input.geography || undefined,
-        customerType: input.customerType || undefined,
-        useCasePreset: input.useCasePreset || undefined,
-        steering: input.steering || undefined,
-      }
-    } else if (input.researchType === 'business_case') {
-      apiBody = {
-        researchType: 'business_case',
-        initiativeName: input.initiativeName,
-        hypothesis: input.hypothesis,
-        targetMarket: input.targetMarket || undefined,
-        successMetrics: input.successMetrics?.length ? input.successMetrics : undefined,
-        keyQuestions: input.keyQuestions || undefined,
-        comparableCompanies: input.comparableCompanies?.length ? input.comparableCompanies : undefined,
-        decisionType: input.decisionType || undefined,
-        decisionAudience: input.decisionAudience || undefined,
-        timeHorizon: input.timeHorizon || undefined,
-        investmentLevel: input.investmentLevel || undefined,
-        roiFrame: input.roiFrame?.length ? input.roiFrame : undefined,
-        steering: input.steering || undefined,
-      }
-    } else {
-      apiBody = {
-        researchType: 'market_research',
-        marketOrTrend: input.marketOrTrend,
-        scope: input.scope,
-        keyQuestions: input.keyQuestions || undefined,
-        knownPlayers: input.knownPlayers?.length ? input.knownPlayers : undefined,
-        timeHorizon: input.timeHorizon || '90d',
-        objective: input.objective || undefined,
-        region: input.region || undefined,
-        customerSegment: input.customerSegment || undefined,
-        useCase: input.useCase || undefined,
-        depth: input.depth || undefined,
-        steering: input.steering || undefined,
-      }
-    }
 
     await generate({
       ...apiBody,
-      preferredModel: typeof window !== 'undefined'
-        ? normalizeModelPreference(localStorage.getItem(MODEL_STORAGE_KEY))
-        : undefined,
+      preferredModel: getStoredPreferredModel(),
     })
   }, [generate, pendingInput])
+
+  const handleRefresh = useCallback(() => {
+    if (!lastRequestPayload || streamState.isStreaming || loadingSavedBrief) return
+
+    setLoadedBrief(null)
+    setSavedBriefId(null)
+    setSavedBriefError(null)
+    void generate({
+      ...lastRequestPayload,
+      preferredModel: getStoredPreferredModel(),
+    })
+  }, [generate, lastRequestPayload, loadingSavedBrief, streamState.isStreaming])
+
+  useEffect(() => {
+    const onRefresh = () => {
+      handleRefresh()
+    }
+
+    window.addEventListener('intel:refresh', onRefresh)
+    return () => window.removeEventListener('intel:refresh', onRefresh)
+  }, [handleRefresh])
 
   const handleNewSearch = useCallback(() => {
     reset()
