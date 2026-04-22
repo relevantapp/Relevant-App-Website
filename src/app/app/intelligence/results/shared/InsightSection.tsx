@@ -2,6 +2,7 @@
 
 import type { Priority, RichBullet } from '@/lib/intelligence/contracts'
 import { INTEL_RESULTS_V2 } from '@/lib/intelligence/feature-flags'
+import ClaimFeedback from './ClaimFeedback'
 import PriorityStrip from './PriorityStrip'
 
 interface InsightSectionProps {
@@ -62,6 +63,11 @@ export default function InsightSection({ title, icon, bullets, onSourceClick }: 
                   </button>
                 ))}
               </div>
+              <ClaimFeedback
+                claimKey={`insight:${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}:${i}`}
+                claimText={bullet.text}
+                sourceIds={bullet.sourceIds}
+              />
             </div>
           </div>
         ))}

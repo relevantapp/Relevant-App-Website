@@ -5,6 +5,8 @@ import { TrendingUp, Target } from 'lucide-react'
 import type { MarketResearchBrief } from '../types'
 import { INTEL_RESULTS_V2 } from '@/lib/intelligence/feature-flags'
 import AnswerBlock from './shared/AnswerBlock'
+import ClaimFeedback from './shared/ClaimFeedback'
+import { ClaimFeedbackProvider } from './shared/ClaimFeedbackContext'
 import ResultsHero from './shared/ResultsHero'
 import PlayerCard from './shared/PlayerCard'
 import BalanceView from './shared/BalanceView'
@@ -13,6 +15,7 @@ import SourcesStrip from './shared/SourcesStrip'
 import StatusBar from './shared/StatusBar'
 import CopyModePicker from './shared/CopyModePicker'
 import DegradedBanner from './shared/DegradedBanner'
+import PdfExportSheet from './shared/PdfExportSheet'
 import ShareButton from './shared/ShareButton'
 import SearchPlanPanel from './shared/SearchPlanPanel'
 import ExhibitShell from './shared/ExhibitShell'
@@ -33,6 +36,7 @@ interface MarketResearchResultsProps {
 
 export default function MarketResearchResults({ brief, onNewSearch, savedBriefId }: MarketResearchResultsProps) {
   const exportRef = useRef<HTMLDivElement>(null)
+  const pdfRef = useRef<HTMLDivElement>(null)
 
   const scrollToSource = useCallback((id: string) => {
     const el = document.getElementById(`source-${id}`)
@@ -48,7 +52,8 @@ export default function MarketResearchResults({ brief, onNewSearch, savedBriefId
   })
 
   return (
-    <div className="mx-auto w-full max-w-4xl">
+    <ClaimFeedbackProvider briefId={savedBriefId ?? null} researchType="market_research">
+      <div className="mx-auto w-full max-w-4xl">
       <div style={{ marginBottom: 20, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
         <button
           onClick={onNewSearch}
@@ -59,7 +64,7 @@ export default function MarketResearchResults({ brief, onNewSearch, savedBriefId
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <HistoryButton compact />
           <ShareButton briefId={savedBriefId ?? null} />
-          <CopyModePicker brief={brief} exportRef={exportRef} />
+          <CopyModePicker brief={brief} exportRef={exportRef} pdfRef={pdfRef} />
         </div>
       </div>
 
@@ -153,6 +158,7 @@ export default function MarketResearchResults({ brief, onNewSearch, savedBriefId
           </div>
           <div style={{ padding: '14px 18px' }}>
             <p style={{ fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.55 }}>{brief.marketOverview}</p>
+            <ClaimFeedback className="mt-3" claimKey="market-overview" claimText={brief.marketOverview} />
           </div>
         </div>
       )}
@@ -177,6 +183,7 @@ export default function MarketResearchResults({ brief, onNewSearch, savedBriefId
                       category={p.category}
                       description={p.description}
                       estimatedPosition={p.estimatedPosition}
+                      feedbackKey={`player:${p.name}`}
                     />
                   ))}
                 </div>
@@ -195,6 +202,7 @@ export default function MarketResearchResults({ brief, onNewSearch, savedBriefId
                     category={p.category}
                     description={p.description}
                     estimatedPosition={p.estimatedPosition}
+                    feedbackKey={`player:${p.name}`}
                   />
                 ))}
               </div>
@@ -261,6 +269,32 @@ export default function MarketResearchResults({ brief, onNewSearch, savedBriefId
         <SourcesStrip sources={brief.sources} />
       </div>
       <StatusBar status={brief.status} />
-    </div>
+      <PdfExportSheet ref={pdfRef} title={brief.headline}>
+        <AnswerBlock
+          answer={brief.answer}
+          fallback={{
+            headline: brief.headline,
+            bottomLine: brief.bottomLine,
+            confidence: brief.confidence,
+            whyItMatters: brief.whyItMatters,
+          }}
+          sources={brief.sources}
+        />
+        {brief.marketMap ? (
+          <LogoMarketMap
+            data={brief.marketMap}
+            headline="The market is fragmenting into a few distinct product shapes, and the wedge is the answer-first layer."
+            subhead="This map shows where the category clusters today before you decide which segment to attack."
+            asOf={brief.generatedAt}
+            sources={brief.sources}
+            playerDetails={brief.players}
+          />
+        ) : null}
+        {brief.trackedSignals?.length ? (
+          <TrendTracker data={brief.trackedSignals} asOf={brief.generatedAt} sources={brief.sources} />
+        ) : null}
+      </PdfExportSheet>
+      </div>
+    </ClaimFeedbackProvider>
   )
 }

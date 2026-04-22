@@ -2,6 +2,7 @@
 
 import type { BriefSource, WatchItem } from '@/lib/intelligence/contracts'
 import AsOfChip from '../AsOfChip'
+import ClaimFeedback from '../ClaimFeedback'
 import ExhibitShell from '../ExhibitShell'
 
 function getWatchSources(sourceIds: string[], sources: BriefSource[]) {
@@ -60,6 +61,12 @@ export default function WatchList({ data, headline, subhead, asOf, sources, now 
                 </a>
               ))}
             </div>
+            <ClaimFeedback
+              className="mt-3"
+              claimKey={`watch:${item.signal}:${item.nextCheckBy}`}
+              claimText={`${item.signal} ${item.whyItMatters}`.trim()}
+              sourceIds={item.sources}
+            />
           </article>
         ))}
       </div>

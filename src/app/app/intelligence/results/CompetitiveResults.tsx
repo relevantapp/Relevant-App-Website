@@ -5,6 +5,8 @@ import { Target, TrendingUp, Lightbulb } from 'lucide-react'
 import type { CompetitiveAnalysisBrief } from '../types'
 import { INTEL_RESULTS_V2 } from '@/lib/intelligence/feature-flags'
 import AnswerBlock from './shared/AnswerBlock'
+import ClaimFeedback from './shared/ClaimFeedback'
+import { ClaimFeedbackProvider } from './shared/ClaimFeedbackContext'
 import ResultsHero from './shared/ResultsHero'
 import InsightSection from './shared/InsightSection'
 import ScoreBar from './shared/ScoreBar'
@@ -12,6 +14,7 @@ import SourcesStrip from './shared/SourcesStrip'
 import StatusBar from './shared/StatusBar'
 import CopyModePicker from './shared/CopyModePicker'
 import DegradedBanner from './shared/DegradedBanner'
+import PdfExportSheet from './shared/PdfExportSheet'
 import ShareButton from './shared/ShareButton'
 import SearchPlanPanel from './shared/SearchPlanPanel'
 import ExhibitShell from './shared/ExhibitShell'
@@ -30,6 +33,7 @@ interface CompetitiveResultsProps {
 
 export default function CompetitiveResults({ brief, onNewSearch, savedBriefId }: CompetitiveResultsProps) {
   const exportRef = useRef<HTMLDivElement>(null)
+  const pdfRef = useRef<HTMLDivElement>(null)
   const hasTypedRecentMoves = brief.competitors.some((competitor) => (competitor.recentMovesTyped?.length ?? 0) > 0)
 
   const scrollToSource = useCallback((id: string) => {
@@ -41,7 +45,8 @@ export default function CompetitiveResults({ brief, onNewSearch, savedBriefId }:
   }, [])
 
   return (
-    <div className="mx-auto w-full max-w-4xl">
+    <ClaimFeedbackProvider briefId={savedBriefId ?? null} researchType="competitive_analysis">
+      <div className="mx-auto w-full max-w-4xl">
       <div style={{ marginBottom: 20, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
         <button
           onClick={onNewSearch}
@@ -52,7 +57,7 @@ export default function CompetitiveResults({ brief, onNewSearch, savedBriefId }:
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <HistoryButton compact />
           <ShareButton briefId={savedBriefId ?? null} />
-          <CopyModePicker brief={brief} exportRef={exportRef} />
+          <CopyModePicker brief={brief} exportRef={exportRef} pdfRef={pdfRef} />
         </div>
       </div>
 
@@ -128,6 +133,11 @@ export default function CompetitiveResults({ brief, onNewSearch, savedBriefId }:
                   ))}
                 </div>
               )}
+              <ClaimFeedback
+                className="mt-3"
+                claimKey={`competitor-card:${comp.name}`}
+                claimText={[comp.description, ...comp.strengths, ...comp.weaknesses, ...comp.recentMoves].join(' ')}
+              />
             </div>
           ))}
         </div>
@@ -305,7 +315,40 @@ export default function CompetitiveResults({ brief, onNewSearch, savedBriefId }:
         <SourcesStrip sources={brief.sources} />
       </div>
       <StatusBar status={brief.status} />
-    </div>
+      <PdfExportSheet ref={pdfRef} title={brief.headline}>
+        <AnswerBlock
+          answer={brief.answer}
+          fallback={{
+            headline: brief.headline,
+            bottomLine: brief.bottomLine,
+            confidence: brief.confidence,
+            whyItMatters: brief.whyItMatters,
+          }}
+          sources={brief.sources}
+        />
+        {brief.competitors.length > 0 ? (
+          <Timeline
+            competitors={brief.competitors}
+            headline="Competitor moves are clustering around workflow packaging"
+            subhead="Recent moves become more useful when they are dated, typed, and viewable across the whole set."
+            asOf={brief.generatedAt}
+            sources={brief.sources}
+          />
+        ) : null}
+        {brief.comparisonMatrix.length > 0 ? (
+          <CapabilityMatrix
+            data={brief.comparisonMatrix}
+            headline={`${brief.headline} - capability comparison`}
+            subhead="The comparison matrix is still the fastest way to see where each platform actually wins."
+            asOf={brief.generatedAt}
+            sources={brief.sources}
+            briefId={brief.id}
+            yourCompany={brief.yourCompany}
+          />
+        ) : null}
+      </PdfExportSheet>
+      </div>
+    </ClaimFeedbackProvider>
   )
 }
 

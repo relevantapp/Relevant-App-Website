@@ -3,6 +3,7 @@
 import { Copy } from 'lucide-react'
 import { useEffect } from 'react'
 import type { AnswerBlock as AnswerBlockData, BriefSource, Confidence } from '@/lib/intelligence/contracts'
+import ClaimFeedback from './ClaimFeedback'
 import CitedText from './CitedText'
 import ConfidenceBadge from './ConfidenceBadge'
 
@@ -55,14 +56,18 @@ export default function AnswerBlock({ answer, fallback, sources }: AnswerBlockPr
 
   if (!answer) {
     return (
-      <section className="sticky top-0 z-20 rounded-[28px] border border-[var(--border)] bg-[var(--bg-elevated)] px-5 py-5 shadow-[0_14px_40px_rgba(0,0,0,0.08)] backdrop-blur">
+      <section data-intel-answer-block className="sticky top-0 z-20 rounded-[28px] border border-[var(--border)] bg-[var(--bg-elevated)] px-5 py-5 shadow-[0_14px_40px_rgba(0,0,0,0.08)] backdrop-blur">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="max-w-3xl">
             <p className="kicker text-[var(--accent)]">Bottom line</p>
             <h2 className="mt-2 text-2xl font-normal leading-tight tracking-tight text-[var(--text)]">{fallback.headline}</h2>
             <p className="mt-3 text-sm leading-relaxed text-[var(--text-muted)]">{fallback.bottomLine}</p>
+            <ClaimFeedback claimKey="fallback:bottom-line" claimText={fallback.bottomLine} />
             {fallback.whyItMatters && (
-              <p className="mt-3 text-sm leading-relaxed text-[var(--text-soft)]">{fallback.whyItMatters}</p>
+              <>
+                <p className="mt-3 text-sm leading-relaxed text-[var(--text-soft)]">{fallback.whyItMatters}</p>
+                <ClaimFeedback claimKey="fallback:why-it-matters" claimText={fallback.whyItMatters} />
+              </>
             )}
           </div>
           <ConfidenceBadge level={fallback.confidence} />
@@ -72,19 +77,22 @@ export default function AnswerBlock({ answer, fallback, sources }: AnswerBlockPr
   }
 
   return (
-    <section className="sticky top-0 z-20 rounded-[28px] border border-[var(--border)] bg-[var(--bg-elevated)] px-5 py-5 shadow-[0_14px_40px_rgba(0,0,0,0.08)] backdrop-blur">
+    <section data-intel-answer-block className="sticky top-0 z-20 rounded-[28px] border border-[var(--border)] bg-[var(--bg-elevated)] px-5 py-5 shadow-[0_14px_40px_rgba(0,0,0,0.08)] backdrop-blur">
       <div className="grid gap-4 lg:grid-cols-2">
         <Slot label="Conclusion" accent="var(--accent)">
           <CitedText spans={[answer.conclusion]} sources={sources} />
+          <ClaimFeedback claimKey="answer:conclusion" claimText={answer.conclusion.text} sourceIds={answer.conclusion.sourceIds} />
         </Slot>
 
         <Slot label="Why it matters">
           <CitedText spans={[answer.whyItMatters]} sources={sources} />
+          <ClaimFeedback claimKey="answer:why-it-matters" claimText={answer.whyItMatters.text} sourceIds={answer.whyItMatters.sourceIds} />
         </Slot>
 
         {answer.whatChanged && (
           <Slot label="What changed">
             <CitedText spans={[answer.whatChanged]} sources={sources} />
+            <ClaimFeedback claimKey="answer:what-changed" claimText={answer.whatChanged.text} sourceIds={answer.whatChanged.sourceIds} />
           </Slot>
         )}
 
@@ -99,10 +107,12 @@ export default function AnswerBlock({ answer, fallback, sources }: AnswerBlockPr
                 <p className="kicker text-[var(--accent-amber)]">{answer.recommendedNext.action}</p>
               )}
               <p className="mt-2 text-sm leading-relaxed text-[var(--text)]">{answer.recommendedNext.text}</p>
+              <ClaimFeedback claimKey="answer:recommended-next" claimText={answer.recommendedNext.text} />
             </div>
             {answer.recommendedNext.copyable && (
               <button
                 type="button"
+                data-intel-copy-action
                 onClick={() => void handleCopy()}
                 className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-1.5 text-xs text-[var(--text-muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2 focus:ring-offset-[var(--surface)]"
               >

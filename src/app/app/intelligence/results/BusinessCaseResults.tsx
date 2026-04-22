@@ -6,6 +6,8 @@ import type { BusinessCaseBrief } from '../types'
 import type { FactorCard, Priority } from '@/lib/intelligence/contracts'
 import { INTEL_RESULTS_V2 } from '@/lib/intelligence/feature-flags'
 import AnswerBlock from './shared/AnswerBlock'
+import ClaimFeedback from './shared/ClaimFeedback'
+import { ClaimFeedbackProvider } from './shared/ClaimFeedbackContext'
 import ResultsHero from './shared/ResultsHero'
 import VerdictBadge from './shared/VerdictBadge'
 import BalanceView from './shared/BalanceView'
@@ -15,6 +17,7 @@ import SourcesStrip from './shared/SourcesStrip'
 import StatusBar from './shared/StatusBar'
 import CopyModePicker from './shared/CopyModePicker'
 import DegradedBanner from './shared/DegradedBanner'
+import PdfExportSheet from './shared/PdfExportSheet'
 import ShareButton from './shared/ShareButton'
 import SearchPlanPanel from './shared/SearchPlanPanel'
 import ExhibitShell from './shared/ExhibitShell'
@@ -50,6 +53,7 @@ function resolvePriority(item: FactorCard, index: number): Priority {
 
 export default function BusinessCaseResults({ brief, onNewSearch, savedBriefId }: BusinessCaseResultsProps) {
   const exportRef = useRef<HTMLDivElement>(null)
+  const pdfRef = useRef<HTMLDivElement>(null)
 
   const scrollToSource = useCallback((id: string) => {
     const el = document.getElementById(`source-${id}`)
@@ -60,7 +64,8 @@ export default function BusinessCaseResults({ brief, onNewSearch, savedBriefId }
   }, [])
 
   return (
-    <div className="mx-auto w-full max-w-4xl">
+    <ClaimFeedbackProvider briefId={savedBriefId ?? null} researchType="business_case">
+      <div className="mx-auto w-full max-w-4xl">
       <div style={{ marginBottom: 20, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
         <button
           onClick={onNewSearch}
@@ -71,7 +76,7 @@ export default function BusinessCaseResults({ brief, onNewSearch, savedBriefId }
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <HistoryButton compact />
           <ShareButton briefId={savedBriefId ?? null} />
-          <CopyModePicker brief={brief} exportRef={exportRef} />
+          <CopyModePicker brief={brief} exportRef={exportRef} pdfRef={pdfRef} />
         </div>
       </div>
 
@@ -123,9 +128,13 @@ export default function BusinessCaseResults({ brief, onNewSearch, savedBriefId }
             sources={brief.sources}
           >
             <VerdictBadge verdict={brief.verdict} rationale={brief.verdictRationale} />
+            <ClaimFeedback className="mt-4" claimKey="business-case:verdict" claimText={brief.verdictRationale} />
           </ExhibitShell>
         ) : (
-          <VerdictBadge verdict={brief.verdict} rationale={brief.verdictRationale} />
+          <>
+            <VerdictBadge verdict={brief.verdict} rationale={brief.verdictRationale} />
+            <ClaimFeedback className="mt-3" claimKey="business-case:verdict" claimText={brief.verdictRationale} />
+          </>
         )}
       </div>
 
@@ -230,6 +239,11 @@ export default function BusinessCaseResults({ brief, onNewSearch, savedBriefId }
                   </div>
                   <p style={{ fontSize: 12.5, lineHeight: 1.5, color: 'var(--text-muted)', marginTop: 6 }}>{comp.relevance}</p>
                   <p style={{ fontSize: 12, lineHeight: 1.45, color: 'var(--text-soft)', marginTop: 4, fontStyle: 'italic' }}>{comp.keyTakeaway}</p>
+                  <ClaimFeedback
+                    className="mt-3"
+                    claimKey={`comparable:${comp.name}`}
+                    claimText={`${comp.relevance} ${comp.keyTakeaway}`.trim()}
+                  />
                 </div>
               )
             })}
@@ -262,7 +276,46 @@ export default function BusinessCaseResults({ brief, onNewSearch, savedBriefId }
         <SourcesStrip sources={brief.sources} />
       </div>
       <StatusBar status={brief.status} />
-    </div>
+      <PdfExportSheet ref={pdfRef} title={brief.headline}>
+        <AnswerBlock
+          answer={brief.answer}
+          fallback={{
+            headline: brief.headline,
+            bottomLine: brief.bottomLine,
+            confidence: brief.confidence,
+            whyItMatters: brief.whyItMatters,
+          }}
+          sources={brief.sources}
+        />
+        <ExhibitShell
+          headline={`${brief.headline} - verdict`}
+          subhead="This verdict should read like a decision memo, not a decorative label."
+          asOf={brief.generatedAt}
+          sources={brief.sources}
+        >
+          <VerdictBadge verdict={brief.verdict} rationale={brief.verdictRationale} />
+          <ClaimFeedback className="mt-4" claimKey="business-case:verdict" claimText={brief.verdictRationale} />
+        </ExhibitShell>
+        {brief.driverTree ? (
+          <DriverTree
+            data={brief.driverTree}
+            headline="The business case rests on four decision branches"
+            subhead="Demand alone is not enough. The economics, fit, and execution branches need to hold too."
+            asOf={brief.generatedAt}
+            sources={brief.sources}
+          />
+        ) : brief.scenarios ? (
+          <ScenarioBands
+            data={brief.scenarios}
+            headline="The base case sits inside a realistic range"
+            subhead="The point is not a single magic number. It is the band between what could go right and what could still fail."
+            asOf={brief.generatedAt}
+            sources={brief.sources}
+          />
+        ) : null}
+      </PdfExportSheet>
+      </div>
+    </ClaimFeedbackProvider>
   )
 }
 
@@ -339,6 +392,12 @@ function FactorColumn({
                       ))}
                     </div>
                   )}
+                  <ClaimFeedback
+                    className="mt-3"
+                    claimKey={`factor:${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}:${index}`}
+                    claimText={item.text}
+                    sourceIds={item.sourceIds}
+                  />
                 </div>
               </div>
             </div>

@@ -2,6 +2,7 @@
 
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { IntelligenceBrief } from './contracts'
+import type { ClaimFeedbackPayload } from './feedback'
 
 export interface SavedBrief {
   id: string
@@ -28,6 +29,20 @@ export interface BriefListItem {
   headline: string
   is_shared: boolean
   share_slug: string | null
+}
+
+export interface SavedClaimFeedback {
+  id: string
+  brief_id: string
+  user_id: string
+  research_type: string
+  claim_key: string
+  claim_text: string
+  sentiment: 'up' | 'down'
+  flags: string[]
+  source_ids: string[]
+  created_at: string
+  updated_at: string
 }
 
 function generateShareSlug(): string {
@@ -164,4 +179,33 @@ export async function toggleShare(
 
   if (error) return { slug: null, error: error.message }
   return { slug: null, error: null }
+}
+
+export async function saveClaimFeedback(
+  supabase: SupabaseClient,
+  userId: string,
+  payload: ClaimFeedbackPayload,
+): Promise<{ id: string; error: string | null }> {
+  const now = new Date().toISOString()
+
+  const { data, error } = await supabase
+    .from('intelligence_feedback')
+    .upsert({
+      brief_id: payload.briefId,
+      user_id: userId,
+      research_type: payload.researchType,
+      claim_key: payload.claimKey,
+      claim_text: payload.claimText,
+      sentiment: payload.sentiment,
+      flags: payload.flags,
+      source_ids: payload.sourceIds,
+      updated_at: now,
+    }, {
+      onConflict: 'user_id,brief_id,claim_key',
+    })
+    .select('id')
+    .single()
+
+  if (error) return { id: '', error: error.message }
+  return { id: data.id, error: null }
 }

@@ -6,6 +6,8 @@ import type { MeetingPrepBrief } from '@/lib/intelligence/contracts'
 import { INTEL_RESULTS_V2 } from '@/lib/intelligence/feature-flags'
 import IntelligenceSources from './IntelligenceSources'
 import AnswerBlock from './results/shared/AnswerBlock'
+import { ClaimFeedbackProvider } from './results/shared/ClaimFeedbackContext'
+import PdfExportSheet from './results/shared/PdfExportSheet'
 import ExhibitShell from './results/shared/ExhibitShell'
 import MethodologyDrawer from './results/shared/MethodologyDrawer'
 import ResultsHero from './results/shared/ResultsHero'
@@ -54,6 +56,7 @@ function collectUsedSourceIds(brief: MeetingPrepBrief, sourceIdMap: Map<string, 
 
 export default function IntelligenceResults({ brief, onNewSearch, savedBriefId }: IntelligenceResultsProps) {
   const exportRef = useRef<HTMLDivElement>(null)
+  const pdfRef = useRef<HTMLDivElement>(null)
 
   const scrollToSource = useCallback((id: string) => {
     const el = document.getElementById(`source-${id}`)
@@ -88,7 +91,8 @@ export default function IntelligenceResults({ brief, onNewSearch, savedBriefId }
   const hasOverviewColumn = Boolean(displayBrief.snapshot) || displayBrief.attendeeProfiles.length > 0
 
   return (
-    <div className="mx-auto w-full max-w-[88rem]">
+    <ClaimFeedbackProvider briefId={savedBriefId ?? null} researchType="meeting_prep">
+      <div className="mx-auto w-full max-w-[88rem]">
       {/* Toolbar */}
       <div style={{ marginBottom: 20, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
         <button
@@ -100,7 +104,7 @@ export default function IntelligenceResults({ brief, onNewSearch, savedBriefId }
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <HistoryButton compact />
           <ShareButton briefId={savedBriefId ?? null} />
-          <CopyModePicker brief={displayBrief} exportRef={exportRef} />
+          <CopyModePicker brief={displayBrief} exportRef={exportRef} pdfRef={pdfRef} />
         </div>
       </div>
 
@@ -230,6 +234,35 @@ export default function IntelligenceResults({ brief, onNewSearch, savedBriefId }
       </div>
 
       <StatusBar status={displayBrief.status} />
-    </div>
+      <PdfExportSheet ref={pdfRef} title={displayBrief.headline}>
+        <AnswerBlock
+          answer={displayBrief.answer}
+          fallback={{
+            headline: displayBrief.headline,
+            bottomLine: displayBrief.bottomLine,
+            confidence: displayBrief.confidence,
+            whyItMatters: displayBrief.whyItMatters,
+          }}
+          sources={displayBrief.sources}
+        />
+        <ExhibitShell
+          headline={`${displayBrief.headline} - recent timeline`}
+          subhead="Use the timeline to see what actually changed before the meeting."
+          asOf={displayBrief.generatedAt}
+          sources={displayBrief.sources}
+        >
+          <VisualTimeline events={displayBrief.timelineEvents} onSourceClick={() => undefined} />
+        </ExhibitShell>
+        <ExhibitShell
+          headline={`${displayBrief.headline} - risk radar`}
+          subhead="The fixed five-axis rubric keeps the risk read comparable across briefs."
+          asOf={displayBrief.generatedAt}
+          sources={displayBrief.sources}
+        >
+          <RiskRadar metrics={displayBrief.radarMetrics} onSourceClick={() => undefined} />
+        </ExhibitShell>
+      </PdfExportSheet>
+      </div>
+    </ClaimFeedbackProvider>
   )
 }

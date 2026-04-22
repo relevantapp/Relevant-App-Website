@@ -2,6 +2,7 @@
 
 import type { Priority, RichBullet } from '@/lib/intelligence/contracts'
 import { INTEL_RESULTS_V2 } from '@/lib/intelligence/feature-flags'
+import ClaimFeedback from './ClaimFeedback'
 import PriorityStrip from './PriorityStrip'
 
 interface BalanceViewProps {
@@ -71,6 +72,11 @@ function Column({ title, items, color, onSourceClick }: { title: string; items: 
                     ))}
                   </div>
                 )}
+                <ClaimFeedback
+                  claimKey={`balance:${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}:${i}`}
+                  claimText={b.text}
+                  sourceIds={b.sourceIds}
+                />
               </div>
             </div>
           </div>

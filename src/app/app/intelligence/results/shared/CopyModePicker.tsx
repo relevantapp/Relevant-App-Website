@@ -20,12 +20,14 @@ const FORMATS: Array<{ value: CopyFormat; label: string; description: string }> 
 interface CopyModePickerProps {
   brief: IntelligenceBrief
   exportRef?: React.RefObject<HTMLDivElement | null>
+  pdfRef?: React.RefObject<HTMLDivElement | null>
 }
 
-export default function CopyModePicker({ brief, exportRef }: CopyModePickerProps) {
+export default function CopyModePicker({ brief, exportRef, pdfRef }: CopyModePickerProps) {
   const [open, setOpen] = useState(false)
   const [copied, setCopied] = useState<CopyFormat | null>(null)
   const [exporting, setExporting] = useState(false)
+  const [printingPdf, setPrintingPdf] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -106,6 +108,7 @@ export default function CopyModePicker({ brief, exportRef }: CopyModePickerProps
     const text = formatBrief(format)
     await navigator.clipboard.writeText(text)
     setCopied(format)
+    setOpen(false)
     setTimeout(() => setCopied(null), 2000)
   }
 
@@ -123,10 +126,71 @@ export default function CopyModePicker({ brief, exportRef }: CopyModePickerProps
       link.download = `intelligence-brief-${Date.now()}.png`
       link.href = dataUrl
       link.click()
+      setOpen(false)
     } catch (err) {
       console.error('[CopyMode] Export failed:', err)
     } finally {
       setExporting(false)
+    }
+  }
+
+  const handleExportPdf = async () => {
+    if (!pdfRef?.current) return
+
+    setPrintingPdf(true)
+
+    try {
+      const dataUrl = await toPng(pdfRef.current, {
+        cacheBust: true,
+        pixelRatio: 2,
+        backgroundColor: '#f6f1e6',
+      })
+
+      const printWindow = window.open('', '_blank', 'width=1200,height=900')
+      if (!printWindow) throw new Error('Print window unavailable')
+
+      printWindow.document.write(`
+        <!doctype html>
+        <html>
+          <head>
+            <title>Intelligence brief export</title>
+            <style>
+              @page { size: landscape; margin: 12mm; }
+              html, body { margin: 0; padding: 0; background: #f6f1e6; }
+              body {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+                font-family: ui-sans-serif, system-ui, sans-serif;
+              }
+              img {
+                width: 100%;
+                max-width: 1280px;
+                height: auto;
+                display: block;
+                border-radius: 20px;
+              }
+            </style>
+          </head>
+          <body>
+            <img src="${dataUrl}" alt="Intelligence brief export" />
+            <script>
+              window.addEventListener('load', () => {
+                window.focus();
+                window.print();
+                window.setTimeout(() => window.close(), 250);
+              });
+            </script>
+          </body>
+        </html>
+      `)
+      printWindow.document.close()
+      setOpen(false)
+    } catch (err) {
+      console.error('[CopyMode] PDF export failed:', err)
+    } finally {
+      setPrintingPdf(false)
     }
   }
 
@@ -226,12 +290,41 @@ export default function CopyModePicker({ brief, exportRef }: CopyModePickerProps
                 }}
               >
                 <Download className="h-3.5 w-3.5 shrink-0 text-[var(--text-muted)]" />
-                <div>
-                  <div style={{ fontWeight: 500 }}>{exporting ? 'Exporting…' : 'Export as Image'}</div>
-                  <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>1200×630 PNG</div>
-                </div>
-              </button>
+                  <div>
+                    <div style={{ fontWeight: 500 }}>{exporting ? 'Exporting…' : 'Export as Image'}</div>
+                    <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>1200×630 PNG</div>
+                  </div>
+                </button>
             </>
+          )}
+
+          {pdfRef && (
+            <button
+              type="button"
+              onClick={handleExportPdf}
+              disabled={printingPdf}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                width: '100%',
+                padding: '8px 10px',
+                fontSize: 13,
+                textAlign: 'left',
+                background: 'none',
+                border: 'none',
+                borderRadius: 6,
+                color: 'var(--text)',
+                cursor: printingPdf ? 'default' : 'pointer',
+                opacity: printingPdf ? 0.5 : 1,
+              }}
+            >
+              <Download className="h-3.5 w-3.5 shrink-0 text-[var(--text-muted)]" />
+              <div>
+                <div style={{ fontWeight: 500 }}>{printingPdf ? 'Preparing PDF…' : 'Export as PDF'}</div>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Print-ready one-page layout</div>
+              </div>
+            </button>
           )}
         </div>
       )}

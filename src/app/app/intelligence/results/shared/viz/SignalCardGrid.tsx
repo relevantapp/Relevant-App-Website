@@ -1,6 +1,7 @@
 'use client'
 
 import type { BriefBullet, BriefSource, SignalCard } from '@/lib/intelligence/contracts'
+import ClaimFeedback from '../ClaimFeedback'
 import ExhibitShell from '../ExhibitShell'
 
 interface SignalCardGridProps {
@@ -97,6 +98,11 @@ export default function SignalCardGrid({
                   </button>
                 ))}
               </div>
+              <ClaimFeedback
+                claimKey={`signal-card:${card.date}:${card.headline}`}
+                claimText={`${card.headline} ${card.whyItMatters}`.trim()}
+                sourceIds={card.sources}
+              />
             </article>
           )
         })}

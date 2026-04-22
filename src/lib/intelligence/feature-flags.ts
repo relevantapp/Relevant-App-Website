@@ -16,4 +16,5 @@ export const intelligenceFlags = {
 }
 
 export const INTEL_RESULTS_V2 =
-  process.env.NEXT_PUBLIC_INTEL_RESULTS_V2 === 'true' || process.env.NODE_ENV !== 'production'
+  process.env.NEXT_PUBLIC_INTEL_RESULTS_V2 === 'true'
+  || (process.env.NEXT_PUBLIC_INTEL_RESULTS_V2 !== 'false' && process.env.NODE_ENV !== 'production')

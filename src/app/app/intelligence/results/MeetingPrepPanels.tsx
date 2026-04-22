@@ -36,6 +36,7 @@ import type {
 } from '@/lib/intelligence/contracts'
 import { INTEL_RESULTS_V2 } from '@/lib/intelligence/feature-flags'
 import { buildMeetingPrepSnapshot } from '@/lib/intelligence/meeting-prep-display'
+import ClaimFeedback from './shared/ClaimFeedback'
 import PriorityStrip from './shared/PriorityStrip'
 import UnknownField from './shared/UnknownField'
 import BulletChart from './shared/viz/BulletChart'
@@ -163,6 +164,11 @@ function BulletList({
                   </button>
                 ))}
               </div>
+              <ClaimFeedback
+                claimKey={`meeting-prep:${variant}:${index}`}
+                claimText={bullet.text}
+                sourceIds={bullet.sourceIds}
+              />
             </div>
           </div>
         </div>

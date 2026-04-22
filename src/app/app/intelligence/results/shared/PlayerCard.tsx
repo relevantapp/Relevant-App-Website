@@ -1,5 +1,7 @@
 'use client'
 
+import ClaimFeedback from './ClaimFeedback'
+
 type Category = 'leader' | 'challenger' | 'niche' | 'emerging'
 
 interface PlayerCardProps {
@@ -7,6 +9,7 @@ interface PlayerCardProps {
   category: Category
   description: string
   estimatedPosition?: string
+  feedbackKey?: string
 }
 
 const CATEGORY_COLOR: Record<Category, string> = {
@@ -23,7 +26,7 @@ const CATEGORY_LABEL: Record<Category, string> = {
   emerging: 'Emerging',
 }
 
-export default function PlayerCard({ name, category, description, estimatedPosition }: PlayerCardProps) {
+export default function PlayerCard({ name, category, description, estimatedPosition, feedbackKey }: PlayerCardProps) {
   const color = CATEGORY_COLOR[category]
 
   return (
@@ -42,6 +45,7 @@ export default function PlayerCard({ name, category, description, estimatedPosit
       {estimatedPosition && (
         <p className="mono" style={{ fontSize: 11, color: 'var(--text-soft)', marginTop: 6 }}>{estimatedPosition}</p>
       )}
+      <ClaimFeedback className="mt-3" claimKey={feedbackKey ?? `player:${name}`} claimText={`${name} ${description}`.trim()} />
     </div>
   )
 }

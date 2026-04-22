@@ -6,6 +6,7 @@ import { useRef } from 'react'
 import type { PropsWithChildren } from 'react'
 import type { BriefSource } from '@/lib/intelligence/contracts'
 import AsOfChip from './AsOfChip'
+import ClaimFeedback from './ClaimFeedback'
 import DeclarativeHeadline from './DeclarativeHeadline'
 
 interface ExhibitShellProps extends PropsWithChildren {
@@ -59,6 +60,12 @@ export default function ExhibitShell({
             {subhead}
           </p>
         )}
+        <ClaimFeedback
+          className="mt-3"
+          claimKey={`exhibit:${slugify(headline) || 'headline'}`}
+          claimText={headline}
+          sourceIds={sources.map((source) => source.id)}
+        />
       </div>
 
       <div className="px-5 py-5 sm:px-6">
@@ -84,6 +91,7 @@ export default function ExhibitShell({
           <AsOfChip at={asOf} />
           <button
             type="button"
+            data-intel-screenshot-action
             onClick={handleScreenshot}
             className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs text-[var(--text-muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2 focus:ring-offset-[var(--bg-elevated)]"
           >

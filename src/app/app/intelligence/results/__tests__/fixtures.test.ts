@@ -58,6 +58,17 @@ describe('INTEL_RESULTS_V2', () => {
     expect(INTEL_RESULTS_V2).toBe(true)
   })
 
+  it('can be forced off in development with NEXT_PUBLIC_INTEL_RESULTS_V2=false', async () => {
+    process.env = {
+      ...ORIGINAL_ENV,
+      NODE_ENV: 'development',
+      NEXT_PUBLIC_INTEL_RESULTS_V2: 'false',
+    }
+
+    const { INTEL_RESULTS_V2 } = await import('@/lib/intelligence/feature-flags')
+    expect(INTEL_RESULTS_V2).toBe(false)
+  })
+
   it('defaults off in production when the public flag is unset', async () => {
     process.env = {
       ...ORIGINAL_ENV,
