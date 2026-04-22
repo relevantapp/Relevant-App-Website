@@ -22,6 +22,7 @@ import MaturityCurve from './shared/viz/MaturityCurve'
 import Quadrant from './shared/viz/Quadrant'
 import QuoteWall from './shared/viz/QuoteWall'
 import TrendTracker from './shared/viz/TrendTracker'
+import WatchList from './shared/viz/WatchList'
 import HistoryButton from '../HistoryButton'
 
 interface MarketResearchResultsProps {
@@ -125,6 +126,18 @@ export default function MarketResearchResults({ brief, onNewSearch, savedBriefId
             data={brief.maturity}
             headline="The category has moved past early hype and is entering practical evaluation."
             subhead="That matters because buyers now reward products that prove one repeatable workflow instead of sounding generically intelligent."
+            asOf={brief.generatedAt}
+            sources={brief.sources}
+          />
+        </div>
+      ) : null}
+
+      {INTEL_RESULTS_V2 && brief.watchList?.length ? (
+        <div style={{ marginTop: 24 }}>
+          <WatchList
+            data={brief.watchList}
+            headline="A short list of signals could still change the category next quarter."
+            subhead="These are the few things worth rechecking before the market narrative hardens."
             asOf={brief.generatedAt}
             sources={brief.sources}
           />

@@ -353,6 +353,26 @@ export const marketResearchFixture: MarketResearchBrief = {
       theme: 'Buyer expectation',
     },
   ],
+  watchList: [
+    {
+      signal: 'More buyers naming “answer plus proof” in evaluations',
+      whyItMatters: 'That would confirm the wedge is moving from intuition to explicit buying criteria.',
+      nextCheckBy: '2026-05-12T12:00:00.000Z',
+      sources: ['mr-1', 'mr-2'],
+    },
+    {
+      signal: 'Enterprise incumbents shipping more workflow-specific answer modes',
+      whyItMatters: 'If the broad platforms narrow into this workflow, the wedge compresses quickly.',
+      nextCheckBy: '2026-05-19T12:00:00.000Z',
+      sources: ['mr-1', 'mr-4'],
+    },
+    {
+      signal: 'Procurement teams asking for proof of trust and source traceability',
+      whyItMatters: 'That would increase the premium on citation depth and decision-ready output.',
+      nextCheckBy: '2026-04-29T12:00:00.000Z',
+      sources: ['mr-2', 'mr-3'],
+    },
+  ],
   players: [
     {
       name: 'AlphaSense',

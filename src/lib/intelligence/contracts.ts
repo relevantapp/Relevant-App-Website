@@ -666,6 +666,14 @@ export const PullQuoteSchema = z.object({
 })
 export type PullQuote = z.infer<typeof PullQuoteSchema>
 
+export const WatchItemSchema = z.object({
+  signal: z.string(),
+  whyItMatters: z.string(),
+  nextCheckBy: z.string(),
+  sources: z.array(z.string()),
+})
+export type WatchItem = z.infer<typeof WatchItemSchema>
+
 export const MarketResearchSynthesisSchema = z.object({
   headline: z.string(),
   bottomLine: z.string(),
@@ -687,6 +695,7 @@ export interface MarketResearchBrief extends BriefBase {
   trackedSignals?: TrackedSignal[]
   maturity?: MaturityPosition
   quotes?: PullQuote[]
+  watchList?: WatchItem[]
   players: MarketPlayer[]
   sections: {
     trendSignals: BriefBullet[]
@@ -839,6 +848,7 @@ export const MarketResearchBriefSchema = BriefBaseSchema.extend({
   trackedSignals: z.array(TrackedSignalSchema).optional(),
   maturity: MaturityPositionSchema.optional(),
   quotes: z.array(PullQuoteSchema).optional(),
+  watchList: z.array(WatchItemSchema).optional(),
   players: z.array(MarketPlayerSchema),
   sections: z.object({
     trendSignals: z.array(BriefBulletSchema),

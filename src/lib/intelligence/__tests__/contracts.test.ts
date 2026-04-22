@@ -26,6 +26,7 @@ import {
   MaturityStageSchema,
   PullQuoteSchema,
   TrackedSignalSchema,
+  WatchItemSchema,
   NormalizedEvidenceSchema,
   MeetingPrepBriefSchema,
   TimelineEventSchema,
@@ -256,6 +257,19 @@ describe('PullQuoteSchema', () => {
     } as const
 
     expect(PullQuoteSchema.parse(quote)).toEqual(quote)
+  })
+})
+
+describe('WatchItemSchema', () => {
+  it('accepts watch-list items with next-check dates and source ids', () => {
+    const watchItem = {
+      signal: 'More buyers naming proof and traceability',
+      whyItMatters: 'That would raise the premium on trustworthy outputs.',
+      nextCheckBy: '2026-05-12T12:00:00.000Z',
+      sources: ['s1', 's2'],
+    } as const
+
+    expect(WatchItemSchema.parse(watchItem)).toEqual(watchItem)
   })
 })
 
