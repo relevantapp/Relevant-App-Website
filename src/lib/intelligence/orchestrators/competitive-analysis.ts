@@ -3,6 +3,7 @@
 import type {
   CompetitiveAnalysisRequest,
   CompetitiveAnalysisBrief,
+  CompetitiveSynthesis,
   BriefSource,
   CompositeQuadrant,
   NormalizedEvidence,
@@ -10,7 +11,7 @@ import type {
 } from '../contracts'
 import { CompetitiveSynthesisSchema } from '../contracts'
 import { runStep, generateBriefId, type PipelineContext } from '../pipeline'
-import { synthesizeWithSchema } from '../models'
+import { synthesizeWithSchema, type ModelPreference, type SynthesisResult } from '../models'
 import { rankEvidence, extractQueryTerms } from '../ranker'
 import { COMPETITIVE_SYSTEM_PROMPT, COMPETITIVE_SCHEMA_DESC, buildCompetitivePrompt } from '../prompts/competitive.v1'
 import { searchExaSnapshot } from '../providers/exa'
@@ -36,8 +37,134 @@ import {
   persistV2EvidencePack,
 } from './v2-bridge'
 
+const COMPETITIVE_ALIGNMENT_RETRY_MODEL: ModelPreference = 'openai/gpt-5.4'
+const COMPETITIVE_ALIGNMENT_SECONDARY_MODEL: ModelPreference = 'anthropic/claude-sonnet-4.6'
+
 function clampUnit(value: number): number {
   return Math.min(1, Math.max(0, value))
+}
+
+function normalizeEntityToken(value: string | null | undefined): string {
+  if (!value) return ''
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function collectExpectedEntities(input: CompetitiveAnalysisRequest): string[] {
+  return Array.from(new Set([
+    normalizeEntityToken(input.yourCompany),
+    ...input.competitors.map((competitor) => normalizeEntityToken(competitor)),
+  ].filter(Boolean)))
+}
+
+function collectCompetitiveOutputText(data: NonNullable<CompetitiveAnalysisBrief['answer']> | undefined, synthesis: CompetitiveSynthesis | null | undefined): string {
+  const competitorBlocks = (synthesis?.competitors ?? []).flatMap((competitor) => [
+    competitor.name,
+    competitor.description,
+    ...competitor.strengths,
+    ...competitor.weaknesses,
+    ...competitor.recentMoves,
+  ])
+
+  const matrixValues = (synthesis?.comparisonMatrix ?? []).flatMap((row) => row.values.flatMap((value) => [
+    value.company,
+    value.position,
+  ]))
+
+  const quadrantValues = synthesis?.compositeQuadrant?.rendered
+    ? [
+      synthesis.compositeQuadrant.xAxis.name,
+      synthesis.compositeQuadrant.yAxis.name,
+      synthesis.compositeQuadrant.xAxis.rationale.text,
+      synthesis.compositeQuadrant.yAxis.rationale.text,
+      ...synthesis.compositeQuadrant.points.flatMap((point) => [point.entity, point.rationale.text]),
+    ]
+    : []
+
+  return normalizeEntityToken([
+    synthesis?.headline,
+    synthesis?.bottomLine,
+    synthesis?.whyItMatters,
+    data?.conclusion.text,
+    data?.whyItMatters.text,
+    data?.whatChanged?.text,
+    data?.recommendedNext.text,
+    ...competitorBlocks,
+    ...matrixValues,
+    ...quadrantValues,
+  ]
+    .filter((value): value is string => typeof value === 'string' && value.trim().length > 0)
+    .join(' '))
+}
+
+function baselineLooksRelevant(priorBriefBaseline: string | null | undefined, expectedEntities: string[]): boolean {
+  if (!priorBriefBaseline || expectedEntities.length === 0) return false
+  const normalizedBaseline = normalizeEntityToken(priorBriefBaseline)
+  return expectedEntities.some((entity) => normalizedBaseline.includes(entity))
+}
+
+function validateCompetitiveAlignment(
+  synthesis: CompetitiveSynthesis | null | undefined,
+  input: CompetitiveAnalysisRequest,
+): { ok: boolean; missing: string[] } {
+  if (!synthesis) {
+    return { ok: false, missing: collectExpectedEntities(input) }
+  }
+
+  const expectedEntities = collectExpectedEntities(input)
+  if (expectedEntities.length === 0) return { ok: true, missing: [] }
+
+  const answer = synthesis.answer
+    ? {
+      conclusion: synthesis.answer.conclusion,
+      whyItMatters: synthesis.answer.whyItMatters,
+      whatChanged: synthesis.answer.whatChanged,
+      confidence: synthesis.answer.confidence,
+      recommendedNext: synthesis.answer.recommendedNext,
+    }
+    : undefined
+  const corpus = collectCompetitiveOutputText(answer, synthesis)
+  const missing = expectedEntities.filter((entity) => !corpus.includes(entity))
+
+  return { ok: missing.length === 0, missing }
+}
+
+async function synthesizeCompetitiveBrief(
+  input: CompetitiveAnalysisRequest,
+  evidence: NormalizedEvidence[],
+  competitorSnapshots: Map<string, string>,
+  yourSnapshot: string | null,
+  priorBriefBaseline: string | null,
+  preferredModel?: ModelPreference,
+): Promise<SynthesisResult<CompetitiveSynthesis>> {
+  const userPrompt = buildCompetitivePrompt({
+    competitors: input.competitors,
+    yourCompany: input.yourCompany,
+    focusArea: input.focusArea,
+    specificQuestions: input.specificQuestions,
+    marketSegment: input.marketSegment,
+    geography: input.geography,
+    customerType: input.customerType,
+    useCasePreset: input.useCasePreset,
+    steering: input.steering,
+    userContext: input.userContext,
+    evidence,
+    competitorSnapshots,
+    yourSnapshot,
+    priorBriefBaseline,
+  })
+
+  return synthesizeWithSchema(
+    COMPETITIVE_SYSTEM_PROMPT,
+    userPrompt,
+    CompetitiveSynthesisSchema,
+    COMPETITIVE_SCHEMA_DESC,
+    'competitive_analysis',
+    preferredModel,
+  )
 }
 
 function normalizeCompositeQuadrant(
@@ -299,12 +426,16 @@ export async function generateCompetitiveAnalysisBrief(
   }, undefined, ctx)
 
   const rankedEvidence = rankStep.data ?? allEvidence
-  const priorBriefBaseline = await loadPriorBriefBaseline({
+  const rawPriorBriefBaseline = await loadPriorBriefBaseline({
     supabase: ctx?.supabase,
     userId: ctx?.userId,
     researchType: 'competitive_analysis',
     requestPayload: input,
   })
+  const expectedEntities = collectExpectedEntities(input)
+  const priorBriefBaseline = baselineLooksRelevant(rawPriorBriefBaseline, expectedEntities)
+    ? rawPriorBriefBaseline
+    : null
 
   const evidencePack = v2Bridge && v2Evidence
     ? persistV2EvidencePack({
@@ -319,31 +450,51 @@ export async function generateCompetitiveAnalysisBrief(
 
   /* ── Step 4: synthesize ──────────────────────────────────── */
   const synthesisStep = await runStep('competitive_analysis', 'synthesize', async () => {
-    const userPrompt = buildCompetitivePrompt({
-      competitors: limitedCompetitors,
-      yourCompany: input.yourCompany,
-      focusArea: input.focusArea,
-      specificQuestions: input.specificQuestions,
-      marketSegment: input.marketSegment,
-      geography: input.geography,
-      customerType: input.customerType,
-      useCasePreset: input.useCasePreset,
-      steering: input.steering,
-      userContext: input.userContext,
-      evidence: rankedEvidence,
-      competitorSnapshots: competitorSnapshotDescriptions,
+    const firstAttempt = await synthesizeCompetitiveBrief(
+      input,
+      rankedEvidence,
+      competitorSnapshotDescriptions,
       yourSnapshot,
       priorBriefBaseline,
-    })
-    return synthesizeWithSchema(
-      COMPETITIVE_SYSTEM_PROMPT, userPrompt,
-      CompetitiveSynthesisSchema, COMPETITIVE_SCHEMA_DESC, 'competitive_analysis',
-      ctx?.preferredModel
+      ctx?.preferredModel,
     )
+
+    const firstAlignment = validateCompetitiveAlignment(firstAttempt.data, input)
+    if (firstAttempt.data && firstAlignment.ok) return firstAttempt
+
+    const retryModel = ctx?.preferredModel === COMPETITIVE_ALIGNMENT_RETRY_MODEL
+      ? COMPETITIVE_ALIGNMENT_SECONDARY_MODEL
+      : COMPETITIVE_ALIGNMENT_RETRY_MODEL
+    const retryAttempt = await synthesizeCompetitiveBrief(
+      input,
+      rankedEvidence,
+      competitorSnapshotDescriptions,
+      yourSnapshot,
+      null,
+      retryModel,
+    )
+    const retryAlignment = validateCompetitiveAlignment(retryAttempt.data, input)
+    if (retryAttempt.data && retryAlignment.ok) return retryAttempt
+
+    return {
+      ...retryAttempt,
+      data: null,
+      errorClass: retryAttempt.errorClass ?? 'entity_alignment_failed',
+      fallbackReason: firstAttempt.data || retryAttempt.data
+        ? `entity_alignment_failed:${Array.from(new Set([...firstAlignment.missing, ...retryAlignment.missing])).join('|')}`
+        : retryAttempt.fallbackReason ?? firstAttempt.fallbackReason ?? null,
+    }
   }, undefined, ctx)
 
   const synthesis = synthesisStep.data
-  if (!synthesis?.data) degradedReasons.push('AI synthesis failed')
+  if (!synthesis?.data) {
+    const alignmentReason = synthesisStep.data?.fallbackReason
+    degradedReasons.push(
+      alignmentReason?.startsWith('entity_alignment_failed:')
+        ? `AI synthesis drifted away from requested companies (${alignmentReason.replace('entity_alignment_failed:', '').replace(/\|/g, ', ')})`
+        : 'AI synthesis failed',
+    )
+  }
 
   /* ── Step 5: assembleBrief ───────────────────────────────── */
   const canonicalSourceIdMap = buildCanonicalSourceIdMap(allSources)

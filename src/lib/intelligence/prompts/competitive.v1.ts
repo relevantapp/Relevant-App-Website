@@ -146,6 +146,7 @@ Include all competitors: ${input.competitors.join(', ')}${input.yourCompany ? ` 
 Only return compositeQuadrant.rendered=true when the two axes are genuinely distinct and defensible from the evidence. If the axes would collapse into a vague score soup, return {"rendered": false, "reason": "..."} instead.
 When rendered=true, include one point per company using normalized x/y values between 0 and 1, and give both axes and every point a cited rationale.
 Return up to four whitespace pockets across these kinds only: segment, flank, pricing, capability. Use declarative headlines and cited evidence. If a kind is not defensible, omit it rather than inventing it.
+If you substitute unrelated companies or industries, the output is invalid. Stay grounded in the exact requested companies and logistics context from the evidence; do not fall back to canned SaaS examples.
 ${input.yourCompany ? `Every comparisonMatrix row must include exactly one values entry for ${input.yourCompany}. Do not omit it from any row.` : ''}`.trim())
 
   return parts.join('\n')

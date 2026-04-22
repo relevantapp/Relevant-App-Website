@@ -292,11 +292,35 @@ describe('generateCompetitiveAnalysisBrief', () => {
   it('preserves the render-false quadrant reason when the model says the axes are not defensible', async () => {
     synthesizeWithSchema.mockResolvedValueOnce({
       data: {
-        headline: 'The comparison is real, but a quadrant would overstate precision.',
-        bottomLine: 'Stick with the matrix because the axes collapse into one another.',
+        headline: 'Relevant and AlphaSense are comparable, but a quadrant would overstate precision.',
+        bottomLine: 'Stick with the matrix because the axes collapse into one another for Relevant and AlphaSense.',
         confidence: 'medium',
-        competitors: [],
-        comparisonMatrix: [],
+        competitors: [
+          {
+            name: 'AlphaSense',
+            description: 'Broad market and research platform.',
+            strengths: ['breadth'],
+            weaknesses: ['heavier workflow'],
+            recentMoves: ['Expanded enterprise packaging'],
+          },
+          {
+            name: 'Klue',
+            description: 'Competitive enablement platform.',
+            strengths: ['battlecards'],
+            weaknesses: ['narrower research depth'],
+            recentMoves: ['Expanded sales enablement automation'],
+          },
+        ],
+        comparisonMatrix: [
+          {
+            dimension: 'Evidence quality',
+            values: [
+              { company: 'Relevant', position: 'Narrower but direct', score: 4 },
+              { company: 'AlphaSense', position: 'Broader but heavier', score: 4 },
+              { company: 'Klue', position: 'Enablement-first', score: 3 },
+            ],
+          },
+        ],
         compositeQuadrant: {
           rendered: false,
           reason: 'The candidate axes mostly restate the same breadth score, so a quadrant would be misleading.',
@@ -318,5 +342,206 @@ describe('generateCompetitiveAnalysisBrief', () => {
       rendered: false,
       reason: 'The candidate axes mostly restate the same breadth score, so a quadrant would be misleading.',
     })
+  })
+
+  it('drops an irrelevant prior baseline before prompting the model', async () => {
+    loadPriorBriefBaseline.mockResolvedValueOnce(`- Generated at: 2026-04-22T21:54:56.875Z
+- Headline: The enterprise cloud storage market is shifting toward AI-integrated data management.
+- Conclusion: Box leads on regulated sharing while Dropbox wins on simplicity.`)
+    synthesizeWithSchema.mockImplementationOnce(async (_systemPrompt: string, userPrompt: string) => {
+      expect(userPrompt).not.toContain('## Prior Brief Baseline')
+      expect(userPrompt).not.toContain('cloud storage market')
+
+      return {
+        data: {
+          headline: 'Purolator can defend Canadian SMB logistics if it answers UPS’s premium-services pivot.',
+          bottomLine: 'UPS is shifting toward higher-margin SMB, B2B, and healthcare lanes while Purolator still owns local familiarity in Canada.',
+          confidence: 'medium',
+          answer: {
+            conclusion: {
+              text: 'UPS is pushing up-market margin plays while Purolator still has a domestic trust and coverage story in Canada.',
+              sourceIds: ['s1'],
+            },
+            whyItMatters: {
+              text: 'You need a clearer SMB and cross-border story before UPS’s premium-services push resets buyer expectations.',
+              sourceIds: ['s1'],
+            },
+            whatChanged: null,
+            confidence: {
+              level: 'medium',
+              driver: 'The evidence is directionally clear but still thin on Purolator-specific primary disclosures.',
+            },
+            recommendedNext: {
+              text: 'Lead with Canadian SMB reliability and cross-border simplicity.',
+            },
+          },
+          competitors: [
+            {
+              name: 'UPS',
+              description: 'Global parcel and logistics incumbent.',
+              strengths: ['Scale'],
+              weaknesses: ['Less localized Canadian positioning'],
+              recentMoves: ['Shifted toward higher-margin SMB and B2B segments'],
+            },
+          ],
+          comparisonMatrix: [
+            {
+              dimension: 'SMB positioning',
+              values: [
+                { company: 'Purolator Ground', position: 'Canada-first story', score: 4 },
+                { company: 'UPS', position: 'Premium-services pivot', score: 4 },
+              ],
+            },
+          ],
+          compositeQuadrant: {
+            rendered: false,
+            reason: 'The evidence is still too thin to place a reliable quadrant.',
+          },
+          whitespace: [],
+          keyFindings: [{ text: 'UPS is leaning into higher-margin SMB and B2B segments.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
+          strategicImplications: [{ text: 'Purolator should sharpen its Canada-first SMB story.', sourceIds: ['s1'], tag: 'inference', priority: 'should' }],
+          recommendations: [{ text: 'Package cross-border simplicity more aggressively.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
+        },
+      }
+    })
+
+    const { generateCompetitiveAnalysisBrief } = await import('../orchestrators/competitive-analysis')
+    const brief = await generateCompetitiveAnalysisBrief({
+      competitors: ['UPS'],
+      yourCompany: 'Purolator Ground',
+      focusArea: 'gtm',
+    })
+
+    expect(brief.headline).toContain('Purolator')
+    expect(brief.answer?.whatChanged).toBeNull()
+  })
+
+  it('retries with a stronger model when the first synthesis omits the requested companies', async () => {
+    loadPriorBriefBaseline.mockResolvedValueOnce(null)
+    synthesizeWithSchema
+      .mockResolvedValueOnce({
+        data: {
+          headline: 'Salesforce faces pressure from HubSpot in the mid-market.',
+          bottomLine: 'HubSpot is simplifying CRM adoption while Salesforce holds enterprise depth.',
+          confidence: 'high',
+          answer: {
+            conclusion: {
+              text: 'Salesforce dominates enterprise, but HubSpot is winning the mid-market.',
+              sourceIds: ['s1'],
+            },
+            whyItMatters: {
+              text: 'You are losing on implementation complexity.',
+              sourceIds: ['s1'],
+            },
+            whatChanged: {
+              text: 'HubSpot launched Breeze AI.',
+              sourceIds: ['s1'],
+            },
+            confidence: {
+              level: 'high',
+              driver: 'The model drifted into a canned SaaS comparison.',
+            },
+            recommendedNext: {
+              text: 'Launch a lite onboarding package.',
+            },
+          },
+          competitors: [
+            {
+              name: 'Salesforce',
+              description: 'CRM suite',
+              strengths: ['Depth'],
+              weaknesses: ['Complexity'],
+              recentMoves: ['Expanded Data Cloud'],
+            },
+            {
+              name: 'HubSpot',
+              description: 'Mid-market CRM',
+              strengths: ['UX'],
+              weaknesses: ['Customization limits'],
+              recentMoves: ['Launched Breeze'],
+            },
+          ],
+          comparisonMatrix: [
+            {
+              dimension: 'Ease of use',
+              values: [
+                { company: 'Salesforce', position: 'Complex', score: 2 },
+                { company: 'HubSpot', position: 'Simple', score: 5 },
+              ],
+            },
+          ],
+          compositeQuadrant: {
+            rendered: false,
+            reason: 'Not enough evidence.',
+          },
+          whitespace: [],
+          keyFindings: [{ text: 'HubSpot is easier to use.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
+          strategicImplications: [],
+          recommendations: [],
+        },
+      })
+      .mockResolvedValueOnce({
+        data: {
+          headline: 'Purolator can counter UPS by packaging Canadian SMB reliability more directly.',
+          bottomLine: 'UPS is pushing harder into higher-margin SMB and B2B lanes, but Purolator still has a domestic trust and network story to lean on.',
+          confidence: 'medium',
+          answer: {
+            conclusion: {
+              text: 'UPS is broadening its SMB push, while Purolator Ground still has a stronger Canada-first trust and coverage story.',
+              sourceIds: ['s1'],
+            },
+            whyItMatters: {
+              text: 'You need a sharper GTM message before UPS’s premium-services pivot changes buyer expectations in Canadian SMB shipping.',
+              sourceIds: ['s1'],
+            },
+            whatChanged: null,
+            confidence: {
+              level: 'medium',
+              driver: 'The stronger retry model stayed on the requested logistics entities.',
+            },
+            recommendedNext: {
+              text: 'Lead with Canadian SMB reliability and cross-border simplicity.',
+            },
+          },
+          competitors: [
+            {
+              name: 'UPS',
+              description: 'Global parcel and logistics incumbent.',
+              strengths: ['Scale'],
+              weaknesses: ['Less localized Canadian positioning'],
+              recentMoves: ['Shifted toward higher-margin SMB and B2B segments'],
+            },
+          ],
+          comparisonMatrix: [
+            {
+              dimension: 'SMB positioning',
+              values: [
+                { company: 'Purolator Ground', position: 'Canada-first story', score: 4 },
+                { company: 'UPS', position: 'Premium-services pivot', score: 4 },
+              ],
+            },
+          ],
+          compositeQuadrant: {
+            rendered: false,
+            reason: 'The evidence is still too thin to place a reliable quadrant.',
+          },
+          whitespace: [],
+          keyFindings: [{ text: 'UPS is leaning into higher-margin SMB and B2B segments.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
+          strategicImplications: [{ text: 'Purolator should sharpen its Canada-first SMB story.', sourceIds: ['s1'], tag: 'inference', priority: 'should' }],
+          recommendations: [{ text: 'Package cross-border simplicity more aggressively.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
+        },
+      })
+
+    const { generateCompetitiveAnalysisBrief } = await import('../orchestrators/competitive-analysis')
+    const brief = await generateCompetitiveAnalysisBrief({
+      competitors: ['UPS'],
+      yourCompany: 'Purolator Ground',
+      focusArea: 'gtm',
+    })
+
+    expect(synthesizeWithSchema).toHaveBeenCalledTimes(2)
+    expect(synthesizeWithSchema.mock.calls[1]?.[5]).toBe('openai/gpt-5.4')
+    expect(brief.headline).toContain('Purolator')
+    expect(brief.competitors.map((competitor: { name: string }) => competitor.name)).toEqual(['UPS'])
   })
 })
