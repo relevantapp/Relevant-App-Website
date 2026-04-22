@@ -131,89 +131,171 @@ export default function CompetitiveResults({ brief, onNewSearch, savedBriefId }:
       {/* Comparison Matrix */}
       {brief.comparisonMatrix.length > 0 && (
         <div style={{ marginTop: 24 }}>
-          {INTEL_RESULTS_V2 ? (
-            <ExhibitShell
-              headline={`${brief.headline} - capability comparison`}
-              subhead="The comparison matrix is still the fastest way to see where each platform actually wins."
-              asOf={brief.generatedAt}
-              sources={brief.sources}
-            >
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', fontSize: 13, borderCollapse: 'collapse' }}>
-                  <thead>
-                    <tr style={{ borderBottom: '1px solid var(--border)' }}>
-                      <th className="kicker" style={{ textAlign: 'left', padding: '10px 18px', fontSize: 10 }}>Dimension</th>
-                      {getUniqueCompanies(brief.comparisonMatrix).map((c) => (
-                        <th key={c} className="kicker" style={{ textAlign: 'left', padding: '10px 18px', fontSize: 10 }}>{c}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {brief.comparisonMatrix.map((row) => (
-                      <tr key={row.dimension} style={{ borderBottom: '1px solid var(--border)' }}>
-                        <td style={{ padding: '10px 18px', fontSize: 13, fontWeight: 500, color: 'var(--text)' }}>{row.dimension}</td>
-                        {getUniqueCompanies(brief.comparisonMatrix).map((company) => {
-                          const val = row.values.find((v) => v.company === company)
+          {(() => {
+            const companies = getMatrixCompanies(brief.comparisonMatrix, brief.yourCompany)
+
+            return INTEL_RESULTS_V2 ? (
+              <ExhibitShell
+                headline={`${brief.headline} - capability comparison`}
+                subhead="The comparison matrix is still the fastest way to see where each platform actually wins."
+                asOf={brief.generatedAt}
+                sources={brief.sources}
+              >
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', fontSize: 13, borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                        <th className="kicker" style={{ textAlign: 'left', padding: '10px 18px', fontSize: 10 }}>Dimension</th>
+                        {companies.map((company) => {
+                          const isYourCompany = company === brief.yourCompany
                           return (
-                            <td key={company} style={{ padding: '10px 18px' }}>
-                              {val ? (
-                                <div>
-                                  <ScoreBar score={val.score} />
-                                  <p style={{ marginTop: 4, fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.4 }}>{val.position}</p>
-                                </div>
-                              ) : (
-                                <span style={{ fontSize: 12, color: 'var(--text-soft)' }}>—</span>
+                            <th
+                              key={company}
+                              className="kicker"
+                              style={{
+                                textAlign: 'left',
+                                padding: '10px 18px',
+                                fontSize: 10,
+                                background: isYourCompany ? 'color-mix(in oklch, var(--accent-teal) 10%, var(--surface))' : undefined,
+                              }}
+                            >
+                              <span>{company}</span>
+                              {isYourCompany && (
+                                <span
+                                  style={{
+                                    marginLeft: 8,
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    borderRadius: 999,
+                                    padding: '2px 7px',
+                                    fontSize: 9,
+                                    letterSpacing: '0.12em',
+                                    textTransform: 'uppercase',
+                                    color: 'var(--accent-teal)',
+                                    background: 'color-mix(in oklch, var(--accent-teal) 16%, transparent)',
+                                  }}
+                                >
+                                  you
+                                </span>
                               )}
-                            </td>
+                            </th>
                           )
                         })}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </ExhibitShell>
-          ) : (
-            <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden' }}>
-              <div style={{ padding: '10px 18px', borderBottom: '1px solid var(--border)' }}>
-                <span className="kicker">Comparison matrix</span>
-              </div>
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', fontSize: 13, borderCollapse: 'collapse' }}>
-                  <thead>
-                    <tr style={{ borderBottom: '1px solid var(--border)' }}>
-                      <th className="kicker" style={{ textAlign: 'left', padding: '10px 18px', fontSize: 10 }}>Dimension</th>
-                      {getUniqueCompanies(brief.comparisonMatrix).map((c) => (
-                        <th key={c} className="kicker" style={{ textAlign: 'left', padding: '10px 18px', fontSize: 10 }}>{c}</th>
+                    </thead>
+                    <tbody>
+                      {brief.comparisonMatrix.map((row) => (
+                        <tr key={row.dimension} style={{ borderBottom: '1px solid var(--border)' }}>
+                          <td style={{ padding: '10px 18px', fontSize: 13, fontWeight: 500, color: 'var(--text)' }}>{row.dimension}</td>
+                          {companies.map((company) => {
+                            const val = row.values.find((v) => v.company === company)
+                            const isYourCompany = company === brief.yourCompany
+                            return (
+                              <td
+                                key={company}
+                                style={{
+                                  padding: '10px 18px',
+                                  background: isYourCompany ? 'color-mix(in oklch, var(--accent-teal) 8%, var(--surface))' : undefined,
+                                }}
+                              >
+                                {val ? (
+                                  <div>
+                                    <ScoreBar score={val.score} />
+                                    <p style={{ marginTop: 4, fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.4 }}>{val.position}</p>
+                                  </div>
+                                ) : (
+                                  <span style={{ fontSize: 12, color: 'var(--text-soft)' }}>—</span>
+                                )}
+                              </td>
+                            )
+                          })}
+                        </tr>
                       ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {brief.comparisonMatrix.map((row) => (
-                      <tr key={row.dimension} style={{ borderBottom: '1px solid var(--border)' }}>
-                        <td style={{ padding: '10px 18px', fontSize: 13, fontWeight: 500, color: 'var(--text)' }}>{row.dimension}</td>
-                        {getUniqueCompanies(brief.comparisonMatrix).map((company) => {
-                          const val = row.values.find((v) => v.company === company)
+                    </tbody>
+                  </table>
+                </div>
+              </ExhibitShell>
+            ) : (
+              <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden' }}>
+                <div style={{ padding: '10px 18px', borderBottom: '1px solid var(--border)' }}>
+                  <span className="kicker">Comparison matrix</span>
+                </div>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', fontSize: 13, borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                        <th className="kicker" style={{ textAlign: 'left', padding: '10px 18px', fontSize: 10 }}>Dimension</th>
+                        {companies.map((company) => {
+                          const isYourCompany = company === brief.yourCompany
                           return (
-                            <td key={company} style={{ padding: '10px 18px' }}>
-                              {val ? (
-                                <div>
-                                  <ScoreBar score={val.score} />
-                                  <p style={{ marginTop: 4, fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.4 }}>{val.position}</p>
-                                </div>
-                              ) : (
-                                <span style={{ fontSize: 12, color: 'var(--text-soft)' }}>—</span>
+                            <th
+                              key={company}
+                              className="kicker"
+                              style={{
+                                textAlign: 'left',
+                                padding: '10px 18px',
+                                fontSize: 10,
+                                background: isYourCompany ? 'color-mix(in oklch, var(--accent-teal) 10%, var(--surface))' : undefined,
+                              }}
+                            >
+                              <span>{company}</span>
+                              {isYourCompany && (
+                                <span
+                                  style={{
+                                    marginLeft: 8,
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    borderRadius: 999,
+                                    padding: '2px 7px',
+                                    fontSize: 9,
+                                    letterSpacing: '0.12em',
+                                    textTransform: 'uppercase',
+                                    color: 'var(--accent-teal)',
+                                    background: 'color-mix(in oklch, var(--accent-teal) 16%, transparent)',
+                                  }}
+                                >
+                                  you
+                                </span>
                               )}
-                            </td>
+                            </th>
                           )
                         })}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {brief.comparisonMatrix.map((row) => (
+                        <tr key={row.dimension} style={{ borderBottom: '1px solid var(--border)' }}>
+                          <td style={{ padding: '10px 18px', fontSize: 13, fontWeight: 500, color: 'var(--text)' }}>{row.dimension}</td>
+                          {companies.map((company) => {
+                            const val = row.values.find((v) => v.company === company)
+                            const isYourCompany = company === brief.yourCompany
+                            return (
+                              <td
+                                key={company}
+                                style={{
+                                  padding: '10px 18px',
+                                  background: isYourCompany ? 'color-mix(in oklch, var(--accent-teal) 8%, var(--surface))' : undefined,
+                                }}
+                              >
+                                {val ? (
+                                  <div>
+                                    <ScoreBar score={val.score} />
+                                    <p style={{ marginTop: 4, fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.4 }}>{val.position}</p>
+                                  </div>
+                                ) : (
+                                  <span style={{ fontSize: 12, color: 'var(--text-soft)' }}>—</span>
+                                )}
+                              </td>
+                            )
+                          })}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
-          )}
+            )
+          })()}
         </div>
       )}
 
@@ -257,10 +339,16 @@ export default function CompetitiveResults({ brief, onNewSearch, savedBriefId }:
   )
 }
 
-function getUniqueCompanies(matrix: CompetitiveAnalysisBrief['comparisonMatrix']): string[] {
+function getMatrixCompanies(matrix: CompetitiveAnalysisBrief['comparisonMatrix'], yourCompany?: string | null): string[] {
   const seen = new Set<string>()
   for (const row of matrix) {
     for (const v of row.values) seen.add(v.company)
   }
-  return Array.from(seen)
+  const companies = Array.from(seen)
+
+  if (!yourCompany || !companies.includes(yourCompany)) {
+    return companies
+  }
+
+  return [yourCompany, ...companies.filter((company) => company !== yourCompany)]
 }

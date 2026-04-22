@@ -32,7 +32,10 @@ export const COMPETITIVE_SCHEMA_DESC = `{
   "comparisonMatrix": [
     {
       "dimension": "Product Depth",
-      "values": [{"company": "CompanyA", "position": "Brief position", "score": 4}]
+      "values": [
+        {"company": "Your Company", "position": "Brief position", "score": 4},
+        {"company": "Competitor A", "position": "Brief position", "score": 3}
+      ]
     }
   ],
   "keyFindings": [{"text": "...", "sourceIds": ["s1"], "tag": "fact|inference"}],
@@ -93,7 +96,8 @@ ${COMPETITIVE_SCHEMA_DESC}
 Include 3-6 comparison dimensions relevant to "${input.focusArea}".
 Return 3-5 bullets per section. Tag each as "fact" or "inference".
 Every bullet must have at least one sourceId.
-Include all competitors: ${input.competitors.join(', ')}${input.yourCompany ? ` and ${input.yourCompany}` : ''} in the comparison matrix.`)
+Include all competitors: ${input.competitors.join(', ')}${input.yourCompany ? ` and ${input.yourCompany}` : ''} in the comparison matrix.
+${input.yourCompany ? `Every comparisonMatrix row must include exactly one values entry for ${input.yourCompany}. Do not omit it from any row.` : ''}`.trim())
 
   return parts.join('\n')
 }
