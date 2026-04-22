@@ -16,6 +16,7 @@ import {
   FactorSeveritySchema,
   IntelligenceBriefSchema,
   MarketResearchBriefSchema,
+  MarketPlayerSchema,
   NormalizedEvidenceSchema,
   MeetingPrepBriefSchema,
   TimelineEventSchema,
@@ -151,6 +152,23 @@ describe('FactorCardSchema', () => {
     } as const
 
     expect(FactorCardSchema.parse(legacyFactor)).toEqual(legacyFactor)
+  })
+})
+
+describe('MarketPlayerSchema', () => {
+  it('accepts optional quadrant coordinates and rationales', () => {
+    const player = {
+      name: 'Relevant',
+      category: 'emerging',
+      description: 'Answer-first workflow.',
+      estimatedPosition: 'Decision-layer wedge.',
+      scale: 0.42,
+      momentum: 0.78,
+      scaleRationale: 'Still earlier in distribution.',
+      momentumRationale: 'High recent product and category movement.',
+    } as const
+
+    expect(MarketPlayerSchema.parse(player)).toEqual(player)
   })
 })
 

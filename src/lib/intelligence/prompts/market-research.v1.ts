@@ -25,7 +25,11 @@ export const MARKET_RESEARCH_SCHEMA_DESC = `{
       "name": "Company Name",
       "category": "leader|challenger|niche|emerging",
       "description": "What they do and their position",
-      "estimatedPosition": "Brief market position description"
+      "estimatedPosition": "Brief market position description",
+      "scale": 0.72,
+      "momentum": 0.64,
+      "scaleRationale": "Why this player deserves that scale score",
+      "momentumRationale": "Why this player deserves that momentum score"
     }
   ],
   "trendSignals": [{"text": "...", "sourceIds": ["s1"], "tag": "fact|inference"}],
@@ -86,6 +90,7 @@ ${MARKET_RESEARCH_SCHEMA_DESC}
 Return 3-5 bullets per section. Tag each as "fact" or "inference".
 Every bullet must have at least one sourceId.
 Include all known players: ${(input.knownPlayers ?? []).join(', ') || 'discover relevant players'}.
+When you list players, score scale and momentum from 0 to 1 and include a one-line rationale for each score whenever the evidence supports it.
 Focus on ${input.scope === 'global' ? 'global perspective' : input.scope + ' market specifically'}.`)
 
   return parts.join('\n')

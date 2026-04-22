@@ -471,6 +471,10 @@ export const MarketPlayerSchema = z.object({
   category: z.enum(['leader', 'challenger', 'niche', 'emerging']),
   description: z.string(),
   estimatedPosition: z.string(),
+  scale: z.number().min(0).max(1).optional(),
+  momentum: z.number().min(0).max(1).optional(),
+  scaleRationale: z.string().optional(),
+  momentumRationale: z.string().optional(),
 })
 export type MarketPlayer = z.infer<typeof MarketPlayerSchema>
 

@@ -17,6 +17,7 @@ import ShareButton from './shared/ShareButton'
 import SearchPlanPanel from './shared/SearchPlanPanel'
 import ExhibitShell from './shared/ExhibitShell'
 import MethodologyDrawer from './shared/MethodologyDrawer'
+import Quadrant from './shared/viz/Quadrant'
 import HistoryButton from '../HistoryButton'
 
 interface MarketResearchResultsProps {
@@ -118,16 +119,19 @@ export default function MarketResearchResults({ brief, onNewSearch, savedBriefId
               asOf={brief.generatedAt}
               sources={brief.sources}
             >
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 14 }}>
-                {sortedPlayers.map((p) => (
-                  <PlayerCard
-                    key={p.name}
-                    name={p.name}
-                    category={p.category}
-                    description={p.description}
-                    estimatedPosition={p.estimatedPosition}
-                  />
-                ))}
+              <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,320px)_minmax(0,1fr)]">
+                <Quadrant players={sortedPlayers} label="Scale and momentum map" />
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 14 }}>
+                  {sortedPlayers.map((p) => (
+                    <PlayerCard
+                      key={p.name}
+                      name={p.name}
+                      category={p.category}
+                      description={p.description}
+                      estimatedPosition={p.estimatedPosition}
+                    />
+                  ))}
+                </div>
               </div>
             </ExhibitShell>
           ) : (
