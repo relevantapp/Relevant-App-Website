@@ -18,7 +18,7 @@ import {
   TrendingUp,
   Users,
 } from 'lucide-react'
-import { useId } from 'react'
+import { useId, useState } from 'react'
 import type { ReactNode } from 'react'
 import { MEETING_PREP_RADAR_CATEGORIES } from '@/lib/intelligence/contracts'
 import type {
@@ -38,6 +38,7 @@ import { buildMeetingPrepSnapshot } from '@/lib/intelligence/meeting-prep-displa
 import PriorityStrip from './shared/PriorityStrip'
 import UnknownField from './shared/UnknownField'
 import BulletChart from './shared/viz/BulletChart'
+import Radar from './shared/viz/Radar'
 
 /* ── Bento Section Card ──────────────────────────────────────── */
 
@@ -696,30 +697,6 @@ export function CompetitorMatrix({
 
 /* ── Risk Radar ────────────────────────────────────────────── */
 
-function polarToCartesian(cx: number, cy: number, radius: number, angle: number) {
-  return {
-    x: cx + radius * Math.cos(angle),
-    y: cy + radius * Math.sin(angle),
-  }
-}
-
-function getRadarPolygonPoints(metrics: RadarMetric[]): string {
-  const cx = 110
-  const cy = 110
-  const maxRadius = 72
-
-  const points = MEETING_PREP_RADAR_CATEGORIES.map((category, index) => {
-    const metric = metrics.find((item) => item.category === category)
-    const severity = metric ? Math.max(0, Math.min(5, metric.severity)) : 0
-    const angle = -Math.PI / 2 + (index * Math.PI * 2) / MEETING_PREP_RADAR_CATEGORIES.length
-    const point = polarToCartesian(cx, cy, (severity / 5) * maxRadius, angle)
-
-    return Number.isFinite(point.x) && Number.isFinite(point.y) ? `${point.x},${point.y}` : `${cx},${cy}`
-  })
-
-  return points.join(' ')
-}
-
 export function RiskRadar({
   metrics,
   onSourceClick,
@@ -728,124 +705,91 @@ export function RiskRadar({
   onSourceClick: (id: string) => void
 }) {
   const shouldReduceMotion = Boolean(useReducedMotion())
-
-  if (!metrics?.length || metrics.length !== MEETING_PREP_RADAR_CATEGORIES.length) {
-    return (
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5">
-        <p className="kicker">Risk radar</p>
-        <div className="mt-4">
-          <EmptyStateCard
-            title="Radar not shown"
-            description="The brief needs all five evidence-backed axes before it can draw a reliable risk shape."
-          />
-        </div>
-      </div>
-    )
-  }
-
-  const polygonPoints = getRadarPolygonPoints(metrics)
-  const cx = 110
-  const cy = 110
-  const maxRadius = 72
+  const [activeIndex, setActiveIndex] = useState(0)
+  const orderedMetrics = MEETING_PREP_RADAR_CATEGORIES.map((category) => metrics?.find((item) => item.category === category))
+  const activeCategory = MEETING_PREP_RADAR_CATEGORIES[activeIndex] ?? MEETING_PREP_RADAR_CATEGORIES[0]
+  const activeMetric = orderedMetrics[activeIndex]
 
   return (
     <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5">
       <p className="kicker">Risk radar</p>
       <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted)]">
-        Five fixed axes keep the risk picture comparable across briefs and prevent decorative chart noise.
+        Five fixed axes keep the risk picture comparable across briefs, even when one or more dimensions remain unknown.
       </p>
 
       <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,240px)_1fr] xl:items-center">
         <div className="mx-auto w-full max-w-[240px]">
-          <svg viewBox="0 0 220 220" className="w-full" aria-label="Meeting risk radar">
-            {[1, 2, 3, 4, 5].map((level) => {
-              const radius = (level / 5) * maxRadius
-              const ringPoints = MEETING_PREP_RADAR_CATEGORIES.map((_, index) => {
-                const angle = -Math.PI / 2 + (index * Math.PI * 2) / MEETING_PREP_RADAR_CATEGORIES.length
-                const point = polarToCartesian(cx, cy, radius, angle)
-                return `${point.x},${point.y}`
-              }).join(' ')
-
-              return (
-                <polygon
-                  key={level}
-                  points={ringPoints}
-                  fill="none"
-                  stroke="var(--border)"
-                  strokeWidth="1"
-                />
-              )
-            })}
-
-            {MEETING_PREP_RADAR_CATEGORIES.map((category, index) => {
-              const angle = -Math.PI / 2 + (index * Math.PI * 2) / MEETING_PREP_RADAR_CATEGORIES.length
-              const point = polarToCartesian(cx, cy, maxRadius + 18, angle)
-              const axisEnd = polarToCartesian(cx, cy, maxRadius, angle)
-
-              return (
-                <g key={category}>
-                  <line x1={cx} y1={cy} x2={axisEnd.x} y2={axisEnd.y} stroke="var(--border)" strokeWidth="1" />
-                  <text
-                    x={point.x}
-                    y={point.y}
-                    textAnchor="middle"
-                    className="mono"
-                    style={{ fontSize: 10, fill: 'var(--text-soft)' }}
-                  >
-                    {RADAR_CATEGORY_LABELS[category]}
-                  </text>
-                </g>
-              )
-            })}
-
-            <motion.polygon
-              points={polygonPoints}
-              fill="color-mix(in oklch, var(--accent-coral) 24%, transparent)"
-              stroke="var(--accent-coral)"
-              strokeWidth="2"
-              initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.92, transformOrigin: '110px 110px' }}
-              animate={{ opacity: 1, scale: 1, transformOrigin: '110px 110px' }}
-              transition={{ duration: shouldReduceMotion ? 0 : 0.45, ease: 'easeOut' }}
+          <motion.div
+            initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: shouldReduceMotion ? 0 : 0.45, ease: 'easeOut' }}
+          >
+            <Radar
+              categories={MEETING_PREP_RADAR_CATEGORIES.map((category) => RADAR_CATEGORY_LABELS[category])}
+              values={orderedMetrics.map((metric) => metric?.severity)}
+              max={5}
+              label="Meeting risk radar"
+              activeIndex={activeIndex}
+              onActiveIndexChange={setActiveIndex}
             />
-
-            {MEETING_PREP_RADAR_CATEGORIES.map((category, index) => {
-              const metric = metrics.find((item) => item.category === category)
-              if (!metric) return null
-
-              const angle = -Math.PI / 2 + (index * Math.PI * 2) / MEETING_PREP_RADAR_CATEGORIES.length
-              const point = polarToCartesian(cx, cy, (Math.max(0, Math.min(5, metric.severity)) / 5) * maxRadius, angle)
-
-              return (
-                <circle key={metric.category} cx={point.x} cy={point.y} r="3.5" fill="var(--accent-coral)" />
-              )
-            })}
-          </svg>
+          </motion.div>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-2">
-          {MEETING_PREP_RADAR_CATEGORIES.map((category) => {
-            const metric = metrics.find((item) => item.category === category)
-            if (!metric) return null
+        <div className="space-y-3">
+          <div className="flex flex-wrap gap-2">
+            {MEETING_PREP_RADAR_CATEGORIES.map((category, index) => {
+              const metric = orderedMetrics[index]
+              const active = index === activeIndex
 
-            return (
-              <div key={category} className="flex min-h-[168px] h-full flex-col rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-4">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="kicker">{RADAR_CATEGORY_LABELS[category]}</p>
-                  <span className="mono text-[11px] uppercase tracking-[0.14em] text-[var(--accent-coral)]">{metric.severity}/5</span>
-                </div>
+              return (
+                <button
+                  key={category}
+                  type="button"
+                  onMouseEnter={() => setActiveIndex(index)}
+                  onFocus={() => setActiveIndex(index)}
+                  onClick={() => setActiveIndex(index)}
+                  className={`rounded-full border px-3 py-1.5 text-[11px] uppercase tracking-[0.14em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${
+                    active
+                      ? 'border-[var(--accent-coral)] bg-[var(--surface)] text-[var(--text)]'
+                      : 'border-[var(--border)] text-[var(--text-muted)]'
+                  }`}
+                >
+                  {RADAR_CATEGORY_LABELS[category]}
+                  <span className="ml-2 font-medium text-[var(--text-soft)]">{metric ? `${metric.severity}/5` : 'unknown'}</span>
+                </button>
+              )
+            })}
+          </div>
+
+          <div className="flex min-h-[188px] h-full flex-col rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-4">
+            <div className="flex items-center justify-between gap-3">
+              <p className="kicker">{RADAR_CATEGORY_LABELS[activeCategory]}</p>
+              {activeMetric ? (
+                <span className="mono text-[11px] uppercase tracking-[0.14em] text-[var(--accent-coral)]">{activeMetric.severity}/5</span>
+              ) : (
+                <span className="mono text-[11px] uppercase tracking-[0.14em] text-[var(--text-soft)]">unknown</span>
+              )}
+            </div>
+
+            {activeMetric ? (
+              <>
                 <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[var(--surface-strong)]">
                   <div
                     className="h-full rounded-full bg-[var(--accent-coral)]"
-                    style={{ width: `${Math.max(0, Math.min(5, metric.severity)) * 20}%` }}
+                    style={{ width: `${Math.max(0, Math.min(5, activeMetric.severity)) * 20}%` }}
                   />
                 </div>
-                <p className="mt-3 flex-1 text-sm leading-relaxed text-[var(--text)]">{metric.details}</p>
+                <p className="mt-3 flex-1 text-sm leading-relaxed text-[var(--text)]">{activeMetric.details}</p>
                 <div className="pt-3">
-                  <SourceChipRow sourceIds={metric.sourceIds} onSourceClick={onSourceClick} />
+                  <SourceChipRow sourceIds={activeMetric.sourceIds} onSourceClick={onSourceClick} />
                 </div>
+              </>
+            ) : (
+              <div className="mt-4">
+                <UnknownField label={RADAR_CATEGORY_LABELS[activeCategory]} queriesTried={[]} />
               </div>
-            )
-          })}
+            )}
+          </div>
         </div>
       </div>
     </div>
