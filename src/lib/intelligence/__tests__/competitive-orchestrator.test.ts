@@ -47,12 +47,32 @@ describe('generateCompetitiveAnalysisBrief', () => {
     rankEvidence.mockImplementation((evidence: unknown[]) => evidence)
     extractQueryTerms.mockReturnValue(['relevant', 'competitive', 'analysis'])
     synthesizeWithSchema.mockImplementation(async (_systemPrompt: string, userPrompt: string) => {
+      expect(userPrompt).toContain('"answer"')
       expect(userPrompt).toContain('Every comparisonMatrix row must include exactly one values entry for Relevant')
 
       return {
         data: {
           headline: 'Relevant wins on direct answers while AlphaSense wins on breadth.',
           bottomLine: 'Relevant should sell the decision layer, not the data warehouse.',
+          answer: {
+            conclusion: {
+              text: 'Relevant wins on direct answers while AlphaSense still wins on enterprise breadth.',
+              sourceIds: ['s1'],
+            },
+            whyItMatters: {
+              text: 'You should position against breadth-heavy incumbents by selling the decision layer.',
+              sourceIds: ['s1'],
+            },
+            whatChanged: null,
+            confidence: {
+              level: 'high',
+              driver: 'The evidence consistently separates direct answer quality from enterprise breadth.',
+            },
+            recommendedNext: {
+              text: 'Lead with answer quality and proof of decision speed.',
+              action: 'Refine positioning',
+            },
+          },
           confidence: 'high',
           competitors: [
             {
@@ -117,6 +137,9 @@ describe('generateCompetitiveAnalysisBrief', () => {
     const brief = await generateCompetitiveAnalysisBrief(request)
 
     expect(brief.yourCompany).toBe('Relevant')
+    expect(brief.answer?.conclusion.text).toBe('Relevant wins on direct answers while AlphaSense still wins on enterprise breadth.')
+    expect(brief.answer?.recommendedNext.action).toBe('Refine positioning')
+    expect(brief.sources.some((source) => source.usedInAnswer)).toBe(true)
     expect(brief.comparisonMatrix).toHaveLength(2)
     brief.comparisonMatrix.forEach((row) => {
       expect(row.values.some((value) => value.company === 'Relevant')).toBe(true)

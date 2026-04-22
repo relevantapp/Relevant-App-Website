@@ -34,11 +34,13 @@ import {
 import {
   buildCanonicalSourceIdMap,
   buildMeetingPrepSnapshot,
+  collectAnswerSourceIds,
   canonicalizeSourceIds,
   COMPETITOR_ADVANTAGE_MAX,
   COMPETITOR_TAG_LIMIT,
   deriveSourceCounts,
   markSourcesUsedInAnswer,
+  normalizeAnswerBlock,
   RADAR_DETAIL_MAX,
   sanitizeMeetingPrepText,
   TIMELINE_EVENT_TEXT_MAX,
@@ -512,6 +514,7 @@ export async function generateMeetingPrepBrief(
     const normalizedCompetitorMatrix = request.competitors?.length
       ? normalizeCompetitorMatrix(synthesis?.data?.competitorMatrix, canonicalSourceIdMap)
       : undefined
+    const normalizedAnswer = normalizeAnswerBlock(synthesis?.data?.answer, canonicalSourceIdMap)
     const normalizedSections = {
       whatJustHappened: normalizeBulletSections(synthesis?.data?.whatJustHappened, canonicalSourceIdMap),
       talkingPoints: normalizeBulletSections(synthesis?.data?.talkingPoints, canonicalSourceIdMap),
@@ -530,6 +533,7 @@ export async function generateMeetingPrepBrief(
         normalizedSections.landmines.flatMap((bullet) => bullet.sourceIds),
         normalizedSections.questionsToAsk.flatMap((bullet) => bullet.sourceIds),
         normalizedSections.competitorContext.flatMap((bullet) => bullet.sourceIds),
+        collectAnswerSourceIds(normalizedAnswer),
       ]),
     )
     const sourceCounts = deriveSourceCounts({
@@ -546,6 +550,7 @@ export async function generateMeetingPrepBrief(
       bottomLine: synthesis?.data?.bottomLine ?? 'The AI synthesis step failed. The raw evidence is still available below.',
       whyItMatters: synthesis?.data?.whyItMatters ?? null,
       confidence: synthesis?.data?.confidence ?? 'low',
+      answer: normalizedAnswer,
       snapshot: displaySnapshot,
       attendeeProfiles,
       momentumScore: typeof synthesis?.data?.momentumScore === 'number'
@@ -588,6 +593,7 @@ export async function generateMeetingPrepBrief(
     bottomLine: 'The final assembly step failed. The raw evidence is still available below.',
     whyItMatters: null,
     confidence: 'low',
+    answer: undefined,
     snapshot: displaySnapshot,
     attendeeProfiles,
     sections: {

@@ -20,6 +20,13 @@ export const COMPETITIVE_SCHEMA_DESC = `{
   "bottomLine": "2-3 sentence strategic takeaway",
   "whyItMatters": "1-2 sentences explaining why this competitive landscape matters to the user personally. Address the user directly as 'you'.",
   "confidence": "high|medium|low based on evidence quality",
+  "answer": {
+    "conclusion": {"text": "Declarative summary of who wins where", "sourceIds": ["s1"], "sourceSnippet": "optional short proof snippet"},
+    "whyItMatters": {"text": "Why that competitive reality matters to the user", "sourceIds": ["s2"], "sourceSnippet": "optional short proof snippet"},
+    "whatChanged": {"text": "What changed recently in the market or rival set", "sourceIds": ["s3"], "sourceSnippet": "optional short proof snippet"} or null,
+    "confidence": {"level": "high|medium|low", "driver": "Short reason the confidence is what it is"},
+    "recommendedNext": {"text": "The next competitive move to make", "action": "optional short CTA label", "copyable": "optional copy-ready wording"}
+  },
   "competitors": [
     {
       "name": "Competitor Name",
@@ -94,6 +101,9 @@ Produce a JSON response matching this exact schema:
 ${COMPETITIVE_SCHEMA_DESC}
 
 Include 3-6 comparison dimensions relevant to "${input.focusArea}".
+Populate answer with a five-part block the UI can render directly. Use declarative sentences, not labels. Example conclusion tone: "Relevant wins on direct answers, while AlphaSense still wins on enterprise breadth."
+answer.conclusion, answer.whyItMatters, and answer.whatChanged must cite evidence IDs. If no recent shift is defensible, set answer.whatChanged to null.
+answer.recommendedNext should be a concrete next move for the user, not a generic suggestion.
 Return 3-5 bullets per section. Tag each as "fact" or "inference".
 Every bullet must have at least one sourceId.
 Include all competitors: ${input.competitors.join(', ')}${input.yourCompany ? ` and ${input.yourCompany}` : ''} in the comparison matrix.

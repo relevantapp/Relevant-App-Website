@@ -50,6 +50,13 @@ export const MEETING_PREP_SCHEMA_DESC = `{
   "bottomLine": "2-3 sentence meeting answer tailored to the goal",
   "whyItMatters": "1-2 sentences explaining why this research matters to the user personally, based on their stated goal. Address the user directly as 'you'.",
   "confidence": "high|medium|low based on evidence quality",
+  "answer": {
+    "conclusion": {"text": "Declarative answer to the meeting question", "sourceIds": ["s1"], "sourceSnippet": "optional short proof snippet"},
+    "whyItMatters": {"text": "Why this matters to the user in this meeting", "sourceIds": ["s2"], "sourceSnippet": "optional short proof snippet"},
+    "whatChanged": {"text": "What just changed recently and why it alters the meeting", "sourceIds": ["s3"], "sourceSnippet": "optional short proof snippet"} or null,
+    "confidence": {"level": "high|medium|low", "driver": "Short reason the confidence is what it is"},
+    "recommendedNext": {"text": "The next move the user should make", "action": "optional short CTA label", "copyable": "optional copy-ready wording"}
+  },
   "momentumScore": "integer 0-100 measuring account momentum; omit only if evidence is truly insufficient",
   "riskLevel": "low|medium|high",
   "sentiment": "positive|neutral|negative",
@@ -139,6 +146,9 @@ Produce a JSON response matching this exact schema:
 ${MEETING_PREP_SCHEMA_DESC}
 
 Return 3-5 bullets per section. Tag each as "fact" (directly sourced) or "inference" (your analysis based on evidence).
+Populate answer with a five-part block the UI can render directly. Use declarative sentences, not labels. Example conclusion tone: "Acme just created a fresh opening for this meeting because the team is pushing a new rollout motion."
+answer.conclusion, answer.whyItMatters, and answer.whatChanged must cite evidence IDs. If there is no defensible recent change, set answer.whatChanged to null.
+answer.recommendedNext should tell the user what to do next in plain language, and copyable should be ready to paste into notes or a prep doc when helpful.
 Every bullet must have at least one sourceId referencing the evidence IDs above.
 Return 4-6 timelineEvents when there is evidence. Each event must be concrete, recent when possible, and include sourceIds.
 Return exactly 5 radarMetrics aligned to these categories in this spirit: ${MEETING_PREP_RADAR_CATEGORIES.join(', ')}. If the evidence cannot support a trustworthy five-axis view, return an empty array.

@@ -19,6 +19,13 @@ export const MARKET_RESEARCH_SCHEMA_DESC = `{
   "bottomLine": "2-3 sentence strategic takeaway",
   "whyItMatters": "1-2 sentences explaining why this market research matters to the user personally. Address the user directly as 'you'.",
   "confidence": "high|medium|low based on evidence quality",
+  "answer": {
+    "conclusion": {"text": "Declarative summary of the market state", "sourceIds": ["s1"], "sourceSnippet": "optional short proof snippet"},
+    "whyItMatters": {"text": "Why that market state matters to the user", "sourceIds": ["s2"], "sourceSnippet": "optional short proof snippet"},
+    "whatChanged": {"text": "What changed recently in the market or category", "sourceIds": ["s3"], "sourceSnippet": "optional short proof snippet"} or null,
+    "confidence": {"level": "high|medium|low", "driver": "Short reason the confidence is what it is"},
+    "recommendedNext": {"text": "The next move the user should make", "action": "optional short CTA label", "copyable": "optional copy-ready wording"}
+  },
   "marketOverview": "2-3 paragraph market overview with key metrics inline",
   "players": [
     {
@@ -87,6 +94,9 @@ export function buildMarketResearchPrompt(input: {
 Produce a JSON response matching this exact schema:
 ${MARKET_RESEARCH_SCHEMA_DESC}
 
+Populate answer with a five-part block the UI can render directly. Use declarative sentences, not labels. Example conclusion tone: "The market is fragmenting, and the answer-first wedge is gaining practical credibility."
+answer.conclusion, answer.whyItMatters, and answer.whatChanged must cite evidence IDs. If the evidence does not support a real recent shift, set answer.whatChanged to null.
+answer.recommendedNext should tell the user what to watch or do next in plain language.
 Return 3-5 bullets per section. Tag each as "fact" or "inference".
 Every bullet must have at least one sourceId.
 Include all known players: ${(input.knownPlayers ?? []).join(', ') || 'discover relevant players'}.

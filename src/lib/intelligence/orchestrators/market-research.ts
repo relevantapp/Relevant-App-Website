@@ -20,6 +20,12 @@ import {
   resetSourceCounter,
 } from '../normalize'
 import {
+  buildCanonicalSourceIdMap,
+  collectAnswerSourceIds,
+  markSourcesUsedInAnswer,
+  normalizeAnswerBlock,
+} from '../meeting-prep-display'
+import {
   buildV2PlanBridge,
   collectV2EvidenceBridge,
   persistV2EvidencePack,
@@ -239,7 +245,12 @@ export async function generateMarketResearchBrief(
   if (!synthesis?.data) degradedReasons.push('AI synthesis failed')
 
   /* ── Step 5: assembleBrief ───────────────────────────────── */
-  const dedupedSources = deduplicateSources(allSources)
+  const canonicalSourceIdMap = buildCanonicalSourceIdMap(allSources)
+  const normalizedAnswer = normalizeAnswerBlock(synthesis?.data?.answer, canonicalSourceIdMap)
+  const dedupedSources = markSourcesUsedInAnswer(
+    deduplicateSources(allSources),
+    collectAnswerSourceIds(normalizedAnswer),
+  )
   if (dedupedSources.length < 4) degradedReasons.push('Low source count')
   const totalMs = Math.round(performance.now() - totalStart)
   const internalMs = v2Evidence?.retrieval.timings.internalMs ?? 0
@@ -254,6 +265,7 @@ export async function generateMarketResearchBrief(
     bottomLine: synthesis?.data?.bottomLine ?? 'AI synthesis failed. Raw evidence is still available.',
     whyItMatters: synthesis?.data?.whyItMatters ?? null,
     confidence: synthesis?.data?.confidence ?? 'low',
+    answer: normalizedAnswer,
     marketOverview: synthesis?.data?.marketOverview ?? '',
     players: synthesis?.data?.players ?? [],
     sections: {

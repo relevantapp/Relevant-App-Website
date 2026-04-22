@@ -12,12 +12,15 @@ import {
   CitedSpanSchema,
   CompetitorProfileSchema,
   CompetitiveAnalysisBriefSchema,
+  CompetitiveSynthesisSchema,
   DriverTreeSchema,
   FactorCardSchema,
   FactorImpactSchema,
   FactorSeveritySchema,
   IntelligenceBriefSchema,
+  BusinessCaseSynthesisSchema,
   MarketResearchBriefSchema,
+  MarketResearchSynthesisSchema,
   MarketMapSchema,
   MarketPlayerSchema,
   MarketPlayerTileSchema,
@@ -663,6 +666,13 @@ describe('MeetingPrepSynthesisSchema', () => {
     bottomLine: 'Lead with recent expansion, then pressure-test timing and champion depth.',
     whyItMatters: 'You can use recent proof points to move the next step forward.',
     confidence: 'high',
+    answer: {
+      conclusion: { text: 'Momentum is real and usable in the meeting.', sourceIds: ['s1'] },
+      whyItMatters: { text: 'You have concrete proof points to use.', sourceIds: ['s2'] },
+      whatChanged: null,
+      confidence: { level: 'high', driver: 'The evidence stack is recent and specific.' },
+      recommendedNext: { text: 'Lead with the recent expansion proof point.' },
+    },
     momentumScore: 72,
     riskLevel: 'medium',
     sentiment: 'positive',
@@ -721,6 +731,70 @@ describe('MeetingPrepSynthesisSchema', () => {
         sourceIds: ['s2'],
       }],
     })).toThrow()
+  })
+})
+
+describe('flow synthesis schemas', () => {
+  const answer = {
+    conclusion: { text: 'The answer is specific and declarative.', sourceIds: ['s1'] },
+    whyItMatters: { text: 'It matters directly to the user.', sourceIds: ['s2'] },
+    whatChanged: null,
+    confidence: { level: 'medium', driver: 'The evidence is decent but not exhaustive.' },
+    recommendedNext: { text: 'Take the next concrete step.' },
+  } as const
+
+  it('accepts answer blocks in competitive synthesis payloads', () => {
+    const synthesis = {
+      headline: 'Relevant wins on direct answers.',
+      bottomLine: 'Sell the decision layer.',
+      whyItMatters: 'You need a sharper category story.',
+      confidence: 'high',
+      answer,
+      competitors: [],
+      comparisonMatrix: [],
+      keyFindings: [],
+      strategicImplications: [],
+      recommendations: [],
+    } as const
+
+    expect(CompetitiveSynthesisSchema.parse(synthesis)).toEqual(synthesis)
+  })
+
+  it('accepts answer blocks in business-case synthesis payloads', () => {
+    const synthesis = {
+      headline: 'The case is promising if reuse holds.',
+      bottomLine: 'Validate adoption before scaling.',
+      whyItMatters: 'You need to pressure-test the real gating assumption.',
+      confidence: 'medium',
+      answer,
+      verdict: 'moderate',
+      verdictRationale: 'Adoption still decides the outcome.',
+      comparables: [],
+      marketEvidence: [],
+      supportingFactors: [],
+      riskFactors: [],
+      openQuestions: [],
+    } as const
+
+    expect(BusinessCaseSynthesisSchema.parse(synthesis)).toEqual(synthesis)
+  })
+
+  it('accepts answer blocks in market-research synthesis payloads', () => {
+    const synthesis = {
+      headline: 'The market is fragmenting.',
+      bottomLine: 'The wedge is narrow but real.',
+      whyItMatters: 'You should define the category more tightly.',
+      confidence: 'medium',
+      answer,
+      marketOverview: 'The market is moving toward repeated workflow use cases.',
+      players: [],
+      trendSignals: [],
+      opportunities: [],
+      threats: [],
+      keyFindings: [],
+    } as const
+
+    expect(MarketResearchSynthesisSchema.parse(synthesis)).toEqual(synthesis)
   })
 })
 

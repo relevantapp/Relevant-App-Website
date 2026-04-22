@@ -1,5 +1,7 @@
 import type {
+  AnswerBlock,
   BriefSource,
+  CitedSpan,
   CompanySnapshot,
   MeetingPrepSnapshot,
 } from './contracts'
@@ -128,6 +130,75 @@ export function canonicalizeSourceIds(sourceIds: string[] | undefined, sourceIdM
         .map((id) => id.trim())
         .filter(Boolean),
     ),
+  )
+}
+
+export function normalizeCitedSpan(
+  span: CitedSpan | null | undefined,
+  sourceIdMap: Map<string, string>,
+): CitedSpan | null {
+  if (!span) return null
+
+  const text = collapseWhitespace(stripMarkdownArtifacts(span.text))
+  if (!text) return null
+
+  const sourceSnippet = span.sourceSnippet
+    ? collapseWhitespace(stripMarkdownArtifacts(span.sourceSnippet))
+    : span.sourceSnippet ?? undefined
+
+  return {
+    text,
+    sourceIds: canonicalizeSourceIds(span.sourceIds, sourceIdMap),
+    sourceSnippet: sourceSnippet || sourceSnippet === null ? sourceSnippet : undefined,
+  }
+}
+
+export function normalizeAnswerBlock(
+  answer: AnswerBlock | undefined,
+  sourceIdMap: Map<string, string>,
+): AnswerBlock | undefined {
+  if (!answer) return undefined
+
+  const conclusion = normalizeCitedSpan(answer.conclusion, sourceIdMap)
+  const whyItMatters = normalizeCitedSpan(answer.whyItMatters, sourceIdMap)
+  if (!conclusion || !whyItMatters) return undefined
+
+  const confidenceDriver = collapseWhitespace(stripMarkdownArtifacts(answer.confidence.driver))
+  const recommendedText = collapseWhitespace(stripMarkdownArtifacts(answer.recommendedNext.text))
+  if (!confidenceDriver || !recommendedText) return undefined
+
+  const recommendedAction = answer.recommendedNext.action
+    ? collapseWhitespace(stripMarkdownArtifacts(answer.recommendedNext.action))
+    : undefined
+  const recommendedCopyable = answer.recommendedNext.copyable
+    ? collapseWhitespace(stripMarkdownArtifacts(answer.recommendedNext.copyable))
+    : undefined
+
+  return {
+    conclusion,
+    whyItMatters,
+    whatChanged: normalizeCitedSpan(answer.whatChanged, sourceIdMap),
+    confidence: {
+      level: answer.confidence.level,
+      driver: confidenceDriver,
+    },
+    recommendedNext: {
+      text: recommendedText,
+      ...(recommendedAction ? { action: recommendedAction } : {}),
+      ...(recommendedCopyable ? { copyable: recommendedCopyable } : {}),
+    },
+  }
+}
+
+export function collectAnswerSourceIds(answer: AnswerBlock | undefined): string[] {
+  if (!answer) return []
+
+  return Array.from(
+    new Set([
+      ...answer.conclusion.sourceIds,
+      ...answer.whyItMatters.sourceIds,
+      ...(answer.whatChanged?.sourceIds ?? []),
+    ]),
   )
 }
 
