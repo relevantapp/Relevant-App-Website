@@ -259,11 +259,9 @@ export function persistV2EvidencePack(args: {
   evidence: NormalizedEvidence[]
   queryTerms: string[]
   ctx?: PipelineContext
-}): EvidencePack | null {
-  if (!intelligenceFlags.evidencePack() || !args.ctx?.supabase || !args.ctx.runId) return null
-
+}): EvidencePack {
   const pack = buildEvidencePack({
-    runId: args.ctx.runId,
+    runId: args.ctx?.runId ?? args.bridge.intent.runId,
     intent: args.bridge.intent,
     userLens: args.bridge.userLens,
     priorMemory: args.priorMemory,
@@ -274,11 +272,13 @@ export function persistV2EvidencePack(args: {
     queryTerms: args.queryTerms,
   })
 
-  void recordEvidencePack({
-    supabase: args.ctx.supabase,
-    runId: args.ctx.runId,
-    pack,
-  })
+  if (intelligenceFlags.evidencePack() && args.ctx?.supabase && args.ctx.runId) {
+    void recordEvidencePack({
+      supabase: args.ctx.supabase,
+      runId: args.ctx.runId,
+      pack,
+    })
+  }
 
   return pack
 }

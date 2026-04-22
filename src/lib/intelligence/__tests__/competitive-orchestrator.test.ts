@@ -142,6 +142,9 @@ describe('generateCompetitiveAnalysisBrief', () => {
     expect(brief.answer?.recommendedNext.action).toBe('Refine positioning')
     expect(brief.sections.keyFindings[0]?.priority).toBe('must')
     expect(brief.sections.strategicImplications[0]?.priority).toBe('should')
+    expect(brief.trust?.sourcedClaimCount).toBeGreaterThan(0)
+    expect(brief.trust?.conflicts).toEqual([])
+    expect(brief.trust?.knownUnknowns).toEqual([])
     expect(brief.sources.some((source) => source.usedInAnswer)).toBe(true)
     expect(brief.comparisonMatrix).toHaveLength(2)
     brief.comparisonMatrix.forEach((row) => {

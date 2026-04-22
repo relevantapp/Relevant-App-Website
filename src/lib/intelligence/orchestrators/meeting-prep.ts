@@ -34,6 +34,7 @@ import {
 import {
   buildCanonicalSourceIdMap,
   buildMeetingPrepSnapshot,
+  buildTrustLayer,
   collectAnswerSourceIds,
   canonicalizeSourceIds,
   COMPETITOR_ADVANTAGE_MAX,
@@ -458,8 +459,8 @@ export async function generateMeetingPrepBrief(
 
   const rankedEvidence = rankStep.data ?? allEvidence
 
-  if (v2Bridge && v2Evidence) {
-    persistV2EvidencePack({
+  const evidencePack = v2Bridge && v2Evidence
+    ? persistV2EvidencePack({
       bridge: v2Bridge,
       retrieval: v2Evidence.retrieval,
       priorMemory: v2Evidence.priorMemory,
@@ -467,7 +468,7 @@ export async function generateMeetingPrepBrief(
       queryTerms,
       ctx,
     })
-  }
+    : null
 
   /* ── Step 4: synthesize ──────────────────────────────────── */
   const synthesisStep = await runStep('meeting_prep', 'synthesize', async () => {
@@ -541,6 +542,27 @@ export async function generateMeetingPrepBrief(
       rankedSourceIds: canonicalizeSourceIds(rankedEvidence.map((item) => item.id), canonicalSourceIdMap),
       usedSourceIds: dedupedSources.filter((source) => source.usedInAnswer).map((source) => source.id),
     })
+    const trust = buildTrustLayer({
+      sources: dedupedSources,
+      sourceIdMap: canonicalSourceIdMap,
+      claimSourceGroups: [
+        ...(normalizedTimelineEvents?.map((event) => event.sourceIds) ?? []),
+        ...(normalizedRadarMetrics?.map((metric) => metric.sourceIds) ?? []),
+        ...(normalizedCompetitorMatrix?.map((row) => row.sourceIds) ?? []),
+        ...normalizedSections.whatJustHappened.map((bullet) => bullet.sourceIds),
+        ...normalizedSections.talkingPoints.map((bullet) => bullet.sourceIds),
+        ...normalizedSections.landmines.map((bullet) => bullet.sourceIds),
+        ...normalizedSections.questionsToAsk.map((bullet) => bullet.sourceIds),
+        ...normalizedSections.competitorContext.map((bullet) => bullet.sourceIds),
+        ...(normalizedAnswer ? [
+          normalizedAnswer.conclusion.sourceIds,
+          normalizedAnswer.whyItMatters.sourceIds,
+          normalizedAnswer.whatChanged?.sourceIds,
+        ] : []),
+      ],
+      pack: evidencePack,
+      plan: v2Bridge?.planV2,
+    })
 
     return {
       id: generateBriefId(),
@@ -563,6 +585,7 @@ export async function generateMeetingPrepBrief(
       competitorMatrix: normalizedCompetitorMatrix,
       sections: normalizedSections,
       sources: dedupedSources,
+      trust,
       researchPlan,
       contextUsed: request.userContext ?? null,
       status: {

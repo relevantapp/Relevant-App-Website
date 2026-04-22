@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   buildCanonicalSourceIdMap,
+  buildTrustLayer,
   buildMeetingPrepSnapshot,
   canonicalizeSourceIds,
   deriveSourceCounts,
@@ -8,7 +9,7 @@ import {
   SNAPSHOT_MILESTONE_MAX,
   SNAPSHOT_SUMMARY_MAX,
 } from '../meeting-prep-display'
-import type { BriefSource, CompanySnapshot } from '../contracts'
+import type { BriefSource, CompanySnapshot, EvidencePack, ResearchPlanV2 } from '../contracts'
 
 describe('buildMeetingPrepSnapshot', () => {
   it('sanitizes markdown artifacts, caps expensive fields, and records known unknowns', () => {
@@ -91,5 +92,103 @@ describe('source canonicalization and counts', () => {
       ranked: 2,
       used: 1,
     })
+  })
+})
+
+describe('buildTrustLayer', () => {
+  it('summarizes freshness, important sources, contradictions, and known unknowns', () => {
+    const sources: BriefSource[] = [
+      {
+        id: 's1',
+        url: 'https://example.com/one',
+        title: 'Source one',
+        domain: 'example.com',
+        publishedAt: '2026-04-10T00:00:00.000Z',
+        provider: 'exa',
+        snippet: 'One',
+      },
+      {
+        id: 's2',
+        url: 'https://example.com/two',
+        title: 'Source two',
+        domain: 'example.com',
+        publishedAt: '2026-04-12T00:00:00.000Z',
+        provider: 'tavily',
+        snippet: 'Two',
+      },
+      {
+        id: 's3',
+        url: 'https://example.com/three',
+        title: 'Source three',
+        domain: 'example.com',
+        publishedAt: '2026-04-18T00:00:00.000Z',
+        provider: 'exa',
+        snippet: 'Three',
+      },
+    ]
+
+    const pack = {
+      evidence: [
+        { sourceId: 's1' },
+        { sourceId: 's2' },
+        { sourceId: 's3' },
+      ],
+      contradictions: [
+        {
+          issue: 'Sources disagree on the rollout timeline.',
+          evidenceIds: ['s1', 's2', 's3'],
+        },
+      ],
+      unknowns: [
+        {
+          question: 'counter_evidence: Who owns final procurement sign-off?',
+          reasonMissing: 'No source covered the final approver.',
+        },
+      ],
+    } as unknown as EvidencePack
+
+    const plan = {
+      lanes: [
+        {
+          sourceRole: 'counter_evidence',
+          questions: ['Who owns final procurement sign-off?'],
+          queryTemplates: [
+            'procurement sign-off workflow owner',
+            'final procurement approver enterprise rollout',
+          ],
+        },
+      ],
+    } as unknown as ResearchPlanV2
+
+    const trust = buildTrustLayer({
+      sources,
+      sourceIdMap: buildCanonicalSourceIdMap(sources),
+      claimSourceGroups: [['s1'], ['s1', 's2'], ['s3']],
+      pack,
+      plan,
+    })
+
+    expect(trust.sourcedClaimCount).toBe(3)
+    expect(trust.freshness).toEqual({
+      oldestSourceAt: '2026-04-10T00:00:00.000Z',
+      newestSourceAt: '2026-04-18T00:00:00.000Z',
+    })
+    expect(trust.mostImportantSourceIds).toEqual(['s1', 's2', 's3'])
+    expect(trust.conflicts).toEqual([
+      {
+        claim: 'Sources disagree on the rollout timeline.',
+        supportingSourceIds: ['s1', 's2'],
+        againstSourceIds: ['s3'],
+      },
+    ])
+    expect(trust.knownUnknowns).toEqual([
+      {
+        question: 'Who owns final procurement sign-off?',
+        queriesTried: [
+          'procurement sign-off workflow owner',
+          'final procurement approver enterprise rollout',
+        ],
+      },
+    ])
   })
 })

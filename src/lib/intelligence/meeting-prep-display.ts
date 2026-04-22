@@ -3,7 +3,10 @@ import type {
   BriefSource,
   CitedSpan,
   CompanySnapshot,
+  EvidencePack,
   MeetingPrepSnapshot,
+  ResearchPlanV2,
+  TrustLayer,
 } from './contracts'
 
 export const SNAPSHOT_SUMMARY_MAX = 220
@@ -223,5 +226,183 @@ export function deriveSourceCounts(args: {
     found: args.sources.length,
     ranked: ranked.size,
     used: used.size,
+  }
+}
+
+const TRUST_IMPORTANT_SOURCE_LIMIT = 3
+const TRUST_CONFLICT_LIMIT = 3
+const TRUST_UNKNOWN_LIMIT = 4
+
+function normalizePublishedAt(value: string | null | undefined): string | null {
+  if (!value) return null
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) return null
+  return parsed.toISOString()
+}
+
+function buildFreshnessSummary(sources: BriefSource[]): TrustLayer['freshness'] {
+  const publishedAt = sources
+    .map((source) => normalizePublishedAt(source.publishedAt))
+    .filter((value): value is string => Boolean(value))
+    .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
+
+  return {
+    oldestSourceAt: publishedAt[0] ?? null,
+    newestSourceAt: publishedAt[publishedAt.length - 1] ?? null,
+  }
+}
+
+function sortByDisplayOrder(sourceIds: string[], sources: BriefSource[]): string[] {
+  const order = new Map(sources.map((source, index) => [source.id, index]))
+  return [...sourceIds].sort((a, b) => (order.get(a) ?? Number.MAX_SAFE_INTEGER) - (order.get(b) ?? Number.MAX_SAFE_INTEGER))
+}
+
+function canonicalClaimSourceGroups(args: {
+  claimSourceGroups: Array<string[] | undefined>
+  sources: BriefSource[]
+  sourceIdMap: Map<string, string>
+}): string[][] {
+  const availableSourceIds = new Set(args.sources.map((source) => source.id))
+
+  return args.claimSourceGroups
+    .map((group) =>
+      sortByDisplayOrder(
+        canonicalizeSourceIds(group, args.sourceIdMap).filter((sourceId) => availableSourceIds.has(sourceId)),
+        args.sources,
+      ),
+    )
+    .filter((group) => group.length > 0)
+}
+
+function buildMostImportantSourceIds(args: {
+  sources: BriefSource[]
+  claimSourceGroups: string[][]
+}): string[] {
+  const availableSourceIds = new Set(args.sources.map((source) => source.id))
+  const sourceOrder = new Map(args.sources.map((source, index) => [source.id, index]))
+  const counts = new Map<string, number>()
+
+  for (const group of args.claimSourceGroups) {
+    for (const sourceId of group) {
+      if (!availableSourceIds.has(sourceId)) continue
+      counts.set(sourceId, (counts.get(sourceId) ?? 0) + 1)
+    }
+  }
+
+  const ranked = Array.from(counts.entries())
+    .sort((a, b) => {
+      if (b[1] !== a[1]) return b[1] - a[1]
+      return (sourceOrder.get(a[0]) ?? Number.MAX_SAFE_INTEGER) - (sourceOrder.get(b[0]) ?? Number.MAX_SAFE_INTEGER)
+    })
+    .map(([sourceId]) => sourceId)
+
+  if (ranked.length > 0) return ranked.slice(0, TRUST_IMPORTANT_SOURCE_LIMIT)
+  return args.sources.slice(0, TRUST_IMPORTANT_SOURCE_LIMIT).map((source) => source.id)
+}
+
+function buildTrustConflicts(args: {
+  pack?: EvidencePack | null
+  sources: BriefSource[]
+  sourceIdMap: Map<string, string>
+}): TrustLayer['conflicts'] {
+  if (!args.pack?.contradictions.length) return []
+
+  const availableSourceIds = new Set(args.sources.map((source) => source.id))
+  const evidenceOrder = new Map(
+    args.pack.evidence.map((item, index) => [args.sourceIdMap.get(item.sourceId) ?? item.sourceId, index]),
+  )
+
+  return args.pack.contradictions
+    .map((conflict) => {
+      const sourceIds = Array.from(
+        new Set(
+          conflict.evidenceIds
+            .map((sourceId) => args.sourceIdMap.get(sourceId) ?? sourceId)
+            .filter((sourceId) => availableSourceIds.has(sourceId)),
+        ),
+      ).sort((a, b) => (evidenceOrder.get(a) ?? Number.MAX_SAFE_INTEGER) - (evidenceOrder.get(b) ?? Number.MAX_SAFE_INTEGER))
+
+      if (sourceIds.length < 2) return null
+
+      return {
+        claim: conflict.issue,
+        supportingSourceIds: sourceIds.slice(0, sourceIds.length - 1),
+        againstSourceIds: sourceIds.slice(sourceIds.length - 1),
+      }
+    })
+    .filter((conflict): conflict is TrustLayer['conflicts'][number] => Boolean(conflict))
+    .slice(0, TRUST_CONFLICT_LIMIT)
+}
+
+function normalizeUnknownQuestion(question: string): { sourceRole: string | null; question: string } {
+  const trimmed = collapseWhitespace(question)
+  const match = trimmed.match(/^([a-z_]+)\s*:\s*(.+)$/i)
+
+  if (!match) return { sourceRole: null, question: trimmed }
+
+  return {
+    sourceRole: match[1].toLowerCase(),
+    question: match[2].trim(),
+  }
+}
+
+function queriesForUnknown(question: string, plan?: ResearchPlanV2 | null): string[] {
+  if (!plan) return []
+
+  const normalized = normalizeUnknownQuestion(question)
+  const lane = plan.lanes.find((candidate) => {
+    if (normalized.sourceRole && candidate.sourceRole === normalized.sourceRole) return true
+    return candidate.questions.some((item) => normalized.question.toLowerCase().includes(item.toLowerCase()))
+  })
+
+  return lane?.queryTemplates.slice(0, 3) ?? []
+}
+
+function buildKnownUnknowns(args: {
+  pack?: EvidencePack | null
+  plan?: ResearchPlanV2 | null
+}): TrustLayer['knownUnknowns'] {
+  if (!args.pack?.unknowns.length) return []
+
+  return args.pack.unknowns
+    .map((unknown) => {
+      const normalized = normalizeUnknownQuestion(unknown.question)
+      return {
+        question: normalized.question,
+        queriesTried: queriesForUnknown(unknown.question, args.plan),
+      }
+    })
+    .slice(0, TRUST_UNKNOWN_LIMIT)
+}
+
+export function buildTrustLayer(args: {
+  sources: BriefSource[]
+  sourceIdMap: Map<string, string>
+  claimSourceGroups: Array<string[] | undefined>
+  pack?: EvidencePack | null
+  plan?: ResearchPlanV2 | null
+}): TrustLayer {
+  const claimSourceGroups = canonicalClaimSourceGroups({
+    claimSourceGroups: args.claimSourceGroups,
+    sources: args.sources,
+    sourceIdMap: args.sourceIdMap,
+  })
+
+  return {
+    sourcedClaimCount: claimSourceGroups.length,
+    freshness: buildFreshnessSummary(args.sources),
+    mostImportantSourceIds: buildMostImportantSourceIds({
+      sources: args.sources,
+      claimSourceGroups,
+    }),
+    conflicts: buildTrustConflicts({
+      pack: args.pack,
+      sources: args.sources,
+      sourceIdMap: args.sourceIdMap,
+    }),
+    knownUnknowns: buildKnownUnknowns({
+      pack: args.pack,
+      plan: args.plan,
+    }),
   }
 }

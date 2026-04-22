@@ -21,6 +21,7 @@ import {
 } from '../normalize'
 import {
   buildCanonicalSourceIdMap,
+  buildTrustLayer,
   collectAnswerSourceIds,
   markSourcesUsedInAnswer,
   normalizeAnswerBlock,
@@ -205,8 +206,8 @@ export async function generateMarketResearchBrief(
 
   const rankedEvidence = rankStep.data ?? allEvidence
 
-  if (v2Bridge && v2Evidence) {
-    persistV2EvidencePack({
+  const evidencePack = v2Bridge && v2Evidence
+    ? persistV2EvidencePack({
       bridge: v2Bridge,
       retrieval: v2Evidence.retrieval,
       priorMemory: v2Evidence.priorMemory,
@@ -214,7 +215,7 @@ export async function generateMarketResearchBrief(
       queryTerms,
       ctx,
     })
-  }
+    : null
 
   /* ── Step 4: synthesize ──────────────────────────────────── */
   const synthesisStep = await runStep('market_research', 'synthesize', async () => {
@@ -251,6 +252,23 @@ export async function generateMarketResearchBrief(
     deduplicateSources(allSources),
     collectAnswerSourceIds(normalizedAnswer),
   )
+  const trust = buildTrustLayer({
+    sources: dedupedSources,
+    sourceIdMap: canonicalSourceIdMap,
+    claimSourceGroups: [
+      ...(synthesis?.data?.trendSignals.map((bullet) => bullet.sourceIds) ?? []),
+      ...(synthesis?.data?.opportunities.map((bullet) => bullet.sourceIds) ?? []),
+      ...(synthesis?.data?.threats.map((bullet) => bullet.sourceIds) ?? []),
+      ...(synthesis?.data?.keyFindings.map((bullet) => bullet.sourceIds) ?? []),
+      ...(normalizedAnswer ? [
+        normalizedAnswer.conclusion.sourceIds,
+        normalizedAnswer.whyItMatters.sourceIds,
+        normalizedAnswer.whatChanged?.sourceIds,
+      ] : []),
+    ],
+    pack: evidencePack,
+    plan: v2Bridge?.planV2,
+  })
   if (dedupedSources.length < 4) degradedReasons.push('Low source count')
   const totalMs = Math.round(performance.now() - totalStart)
   const internalMs = v2Evidence?.retrieval.timings.internalMs ?? 0
@@ -275,6 +293,7 @@ export async function generateMarketResearchBrief(
       keyFindings: synthesis?.data?.keyFindings ?? [],
     },
     sources: dedupedSources,
+    trust,
     researchPlan,
     contextUsed: input.userContext ?? null,
     status: {
