@@ -3,6 +3,7 @@
 import type {
   MeetingPrepRequest,
   MeetingPrepBrief,
+  MeetingPrepSynthesis,
   CompanySnapshot,
   AttendeeProfile,
   BriefSource,
@@ -65,6 +66,29 @@ const SIGNAL_CARD_OPENER_MAX = 140
 const STAKEHOLDER_LIMIT = 5
 const STAKEHOLDER_UNKNOWN_MAX = 120
 const STAKEHOLDER_TAG_MAX = 48
+const ALIGNMENT_STOP_WORDS = new Set([
+  'about',
+  'after',
+  'again',
+  'against',
+  'and',
+  'are',
+  'for',
+  'from',
+  'into',
+  'our',
+  'services',
+  'service',
+  'solution',
+  'solutions',
+  'that',
+  'the',
+  'their',
+  'this',
+  'with',
+  'your',
+])
+const GENERIC_PLACEHOLDER_ENTITIES = ['acme', 'acme corp', 'techflow', 'northstar', 'northstar health']
 
 const MONTH_INDEX: Record<string, number> = {
   jan: 0,
@@ -318,6 +342,169 @@ function normalizeBulletSections(bullets: BriefBullet[] | undefined, sourceIdMap
 
 function collectUsedSourceIds(groups: Array<string[] | undefined>): string[] {
   return Array.from(new Set(groups.flatMap((group) => group ?? []).filter(Boolean)))
+}
+
+function normalizeEntityText(value: string | null | undefined): string {
+  return (value ?? '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function buildEntityAliases(...values: Array<string | null | undefined>): string[] {
+  const aliases = new Set<string>()
+
+  for (const value of values) {
+    const normalized = normalizeEntityText(value)
+    if (!normalized) continue
+    aliases.add(normalized)
+
+    const parts = normalized.split(' ').filter((part) => part.length > 2)
+    if (parts.length > 1) aliases.add(parts[0])
+  }
+
+  return Array.from(aliases)
+}
+
+function buildOfferTerms(value: string | null | undefined): string[] {
+  const normalized = normalizeEntityText(value)
+  if (!normalized) return []
+
+  const terms = normalized
+    .split(' ')
+    .filter((term) => term.length > 3 && !ALIGNMENT_STOP_WORDS.has(term))
+
+  if (/\bstaffing\b|\bworkforce\b|\brecruit/i.test(value ?? '')) {
+    terms.push('staffing', 'workforce', 'talent', 'recruiting', 'hiring', 'placement')
+  }
+
+  return Array.from(new Set(terms))
+}
+
+function collectSynthesisText(synthesis: MeetingPrepSynthesis | null | undefined): string {
+  if (!synthesis) return ''
+
+  const answer = synthesis.answer
+    ? [
+      synthesis.answer.conclusion.text,
+      synthesis.answer.whyItMatters.text,
+      synthesis.answer.whatChanged?.text,
+      synthesis.answer.confidence.driver,
+      synthesis.answer.recommendedNext.text,
+      synthesis.answer.recommendedNext.copyable,
+    ]
+    : []
+
+  return normalizeEntityText([
+    synthesis.headline,
+    synthesis.bottomLine,
+    synthesis.whyItMatters,
+    ...answer,
+    ...(synthesis.timelineEvents ?? []).map((event) => event.text),
+    ...(synthesis.radarMetrics ?? []).map((metric) => metric.details),
+    ...(synthesis.signalCards ?? []).flatMap((card) => [card.headline, card.whyItMatters, card.suggestedOpener]),
+    ...(synthesis.stakeholders ?? []).flatMap((row) => [
+      row.name,
+      row.title,
+      row.likelyAgenda?.text,
+      row.pressure?.text,
+      row.leverage?.text,
+      ...row.unknowns,
+    ]),
+    ...(synthesis.competitorMatrix ?? []).flatMap((row) => [row.name, row.advantage, ...row.tags]),
+    ...synthesis.whatJustHappened.map((bullet) => bullet.text),
+    ...synthesis.talkingPoints.map((bullet) => bullet.text),
+    ...synthesis.landmines.map((bullet) => bullet.text),
+    ...synthesis.questionsToAsk.map((bullet) => bullet.text),
+    ...synthesis.competitorContext.map((bullet) => bullet.text),
+  ].filter((item): item is string => typeof item === 'string' && item.trim().length > 0).join(' '))
+}
+
+function validateMeetingPrepAlignment(
+  synthesis: MeetingPrepSynthesis | null | undefined,
+  request: MeetingPrepRequest,
+): { ok: boolean; reasons: string[] } {
+  const corpus = collectSynthesisText(synthesis)
+  if (!synthesis || !corpus) return { ok: false, reasons: ['AI synthesis returned no usable meeting-prep content'] }
+
+  const accountAliases = buildEntityAliases(request.accountName)
+  const reasons: string[] = []
+
+  if (!accountAliases.some((alias) => corpus.includes(alias))) {
+    reasons.push(`AI synthesis drifted away from requested account (${request.accountName})`)
+  }
+
+  const offerTerms = buildOfferTerms(request.whatYoureSelling)
+  if (offerTerms.length >= 2 && !offerTerms.some((term) => corpus.includes(term))) {
+    reasons.push('AI synthesis drifted away from what the user is selling')
+  }
+
+  const unexpectedPlaceholder = GENERIC_PLACEHOLDER_ENTITIES.find((placeholder) => {
+    if (accountAliases.some((alias) => alias.includes(placeholder) || placeholder.includes(alias))) return false
+    return corpus.includes(placeholder)
+  })
+  if (unexpectedPlaceholder) {
+    reasons.push(`AI synthesis introduced unrelated placeholder company (${unexpectedPlaceholder})`)
+  }
+
+  return { ok: reasons.length === 0, reasons }
+}
+
+function buildFallbackMeetingPrepSynthesis(
+  request: MeetingPrepRequest,
+  evidence: NormalizedEvidence[],
+  reasons: string[],
+): MeetingPrepSynthesis {
+  const sourceIds = Array.from(new Set(evidence.map((item) => item.id))).slice(0, 3)
+  const offer = request.whatYoureSelling ? ` for ${request.whatYoureSelling}` : ''
+  const reason = reasons[0] ?? 'The AI synthesis drifted away from the requested account.'
+
+  return {
+    headline: `${request.accountName} needs a rerun before this meeting brief can be trusted.`,
+    bottomLine: `The generated draft did not stay anchored to ${request.accountName}${offer}. Do not use the wrong-company answer; rerun with the corrected pipeline.`,
+    whyItMatters: `You asked for meeting prep on ${request.accountName}${offer}, so a wrong-company answer would create bad talking points and damage the conversation.`,
+    confidence: 'low',
+    answer: {
+      conclusion: {
+        text: `This run is not reliable because it drifted away from ${request.accountName}.`,
+        sourceIds,
+      },
+      whyItMatters: {
+        text: `Your prep needs to match ${request.accountName} and the offer you are taking into the room.`,
+        sourceIds,
+      },
+      whatChanged: null,
+      confidence: {
+        level: 'low',
+        driver: reason,
+      },
+      recommendedNext: {
+        text: `Rerun the brief for ${request.accountName} with your offer kept explicit.`,
+        action: 'Rerun brief',
+        copyable: `Rerun meeting prep for ${request.accountName}. Keep the analysis focused on ${request.whatYoureSelling ?? 'my offer'} and do not use generic examples.`,
+      },
+    },
+    riskLevel: 'high',
+    sentiment: 'neutral',
+    timelineEvents: [],
+    radarMetrics: [],
+    signalCards: [],
+    stakeholders: [],
+    competitorMatrix: [],
+    whatJustHappened: [],
+    talkingPoints: [],
+    landmines: [
+      {
+        text: `Do not use the generated draft until it is regenerated for ${request.accountName}.`,
+        sourceIds,
+        tag: 'inference',
+        priority: 'must',
+      },
+    ],
+    questionsToAsk: [],
+    competitorContext: [],
+  }
 }
 
 export async function generateMeetingPrepBrief(
@@ -611,7 +798,16 @@ export async function generateMeetingPrepBrief(
   }, undefined, ctx)
 
   const synthesis = synthesisStep.data
-  if (!synthesis?.data) degradedReasons.push('AI synthesis failed')
+  const alignment = validateMeetingPrepAlignment(synthesis?.data, request)
+  const finalSynthesis = synthesis?.data && alignment.ok
+    ? synthesis.data
+    : buildFallbackMeetingPrepSynthesis(request, rankedEvidence, alignment.reasons)
+
+  if (!synthesis?.data) {
+    degradedReasons.push('AI synthesis failed')
+  } else if (!alignment.ok) {
+    degradedReasons.push(...alignment.reasons)
+  }
 
   /* ── Step 5: assembleBrief ───────────────────────────────── */
   const dedupedSources = deduplicateSources(allSources)
@@ -624,23 +820,23 @@ export async function generateMeetingPrepBrief(
 
   const assembleStep = await runStep('meeting_prep', 'assembleBrief', async () => {
     const canonicalSourceIdMap = buildCanonicalSourceIdMap(allSources)
-    const normalizedTimelineEvents = normalizeTimelineEvents(synthesis?.data?.timelineEvents, canonicalSourceIdMap)
-    const normalizedRadarMetrics = normalizeRadarMetrics(synthesis?.data?.radarMetrics, canonicalSourceIdMap)
-    const normalizedSignalCards = normalizeSignalCards(synthesis?.data?.signalCards, canonicalSourceIdMap)
-    const normalizedStakeholders = normalizeStakeholders(synthesis?.data?.stakeholders, canonicalSourceIdMap, attendeeProfiles)
+    const normalizedTimelineEvents = normalizeTimelineEvents(finalSynthesis.timelineEvents, canonicalSourceIdMap)
+    const normalizedRadarMetrics = normalizeRadarMetrics(finalSynthesis.radarMetrics, canonicalSourceIdMap)
+    const normalizedSignalCards = normalizeSignalCards(finalSynthesis.signalCards, canonicalSourceIdMap)
+    const normalizedStakeholders = normalizeStakeholders(finalSynthesis.stakeholders, canonicalSourceIdMap, attendeeProfiles)
     const normalizedCompetitorMatrix = request.competitors?.length
-      ? normalizeCompetitorMatrix(synthesis?.data?.competitorMatrix, canonicalSourceIdMap)
+      ? normalizeCompetitorMatrix(finalSynthesis.competitorMatrix, canonicalSourceIdMap)
       : undefined
-    const normalizedAnswer = normalizeAnswerBlock(synthesis?.data?.answer, canonicalSourceIdMap)
+    const normalizedAnswer = normalizeAnswerBlock(finalSynthesis.answer, canonicalSourceIdMap)
     const finalAnswer = priorBriefBaseline || !normalizedAnswer
       ? normalizedAnswer
       : { ...normalizedAnswer, whatChanged: null }
     const normalizedSections = {
-      whatJustHappened: normalizeBulletSections(synthesis?.data?.whatJustHappened, canonicalSourceIdMap),
-      talkingPoints: normalizeBulletSections(synthesis?.data?.talkingPoints, canonicalSourceIdMap),
-      landmines: normalizeBulletSections(synthesis?.data?.landmines, canonicalSourceIdMap),
-      questionsToAsk: normalizeBulletSections(synthesis?.data?.questionsToAsk, canonicalSourceIdMap),
-      competitorContext: normalizeBulletSections(synthesis?.data?.competitorContext, canonicalSourceIdMap),
+      whatJustHappened: normalizeBulletSections(finalSynthesis.whatJustHappened, canonicalSourceIdMap),
+      talkingPoints: normalizeBulletSections(finalSynthesis.talkingPoints, canonicalSourceIdMap),
+      landmines: normalizeBulletSections(finalSynthesis.landmines, canonicalSourceIdMap),
+      questionsToAsk: normalizeBulletSections(finalSynthesis.questionsToAsk, canonicalSourceIdMap),
+      competitorContext: normalizeBulletSections(finalSynthesis.competitorContext, canonicalSourceIdMap),
     }
     const dedupedSources = markSourcesUsedInAnswer(
       deduplicateSources(allSources),
@@ -708,18 +904,18 @@ export async function generateMeetingPrepBrief(
       id: generateBriefId(),
       researchType: 'meeting_prep',
       generatedAt: new Date().toISOString(),
-      headline: synthesis?.data?.headline ?? 'Unable to generate full analysis',
-      bottomLine: synthesis?.data?.bottomLine ?? 'The AI synthesis step failed. The raw evidence is still available below.',
-      whyItMatters: synthesis?.data?.whyItMatters ?? null,
-      confidence: synthesis?.data?.confidence ?? 'low',
+      headline: finalSynthesis.headline,
+      bottomLine: finalSynthesis.bottomLine,
+      whyItMatters: finalSynthesis.whyItMatters ?? null,
+      confidence: finalSynthesis.confidence,
       answer: finalAnswer,
       snapshot: displaySnapshot,
       attendeeProfiles,
-      momentumScore: typeof synthesis?.data?.momentumScore === 'number'
-        ? clampInt(synthesis.data.momentumScore, 0, 100)
+      momentumScore: typeof finalSynthesis.momentumScore === 'number'
+        ? clampInt(finalSynthesis.momentumScore, 0, 100)
         : undefined,
-      riskLevel: synthesis?.data?.riskLevel,
-      sentiment: synthesis?.data?.sentiment,
+      riskLevel: finalSynthesis.riskLevel,
+      sentiment: finalSynthesis.sentiment,
       timelineEvents: normalizedTimelineEvents,
       radarMetrics: normalizedRadarMetrics,
       signalCards: normalizedSignalCards,

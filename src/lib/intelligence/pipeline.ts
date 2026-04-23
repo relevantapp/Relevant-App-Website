@@ -107,13 +107,16 @@ export function validateSchema<T>(schema: ZodSchema<T>, raw: unknown): ParseResu
   return { ok: false, data: null, issues }
 }
 
-export function generateRepairPrompt(issues: string, originalSchema: string): string {
+export function generateRepairPrompt(issues: string, originalSchema: string, previousOutput?: string): string {
   return `The previous output didn't match the required schema. Errors: ${issues}
+
+Previous output to repair:
+${previousOutput?.trim() || '[previous output unavailable]'}
 
 Return ONLY valid JSON matching this schema exactly:
 ${originalSchema}
 
-Fix all validation errors and return the corrected JSON. No markdown fences, no commentary.`
+Fix all validation errors and return the corrected JSON. Preserve the factual content, company names, people, source IDs, and user-specific context from the previous output. Do not introduce new companies, examples, metrics, events, or source IDs. If a required optional-looking field cannot be repaired from the previous output, use null or an empty array where the schema allows it. No markdown fences, no commentary.`
 }
 
 /* ── ID generator ──────────────────────────────────────────── */

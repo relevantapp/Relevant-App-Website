@@ -317,4 +317,58 @@ describe('generateMeetingPrepBrief', () => {
 
     expect(brief.answer?.whatChanged).toBeNull()
   })
+
+  it('degrades instead of showing a wrong-company meeting prep answer', async () => {
+    synthesizeWithSchema.mockResolvedValueOnce({
+      data: {
+        headline: 'Acme Corp is prioritizing AI-driven automation to offset Q3 margin compression.',
+        bottomLine: 'Acme is under pressure to reduce operational overhead before year-end.',
+        whyItMatters: 'Your deal size depends on proving ROI through headcount reduction or process automation.',
+        confidence: 'high',
+        answer: {
+          conclusion: {
+            text: 'Acme is shifting focus from top-line growth to margin efficiency.',
+            sourceIds: ['s1'],
+          },
+          whyItMatters: {
+            text: 'Your deal size depends on proving ROI through automation.',
+            sourceIds: ['s1'],
+          },
+          whatChanged: {
+            text: 'CFO announced a hiring freeze last week.',
+            sourceIds: ['s1'],
+          },
+          confidence: {
+            level: 'high',
+            driver: 'The model returned a confident but unrelated company.',
+          },
+          recommendedNext: {
+            text: "Present the 'Efficiency ROI' deck.",
+            copyable: "Present the 'Efficiency ROI' deck.",
+          },
+        },
+        whatJustHappened: [{ text: 'Acme is shifting focus to margin efficiency.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
+        talkingPoints: [{ text: 'Lead with AI automation.', sourceIds: ['s1'], tag: 'inference', priority: 'must' }],
+        landmines: [{ text: 'Do not discuss staffing.', sourceIds: ['s1'], tag: 'inference', priority: 'must' }],
+        questionsToAsk: [{ text: 'Who owns automation ROI?', sourceIds: ['s1'], tag: 'inference', priority: 'should' }],
+        competitorContext: [],
+      },
+    })
+
+    const { generateMeetingPrepBrief } = await import('../orchestrators/meeting-prep')
+
+    const brief = await generateMeetingPrepBrief({
+      accountName: 'Graham Company',
+      meetingType: 'client',
+      goal: 'Prepare for a staffing services sales meeting',
+      whatYoureSelling: 'Arrow workforce solutions staffing services',
+    })
+
+    expect(brief.status.degraded).toBe(true)
+    expect(brief.headline).toContain('Graham Company')
+    expect(`${brief.headline} ${brief.bottomLine}`).not.toMatch(/Acme/i)
+    expect(brief.confidence).toBe('low')
+    expect(brief.answer?.recommendedNext.copyable).toContain('Arrow workforce solutions staffing services')
+    expect(brief.status.reasons.join(' ')).toMatch(/requested account|what the user is selling|placeholder company/)
+  })
 })

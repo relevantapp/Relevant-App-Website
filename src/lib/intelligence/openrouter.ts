@@ -365,7 +365,7 @@ async function attemptSynthesizeWithSchema<T>(
     }
 
     console.warn(`[intel:${logTag}:synthesize]`, `Schema validation failed for openrouter/${response.model}:`, validation.issues)
-    const repairPrompt = generateRepairPrompt(validation.issues!, schemaDescription)
+    const repairPrompt = generateRepairPrompt(validation.issues!, schemaDescription, response.content)
     const repairController = new AbortController()
     const repairTimeout = setTimeout(() => repairController.abort(), timeoutMs)
 

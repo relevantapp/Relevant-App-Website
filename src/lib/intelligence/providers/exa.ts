@@ -117,13 +117,16 @@ export function buildExaSearchBody(query: string, options: ExaQueryOptions = {})
   const lookbackDays = options.lookbackDays ?? 60
   const startDate = new Date()
   startDate.setDate(startDate.getDate() - lookbackDays)
+  const supportsPublishedDateFilter = options.category !== 'people'
 
   return {
     query,
     type: options.category === 'news' ? 'neural' : 'auto',
     numResults: options.numResults ?? 10,
-    startPublishedDate: toDateOnly(startDate),
-    endPublishedDate: toDateOnly(new Date()),
+    ...(supportsPublishedDateFilter ? {
+      startPublishedDate: toDateOnly(startDate),
+      endPublishedDate: toDateOnly(new Date()),
+    } : {}),
     ...(options.category ? { category: options.category } : {}),
     ...(options.includeDomains?.length ? { includeDomains: options.includeDomains } : {}),
     ...(options.excludeDomains?.length ? { excludeDomains: options.excludeDomains } : {}),
