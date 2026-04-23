@@ -55,11 +55,54 @@ function normalizeEntityToken(value: string | null | undefined): string {
     .trim()
 }
 
-function collectExpectedEntities(input: CompetitiveAnalysisRequest): string[] {
-  return Array.from(new Set([
-    normalizeEntityToken(input.yourCompany),
-    ...input.competitors.map((competitor) => normalizeEntityToken(competitor)),
-  ].filter(Boolean)))
+const ENTITY_DESCRIPTOR_TAILS = new Set([
+  'ground',
+  'express',
+  'logistics',
+  'shipping',
+  'ship',
+  'courier',
+  'delivery',
+  'freight',
+  'mail',
+  'parcel',
+  'services',
+  'service',
+])
+
+interface CompetitiveEntityMatcher {
+  label: string
+  aliases: string[]
+}
+
+function buildEntityAliases(value: string | null | undefined): string[] {
+  const normalized = normalizeEntityToken(value)
+  if (!normalized) return []
+
+  const aliases = new Set<string>([normalized])
+  const parts = normalized.split(' ').filter(Boolean)
+  if (parts.length === 2 && ENTITY_DESCRIPTOR_TAILS.has(parts[1])) {
+    aliases.add(parts[0])
+  }
+
+  return Array.from(aliases)
+}
+
+function collectExpectedEntities(input: CompetitiveAnalysisRequest): CompetitiveEntityMatcher[] {
+  const seen = new Set<string>()
+  const entities = [input.yourCompany, ...input.competitors]
+  const matchers: CompetitiveEntityMatcher[] = []
+
+  for (const entity of entities) {
+    const aliases = buildEntityAliases(entity)
+    if (!aliases.length) continue
+    const label = aliases[0]
+    if (seen.has(label)) continue
+    seen.add(label)
+    matchers.push({ label, aliases })
+  }
+
+  return matchers
 }
 
 function collectCompetitiveOutputText(data: NonNullable<CompetitiveAnalysisBrief['answer']> | undefined, synthesis: CompetitiveSynthesis | null | undefined): string {
@@ -102,10 +145,10 @@ function collectCompetitiveOutputText(data: NonNullable<CompetitiveAnalysisBrief
     .join(' '))
 }
 
-function baselineLooksRelevant(priorBriefBaseline: string | null | undefined, expectedEntities: string[]): boolean {
+function baselineLooksRelevant(priorBriefBaseline: string | null | undefined, expectedEntities: CompetitiveEntityMatcher[]): boolean {
   if (!priorBriefBaseline || expectedEntities.length === 0) return false
   const normalizedBaseline = normalizeEntityToken(priorBriefBaseline)
-  return expectedEntities.some((entity) => normalizedBaseline.includes(entity))
+  return expectedEntities.some((entity) => entity.aliases.some((alias) => normalizedBaseline.includes(alias)))
 }
 
 function validateCompetitiveAlignment(
@@ -113,7 +156,7 @@ function validateCompetitiveAlignment(
   input: CompetitiveAnalysisRequest,
 ): { ok: boolean; missing: string[] } {
   if (!synthesis) {
-    return { ok: false, missing: collectExpectedEntities(input) }
+    return { ok: false, missing: collectExpectedEntities(input).map((entity) => entity.label) }
   }
 
   const expectedEntities = collectExpectedEntities(input)
@@ -129,9 +172,160 @@ function validateCompetitiveAlignment(
     }
     : undefined
   const corpus = collectCompetitiveOutputText(answer, synthesis)
-  const missing = expectedEntities.filter((entity) => !corpus.includes(entity))
+  const missing = expectedEntities
+    .filter((entity) => !entity.aliases.some((alias) => corpus.includes(alias)))
+    .map((entity) => entity.label)
 
   return { ok: missing.length === 0, missing }
+}
+
+function collectEntityEvidence(evidence: NormalizedEvidence[], aliases: string[]): NormalizedEvidence[] {
+  if (!aliases.length) return []
+  return evidence.filter((item) => {
+    const haystack = normalizeEntityToken(`${item.title} ${item.text}`)
+    return aliases.some((alias) => haystack.includes(alias))
+  })
+}
+
+function buildFallbackSourceIds(evidence: NormalizedEvidence[], limit = 3): string[] {
+  return Array.from(new Set(evidence.map((item) => item.id))).slice(0, limit)
+}
+
+function clipSentence(value: string, max = 160): string {
+  const trimmed = value.replace(/\s+/g, ' ').trim()
+  if (!trimmed) return ''
+  return trimmed.length <= max ? trimmed : `${trimmed.slice(0, max - 1).trimEnd()}…`
+}
+
+function buildFallbackCompetitiveSynthesis(
+  input: CompetitiveAnalysisRequest,
+  evidence: NormalizedEvidence[],
+  competitorSnapshots: Map<string, string>,
+  yourSnapshot: string | null,
+  alignmentMissing: string[],
+): CompetitiveSynthesis {
+  const entities = collectExpectedEntities(input)
+  const yourEntity = entities.find((entity) => entity.label === normalizeEntityToken(input.yourCompany))
+  const competitorEntities = entities.filter((entity) => entity.label !== normalizeEntityToken(input.yourCompany))
+  const yourEvidence = collectEntityEvidence(evidence, yourEntity?.aliases ?? [])
+  const competitorEvidence = competitorEntities.flatMap((entity) => collectEntityEvidence(evidence, entity.aliases))
+  const allEvidence = evidence.length ? evidence : [...yourEvidence, ...competitorEvidence]
+  const dominantCompetitor = competitorEntities[0]
+  const dominantCompetitorName = input.competitors[0] ?? 'the requested competitor'
+  const yourName = input.yourCompany ?? 'your company'
+  const sourceIds = buildFallbackSourceIds([
+    ...yourEvidence.slice(0, 2),
+    ...competitorEvidence.slice(0, 2),
+    ...allEvidence.slice(0, 2),
+  ])
+
+  const yourCoverage = yourEvidence.length
+  const competitorCoverage = competitorEvidence.length
+  const coverageHeadline = yourCoverage && competitorCoverage
+    ? `${yourName} vs ${dominantCompetitorName} stays relevant, but the evidence is too uneven for a high-confidence ${input.focusArea} verdict.`
+    : `Relevant found source material for ${yourName} vs ${dominantCompetitorName}, but not enough balanced evidence to make a confident ${input.focusArea} call.`
+
+  const whyItMatters = `You can still review the cited sources for ${yourName} and ${dominantCompetitorName}, but this comparison should stay provisional until the synthesis pass stops drifting off-topic.`
+  const alignmentReason = alignmentMissing.length
+    ? `The model kept substituting unrelated companies instead of staying with ${alignmentMissing.join(' and ')}.`
+    : `The model could not keep the comparison anchored to ${yourName} and ${dominantCompetitorName}.`
+
+  const competitorProfiles = input.competitors.map((name) => {
+    const matcher = entities.find((entity) => entity.aliases.includes(normalizeEntityToken(name)))
+    const entityEvidence = collectEntityEvidence(evidence, matcher?.aliases ?? [])
+    const snapshot = competitorSnapshots.get(name)
+
+    return {
+      name,
+      description: clipSentence(snapshot ?? entityEvidence[0]?.title ?? `${name} is part of the requested competitor set in this analysis.`),
+      strengths: entityEvidence.length
+        ? entityEvidence.slice(0, 2).map((item) => clipSentence(item.title))
+        : ['Current source coverage for this competitor is thin in the retrieved set.'],
+      weaknesses: [
+        entityEvidence.length
+          ? 'The retrieved source set does not isolate a defensible weakness without more primary evidence.'
+          : 'There is not enough direct evidence in the current source set to score weaknesses confidently.',
+      ],
+      recentMoves: entityEvidence.length
+        ? entityEvidence.slice(0, 2).map((item) => clipSentence(item.title))
+        : ['No specific recent move was strong enough to cite confidently from the current retrieval set.'],
+    }
+  })
+
+  const comparisonMatrix = input.yourCompany
+    ? [
+      {
+        dimension: 'Evidence coverage',
+        values: [
+          { company: yourName, position: `${yourCoverage} cited signals in the current set`, score: Math.min(5, Math.max(1, yourCoverage || 1)) },
+          { company: dominantCompetitorName, position: `${competitorCoverage} cited signals in the current set`, score: Math.min(5, Math.max(1, competitorCoverage || 1)) },
+        ],
+      },
+      {
+        dimension: 'Structured confidence',
+        values: [
+          { company: yourName, position: 'Still provisional because the synthesis drifted off-topic', score: 2 },
+          { company: dominantCompetitorName, position: 'Still provisional because the synthesis drifted off-topic', score: 2 },
+        ],
+      },
+    ]
+    : []
+
+  return {
+    headline: coverageHeadline,
+    bottomLine: `${alignmentReason} Relevant still retrieved ${allEvidence.length} source-backed signals for this request, so the answer remains on ${yourName} vs ${dominantCompetitorName} instead of falling back to a different market entirely.`,
+    whyItMatters,
+    confidence: 'low',
+    answer: {
+      conclusion: {
+        text: `${yourName} and ${dominantCompetitorName} remain the right comparison set, but the current evidence is too uneven to declare a reliable ${input.focusArea} winner.`,
+        sourceIds,
+      },
+      whyItMatters: {
+        text: whyItMatters,
+        sourceIds,
+      },
+      whatChanged: null,
+      confidence: {
+        level: 'low',
+        driver: alignmentReason,
+      },
+      recommendedNext: {
+        text: `Use the cited sources to narrow the next rerun around one GTM sub-question for ${yourName} vs ${dominantCompetitorName}, such as pricing, channel motion, or service positioning.`,
+      },
+    },
+    competitors: competitorProfiles,
+    comparisonMatrix,
+    compositeQuadrant: {
+      rendered: false,
+      reason: 'The AI synthesis drifted off-topic, so a quadrant would imply confidence we do not actually have.',
+    },
+    whitespace: [],
+    keyFindings: [
+      {
+        text: `${dominantCompetitorName} has ${competitorCoverage} directly retrieved evidence items in this run, while ${yourName} has ${yourCoverage}.`,
+        sourceIds,
+        tag: 'fact',
+        priority: 'must',
+      },
+    ],
+    strategicImplications: [
+      {
+        text: `Keep the comparison scoped to ${yourName} and ${dominantCompetitorName} until the synthesis model can stay anchored to the retrieved logistics evidence.`,
+        sourceIds,
+        tag: 'inference',
+        priority: 'should',
+      },
+    ],
+    recommendations: [
+      {
+        text: `Rerun ${yourName} vs ${dominantCompetitorName} with a narrower GTM question if you need a sharper answer than this low-confidence fallback.`,
+        sourceIds,
+        tag: 'fact',
+        priority: 'must',
+      },
+    ],
+  }
 }
 
 async function synthesizeCompetitiveBrief(
@@ -494,6 +688,19 @@ export async function generateCompetitiveAnalysisBrief(
   }, undefined, ctx)
 
   const synthesis = synthesisStep.data
+  const alignmentMissing = synthesisStep.data?.fallbackReason?.startsWith('entity_alignment_failed:')
+    ? synthesisStep.data.fallbackReason.replace('entity_alignment_failed:', '').split('|').filter(Boolean)
+    : []
+  const fallbackSynthesis = !synthesis?.data
+    ? buildFallbackCompetitiveSynthesis(
+      input,
+      rankedEvidence,
+      competitorSnapshotDescriptions,
+      yourSnapshot,
+      alignmentMissing,
+    )
+    : null
+  const finalSynthesis = synthesis?.data ?? fallbackSynthesis
   if (!synthesis?.data) {
     const alignmentReason = synthesisStep.data?.fallbackReason
     degradedReasons.push(
@@ -505,12 +712,12 @@ export async function generateCompetitiveAnalysisBrief(
 
   /* ── Step 5: assembleBrief ───────────────────────────────── */
   const canonicalSourceIdMap = buildCanonicalSourceIdMap(allSources)
-  const normalizedAnswer = normalizeAnswerBlock(synthesis?.data?.answer, canonicalSourceIdMap)
+  const normalizedAnswer = normalizeAnswerBlock(finalSynthesis?.answer, canonicalSourceIdMap)
   const finalAnswer = priorBriefBaseline || !normalizedAnswer
     ? normalizedAnswer
     : { ...normalizedAnswer, whatChanged: null }
-  const normalizedCompositeQuadrant = normalizeCompositeQuadrant(synthesis?.data?.compositeQuadrant, canonicalSourceIdMap)
-  const normalizedWhitespace = normalizeWhitespace(synthesis?.data?.whitespace, canonicalSourceIdMap)
+  const normalizedCompositeQuadrant = normalizeCompositeQuadrant(finalSynthesis?.compositeQuadrant, canonicalSourceIdMap)
+  const normalizedWhitespace = normalizeWhitespace(finalSynthesis?.whitespace, canonicalSourceIdMap)
   const dedupedSources = markSourcesUsedInAnswer(
     deduplicateSources(allSources),
     [
@@ -537,9 +744,9 @@ export async function generateCompetitiveAnalysisBrief(
           ...normalizedCompositeQuadrant.points.map((point) => point.rationale.sourceIds),
         ]
         : []),
-      ...(synthesis?.data?.keyFindings.map((bullet) => bullet.sourceIds) ?? []),
-      ...(synthesis?.data?.strategicImplications.map((bullet) => bullet.sourceIds) ?? []),
-      ...(synthesis?.data?.recommendations.map((bullet) => bullet.sourceIds) ?? []),
+      ...(finalSynthesis?.keyFindings.map((bullet) => bullet.sourceIds) ?? []),
+      ...(finalSynthesis?.strategicImplications.map((bullet) => bullet.sourceIds) ?? []),
+      ...(finalSynthesis?.recommendations.map((bullet) => bullet.sourceIds) ?? []),
       ...(finalAnswer ? [
         finalAnswer.conclusion.sourceIds,
         finalAnswer.whyItMatters.sourceIds,
@@ -568,20 +775,20 @@ export async function generateCompetitiveAnalysisBrief(
     id: generateBriefId(),
     researchType: 'competitive_analysis',
     generatedAt: new Date().toISOString(),
-    headline: synthesis?.data?.headline ?? 'Unable to generate competitive analysis',
-    bottomLine: synthesis?.data?.bottomLine ?? 'AI synthesis failed. Raw evidence is still available.',
-    whyItMatters: synthesis?.data?.whyItMatters ?? null,
-    confidence: synthesis?.data?.confidence ?? 'low',
+    headline: finalSynthesis?.headline ?? 'Unable to generate competitive analysis',
+    bottomLine: finalSynthesis?.bottomLine ?? 'AI synthesis failed. Raw evidence is still available.',
+    whyItMatters: finalSynthesis?.whyItMatters ?? null,
+    confidence: finalSynthesis?.confidence ?? 'low',
     answer: finalAnswer,
     yourCompany: input.yourCompany ?? null,
-    competitors: synthesis?.data?.competitors ?? [],
-    comparisonMatrix: synthesis?.data?.comparisonMatrix ?? [],
+    competitors: finalSynthesis?.competitors ?? [],
+    comparisonMatrix: finalSynthesis?.comparisonMatrix ?? [],
     compositeQuadrant: normalizedCompositeQuadrant,
     whitespace: normalizedWhitespace,
     sections: {
-      keyFindings: synthesis?.data?.keyFindings ?? [],
-      strategicImplications: synthesis?.data?.strategicImplications ?? [],
-      recommendations: synthesis?.data?.recommendations ?? [],
+      keyFindings: finalSynthesis?.keyFindings ?? [],
+      strategicImplications: finalSynthesis?.strategicImplications ?? [],
+      recommendations: finalSynthesis?.recommendations ?? [],
     },
     sources: dedupedSources,
     trust,

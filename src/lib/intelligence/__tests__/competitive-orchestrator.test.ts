@@ -416,6 +416,73 @@ describe('generateCompetitiveAnalysisBrief', () => {
     expect(brief.answer?.whatChanged).toBeNull()
   })
 
+  it('accepts a shorter company alias when the synthesis stays on the requested company', async () => {
+    loadPriorBriefBaseline.mockResolvedValueOnce(null)
+    synthesizeWithSchema.mockResolvedValueOnce({
+      data: {
+        headline: 'Purolator can defend Canadian SMB lanes if it sharpens its GTM message against UPS.',
+        bottomLine: 'UPS is broadening its SMB and B2B push, while Purolator still has the stronger domestic trust story for Canadian shippers.',
+        confidence: 'medium',
+        answer: {
+          conclusion: {
+            text: 'UPS is expanding its SMB motion, but Purolator still has a stronger Canada-first trust and coverage story.',
+            sourceIds: ['s1'],
+          },
+          whyItMatters: {
+            text: 'You need a sharper GTM message before UPS resets buyer expectations around premium parcel services.',
+            sourceIds: ['s1'],
+          },
+          whatChanged: null,
+          confidence: {
+            level: 'medium',
+            driver: 'The synthesis stays on the right logistics companies, even though it shortens Purolator Ground to Purolator.',
+          },
+          recommendedNext: {
+            text: 'Lead with Canadian SMB reliability and cross-border simplicity.',
+          },
+        },
+        competitors: [
+          {
+            name: 'UPS',
+            description: 'Global parcel and logistics incumbent.',
+            strengths: ['Scale'],
+            weaknesses: ['Less localized Canadian positioning'],
+            recentMoves: ['Shifted toward higher-margin SMB and B2B segments'],
+          },
+        ],
+        comparisonMatrix: [
+          {
+            dimension: 'SMB positioning',
+            values: [
+              { company: 'Purolator', position: 'Canada-first story', score: 4 },
+              { company: 'UPS', position: 'Premium-services pivot', score: 4 },
+            ],
+          },
+        ],
+        compositeQuadrant: {
+          rendered: false,
+          reason: 'The evidence is still too thin to place a reliable quadrant.',
+        },
+        whitespace: [],
+        keyFindings: [{ text: 'UPS is leaning into higher-margin SMB and B2B segments.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
+        strategicImplications: [{ text: 'Purolator should sharpen its Canada-first SMB story.', sourceIds: ['s1'], tag: 'inference', priority: 'should' }],
+        recommendations: [{ text: 'Package cross-border simplicity more aggressively.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
+      },
+    })
+
+    const { generateCompetitiveAnalysisBrief } = await import('../orchestrators/competitive-analysis')
+    const brief = await generateCompetitiveAnalysisBrief({
+      competitors: ['UPS'],
+      yourCompany: 'Purolator Ground',
+      focusArea: 'gtm',
+    })
+
+    expect(synthesizeWithSchema).toHaveBeenCalledTimes(1)
+    expect(brief.headline).toContain('Purolator')
+    expect(brief.bottomLine).not.toBe('AI synthesis failed. Raw evidence is still available.')
+    expect(brief.status.reasons).not.toContain('AI synthesis drifted away from requested companies (purolator ground, ups)')
+  })
+
   it('retries with a stronger model when the first synthesis omits the requested companies', async () => {
     loadPriorBriefBaseline.mockResolvedValueOnce(null)
     synthesizeWithSchema
@@ -544,5 +611,107 @@ describe('generateCompetitiveAnalysisBrief', () => {
     expect(synthesizeWithSchema.mock.calls[1]?.[6]).toEqual({ disableModelFallback: true, timeoutMs: 12000 })
     expect(brief.headline).toContain('Purolator')
     expect(brief.competitors.map((competitor: { name: string }) => competitor.name)).toEqual(['UPS'])
+  })
+
+  it('falls back to an on-topic deterministic brief when both synthesis attempts drift or fail', async () => {
+    loadPriorBriefBaseline.mockResolvedValueOnce(null)
+    executeSearchPlan.mockResolvedValueOnce({
+      sources: [
+        {
+          id: 's1',
+          title: 'UPS expands SMB shipping bundles in Canada',
+          url: 'https://example.com/ups',
+          domain: 'example.com',
+          publishedAt: '2026-04-20T00:00:00.000Z',
+          provider: 'exa',
+          usedInAnswer: false,
+        },
+        {
+          id: 's2',
+          title: 'Purolator grows weekend parcel coverage',
+          url: 'https://example.com/purolator',
+          domain: 'example.com',
+          publishedAt: '2026-04-19T00:00:00.000Z',
+          provider: 'exa',
+          usedInAnswer: false,
+        },
+      ],
+      evidence: [
+        {
+          id: 's1',
+          title: 'UPS expands SMB shipping bundles in Canada',
+          text: 'UPS is expanding bundled services for SMB and mid-market shippers in Canada.',
+          url: 'https://example.com/ups',
+          domain: 'example.com',
+          publishedAt: '2026-04-20T00:00:00.000Z',
+          provider: 'exa',
+        },
+        {
+          id: 's2',
+          title: 'Purolator grows weekend parcel coverage',
+          text: 'Purolator Ground is extending weekend parcel coverage for Canadian shippers.',
+          url: 'https://example.com/purolator',
+          domain: 'example.com',
+          publishedAt: '2026-04-19T00:00:00.000Z',
+          provider: 'exa',
+        },
+      ],
+    })
+    synthesizeWithSchema
+      .mockResolvedValueOnce({
+        data: {
+          headline: 'Salesforce faces pressure from HubSpot in the mid-market.',
+          bottomLine: 'HubSpot is simplifying CRM adoption while Salesforce holds enterprise depth.',
+          confidence: 'high',
+          answer: {
+            conclusion: { text: 'Salesforce dominates enterprise, but HubSpot is winning the mid-market.', sourceIds: ['s1'] },
+            whyItMatters: { text: 'You are losing on implementation complexity.', sourceIds: ['s1'] },
+            whatChanged: null,
+            confidence: { level: 'high', driver: 'The model drifted into a canned SaaS comparison.' },
+            recommendedNext: { text: 'Launch a lite onboarding package.' },
+          },
+          competitors: [
+            { name: 'Salesforce', description: 'CRM suite', strengths: ['Depth'], weaknesses: ['Complexity'], recentMoves: ['Expanded Data Cloud'] },
+            { name: 'HubSpot', description: 'Mid-market CRM', strengths: ['UX'], weaknesses: ['Customization limits'], recentMoves: ['Launched Breeze'] },
+          ],
+          comparisonMatrix: [
+            {
+              dimension: 'Ease of use',
+              values: [
+                { company: 'Salesforce', position: 'Complex', score: 2 },
+                { company: 'HubSpot', position: 'Simple', score: 5 },
+              ],
+            },
+          ],
+          compositeQuadrant: { rendered: false, reason: 'Not enough evidence.' },
+          whitespace: [],
+          keyFindings: [{ text: 'HubSpot is easier to use.', sourceIds: ['s1'], tag: 'fact', priority: 'must' }],
+          strategicImplications: [],
+          recommendations: [],
+        },
+      })
+      .mockResolvedValueOnce({
+        data: null,
+        model: 'openrouter/anthropic/claude-sonnet-4.6',
+        promptTokens: 0,
+        responseTokens: 0,
+        parseSuccess: false,
+        errorClass: 'timeout',
+        fallbackReason: 'json_object_provider_error',
+      })
+
+    const { generateCompetitiveAnalysisBrief } = await import('../orchestrators/competitive-analysis')
+    const brief = await generateCompetitiveAnalysisBrief({
+      competitors: ['UPS'],
+      yourCompany: 'Purolator Ground',
+      focusArea: 'gtm',
+    })
+
+    expect(brief.headline).toContain('Purolator Ground')
+    expect(brief.headline).toContain('UPS')
+    expect(brief.bottomLine).not.toBe('AI synthesis failed. Raw evidence is still available.')
+    expect(brief.sections.keyFindings[0]?.text).toContain('UPS')
+    expect(brief.sections.recommendations[0]?.text).toContain('Purolator Ground')
+    expect(brief.status.reasons).toContain('AI synthesis drifted away from requested companies (purolator ground, ups)')
   })
 })
