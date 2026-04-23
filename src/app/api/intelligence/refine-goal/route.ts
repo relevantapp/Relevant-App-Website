@@ -7,6 +7,11 @@ import {
   DEFAULT_MODEL_PREFERENCE,
   normalizeModelPreference,
 } from '@/lib/intelligence/models'
+import {
+  AI_ONLY_INTELLIGENCE_PROVIDERS,
+  buildIntelligenceSetupMessage,
+  getIntelligenceProviderStatus,
+} from '@/lib/intelligence/provider-config'
 
 export const maxDuration = 30
 
@@ -61,8 +66,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Goal is required' }, { status: 400 })
   }
 
-  if (!process.env.OPENROUTER_API_KEY) {
-    return NextResponse.json({ error: 'AI provider not configured' }, { status: 503 })
+  const providerStatus = getIntelligenceProviderStatus(AI_ONLY_INTELLIGENCE_PROVIDERS)
+  if (!providerStatus.ready) {
+    return NextResponse.json(
+      { error: buildIntelligenceSetupMessage('AI refinement', AI_ONLY_INTELLIGENCE_PROVIDERS) },
+      { status: 503, headers: { 'Cache-Control': 'no-store' } },
+    )
   }
 
   const userPrompt = `Meeting type: ${meetingType || 'general'}

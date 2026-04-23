@@ -85,6 +85,10 @@ vi.mock('../results/shared/FollowUpChat', () => ({
   default: () => <div>follow up chat</div>,
 }))
 
+vi.mock('../IntelligenceSetupNotice', () => ({
+  default: () => <div>setup notice</div>,
+}))
+
 vi.mock('../ActivityRail', () => ({
   default: () => <div>activity rail</div>,
 }))
@@ -96,21 +100,38 @@ vi.mock('../HistoryButton', () => ({
 describe('IntelligencePage refresh wiring', () => {
   beforeEach(() => {
     vi.resetAllMocks()
-    fetchMock.mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        brief: {
-          id: 'saved-brief-1',
-          research_type: 'market_research',
-          request_payload: {
-            marketOrTrend: 'AI research workflows',
-            scope: 'global',
-            timeHorizon: '90d',
-            region: 'North America',
-          },
-          synthesis: marketResearchFixture,
-        },
-      }),
+    fetchMock.mockImplementation(async (input: string) => {
+      if (input === '/api/intelligence/status') {
+        return {
+          ok: true,
+          json: async () => ({
+            generateReady: true,
+            chatReady: true,
+            providers: [],
+          }),
+        }
+      }
+
+      if (input === '/api/intelligence/briefs') {
+        return {
+          ok: true,
+          json: async () => ({
+            brief: {
+              id: 'saved-brief-1',
+              research_type: 'market_research',
+              request_payload: {
+                marketOrTrend: 'AI research workflows',
+                scope: 'global',
+                timeHorizon: '90d',
+                region: 'North America',
+              },
+              synthesis: marketResearchFixture,
+            },
+          }),
+        }
+      }
+
+      throw new Error(`Unexpected fetch ${input}`)
     })
     vi.stubGlobal('fetch', fetchMock)
   })

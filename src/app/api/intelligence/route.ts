@@ -18,6 +18,11 @@ import type { IntelligenceBrief, ResearchType } from '@/lib/intelligence/contrac
 import { createRun, patchRunAsync } from '@/lib/intelligence/runs/store'
 import { intelligenceFlags } from '@/lib/intelligence/feature-flags'
 import { repairUnsupportedCitations } from '@/lib/intelligence/verifier/repair'
+import {
+  buildIntelligenceSetupMessage,
+  FULL_INTELLIGENCE_PROVIDERS,
+  getIntelligenceProviderStatus,
+} from '@/lib/intelligence/provider-config'
 
 // Competitive retries can legitimately take longer than the original 60s budget.
 // Give streaming runs enough headroom so Vercel does not cut the SSE connection
@@ -188,6 +193,17 @@ export async function POST(request: NextRequest) {
   const { data: { user }, error: authError } = await supabase.auth.getUser(userToken)
   if (authError || !user) {
     return NextResponse.json({ error: 'Invalid session' }, { status: 401 })
+  }
+
+  const providerStatus = getIntelligenceProviderStatus(FULL_INTELLIGENCE_PROVIDERS)
+  if (!providerStatus.ready) {
+    return NextResponse.json(
+      {
+        error: buildIntelligenceSetupMessage('Intelligence', FULL_INTELLIGENCE_PROVIDERS),
+        missingProviders: providerStatus.missingProviders,
+      },
+      { status: 503, headers: { 'Cache-Control': 'no-store' } },
+    )
   }
 
   // ── Rate limit ──

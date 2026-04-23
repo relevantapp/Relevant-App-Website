@@ -15,6 +15,7 @@ import CompetitiveResults from './results/CompetitiveResults'
 import BusinessCaseResults from './results/BusinessCaseResults'
 import MarketResearchResults from './results/MarketResearchResults'
 import FollowUpChat from './results/shared/FollowUpChat'
+import IntelligenceSetupNotice from './IntelligenceSetupNotice'
 import ActivityRail from './ActivityRail'
 import HistoryButton from './HistoryButton'
 import { useIntelligenceStream } from '@/hooks/useIntelligenceStream'
@@ -47,6 +48,19 @@ const INITIAL_FORM_STATES: FormStates = {
   business_case: {},
   competitive_analysis: {},
   market_research: {},
+}
+
+interface IntelligenceProviderStatus {
+  key: string
+  label: string
+  purpose: string
+  configured: boolean
+}
+
+interface IntelligenceSetupState {
+  generateReady: boolean
+  chatReady: boolean
+  providers: IntelligenceProviderStatus[]
 }
 
 function buildApiBodyFromInput(input: IntelligenceInput): Record<string, unknown> {
@@ -136,11 +150,55 @@ export default function IntelligencePage() {
   const [loadedBrief, setLoadedBrief] = useState<IntelligenceBrief | null>(null)
   const [loadingSavedBrief, setLoadingSavedBrief] = useState(false)
   const [savedBriefError, setSavedBriefError] = useState<string | null>(null)
+  const [setupState, setSetupState] = useState<IntelligenceSetupState | null>(null)
+  const [setupLoading, setSetupLoading] = useState(true)
 
   const brief = loadedBrief ?? streamState.brief
   const loading = streamState.isStreaming || loadingSavedBrief
   const error = streamState.error ?? savedBriefError
   const briefParam = searchParams.get('brief')
+  const generateReady = setupState?.generateReady ?? true
+  const chatReady = setupState?.chatReady ?? true
+
+  useEffect(() => {
+    if (authLoading) return
+
+    if (!isAuthenticated) {
+      setSetupState(null)
+      setSetupLoading(false)
+      return
+    }
+
+    let cancelled = false
+    setSetupLoading(true)
+
+    fetch('/api/intelligence/status', { cache: 'no-store' })
+      .then(async (response) => {
+        if (!response.ok) throw new Error('status_check_failed')
+        const payload = await response.json()
+        if (cancelled) return
+        setSetupState({
+          generateReady: Boolean(payload.generateReady),
+          chatReady: Boolean(payload.chatReady),
+          providers: Array.isArray(payload.providers) ? payload.providers : [],
+        })
+      })
+      .catch(() => {
+        if (cancelled) return
+        setSetupState({
+          generateReady: true,
+          chatReady: true,
+          providers: [],
+        })
+      })
+      .finally(() => {
+        if (!cancelled) setSetupLoading(false)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [authLoading, isAuthenticated])
 
   useEffect(() => {
     if (streamState.brief?.id) setSavedBriefId(streamState.brief.id)
@@ -204,7 +262,7 @@ export default function IntelligencePage() {
   }, [])
 
   const handleConfirm = useCallback(async () => {
-    if (!pendingInput) return
+    if (!pendingInput || !generateReady) return
     const input = pendingInput
     setLoadedBrief(null)
     setSavedBriefId(null)
@@ -216,10 +274,10 @@ export default function IntelligencePage() {
       ...apiBody,
       preferredModel: getStoredPreferredModel(),
     })
-  }, [generate, pendingInput])
+  }, [generate, generateReady, pendingInput])
 
   const handleRefresh = useCallback(() => {
-    if (!lastRequestPayload || streamState.isStreaming || loadingSavedBrief) return
+    if (!lastRequestPayload || streamState.isStreaming || loadingSavedBrief || !generateReady) return
 
     setLoadedBrief(null)
     setSavedBriefId(null)
@@ -228,7 +286,7 @@ export default function IntelligencePage() {
       ...lastRequestPayload,
       preferredModel: getStoredPreferredModel(),
     })
-  }, [generate, lastRequestPayload, loadingSavedBrief, streamState.isStreaming])
+  }, [generate, generateReady, lastRequestPayload, loadingSavedBrief, streamState.isStreaming])
 
   useEffect(() => {
     const onRefresh = () => {
@@ -261,7 +319,7 @@ export default function IntelligencePage() {
     reset()
   }, [reset])
 
-  if (authLoading) {
+  if (authLoading || (isAuthenticated && setupLoading && !brief)) {
     return (
       <div data-intel="v4" className="intel-shell">
         <div className="intel-stage flex min-h-[60vh] items-center justify-center">
@@ -288,14 +346,6 @@ export default function IntelligencePage() {
     return (
       <div data-intel="v4" className="intel-shell">
         <div className="intel-stage">
-          {brief.status?.degraded && (
-            <div className="mx-auto mb-4 max-w-4xl rounded-xl border border-[var(--accent-coral)]/30 bg-[var(--accent-coral)]/10 p-4">
-              <div className="flex items-center gap-2 text-sm text-[var(--accent-coral)]">
-                <AlertCircle className="h-4 w-4 shrink-0" />
-                Analysis unavailable — showing raw evidence
-              </div>
-            </div>
-          )}
           {researchType === 'meeting_prep' && (
             <IntelligenceResults brief={brief as MeetingPrepBrief} onNewSearch={handleNewSearch} savedBriefId={savedBriefId} />
           )}
@@ -308,11 +358,13 @@ export default function IntelligencePage() {
           {researchType === 'market_research' && (
             <MarketResearchResults brief={brief as MarketResearchBrief} onNewSearch={handleNewSearch} savedBriefId={savedBriefId} />
           )}
-          <FollowUpChat briefId={savedBriefId} researchType={researchType ?? undefined} />
+          {chatReady && <FollowUpChat briefId={savedBriefId} researchType={researchType ?? undefined} />}
         </div>
       </div>
     )
   }
+
+  const showSetupNotice = !loading && !pendingInput && !brief && !generateReady
 
   return (
     <div data-intel="v4" className="intel-shell">
@@ -347,11 +399,13 @@ export default function IntelligencePage() {
           </div>
         )}
 
+        {showSetupNotice && <IntelligenceSetupNotice providers={setupState?.providers ?? []} />}
+
         {/* Step 1: Research type selector (if no type selected) */}
-        {!selectedType && !loading && !pendingInput && <ResearchTypeSelector selected={null} onSelect={setSelectedType} />}
+        {!showSetupNotice && !selectedType && !loading && !pendingInput && <ResearchTypeSelector selected={null} onSelect={setSelectedType} />}
 
         {/* Step 2a: Confirmation step */}
-        {pendingInput && !loading && (
+        {!showSetupNotice && pendingInput && !loading && (
           <ResearchConfirmation
             input={pendingInput}
             onChange={(next) => setPendingInput(next)}
@@ -362,7 +416,7 @@ export default function IntelligencePage() {
         )}
 
         {/* Step 2: Per-type form */}
-        {selectedType && !loading && !pendingInput && (
+        {!showSetupNotice && selectedType && !loading && !pendingInput && (
           <div>
             <button
               type="button"

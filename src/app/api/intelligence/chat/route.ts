@@ -7,6 +7,11 @@ import {
   DEFAULT_MODEL_PREFERENCE,
   normalizeModelPreference,
 } from '@/lib/intelligence/models'
+import {
+  AI_ONLY_INTELLIGENCE_PROVIDERS,
+  buildIntelligenceSetupMessage,
+  getIntelligenceProviderStatus,
+} from '@/lib/intelligence/provider-config'
 
 const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? '').replace(/^=+/, '').trim()
 const anonKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '').replace(/^=+/, '').trim()
@@ -117,8 +122,12 @@ ${Array.isArray(brief.sources) ? brief.sources.slice(0, 10).map((s: Record<strin
   }
   messages.push({ role: 'user', content: question.trim() })
 
-  if (!process.env.OPENROUTER_API_KEY) {
-    return NextResponse.json({ error: 'AI provider not configured' }, { status: 503 })
+  const providerStatus = getIntelligenceProviderStatus(AI_ONLY_INTELLIGENCE_PROVIDERS)
+  if (!providerStatus.ready) {
+    return NextResponse.json(
+      { error: buildIntelligenceSetupMessage('Follow-up answers', AI_ONLY_INTELLIGENCE_PROVIDERS) },
+      { status: 503, headers: { 'Cache-Control': 'no-store' } },
+    )
   }
 
   try {
