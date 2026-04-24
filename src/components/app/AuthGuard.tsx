@@ -9,12 +9,12 @@ const PUBLIC_PATHS = ['/', '/login', '/signup', '/verify-email', '/privacy', '/t
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading, needsEmailVerification, needsOnboarding, pendingVerificationEmail, isSignalForgeInProgress } = useAuth()
   const router = useRouter()
-  const pathname = usePathname()
+  const pathname = usePathname() ?? ''
+  const isPublic = PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith('/signal/'))
 
   useEffect(() => {
     if (isLoading) return
 
-    const isPublic = PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith('/signal/'))
     const isAuthPage = pathname === '/login' || pathname === '/signup' || pathname === '/verify-email'
     const isAppPage = pathname.startsWith('/app')
     const isOnboarding = pathname === '/onboarding'
@@ -48,9 +48,13 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       router.replace('/login')
       return
     }
-  }, [isAuthenticated, isLoading, needsEmailVerification, needsOnboarding, pendingVerificationEmail, isSignalForgeInProgress, pathname, router])
+  }, [isAuthenticated, isLoading, needsEmailVerification, needsOnboarding, pendingVerificationEmail, isSignalForgeInProgress, isPublic, pathname, router])
 
   if (isLoading) {
+    if (isPublic) {
+      return <>{children}</>
+    }
+
     return (
       <div className="flex min-h-screen items-center justify-center bg-[var(--color-bg)]">
         <div className="flex flex-col items-center gap-4">

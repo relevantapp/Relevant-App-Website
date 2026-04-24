@@ -15,9 +15,7 @@ const themeScript = `
       var resolvedTheme =
         storedTheme === 'light' || storedTheme === 'dark'
           ? storedTheme
-          : window.matchMedia('(prefers-color-scheme: light)').matches
-            ? 'light'
-            : 'dark';
+          : 'dark';
       document.documentElement.dataset.theme = resolvedTheme;
       document.documentElement.style.colorScheme = resolvedTheme;
     } catch (error) {}
@@ -27,16 +25,16 @@ const themeScript = `
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.getrelevantapp.com'),
   title: {
-    default: 'Relevant — Less Noise. More Clarity.',
+    default: 'Relevant - Know What Matters Before It Becomes Obvious',
     template: '%s | Relevant',
   },
   description:
-    'Relevant is an AI app that watches the news for your work, then tells you what changed, why it matters, and what to do next.',
+    'Relevant is a professional awareness app that turns market noise into role-aware signals, cited intelligence, and clear next moves for your work.',
   keywords: [
-    'relevant app', 'ai news app', 'personalized news', 'work intelligence',
-    'ai briefing', 'news for professionals', 'role-aware news',
+    'relevant app', 'role-aware intelligence', 'relevance engine', 'work intelligence',
+    'ai briefing', 'signal detection', 'strategic briefings',
     'what happened why it matters', 'ai relevance engine',
-    'business intelligence app', 'news monitoring',
+    'professional intelligence', 'business signals', 'decision intelligence',
   ],
   authors: [{ name: 'Relevant' }],
   creator: 'Relevant',
@@ -57,9 +55,9 @@ export const metadata: Metadata = {
     apple: '/app-icon.png',
   },
   openGraph: {
-    title: 'Relevant — Less Noise. More Clarity.',
+    title: 'Know what matters before it becomes obvious.',
     description:
-      'AI that reads the news for your work and tells you what changed, why it matters, and what it means for you.',
+      'Daily role-aware signals and on-demand intelligence for meetings, competitors, markets, and decisions.',
     url: 'https://www.getrelevantapp.com',
     siteName: 'Relevant',
     images: [
@@ -67,7 +65,7 @@ export const metadata: Metadata = {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Relevant — AI-powered personalized news feed for professionals',
+        alt: 'Relevant — role-aware relevance engine for professionals',
       },
     ],
     locale: 'en_US',
@@ -75,9 +73,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Relevant — Less Noise. More Clarity.',
+    title: 'Know what matters before it becomes obvious.',
     description:
-      'AI that reads the news for your work and tells you what changed, why it matters, and what it means for you.',
+      'Daily role-aware signals and on-demand intelligence for meetings, competitors, markets, and decisions.',
     images: ['/og-image.png'],
   },
   alternates: {
@@ -92,8 +90,8 @@ export const viewport: Viewport = {
   maximumScale: 1,
   viewportFit: 'cover',
   themeColor: [
-    { media: '(prefers-color-scheme: dark)', color: '#202124' },
-    { media: '(prefers-color-scheme: light)', color: '#fafafa' },
+    { media: '(prefers-color-scheme: dark)', color: '#07090d' },
+    { media: '(prefers-color-scheme: light)', color: '#f7f8fb' },
   ],
 }
 
@@ -109,7 +107,7 @@ export default function RootLayout({
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'iOS',
     description:
-      'Relevant is an AI-powered app that watches the news for your work, then tells you what changed, why it matters, and what to do next. Role-aware, personalized intelligence — not a generic feed.',
+      'Relevant is a role-aware relevance engine that watches the outside world for your work, then tells you what changed, why it matters, and what to do next.',
     url: 'https://www.getrelevantapp.com',
     image: 'https://www.getrelevantapp.com/og-image.png',
     offers: {

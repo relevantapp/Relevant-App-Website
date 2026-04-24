@@ -390,7 +390,7 @@ export default function SignalDetailPage() {
   const [timeline, setTimeline] = useState<EventUpdate[]>([])
   const [timelineLoading, setTimelineLoading] = useState(false)
 
-  const signalId = typeof params.id === 'string' ? params.id : ''
+  const signalId = typeof params?.id === 'string' ? params.id : ''
 
   useEffect(() => {
     if (!signalId) return

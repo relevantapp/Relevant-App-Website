@@ -24,7 +24,7 @@ const facts: LegalFact[] = [
   {
     label: 'Scope',
     value: 'Website, iOS, Android, and public share links',
-    detail: 'Also covers waitlist signups, contact requests, and public signal pages.',
+    detail: 'Also covers website requests, contact messages, and public signal pages.',
   },
 ]
 
@@ -69,7 +69,7 @@ const sections: LegalSection[] = [
             submit for transcription and the text result generated from it.
           </li>
           <li>
-            <strong>Website form data:</strong> waitlist emails, contact form details, and normal web request data needed to operate the site.
+            <strong>Website form data:</strong> emails you submit, contact form details, and normal web request data needed to operate the site.
           </li>
           <li>
             <strong>Location context:</strong> your country if you enter it manually, or a best-guess
@@ -127,7 +127,7 @@ const sections: LegalSection[] = [
           </li>
           <li>
             <strong>Email and communication:</strong> services such as Supabase Auth email delivery and Resend
-            for verification emails, waitlist messages, and support workflows.
+            for verification emails, requested updates, and support workflows.
           </li>
           <li>
             <strong>Mobile delivery:</strong> Expo, Apple, and Google to deliver push notifications and app-store infrastructure.
@@ -156,8 +156,8 @@ const sections: LegalSection[] = [
           You can manage notifications from device settings and inside the app.
         </p>
         <p>
-          If you join the waitlist or use the contact form on the website, we use the information you submit
-          to respond or manage the waitlist.
+          If you ask for a brief or use the contact form on the website, we use the information you submit
+          to respond.
         </p>
         <p>
           If you create or open a shared signal link, the shared payload on that public page may be viewable by

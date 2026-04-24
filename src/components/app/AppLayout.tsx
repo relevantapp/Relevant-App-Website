@@ -38,7 +38,7 @@ function getMobileTitle(pathname: string): string | null {
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, signOut } = useAuth()
-  const pathname = usePathname()
+  const pathname = usePathname() ?? ''
   const router = useRouter()
   const { theme, toggleTheme } = useTheme()
 

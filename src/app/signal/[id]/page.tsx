@@ -550,7 +550,7 @@ export default async function SignalPage({ params }: PageProps) {
             </a>
           </div>
           <p className="mt-4 text-xs text-[var(--text-soft)]">
-            Web app is live now. Mobile app in early access.
+            The app is live. Get Relevant from the App Store.
           </p>
         </div>
 

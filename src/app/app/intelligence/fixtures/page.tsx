@@ -64,8 +64,8 @@ function normalizeFixture(value: string | null): FixtureKey {
 
 export default function IntelligenceFixturesPage() {
   const searchParams = useSearchParams()
-  const flow = normalizeFlow(searchParams.get('flow'))
-  const fixture = normalizeFixture(searchParams.get('fixture'))
+  const flow = normalizeFlow(searchParams?.get('flow') ?? null)
+  const fixture = normalizeFixture(searchParams?.get('fixture') ?? null)
   const selectedBrief = FIXTURES[fixture][flow]
 
   return (

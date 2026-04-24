@@ -156,7 +156,7 @@ export default function IntelligencePage() {
   const brief = loadedBrief ?? streamState.brief
   const loading = streamState.isStreaming || loadingSavedBrief
   const error = streamState.error ?? savedBriefError
-  const briefParam = searchParams.get('brief')
+  const briefParam = searchParams?.get('brief') ?? null
   const generateReady = setupState?.generateReady ?? true
   const chatReady = setupState?.chatReady ?? true
 
@@ -207,7 +207,7 @@ export default function IntelligencePage() {
   useEffect(() => {
     if (!streamState.brief?.id || briefParam === streamState.brief.id) return
 
-    const nextParams = new URLSearchParams(searchParams.toString())
+    const nextParams = new URLSearchParams(searchParams?.toString() ?? '')
     nextParams.set('brief', streamState.brief.id)
     router.replace(`/app/intelligence?${nextParams.toString()}`, { scroll: false })
   }, [briefParam, router, searchParams, streamState.brief?.id])
@@ -305,7 +305,7 @@ export default function IntelligencePage() {
     setPendingInput(null)
     setLastRequestPayload(null)
     if (briefParam) {
-      const nextParams = new URLSearchParams(searchParams.toString())
+      const nextParams = new URLSearchParams(searchParams?.toString() ?? '')
       nextParams.delete('brief')
       const nextQuery = nextParams.toString()
       router.replace(nextQuery ? `/app/intelligence?${nextQuery}` : '/app/intelligence', { scroll: false })

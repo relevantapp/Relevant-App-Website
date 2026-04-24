@@ -4,15 +4,15 @@
 export const siteConfig = {
   name: 'Relevant',
   tagline: "You shouldn't need to read the news just to stay sharp at work.",
-  description: 'We scan thousands of articles. You get one alert when something matters.',
+  description: 'Relevant scans the outside world and gives you the signals that matter to your work.',
   email: 'support@getrelevantapp.com',
 }
 
 export const heroContent = {
   headline: "You shouldn't need to read the news just to stay sharp at work.",
-  subheadline: 'We scan thousands of articles. You get one alert when something matters.',
-  cta: 'Try it free',
-  microcopy: 'Web app is live. Mobile coming soon.',
+  subheadline: 'Relevant turns market noise into clear, role-aware signals.',
+  cta: 'Get Relevant',
+  microcopy: 'The app is live. Get Relevant from the App Store.',
 }
 
 export const problemContent = {
@@ -98,16 +98,16 @@ export const whoItsForContent = {
 
 export const waitlistContent = {
   title: 'You have better things to do than read the news.',
-  subtext: 'Web app is live. Mobile coming soon.',
-  cta: 'Notify me',
-  mobileNote: 'Mobile in early access.',
-  microcopy: 'No spam.',
+  subtext: 'The app is live. Get Relevant from the App Store.',
+  cta: 'Get Relevant',
+  mobileNote: 'Download from the App Store.',
+  microcopy: 'Set your work context and start with sharper signals.',
 }
 
 export const pricingContent = {
   title: 'Pricing',
-  disclaimer: 'Free to try. Pricing at launch.',
-  earlyAccessNote: 'No charge during early access.',
+  disclaimer: 'Start with Relevant and see the value before any paid plan.',
+  earlyAccessNote: 'Any paid plan will be shown clearly before you choose it.',
   trial: '7-day free trial',
   price: 'Then $4.99/month',
   value: 'Less than a coffee. More useful than most apps.',
@@ -118,7 +118,7 @@ export const navLinks = [
   { label: 'How it works', href: '#how-it-works' },
   { label: 'Features', href: '#features' },
   { label: 'Pricing', href: '#pricing' },
-  { label: 'Get early access', href: '#waitlist' },
+  { label: 'Get Relevant', href: 'https://apps.apple.com/app/id6756225699' },
 ]
 
 export const footerLinks = [

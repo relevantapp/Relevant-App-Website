@@ -30,6 +30,11 @@ Rules:
 - Do not describe Relevant as a generic news feed.
 - Position it as a role-aware relevance engine that explains what happened, why it matters, and what to do next.
 
+## Screenshot Generation Guardrail
+- When asked to generate, refresh, or expand marketing screenshots, read `docs/screenshots/README.md` first.
+- Website screenshots should come from the app repo's real Surface Lab export pipeline, then be copied into `public/marketing-screenshots/`.
+- Do not create website-only mock app screens when the real app export path exists.
+
 ## Skills (Load Only When Needed)
 
 - `copywriting` — load from the Relevant repo at `.github/skills/copywriting/SKILL.md` whenever writing or editing marketing copy on any page, component, or surface. Also read `RELEVANT_BRAND_SYSTEM.md` at this repo root for brand context.
