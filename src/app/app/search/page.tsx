@@ -103,6 +103,26 @@ type DimensionRow = {
   normalized_value: string | null
 }
 
+type DimensionSignalRow = {
+  event_id: string | null
+  why_showing: string | null
+  image_url: string | null
+}
+
+type PendingDimensionMatchRow = {
+  merged_into_brief_id: string | null
+  dimension_id: string | null
+}
+
+type ProfileCompanyRow = {
+  company_id: string | null
+  company_name_manual: string | null
+}
+
+type CompanyLookupRow = {
+  name: string | null
+}
+
 type DimensionTile = {
   id: string
   category: CategoryKey
@@ -135,6 +155,16 @@ function saveRecentSearch(query: string) {
 
 function clearRecentSearches() {
   localStorage.removeItem(RECENT_SEARCHES_KEY)
+}
+
+function removeRecentSearch(query: string): string[] {
+  const nextRecent = getRecentSearches().filter((search) => search !== query)
+  if (nextRecent.length === 0) {
+    clearRecentSearches()
+    return []
+  }
+  localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(nextRecent))
+  return nextRecent
 }
 
 function mapRow(row: Record<string, unknown>): ProBriefItem {
@@ -172,6 +202,115 @@ function hashColor(str: string): string {
   }
   const hue = Math.abs(hash % 360)
   return `hsl(${hue}, 50%, 25%)`
+}
+
+function normalizeCompanyTopicName(value: string | null | undefined): string {
+  return (value ?? '')
+    .toLowerCase()
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\b(inc|incorporated|corp|corporation|co|company|ltd|limited|llc|plc|group|holdings)\b/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+async function fetchOwnCompanyNames(userId: string): Promise<string[]> {
+  const { data } = await supabase
+    .from('users')
+    .select('company_id, company_name_manual')
+    .eq('id', userId)
+    .maybeSingle()
+
+  const profileCompany = data as ProfileCompanyRow | null
+  const companyNames = new Set<string>()
+
+  if (typeof profileCompany?.company_name_manual === 'string' && profileCompany.company_name_manual.trim()) {
+    companyNames.add(profileCompany.company_name_manual.trim())
+  }
+
+  if (typeof profileCompany?.company_id === 'string' && profileCompany.company_id.trim()) {
+    const { data: companyData } = await supabase
+      .from('companies')
+      .select('name')
+      .eq('id', profileCompany.company_id.trim())
+      .maybeSingle()
+
+    const company = companyData as CompanyLookupRow | null
+    if (typeof company?.name === 'string' && company.name.trim()) {
+      companyNames.add(company.name.trim())
+    }
+  }
+
+  return Array.from(companyNames)
+}
+
+function buildDimensionTiles(
+  dims: DimensionRow[],
+  signals: DimensionSignalRow[] | null | undefined,
+  pendingMatches: PendingDimensionMatchRow[] | null | undefined,
+  ownCompanyNames: string[] = [],
+): DimensionTile[] {
+  const signalRows = signals ?? []
+  const signalByEvent = new Map<string, DimensionSignalRow>()
+  const eventIdsByDimension = new Map<string, Set<string>>()
+  const ownCompanyKeys = new Set(
+    ownCompanyNames
+      .map((name) => normalizeCompanyTopicName(name))
+      .filter(Boolean),
+  )
+
+  for (const signal of signalRows) {
+    if (signal.event_id) {
+      signalByEvent.set(signal.event_id, signal)
+    }
+  }
+
+  for (const row of pendingMatches ?? []) {
+    if (!row.dimension_id || !row.merged_into_brief_id) continue
+    const bucket = eventIdsByDimension.get(row.dimension_id) ?? new Set<string>()
+    bucket.add(row.merged_into_brief_id)
+    eventIdsByDimension.set(row.dimension_id, bucket)
+  }
+
+  const tiles = dims
+    .map((d) => {
+      const nv = (d.normalized_value || d.value || '').toLowerCase()
+      if (
+        d.category === 'company' &&
+        ownCompanyKeys.has(normalizeCompanyTopicName(d.value || d.normalized_value))
+      ) {
+        return null
+      }
+
+      const pendingSignals = Array.from(eventIdsByDimension.get(d.id) ?? [])
+        .map((eventId) => signalByEvent.get(eventId))
+        .filter((signal): signal is DimensionSignalRow => Boolean(signal))
+      const fallbackSignals = nv
+        ? signalRows.filter((signal) => (signal.why_showing ?? '').toLowerCase().includes(nv))
+        : []
+      const matchedSignals = pendingSignals.length > 0 ? pendingSignals : fallbackSignals
+      const seen = new Set<string>()
+      const uniqueSignals = matchedSignals.filter((signal) => {
+        const eventId = signal.event_id
+        if (!eventId || seen.has(eventId)) return false
+        seen.add(eventId)
+        return true
+      })
+
+      if (uniqueSignals.length === 0) return null
+
+      return {
+        id: d.id,
+        category: d.category as CategoryKey,
+        value: d.value,
+        normalizedValue: nv,
+        signalCount: uniqueSignals.length,
+        imageUrl: uniqueSignals.find((signal) => signal.image_url)?.image_url ?? null,
+      }
+    })
+    .filter((tile): tile is DimensionTile => tile !== null)
+
+  return tiles.sort((a, b) => b.signalCount - a.signalCount || a.value.localeCompare(b.value))
 }
 
 // ─── Search state type ────────────────────────────────────────────────────────
@@ -243,44 +382,23 @@ export default function SearchPage() {
           return
         }
 
-        // Fetch recent signals for images + counts
-        const { data: signals } = await supabase
-          .from('signal_items')
-          .select('why_showing, image_url')
-          .eq('user_id', user!.id)
-          .order('created_at', { ascending: false })
-          .limit(500)
+        const [{ data: signals }, { data: pendingMatches }, ownCompanyNames] = await Promise.all([
+          supabase
+            .from('signal_items')
+            .select('event_id, why_showing, image_url')
+            .eq('user_id', user!.id)
+            .order('created_at', { ascending: false })
+            .limit(500),
+          supabase
+            .from('pro_pending_signals')
+            .select('merged_into_brief_id, dimension_id')
+            .eq('user_id', user!.id)
+            .not('merged_into_brief_id', 'is', null)
+            .limit(5000),
+          fetchOwnCompanyNames(user!.id),
+        ])
 
-        const tiles: DimensionTile[] = (dims as DimensionRow[]).map((d) => {
-          const nv = (d.normalized_value || '').toLowerCase()
-          let signalCount = 0
-          let imageUrl: string | null = null
-
-          if (signals) {
-            for (const s of signals) {
-              const ws = ((s.why_showing as string) ?? '').toLowerCase()
-              if (ws.includes(nv)) {
-                signalCount++
-                if (!imageUrl && s.image_url) {
-                  imageUrl = s.image_url as string
-                }
-              }
-            }
-          }
-
-          return {
-            id: d.id as string,
-            category: d.category as CategoryKey,
-            value: d.value as string,
-            normalizedValue: nv,
-            signalCount,
-            imageUrl,
-          }
-        })
-
-        // Sort: most signals first
-        tiles.sort((a, b) => b.signalCount - a.signalCount)
-        setDimensionTiles(tiles)
+        setDimensionTiles(buildDimensionTiles(dims as DimensionRow[], signals, pendingMatches, ownCompanyNames))
       } catch (e) {
         console.error('Failed to load dimension tiles:', e)
       } finally {
@@ -293,6 +411,8 @@ export default function SearchPage() {
 
   // ── Full-text search ────────────────────────────────────────────────────
   const performSearch = useCallback(async (searchQuery: string) => {
+    if (!user) return
+
     const clean = sanitize(searchQuery)
     if (!clean || clean.length < 2) {
       setResults([])
@@ -306,6 +426,7 @@ export default function SearchPage() {
       const { data, error } = await supabase
         .from('signal_items')
         .select(SIGNAL_SELECT)
+        .eq('user_id', user.id)
         .textSearch('headline', clean, { type: 'websearch' })
         .limit(30)
 
@@ -315,6 +436,7 @@ export default function SearchPage() {
         const { data: fallbackData } = await supabase
           .from('signal_items')
           .select(SIGNAL_SELECT)
+          .eq('user_id', user.id)
           .ilike('headline', `%${clean}%`)
           .limit(30)
         items = fallbackData
@@ -339,7 +461,7 @@ export default function SearchPage() {
       setResults([])
       setSearchState('empty')
     }
-  }, [])
+  }, [user])
 
   // ── Dimension drill-down ────────────────────────────────────────────────
   const openDimension = useCallback(async (tile: DimensionTile) => {
@@ -355,10 +477,25 @@ export default function SearchPage() {
         .order('created_at', { ascending: false })
         .limit(200)
 
+      const { data: pendingMatches } = await supabase
+        .from('pro_pending_signals')
+        .select('merged_into_brief_id')
+        .eq('user_id', user.id)
+        .eq('dimension_id', tile.id)
+        .not('merged_into_brief_id', 'is', null)
+        .limit(500)
+
+      const eventIds = new Set(
+        (pendingMatches ?? [])
+          .map((row: { merged_into_brief_id: string | null }) => row.merged_into_brief_id)
+          .filter((eventId): eventId is string => Boolean(eventId)),
+      )
+
       const matched = (signals ?? [])
         .filter((s: Record<string, unknown>) => {
+          const eventId = s.event_id as string | null
           const ws = ((s.why_showing as string) ?? '').toLowerCase()
-          return ws.includes(tile.normalizedValue)
+          return (eventId && eventIds.has(eventId)) || ws.includes(tile.normalizedValue)
         })
         .map((row: Record<string, unknown>) => mapRow(row))
 
@@ -437,42 +574,23 @@ export default function SearchPage() {
             return
           }
 
-          const { data: signals } = await supabase
-            .from('signal_items')
-            .select('why_showing, image_url')
-            .eq('user_id', user!.id)
-            .order('created_at', { ascending: false })
-            .limit(500)
+          const [{ data: signals }, { data: pendingMatches }, ownCompanyNames] = await Promise.all([
+            supabase
+              .from('signal_items')
+              .select('event_id, why_showing, image_url')
+              .eq('user_id', user!.id)
+              .order('created_at', { ascending: false })
+              .limit(500),
+            supabase
+              .from('pro_pending_signals')
+              .select('merged_into_brief_id, dimension_id')
+              .eq('user_id', user!.id)
+              .not('merged_into_brief_id', 'is', null)
+              .limit(5000),
+            fetchOwnCompanyNames(user!.id),
+          ])
 
-          const tiles: DimensionTile[] = (dims as DimensionRow[]).map((d) => {
-            const nv = (d.normalized_value || '').toLowerCase()
-            let signalCount = 0
-            let imageUrl: string | null = null
-
-            if (signals) {
-              for (const s of signals as Array<{ why_showing: string | null; image_url: string | null }>) {
-                const ws = (s.why_showing ?? '').toLowerCase()
-                if (ws.includes(nv)) {
-                  signalCount++
-                  if (!imageUrl && s.image_url) {
-                    imageUrl = s.image_url as string
-                  }
-                }
-              }
-            }
-
-            return {
-              id: d.id as string,
-              category: d.category as CategoryKey,
-              value: d.value as string,
-              normalizedValue: nv,
-              signalCount,
-              imageUrl,
-            }
-          })
-
-          tiles.sort((a, b) => b.signalCount - a.signalCount)
-          setDimensionTiles(tiles)
+          setDimensionTiles(buildDimensionTiles(dims as DimensionRow[], signals, pendingMatches, ownCompanyNames))
         } catch (e) {
           console.error('Failed to reload tiles:', e)
         } finally {
@@ -508,6 +626,10 @@ export default function SearchPage() {
   const handleClearRecent = () => {
     clearRecentSearches()
     setRecentSearches([])
+  }
+
+  const handleRemoveRecent = (search: string) => {
+    setRecentSearches(removeRecentSearch(search))
   }
 
   const handleClearAll = () => {
@@ -691,14 +813,27 @@ export default function SearchPage() {
               </div>
               <div className="flex flex-wrap gap-2">
                 {recentSearches.map((search) => (
-                  <button
+                  <span
                     key={search}
-                    onClick={() => handleRecentClick(search)}
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-sm text-[var(--text-muted)] transition-colors hover:border-[var(--border-strong)] hover:text-[var(--text)]"
+                    className="inline-flex overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--surface)] text-sm text-[var(--text-muted)] transition-colors hover:border-[var(--border-strong)]"
                   >
-                    <Clock size={12} />
-                    {search}
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => handleRecentClick(search)}
+                      className="inline-flex min-w-0 items-center gap-1.5 px-3 py-1.5 transition-colors hover:text-[var(--text)]"
+                    >
+                      <Clock size={12} className="shrink-0" />
+                      <span className="max-w-[180px] truncate">{search}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveRecent(search)}
+                      aria-label={`Remove ${search} from recent searches`}
+                      className="inline-flex w-8 items-center justify-center border-l border-[var(--border)] text-[var(--text-soft)] transition-colors hover:bg-[var(--bg-elevated)] hover:text-[var(--text)]"
+                    >
+                      <X size={12} />
+                    </button>
+                  </span>
                 ))}
               </div>
             </div>
@@ -707,9 +842,9 @@ export default function SearchPage() {
           {/* Header with Add Topic button */}
           <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="text-lg font-bold text-[var(--text)]">Your Topics</h2>
+              <h2 className="text-lg font-bold text-[var(--text)]">Topic map</h2>
               <p className="mt-0.5 text-xs text-[var(--text-soft)]">
-                {dimensionTiles.length} topic{dimensionTiles.length !== 1 ? 's' : ''} you&apos;re tracking
+                {dimensionTiles.length} topic{dimensionTiles.length !== 1 ? 's' : ''} with delivered stories
               </p>
             </div>
             <button
@@ -830,8 +965,8 @@ export default function SearchPage() {
           ) : dimensionTiles.length === 0 ? (
             <div className="flex flex-col items-center py-20">
               <Sparkles size={32} className="mb-3 text-[var(--text-soft)]" />
-              <p className="text-sm font-medium text-[var(--text)]">No topics yet</p>
-              <p className="mt-1 text-xs text-[var(--text-soft)]">Start following companies, people, and trends to see them here</p>
+              <p className="text-sm font-medium text-[var(--text)]">No story topics yet</p>
+              <p className="mt-1 text-xs text-[var(--text-soft)]">This grid fills automatically when followed topics start delivering stories.</p>
               <button
                 onClick={() => setShowAddTopic(true)}
                 className="mt-4 inline-flex items-center gap-2 rounded-xl bg-accent-blue px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"

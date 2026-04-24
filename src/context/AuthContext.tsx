@@ -82,6 +82,8 @@ async function syncUserProfileFromAuthMetadata(sessionUser: {
   const companyManual = typeof metadata.company_name_manual === 'string' ? metadata.company_name_manual.trim() : ''
   const industryRaw = typeof metadata.industry_raw === 'string' ? metadata.industry_raw.trim() : ''
   const roleRaw = typeof metadata.role_raw === 'string' ? metadata.role_raw.trim() : ''
+  const locationCountry = typeof metadata.location_country === 'string' ? metadata.location_country.trim() : ''
+  const profileContextNote = typeof metadata.profile_context_note === 'string' ? metadata.profile_context_note.trim() : ''
 
   if (industryId) payload.industry_id = industryId
   if (roleId) payload.role_id = roleId
@@ -91,6 +93,8 @@ async function syncUserProfileFromAuthMetadata(sessionUser: {
   }
   if (industryRaw) payload.industry_raw = industryRaw
   if (roleRaw) payload.role_raw = roleRaw
+  if (locationCountry) payload.location_country = locationCountry
+  if (profileContextNote) payload.profile_context_note = profileContextNote
 
   await supabase.from('users').upsert(payload, { onConflict: 'id' })
 }

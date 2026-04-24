@@ -123,7 +123,7 @@ export default function LoginPage() {
           Less noise. More clarity.
         </h2>
         <p className="mt-2 text-sm text-white/60 max-w-[280px] mx-auto">
-          Your personalized intelligence feed, always up&nbsp;to&nbsp;date.
+          Role-aware signals for what changed, why it matters, and what to do next.
         </p>
       </div>
       {/* Back to home */}

@@ -29,28 +29,24 @@ const SAMPLE_USER = {
 
 type ContextField = 'identity' | 'company' | 'location' | 'goals'
 
-const fieldMeta: Record<ContextField, { label: string; color: string; icon: string; description: string }> = {
+const fieldMeta: Record<ContextField, { label: string; icon: string; description: string }> = {
   identity: {
     label: 'Identity',
-    color: 'blue',
     icon: '👤',
     description: 'Name, role, industry — the basics that shape every synthesis.',
   },
   company: {
     label: 'Company Meta',
-    color: 'violet',
     icon: '🏢',
     description: 'Sector, stage, size, business model — so the AI understands your operating context.',
   },
   location: {
     label: 'Location',
-    color: 'teal',
     icon: '📍',
     description: 'Geography + timezone — regional relevance and regulatory context.',
   },
   goals: {
     label: 'Active Goals',
-    color: 'amber',
     icon: '🎯',
     description: 'What you\'re working on right now — career, competitive intel, ops efficiency.',
   },
@@ -84,14 +80,14 @@ export function EnrichedContextViz() {
                 onClick={() => setActiveField(key)}
                 className={`w-full text-left p-4 rounded-xl border transition-all ${
                   isActive
-                    ? `bg-[var(--color-${meta.color}-500)]/10 border-[var(--color-${meta.color}-500)]/40`
+                    ? 'border-[var(--color-blue-500)]/40 bg-[var(--color-blue-500)]/10'
                     : 'bg-[var(--color-gray-900)] border-[var(--color-gray-800)] hover:border-[var(--color-gray-700)]'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <span className="text-xl">{meta.icon}</span>
                   <div>
-                    <p className={`font-semibold ${isActive ? `text-[var(--color-${meta.color}-300)]` : 'text-[var(--color-gray-200)]'}`}>
+                    <p className={`font-semibold ${isActive ? 'text-[var(--color-blue-300)]' : 'text-[var(--color-gray-200)]'}`}>
                       {meta.label}
                     </p>
                     <p className="text-sm text-[var(--color-gray-500)]">{meta.description}</p>

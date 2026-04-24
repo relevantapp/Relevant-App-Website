@@ -126,7 +126,7 @@ export default function ResearchConfirmation({
     const loadProfile = async () => {
       const { data } = await supabase
         .from('users')
-        .select('profile_kind, industry_raw, role_raw, company_id, company_name_manual')
+        .select('industry_raw, role_raw, company_id, company_name_manual')
         .eq('id', user.id)
         .maybeSingle()
 
@@ -147,7 +147,7 @@ export default function ResearchConfirmation({
 
       if (cancelled) return
       setProfile({
-        profileKind: clean(row.profile_kind as string | null),
+        profileKind: null,
         industry: clean(row.industry_raw as string | null),
         role: clean(row.role_raw as string | null),
         company: clean(company),
@@ -194,7 +194,7 @@ export default function ResearchConfirmation({
           <Kicker>Run settings</Kicker>
           <div className="intel-docket-table">
             {[
-              { k: 'Lens', v: profileLens(profile) },
+              { k: 'Work context', v: profileLens(profile) },
               { k: 'Depth', v: depthLabel },
               { k: 'Buckets', v: `${evidencePlan.length} planned` },
             ].map((item) => (
@@ -266,7 +266,7 @@ export default function ResearchConfirmation({
 
         <div className="intel-refined-meta">
           {[
-            { k: 'Lens', v: profileLens(profile) },
+            { k: 'Work context', v: profileLens(profile) },
             { k: 'Depth', v: depthLabel },
             { k: 'Evidence buckets', v: `${evidencePlan.length} planned` },
           ].map((m) => (

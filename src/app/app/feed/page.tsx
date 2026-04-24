@@ -497,79 +497,74 @@ export default function FeedPage() {
 
   return (
     <div className="py-4 sm:py-6 lg:py-8">
-      {/* ── Mobile compact summary bar ── */}
-      <section className="mb-4 sm:hidden">
-        <div className="mb-3 flex items-baseline gap-2">
-          <h1 className="font-display text-xl font-semibold tracking-[-0.03em] text-[var(--text)]">
-            {greeting}{firstName ? `, ${firstName}` : ''}
-          </h1>
+      <section className="mb-6 lg:mb-8">
+        <div className="mb-4">
+          <p className="text-sm font-medium text-[var(--text-muted)]">{greeting}{firstName ? ',' : ''}</p>
+          {firstName ? (
+            <h1 className="font-display text-3xl font-semibold leading-none tracking-[-0.05em] text-[var(--text)]">
+              {firstName}
+            </h1>
+          ) : null}
         </div>
-        <div className="flex gap-2">
+        <div className="grid max-w-[680px] grid-cols-2 gap-3">
           <button
             type="button"
             onClick={() => setShowStatsPanel(true)}
-            className="flex flex-1 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2.5 text-left transition-colors hover:border-[var(--border-strong)]"
+            aria-haspopup="dialog"
+            className="group relative min-h-[154px] overflow-hidden rounded-xl border border-[var(--border-strong)] bg-[var(--text)] p-4 text-left text-[var(--bg)] shadow-[0_18px_46px_rgba(0,0,0,0.18)] transition-transform hover:-translate-y-0.5"
           >
-            <span className="font-display text-lg font-semibold leading-none text-[var(--text)]">{summaryTimeSavedHours ?? '—'}<span className="ml-0.5 text-[10px] font-medium uppercase text-[var(--text-soft)]">hrs</span></span>
-            <span className="text-[10px] text-[var(--text-muted)]">saved</span>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_90%_10%,rgba(59,130,246,0.28),transparent_34%)]" aria-hidden="true" />
+            <div className="relative flex h-full flex-col justify-between">
+              <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] opacity-70">Time saved · 7D</p>
+              <div>
+                <span className="font-display text-5xl font-semibold leading-none tracking-[-0.07em]">{summaryTimeSavedHours ?? '—'}</span>
+                {summaryTimeSavedHours ? (
+                  <span className="ml-1 font-mono text-[11px] font-semibold uppercase tracking-[0.18em] opacity-70">hrs</span>
+                ) : null}
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-xs opacity-70">Back in your week.</p>
+                <span className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--accent)]">
+                  See details <ArrowUpRight size={13} />
+                </span>
+              </div>
+            </div>
           </button>
-          <button
-            type="button"
-            onClick={() => setShowStatsPanel(true)}
-            className="flex flex-1 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2.5 text-left transition-colors hover:border-[var(--border-strong)]"
-          >
-            <span className="font-display text-lg font-semibold leading-none text-[var(--text)]">{summaryStoryCount}</span>
-            <span className="text-[10px] text-[var(--text-muted)]">stories</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setShowTuneSheet(true)}
-            className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2.5 text-left transition-colors hover:border-[var(--border-strong)]"
-          >
-            <SlidersHorizontal size={14} className="text-[var(--text-muted)]" />
-            <span className="text-[10px] text-[var(--text-muted)]">Tune</span>
-          </button>
-        </div>
-      </section>
 
-      {/* ── Desktop / tablet compact stats bar ── */}
-      <section className="mb-6 hidden sm:block lg:mb-8">
-        <div className="mb-4 flex items-baseline justify-between">
-          <h1 className="font-display text-2xl font-semibold tracking-[-0.04em] text-[var(--text)] lg:text-3xl">
-            {greeting}{firstName ? `, ${firstName}` : ''}
-          </h1>
-        </div>
-        <div className="flex gap-3">
-          <button
-            type="button"
-            onClick={() => setShowStatsPanel(true)}
-            aria-haspopup="dialog"
-            className="group flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3 text-left transition-colors hover:border-[var(--border-strong)]"
-          >
-            <span className="font-display text-2xl font-semibold leading-none tracking-[-0.04em] text-[var(--text)]">{summaryTimeSavedHours ?? '—'}<span className="ml-0.5 text-[10px] font-medium uppercase tracking-wider text-[var(--text-soft)]">hrs</span></span>
-            <span className="text-xs text-[var(--text-muted)]">saved this week</span>
-            <ArrowUpRight size={13} className="text-[var(--text-soft)] transition-colors group-hover:text-[var(--text)]" />
-          </button>
-          <button
-            type="button"
-            onClick={() => setShowStatsPanel(true)}
-            aria-haspopup="dialog"
-            className="group flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3 text-left transition-colors hover:border-[var(--border-strong)]"
-          >
-            <span className="font-display text-2xl font-semibold leading-none tracking-[-0.04em] text-[var(--text)]">{summaryStoryCount}</span>
-            <span className="text-xs text-[var(--text-muted)]">stories · {summaryMatchedArticles} sources</span>
-            <ArrowUpRight size={13} className="text-[var(--text-soft)] transition-colors group-hover:text-[var(--text)]" />
-          </button>
-          <button
-            type="button"
-            onClick={() => setShowTuneSheet(true)}
-            aria-haspopup="dialog"
-            className="group flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3 text-left transition-colors hover:border-[var(--border-strong)]"
-          >
-            <SlidersHorizontal size={15} className="text-[var(--text-muted)]" />
-            <span className="text-xs font-medium text-[var(--text-muted)]">{activeSensitivity.label} · {activeStyle.label}</span>
-            <ArrowUpRight size={13} className="text-[var(--text-soft)] transition-colors group-hover:text-[var(--text)]" />
-          </button>
+          <div className="grid min-h-[154px] gap-3">
+            <button
+              type="button"
+              onClick={() => setShowStatsPanel(true)}
+              aria-haspopup="dialog"
+              className="group rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4 text-left shadow-[0_1px_0_rgba(255,255,255,0.03)_inset] transition-transform hover:-translate-y-0.5 hover:border-[var(--border-strong)]"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--text-soft)]">Stories · 7D</p>
+                  <p className="mt-1 font-display text-3xl font-semibold leading-none tracking-[-0.06em] text-[var(--text)]">{summaryStoryCount}</p>
+                  <p className="mt-1 text-xs text-[var(--text-muted)]">{summaryMatchedArticles} sources</p>
+                </div>
+                <ArrowUpRight size={14} className="text-[var(--text-soft)] group-hover:text-[var(--text)]" />
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowTuneSheet(true)}
+              aria-haspopup="dialog"
+              className="group flex items-center justify-between gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4 text-left shadow-[0_1px_0_rgba(255,255,255,0.03)_inset] transition-transform hover:-translate-y-0.5 hover:border-[var(--border-strong)]"
+            >
+              <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--text)] text-[var(--bg)]">
+                <SlidersHorizontal size={15} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--text-soft)]">Adjust</span>
+                <span className="block text-sm font-semibold text-[var(--text)]">Tune feed</span>
+                <span className="block truncate text-xs text-[var(--text-muted)]">{activeSensitivity.label} · {activeStyle.label}</span>
+              </span>
+              <ArrowUpRight size={14} className="text-[var(--text-soft)] group-hover:text-[var(--text)]" />
+            </button>
+          </div>
         </div>
       </section>
 

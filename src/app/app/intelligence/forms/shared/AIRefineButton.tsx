@@ -3,7 +3,6 @@
 import { useState, useCallback } from 'react'
 import { Undo2, Loader2 } from 'lucide-react'
 import { getValidAccessToken } from '@/lib/supabase'
-import { MODEL_STORAGE_KEY, normalizeModelPreference } from '@/lib/intelligence/models'
 
 interface AIRefineButtonProps {
   goal: string
@@ -40,7 +39,6 @@ export default function AIRefineButton({
           goal,
           meetingType,
           accountName,
-          preferredModel: normalizeModelPreference(localStorage.getItem(MODEL_STORAGE_KEY)),
         }),
       })
 

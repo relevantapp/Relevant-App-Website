@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import ThemeLogo from './ThemeLogo'
 
 type AppLogoProps = {
   alt?: string
@@ -16,14 +16,12 @@ export default function AppLogo({
   priority = false,
 }: AppLogoProps) {
   return (
-    <Image
-      src="/app-icon.png"
+    <ThemeLogo
       alt={alt}
       width={width}
       height={height}
-      className={`theme-aware-logo ${className}`}
+      className={className}
       priority={priority}
-      style={{ borderRadius: '22%' }}
     />
   )
 }

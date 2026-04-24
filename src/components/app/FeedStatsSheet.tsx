@@ -41,6 +41,48 @@ function formatDecimal(value: number | null): string {
   return value >= 10 ? value.toFixed(1).replace(/\.0$/, '') : value.toFixed(1)
 }
 
+function SummaryRow({
+  label,
+  value,
+  detail,
+}: {
+  label: string
+  value: string | number
+  detail: string
+}) {
+  return (
+    <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-4 border-t border-[var(--border)] py-3 first:border-t-0 first:pt-0 last:pb-0">
+      <div className="min-w-0">
+        <p className="text-sm font-medium text-[var(--text)]">{label}</p>
+        <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{detail}</p>
+      </div>
+      <p className="font-display text-2xl font-semibold tracking-[-0.04em] text-[var(--text)]">
+        {value}
+      </p>
+    </div>
+  )
+}
+
+function MetricTile({
+  label,
+  value,
+  caption,
+}: {
+  label: string
+  value: string | number
+  caption: string
+}) {
+  return (
+    <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+      <p className="font-display text-3xl font-semibold leading-none tracking-[-0.06em] text-[var(--text)]">
+        {value}
+      </p>
+      <p className="mt-2 text-sm font-semibold text-[var(--text)]">{label}</p>
+      <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{caption}</p>
+    </div>
+  )
+}
+
 export default function FeedStatsSheet({
   open,
   onClose,
@@ -57,119 +99,90 @@ export default function FeedStatsSheet({
   const maxActivity = Math.max(1, ...activity.map((point) => point.count))
   const maxBreakdown = Math.max(1, ...breakdown.map((item) => item.count))
   const strongestBucket = breakdown.find((item) => item.count > 0) ?? null
+  const noiseFiltered =
+    sourceDocumentCount > 0
+      ? Math.max(0, Math.min(99, 100 - Math.round((storyCount / sourceDocumentCount) * 100)))
+      : 0
 
   return (
     <FeedBottomSheet
       open={open}
       onClose={onClose}
-      title="Feed summary"
-      description="A seven-day readout of what the feed reduced, grouped, and surfaced for you."
+      title="Your Relevance Summary"
+      description="What Relevant checked, filtered, and showed for you."
+      maxWidthClassName="max-w-[460px]"
     >
-      <div className="space-y-4">
-        <section className="rounded-[28px] border border-[var(--border-strong)] bg-[var(--bg)] px-5 py-5 sm:px-6 sm:py-6">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--text-soft)]">
-            Time saved · 7D
-          </p>
+      <div className="space-y-6">
+        <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--text-soft)]">
+          <span className="h-2 w-2 rounded-full bg-[var(--accent)]" />
+          Live
+          <span className="ml-auto font-normal normal-case tracking-normal">updated from your feed</span>
+        </div>
 
-          <div className="mt-4 flex items-end gap-2">
-            <span className="font-display text-[3.4rem] font-semibold leading-none tracking-[-0.06em] text-[var(--text)] sm:text-[4.5rem]">
-              {formatHours(timeSavedHours)}
-            </span>
-            {typeof timeSavedHours === 'number' && timeSavedHours > 0 ? (
-              <span className="pb-2 font-mono text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--text-soft)]">
-                hrs
+        <div className="grid grid-cols-3 gap-1 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-1">
+          {['7D', '30D', 'All'].map((range) => (
+            <button
+              key={range}
+              type="button"
+              className={`rounded-lg px-3 py-2 text-xs font-semibold ${
+                range === '7D'
+                  ? 'bg-[var(--text)] text-[var(--bg)]'
+                  : 'text-[var(--text-muted)]'
+              }`}
+            >
+              {range}
+            </button>
+          ))}
+        </div>
+
+        <section className="space-y-3">
+          <div className="relative overflow-hidden rounded-xl border border-[var(--border-strong)] bg-[var(--text)] p-5 text-[var(--bg)] shadow-[0_18px_46px_rgba(0,0,0,0.18)]">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_12%,rgba(59,130,246,0.28),transparent_34%)]" aria-hidden="true" />
+            <p className="relative font-mono text-[10px] font-semibold uppercase tracking-[0.22em] opacity-70">
+              Time saved
+            </p>
+            <div className="mt-3 flex items-end gap-2">
+              <span className="relative font-display text-[4rem] font-semibold leading-none tracking-[-0.06em]">
+                {formatHours(timeSavedHours)}
               </span>
-            ) : null}
-          </div>
-
-          <p className="mt-3 text-base font-medium text-[var(--text)]">
-            Back in your week.
-          </p>
-          <p className="mt-1 max-w-2xl text-sm leading-6 text-[var(--text-muted)]">
-            {storyCount} stories distilled from {sourceDocumentCount} source documents across {rangeLabel}.
-          </p>
-
-          <div className="mt-4 flex flex-wrap gap-2">
-            <span className="rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-1 text-[11px] font-medium text-[var(--text-muted)]">
-              {publisherCount} publishers in view
-            </span>
-            <span className="rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-1 text-[11px] font-medium text-[var(--text-muted)]">
-              {activeDaysCount} active days
-            </span>
-            {strongestBucket ? (
-              <span className="rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-1 text-[11px] font-medium text-[var(--text-muted)]">
-                {strongestBucket.label} led the week
-              </span>
-            ) : null}
-          </div>
-        </section>
-
-        <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <div className="rounded-[22px] border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--text-soft)]">
-              Stories
-            </p>
-            <p className="mt-3 font-display text-3xl font-semibold tracking-[-0.05em] text-[var(--text)]">
-              {storyCount}
-            </p>
-            <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">
-              The stories that made the feed.
-            </p>
-          </div>
-
-          <div className="rounded-[22px] border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--text-soft)]">
-              Source docs
-            </p>
-            <p className="mt-3 font-display text-3xl font-semibold tracking-[-0.05em] text-[var(--text)]">
-              {sourceDocumentCount}
-            </p>
-            <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">
-              Individual documents compressed into those stories.
-            </p>
-          </div>
-
-          <div className="rounded-[22px] border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--text-soft)]">
-              Publishers
-            </p>
-            <p className="mt-3 font-display text-3xl font-semibold tracking-[-0.05em] text-[var(--text)]">
-              {publisherCount}
-            </p>
-            <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">
-              Distinct outlets represented this week.
-            </p>
-          </div>
-
-          <div className="rounded-[22px] border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--text-soft)]">
-              Avg. coverage
-            </p>
-            <p className="mt-3 font-display text-3xl font-semibold tracking-[-0.05em] text-[var(--text)]">
-              {formatDecimal(averageSourcesPerStory)}
-            </p>
-            <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">
-              Source documents per story on average.
-            </p>
-          </div>
-        </section>
-
-        <section className="grid gap-4 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
-          <div className="rounded-[24px] border border-[var(--border)] bg-[var(--bg-elevated)] p-4 sm:p-5">
-            <div className="flex items-end justify-between gap-4">
-              <div>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--text-soft)]">
-                  Week rhythm
-                </p>
-                <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">
-                  How many stories landed on each day in the current seven-day window.
-                </p>
-              </div>
+              {typeof timeSavedHours === 'number' && timeSavedHours > 0 ? (
+                <span className="relative pb-2 font-mono text-[11px] font-semibold uppercase tracking-[0.22em] opacity-70">
+                  hrs
+                </span>
+              ) : null}
             </div>
+            <p className="relative mt-3 text-sm leading-6 opacity-70">
+              {storyCount} stories from {sourceDocumentCount} source documents across {rangeLabel}.
+            </p>
+          </div>
 
-            <div className="mt-5 flex min-h-[190px] items-end gap-2 sm:gap-3">
+          <div className="grid grid-cols-2 gap-3">
+            <MetricTile label="Noise filtered" value={`${noiseFiltered}%`} caption="Only the strongest stories reached you." />
+            <MetricTile label="Sources" value={sourceDocumentCount} caption="Source documents checked for relevance." />
+            <MetricTile label="Publishers" value={publisherCount} caption="Distinct outlets represented." />
+            <MetricTile label="Coverage" value={formatDecimal(averageSourcesPerStory)} caption="Sources per story on average." />
+          </div>
+
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-4">
+            <SummaryRow label="Checked" value={sourceDocumentCount} detail="Documents read and compressed." />
+            <SummaryRow label="Shown" value={storyCount} detail="Stories that made it through." />
+          </div>
+        </section>
+
+        <section className="space-y-3">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--text-soft)]">
+              Week rhythm
+            </p>
+            <p className="mt-1 text-sm leading-6 text-[var(--text-muted)]">
+              {activeDaysCount} active days. {strongestBucket ? `${strongestBucket.label} led the week.` : 'No dominant story type yet.'}
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+            <div className="flex min-h-[132px] items-end gap-2 sm:gap-3">
               {activity.map((point, index) => {
-                const height = point.count === 0 ? 0 : Math.max(12, (point.count / maxActivity) * 126)
+                const height = point.count === 0 ? 0 : Math.max(10, (point.count / maxActivity) * 92)
                 const isLast = index === activity.length - 1
 
                 return (
@@ -177,12 +190,12 @@ export default function FeedStatsSheet({
                     <span className={`text-[10px] font-semibold ${isLast ? 'text-[var(--text)]' : 'text-[var(--text-soft)]'}`}>
                       {point.count}
                     </span>
-                    <div className="flex h-36 w-full items-end">
+                    <div className="flex h-24 w-full items-end">
                       <div
-                        className="w-full rounded-t-[12px]"
+                        className="w-full rounded-t-lg"
                         style={{
                           height,
-                          backgroundColor: isLast ? 'var(--accent)' : 'color-mix(in srgb, var(--accent-teal) 78%, var(--surface-strong))',
+                          backgroundColor: isLast ? 'var(--accent)' : 'var(--surface-strong)',
                         }}
                       />
                     </div>
@@ -194,25 +207,28 @@ export default function FeedStatsSheet({
               })}
             </div>
           </div>
+        </section>
 
-          <div className="rounded-[24px] border border-[var(--border)] bg-[var(--bg-elevated)] p-4 sm:p-5">
+        <section className="space-y-3">
+          <div>
             <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--text-soft)]">
               Story mix
             </p>
-            <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">
+            <p className="mt-1 text-sm leading-6 text-[var(--text-muted)]">
               What kind of movement dominated the stories that reached the feed.
             </p>
+          </div>
 
-            <div className="mt-5 space-y-3">
+          <div className="space-y-3">
               {breakdown.map((item) => (
-                <div key={item.label} className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] px-3 py-3">
+              <div key={item.label}>
                   <div className="flex items-center justify-between gap-3">
-                    <span className="text-sm font-medium text-[var(--text)]">{item.label}</span>
+                  <span className="text-sm font-medium text-[var(--text)]">{item.label}</span>
                     <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--text-soft)]">
                       {item.count}
                     </span>
                   </div>
-                    <div className="mt-2 h-1.5 rounded-full bg-[var(--bg-elevated)]">
+                <div className="mt-2 h-1.5 rounded-full bg-[var(--surface)]">
                     <div
                       className="h-full rounded-full"
                       style={{
@@ -223,11 +239,10 @@ export default function FeedStatsSheet({
                   </div>
                 </div>
               ))}
-            </div>
           </div>
         </section>
 
-        <p className="text-xs leading-5 text-[var(--text-soft)]">
+        <p className="border-t border-[var(--border)] pt-4 text-xs leading-5 text-[var(--text-soft)]">
           Time saved uses a 4.5-minute reading baseline per source document, matching the estimate used in mobile.
         </p>
       </div>

@@ -19,7 +19,6 @@ import IntelligenceSetupNotice from './IntelligenceSetupNotice'
 import ActivityRail from './ActivityRail'
 import HistoryButton from './HistoryButton'
 import { useIntelligenceStream } from '@/hooks/useIntelligenceStream'
-import { MODEL_STORAGE_KEY, normalizeModelPreference } from '@/lib/intelligence/models'
 import type {
   MeetingPrepBrief,
   CompetitiveAnalysisBrief,
@@ -131,12 +130,6 @@ function buildApiBodyFromInput(input: IntelligenceInput): Record<string, unknown
   }
 }
 
-function getStoredPreferredModel() {
-  return typeof window !== 'undefined'
-    ? normalizeModelPreference(localStorage.getItem(MODEL_STORAGE_KEY))
-    : undefined
-}
-
 export default function IntelligencePage() {
   const { isAuthenticated, isLoading: authLoading } = useAuth()
   const router = useRouter()
@@ -156,7 +149,7 @@ export default function IntelligencePage() {
   const brief = loadedBrief ?? streamState.brief
   const loading = streamState.isStreaming || loadingSavedBrief
   const error = streamState.error ?? savedBriefError
-  const briefParam = searchParams.get('brief')
+  const briefParam = searchParams?.get('brief') ?? null
   const generateReady = setupState?.generateReady ?? true
   const chatReady = setupState?.chatReady ?? true
 
@@ -207,7 +200,7 @@ export default function IntelligencePage() {
   useEffect(() => {
     if (!streamState.brief?.id || briefParam === streamState.brief.id) return
 
-    const nextParams = new URLSearchParams(searchParams.toString())
+    const nextParams = new URLSearchParams(searchParams?.toString() ?? '')
     nextParams.set('brief', streamState.brief.id)
     router.replace(`/app/intelligence?${nextParams.toString()}`, { scroll: false })
   }, [briefParam, router, searchParams, streamState.brief?.id])
@@ -272,7 +265,6 @@ export default function IntelligencePage() {
 
     await generate({
       ...apiBody,
-      preferredModel: getStoredPreferredModel(),
     })
   }, [generate, generateReady, pendingInput])
 
@@ -284,7 +276,6 @@ export default function IntelligencePage() {
     setSavedBriefError(null)
     void generate({
       ...lastRequestPayload,
-      preferredModel: getStoredPreferredModel(),
     })
   }, [generate, generateReady, lastRequestPayload, loadingSavedBrief, streamState.isStreaming])
 
@@ -305,7 +296,7 @@ export default function IntelligencePage() {
     setPendingInput(null)
     setLastRequestPayload(null)
     if (briefParam) {
-      const nextParams = new URLSearchParams(searchParams.toString())
+      const nextParams = new URLSearchParams(searchParams?.toString() ?? '')
       nextParams.delete('brief')
       const nextQuery = nextParams.toString()
       router.replace(nextQuery ? `/app/intelligence?${nextQuery}` : '/app/intelligence', { scroll: false })

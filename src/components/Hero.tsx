@@ -30,9 +30,7 @@ export default function Hero() {
 
         {/* Subtext */}
         <p className="text-lg sm:text-xl mb-10 max-w-2xl mx-auto animate-fade-in-up animation-delay-400" style={{ color: 'var(--text-muted)' }}>
-          Relevant gives you a personalized feed that cuts through the clutter. 
-          No doom scrolling, no algorithm tricks—just what matters to you, 
-          with clear summaries of why it&apos;s important.
+          Relevant turns market noise into a few role-aware signals, with the event, the impact, and the next move made clear.
         </p>
 
         {/* Email Form */}
@@ -42,7 +40,7 @@ export default function Hero() {
 
         {/* Trust Text */}
         <p className="mt-6 text-sm animate-fade-in-up animation-delay-400" style={{ color: 'var(--text-soft)' }}>
-          Web app is live. Mobile app in early access.
+          The app is live. Get Relevant from the App Store.
         </p>
       </div>
     </section>
