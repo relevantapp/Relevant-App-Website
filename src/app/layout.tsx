@@ -25,11 +25,11 @@ const themeScript = `
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.getrelevantapp.com'),
   title: {
-    default: 'Relevant - Know What Matters Before It Becomes Obvious',
+    default: "Relevant - The Intelligence Platform for People Who Can't Miss What Changed",
     template: '%s | Relevant',
   },
   description:
-    'Relevant is a professional awareness app that turns market noise into role-aware signals, cited intelligence, and clear next moves for your work.',
+    'Relevant is a role-aware relevance engine that turns market noise into cited signals, clear consequence, and next moves for your work.',
   keywords: [
     'relevant app', 'role-aware intelligence', 'relevance engine', 'work intelligence',
     'ai briefing', 'signal detection', 'strategic briefings',
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
     apple: '/app-icon.png',
   },
   openGraph: {
-    title: 'Know what matters before it becomes obvious.',
+    title: "The intelligence platform for people who can't miss what changed.",
     description:
       'Daily role-aware signals and on-demand intelligence for meetings, competitors, markets, and decisions.',
     url: 'https://www.getrelevantapp.com',
@@ -73,7 +73,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Know what matters before it becomes obvious.',
+    title: "The intelligence platform for people who can't miss what changed.",
     description:
       'Daily role-aware signals and on-demand intelligence for meetings, competitors, markets, and decisions.',
     images: ['/og-image.png'],

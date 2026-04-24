@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import type { CSSProperties } from 'react'
 
 type ThemeLogoProps = {
   alt?: string
@@ -16,14 +17,33 @@ export default function ThemeLogo({
   priority = false,
 }: ThemeLogoProps) {
   return (
-    <Image
-      src="/app-icon.png"
-      alt={alt}
-      width={width}
-      height={height}
-      className={`theme-aware-logo ${className}`}
-      priority={priority}
-      style={{ borderRadius: '22%' }}
-    />
+    <span
+      className={`theme-logo ${className}`}
+      role="img"
+      aria-label={alt}
+      style={{
+        '--theme-logo-width': `${width}px`,
+        '--theme-logo-height': `${height}px`,
+      } as CSSProperties}
+    >
+      <Image
+        src="/relevant-logo-foreground-white-v2.png"
+        alt=""
+        aria-hidden="true"
+        width={width}
+        height={height}
+        className="theme-logo__image theme-logo__image--dark"
+        priority={priority}
+      />
+      <Image
+        src="/relevant-logo-foreground-dark-v2.png"
+        alt=""
+        aria-hidden="true"
+        width={width}
+        height={height}
+        className="theme-logo__image theme-logo__image--light"
+        priority={priority}
+      />
+    </span>
   )
 }

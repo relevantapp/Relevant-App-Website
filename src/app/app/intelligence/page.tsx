@@ -19,7 +19,6 @@ import IntelligenceSetupNotice from './IntelligenceSetupNotice'
 import ActivityRail from './ActivityRail'
 import HistoryButton from './HistoryButton'
 import { useIntelligenceStream } from '@/hooks/useIntelligenceStream'
-import { MODEL_STORAGE_KEY, normalizeModelPreference } from '@/lib/intelligence/models'
 import type {
   MeetingPrepBrief,
   CompetitiveAnalysisBrief,
@@ -129,12 +128,6 @@ function buildApiBodyFromInput(input: IntelligenceInput): Record<string, unknown
     depth: input.depth || undefined,
     steering: input.steering || undefined,
   }
-}
-
-function getStoredPreferredModel() {
-  return typeof window !== 'undefined'
-    ? normalizeModelPreference(localStorage.getItem(MODEL_STORAGE_KEY))
-    : undefined
 }
 
 export default function IntelligencePage() {
@@ -272,7 +265,6 @@ export default function IntelligencePage() {
 
     await generate({
       ...apiBody,
-      preferredModel: getStoredPreferredModel(),
     })
   }, [generate, generateReady, pendingInput])
 
@@ -284,7 +276,6 @@ export default function IntelligencePage() {
     setSavedBriefError(null)
     void generate({
       ...lastRequestPayload,
-      preferredModel: getStoredPreferredModel(),
     })
   }, [generate, generateReady, lastRequestPayload, loadingSavedBrief, streamState.isStreaming])
 

@@ -22,7 +22,7 @@ export default function FeedBottomSheet({
   description,
   children,
   footer,
-  maxWidthClassName = 'max-w-3xl',
+  maxWidthClassName = 'max-w-2xl',
 }: FeedBottomSheetProps) {
   const [mounted, setMounted] = useState(false)
 
@@ -69,32 +69,32 @@ export default function FeedBottomSheet({
         >
           <button
             type="button"
-            className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"
+            className="absolute inset-0 bg-black/55 backdrop-blur-sm"
             onClick={onClose}
             aria-label="Close sheet"
           />
 
-          <div className="absolute inset-x-0 bottom-0 flex justify-center px-4 pb-4 pt-10 sm:px-6">
+          <div className="absolute inset-x-0 bottom-0 flex justify-center px-3 pb-3 pt-10 sm:px-6 sm:pb-6">
             <motion.div
-              initial={{ y: 36, opacity: 0.96 }}
+              initial={{ y: 28, opacity: 0.96 }}
               animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 28, opacity: 0.96 }}
+              exit={{ y: 24, opacity: 0.96 }}
               transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
-              className={`relative flex max-h-[min(86vh,780px)] w-full flex-col overflow-hidden rounded-[32px] border border-[var(--border-strong)] bg-[var(--surface)] shadow-[var(--shadow)] ${maxWidthClassName}`}
+              className={`relative flex max-h-[min(86vh,760px)] w-full flex-col overflow-hidden rounded-xl border border-[var(--border-strong)] bg-[var(--bg-elevated)] shadow-[0_28px_80px_rgba(0,0,0,0.35)] ${maxWidthClassName}`}
               onClick={(event) => event.stopPropagation()}
               role="dialog"
               aria-modal="true"
               aria-label={title}
             >
-              <div className="border-b border-[var(--border)] px-5 pb-4 pt-3 sm:px-6">
-                <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-[var(--border-strong)]" />
+              <div className="px-5 pb-4 pt-3 sm:px-6">
+                <div className="mx-auto mb-3 h-1 w-9 rounded-full bg-[var(--border-strong)]" aria-hidden="true" />
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
-                    <h2 className="font-display text-[1.35rem] font-semibold leading-tight text-[var(--text)]">
+                    <h2 className="font-display text-lg font-semibold leading-tight text-[var(--text)]">
                       {title}
                     </h2>
                     {description ? (
-                      <p className="mt-1 max-w-2xl text-sm leading-6 text-[var(--text-muted)]">
+                      <p className="mt-1 max-w-2xl text-sm leading-5 text-[var(--text-muted)]">
                         {description}
                       </p>
                     ) : null}
@@ -103,7 +103,7 @@ export default function FeedBottomSheet({
                   <button
                     type="button"
                     onClick={onClose}
-                    className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] text-[var(--text-muted)] transition-colors hover:border-[var(--border-strong)] hover:text-[var(--text)]"
+                    className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] transition-colors hover:border-[var(--border-strong)] hover:text-[var(--text)]"
                     aria-label="Close sheet"
                   >
                     <X size={16} />
@@ -111,7 +111,7 @@ export default function FeedBottomSheet({
                 </div>
               </div>
 
-              <div className="overflow-y-auto px-5 pb-5 pt-4 sm:px-6">
+              <div className="overflow-y-auto border-t border-[var(--border)] px-5 pb-5 pt-4 sm:px-6">
                 {children}
               </div>
 

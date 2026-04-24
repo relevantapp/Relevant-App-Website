@@ -37,10 +37,10 @@ function OptionButton({
       onClick={option.onSelect}
       disabled={disabled}
       aria-pressed={option.active}
-      className={`rounded-[18px] border px-4 py-3 text-left transition-colors ${
+      className={`rounded-lg border px-4 py-3 text-left transition-colors ${
         option.active
-          ? 'border-[var(--border-strong)] bg-[var(--bg-elevated)] text-[var(--text)]'
-          : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:border-[var(--border-strong)] hover:text-[var(--text)]'
+          ? 'border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--text)]'
+          : 'border-[var(--border)] bg-transparent text-[var(--text-muted)] hover:border-[var(--border-strong)] hover:text-[var(--text)]'
       } disabled:cursor-not-allowed disabled:opacity-50`}
     >
       <div className="flex items-start justify-between gap-3">
@@ -49,8 +49,11 @@ function OptionButton({
           <p className="mt-1 text-xs leading-5 text-[var(--text-soft)]">{option.description}</p>
         </div>
         <span
-          className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full"
-          style={{ backgroundColor: option.active ? 'var(--accent)' : 'var(--border-strong)' }}
+          className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full border"
+          style={{
+            backgroundColor: option.active ? 'var(--accent)' : 'transparent',
+            borderColor: option.active ? 'var(--accent)' : 'var(--border-strong)',
+          }}
         />
       </div>
     </button>
@@ -73,9 +76,9 @@ export default function FeedTuneSheet({
     <FeedBottomSheet
       open={open}
       onClose={onClose}
-      title="Tune feed"
-      description="Adjust how broad the feed casts and how each story reads once it gets through."
-      maxWidthClassName="max-w-2xl"
+      title="Tune your feed"
+      description="Choose what it follows, how much to show, and how updates are written."
+      maxWidthClassName="max-w-[460px]"
       footer={
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs leading-5 text-[var(--text-soft)]">
@@ -93,12 +96,12 @@ export default function FeedTuneSheet({
         </div>
       }
     >
-      <div className="space-y-4">
-        <section className="rounded-[26px] border border-[var(--border-strong)] bg-[var(--bg)] px-5 py-5 sm:px-6">
+      <div className="space-y-6">
+        <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
           <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--text-soft)]">
-            Current blend
+            Current setup
           </p>
-          <h3 className="mt-3 font-display text-3xl font-semibold tracking-[-0.05em] text-[var(--text)]">
+          <h3 className="mt-2 font-display text-2xl font-semibold tracking-[-0.05em] text-[var(--text)]">
             {summaryTitle}
           </h3>
           <p className="mt-2 max-w-xl text-sm leading-6 text-[var(--text-muted)]">
@@ -106,30 +109,30 @@ export default function FeedTuneSheet({
           </p>
         </section>
 
-        <section className="rounded-[24px] border border-[var(--border)] bg-[var(--bg-elevated)] p-4 sm:p-5">
+        <section className="space-y-3 border-t border-[var(--border)] pt-5">
           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--text-soft)]">
             Story volume
           </p>
-          <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">
+          <p className="text-sm leading-6 text-[var(--text-muted)]">
             Control how selective the feed is before a story ever reaches you.
           </p>
 
-          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-3">
             {sensitivityOptions.map((option) => (
               <OptionButton key={option.id} option={option} disabled={disabled} />
             ))}
           </div>
         </section>
 
-        <section className="rounded-[24px] border border-[var(--border)] bg-[var(--bg-elevated)] p-4 sm:p-5">
+        <section className="space-y-3 border-t border-[var(--border)] pt-5">
           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--text-soft)]">
             Writing style
           </p>
-          <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">
+          <p className="text-sm leading-6 text-[var(--text-muted)]">
             Pick how the final story should sound once it has been selected.
           </p>
 
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2">
             {styleOptions.map((option) => (
               <OptionButton key={option.id} option={option} disabled={disabled} />
             ))}

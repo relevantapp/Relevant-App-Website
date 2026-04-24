@@ -12,7 +12,7 @@ import type { MeetingType } from '@/lib/intelligence/contracts'
 import type { UserResearchContext } from '@/lib/intelligence/contracts'
 import { createSSEEmitter } from '@/lib/intelligence/sse-emitter'
 import type { PipelineContext } from '@/lib/intelligence/pipeline'
-import { normalizeModelPreference, type ModelPreference } from '@/lib/intelligence/models'
+import { DEFAULT_MODEL_PREFERENCE, type ModelPreference } from '@/lib/intelligence/models'
 import { saveBrief } from '@/lib/intelligence/db'
 import type { IntelligenceBrief, ResearchType } from '@/lib/intelligence/contracts'
 import { createRun, patchRunAsync } from '@/lib/intelligence/runs/store'
@@ -232,8 +232,7 @@ export async function POST(request: NextRequest) {
 
   const researchType = sanitizeString(body.researchType, 30) || 'meeting_prep'
   const effectiveResearchType = coerceResearchType(researchType)
-  const rawModel = sanitizeString(body.preferredModel, 160)
-  const preferredModel = normalizeModelPreference(rawModel)
+  const preferredModel = DEFAULT_MODEL_PREFERENCE
   const userContext = await loadUserResearchContext(supabase, user)
   const runId = await createRun({
     supabase,

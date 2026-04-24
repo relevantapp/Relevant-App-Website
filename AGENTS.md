@@ -30,6 +30,12 @@ Rules:
 - Do not describe Relevant as a generic news feed.
 - Position it as a role-aware relevance engine that explains what happened, why it matters, and what to do next.
 
+## Visual Color and Logo Guardrail
+- Marketing UI may only use grays, whites, blacks, and the Relevant company blue.
+- Do not introduce decorative multicolor gradients, rainbow accents, teal/green/yellow/purple/orange status colors, or fake brand colors.
+- Do not invent fake company logos or fake publisher marks.
+- When showing publishers in marketing animations, use real publisher names or monochrome publisher wordmarks only.
+
 ## Screenshot Generation Guardrail
 - When asked to generate, refresh, or expand marketing screenshots, read `docs/screenshots/README.md` first.
 - Website screenshots should come from the app repo's real Surface Lab export pipeline, then be copied into `public/marketing-screenshots/`.

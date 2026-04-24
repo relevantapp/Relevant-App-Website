@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next'
+import { marketingSeoPages } from '@/lib/marketingSeoPages'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://www.getrelevantapp.com'
@@ -10,6 +11,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 1,
     },
+    ...marketingSeoPages.map((page) => ({
+      url: `${baseUrl}/${page.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.85,
+    })),
     {
       url: `${baseUrl}/signup`,
       lastModified: new Date(),

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
+import { useEffect, useState, FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -8,6 +8,17 @@ import { motion } from 'framer-motion'
 import { Eye, EyeOff, Loader2, Mail, Lock, User, ArrowLeft } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import AppLogo from '@/components/AppLogo'
+
+const FIRST_BRIEF_CONTEXT_KEY = 'relevant_first_brief_context'
+
+type FirstBriefSignupContext = {
+  source?: string
+  preparation?: string
+  role?: string
+  companyOrMarket?: string
+  email?: string
+  createdAt?: string
+}
 
 export default function SignupPage() {
   const { signUp } = useAuth()
@@ -20,6 +31,27 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [firstBriefContext, setFirstBriefContext] = useState<FirstBriefSignupContext | null>(null)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const isFirstBrief = params.get('intent') === 'first-brief'
+    const queryEmail = params.get('email')?.trim().toLowerCase() ?? ''
+
+    let storedContext: FirstBriefSignupContext | null = null
+    try {
+      const raw = localStorage.getItem(FIRST_BRIEF_CONTEXT_KEY)
+      storedContext = raw ? JSON.parse(raw) as FirstBriefSignupContext : null
+    } catch {
+      storedContext = null
+    }
+
+    if (queryEmail) setEmail(queryEmail)
+    if (isFirstBrief && storedContext) {
+      setFirstBriefContext(storedContext)
+      if (!queryEmail && storedContext.email) setEmail(storedContext.email)
+    }
+  }, [])
 
   const passwordError = password.length > 0 && password.length < 8
     ? 'Password must be at least 8 characters.'
@@ -42,7 +74,21 @@ export default function SignupPage() {
 
     setLoading(true)
     try {
-      await signUp(name, email, password)
+      const preferences = firstBriefContext
+        ? {
+            profile_kind: 'professional',
+            role_raw: firstBriefContext.role,
+            company_name_manual: firstBriefContext.companyOrMarket,
+            first_brief_preparation: firstBriefContext.preparation,
+            first_brief_source: firstBriefContext.source,
+            profile_context_note: [
+              firstBriefContext.preparation ? `Preparing for: ${firstBriefContext.preparation}.` : '',
+              firstBriefContext.companyOrMarket ? `Company or market: ${firstBriefContext.companyOrMarket}.` : '',
+            ].filter(Boolean).join(' '),
+          }
+        : undefined
+
+      await signUp(name, email, password, preferences)
       router.push('/verify-email')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong.')
@@ -90,7 +136,7 @@ export default function SignupPage() {
             Less noise. More clarity.
           </h2>
           <p className="mt-2 text-sm text-white/60 max-w-[280px] mx-auto">
-            Your personalized intelligence feed, always up&nbsp;to&nbsp;date.
+            Role-aware signals for what changed, why it matters, and what to do next.
           </p>
         </div>
         <Link
@@ -116,9 +162,25 @@ export default function SignupPage() {
           </div>
 
           <div className="mb-8">
-            <h1 className="font-display text-3xl font-bold text-[var(--text)] sm:text-4xl">{getGreeting()}</h1>
-            <p className="mt-2 text-base text-[var(--text-muted)]">Create your Relevant account</p>
+            <h1 className="font-display text-3xl font-bold text-[var(--text)] sm:text-4xl">
+              {firstBriefContext ? 'Finish your first brief setup' : getGreeting()}
+            </h1>
+            <p className="mt-2 text-base text-[var(--text-muted)]">
+              {firstBriefContext
+                ? 'Your brief context is attached. Add your name and password to continue.'
+                : 'Create your Relevant account'}
+            </p>
           </div>
+
+          {firstBriefContext && (
+            <div className="mb-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4">
+              <p className="text-xs font-medium uppercase tracking-[0.16em] text-accent-blue">First brief</p>
+              <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted)]">
+                {firstBriefContext.preparation || 'Brief'} for {firstBriefContext.role || 'your role'}
+                {firstBriefContext.companyOrMarket ? `, focused on ${firstBriefContext.companyOrMarket}` : ''}.
+              </p>
+            </div>
+          )}
 
           <form onSubmit={handleSignUp} className="flex flex-col gap-4">
             <div>

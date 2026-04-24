@@ -13,7 +13,7 @@ export default function BrandMark({ href, ariaLabel = 'Relevant home', className
   const classes = ['brand-lockup', className].filter(Boolean).join(' ')
   const mark = (
     <>
-      <ThemeLogo alt="Relevant" width={28} height={28} className="brand-logo" />
+      <ThemeLogo alt="Relevant" width={28} height={28} className="brand-logo" priority />
       <span className="brand-wordmark">Relevant</span>
     </>
   )

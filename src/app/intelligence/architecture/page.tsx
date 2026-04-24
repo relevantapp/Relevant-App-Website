@@ -7,10 +7,10 @@ import { IntentLayerViz } from './IntentLayerViz'
 import { FeedbackLoopViz } from './FeedbackLoopViz'
 
 const tabs = [
-  { id: 'context', label: 'Enriched Context', color: 'blue' },
-  { id: 'role', label: 'Role Concerns', color: 'violet' },
-  { id: 'intent', label: 'Intent Layer', color: 'teal' },
-  { id: 'feedback', label: 'Feedback Loop', color: 'amber' },
+  { id: 'context', label: 'Enriched Context' },
+  { id: 'role', label: 'Role Concerns' },
+  { id: 'intent', label: 'Intent Layer' },
+  { id: 'feedback', label: 'Feedback Loop' },
 ] as const
 
 type TabId = (typeof tabs)[number]['id']
@@ -46,8 +46,8 @@ export default function IntelligenceArchitecturePage() {
             </div>
           ))}
           <span className="text-[var(--color-gray-600)]">→</span>
-          <div className="px-4 py-2 rounded-xl bg-gradient-to-r from-[var(--color-blue-500)]/20 to-[var(--color-violet-500)]/20 border border-[var(--color-blue-500)]/30 text-sm font-semibold text-[var(--color-blue-300)]">
-            ✦ Super-Agent Layer
+          <div className="px-4 py-2 rounded-xl border border-[var(--color-blue-500)]/30 bg-[var(--color-blue-500)]/10 text-sm font-semibold text-[var(--color-blue-300)]">
+            Super-Agent Layer
           </div>
           <span className="text-[var(--color-gray-600)]">→</span>
           <div className="px-3 py-1.5 rounded-lg bg-[var(--color-gray-800)] text-xs font-mono text-[var(--color-gray-400)]">
@@ -65,7 +65,7 @@ export default function IntelligenceArchitecturePage() {
               onClick={() => setActiveTab(tab.id)}
               className={`px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap border-b-2 -mb-px ${
                 activeTab === tab.id
-                  ? `text-[var(--color-${tab.color}-400)] border-[var(--color-${tab.color}-400)]`
+                  ? 'border-[var(--color-blue-400)] text-[var(--color-blue-300)]'
                   : 'text-[var(--color-gray-500)] border-transparent hover:text-[var(--color-gray-300)]'
               }`}
             >

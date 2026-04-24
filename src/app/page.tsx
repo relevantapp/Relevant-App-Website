@@ -7,28 +7,24 @@ import {
   Building2,
   CalendarClock,
   Check,
+  Circle,
   ChevronRight,
   Factory,
   Handshake,
-  Link2,
   MapPin,
   Moon,
-  Newspaper,
   PhoneCall,
   Rocket,
   ScanLine,
-  Send,
-  Sparkles,
   Sun,
   Telescope,
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { type CSSProperties, FormEvent, MouseEvent, useEffect, useState } from 'react'
+import { type CSSProperties, MouseEvent, useEffect, useState } from 'react'
 import BrandMark from '@/components/BrandMark'
 
 type ThemeMode = 'dark' | 'light'
-type FormStatus = 'idle' | 'loading' | 'success' | 'error'
 type ScreenshotSurface = {
   label: string
   title: string
@@ -42,7 +38,7 @@ const APP_STORE_URL = 'https://apps.apple.com/app/id6756225699'
 
 const promiseCards = [
   {
-    label: 'Fewer items',
+    label: 'Small set',
     text: 'A small set of updates worth your attention.',
   },
   {
@@ -50,7 +46,7 @@ const promiseCards = [
     text: 'Ranked against your company, role, industry, and market.',
   },
   {
-    label: 'Consequence-first',
+    label: 'Consequence',
     text: 'Each signal explains the impact, not just the event.',
   },
   {
@@ -157,20 +153,14 @@ const howSteps = [
 const heroSignals = [
   {
     src: '/marketing-screenshots/signal-card.png',
-    alt: 'Relevant signal card showing a professional update',
-    label: 'Main signal',
     className: 'signal-hero-signal--primary',
   },
   {
     src: '/marketing-screenshots/detail-what-happened.png',
-    alt: 'Relevant detail screen explaining what changed',
-    label: 'What changed',
     className: 'signal-hero-signal--left',
   },
   {
     src: '/marketing-screenshots/detail-why-matters.png',
-    alt: 'Relevant detail screen explaining why the update matters',
-    label: 'Why it matters',
     className: 'signal-hero-signal--right',
   },
 ]
@@ -183,54 +173,60 @@ const contextInputs = [
 ]
 
 const headlineStreams = [
-  { source: 'Reuters', text: 'Enterprise AI budgets shift toward workflow tools' },
-  { source: 'SEC', text: 'Public filing shows rising cloud infrastructure spend' },
-  { source: 'The Information', text: 'New pricing pressure hits vertical SaaS vendors' },
-  { source: 'FT', text: 'Cross-border data rules move through committee' },
-  { source: 'Bloomberg', text: 'Payments platform expands partnership channel' },
-  { source: 'CB Insights', text: 'Seed funding concentrates around operational AI' },
-  { source: 'Axios', text: 'Retail tech buyers slow discretionary software spend' },
-  { source: 'TechCrunch', text: 'Workflow automation startup launches enterprise suite' },
+  { source: 'Reuters', logo: 'Reuters', text: 'Enterprise AI budgets shift toward workflow tools' },
+  { source: 'SEC', logo: 'SEC', text: 'Public filing shows rising cloud infrastructure spend' },
+  { source: 'The Information', logo: 'The Information', text: 'New pricing pressure hits vertical SaaS vendors' },
+  { source: 'Financial Times', logo: 'Financial Times', text: 'Cross-border data rules move through committee' },
+  { source: 'Bloomberg', logo: 'Bloomberg', text: 'Payments platform expands partnership channel' },
+  { source: 'CB Insights', logo: 'CB Insights', text: 'Seed funding concentrates around operational AI' },
+  { source: 'Axios', logo: 'Axios', text: 'Retail tech buyers slow discretionary software spend' },
+  { source: 'TechCrunch', logo: 'TechCrunch', text: 'Workflow automation startup launches enterprise suite' },
 ]
 
 const sourceScanRows = [
   {
     source: 'Reuters',
+    logo: 'Reuters',
     company: 'Shopify',
     text: 'Supplier pricing pressure rises after import-cost ruling',
     decision: 'Kept',
     reason: 'Operational exposure',
   },
   {
-    source: 'Company filing',
+    source: 'SEC filing',
+    logo: 'SEC',
     company: 'Stripe',
     text: 'New logistics note changes near-term margin forecast',
     decision: 'Kept',
     reason: 'Direct company impact',
   },
   {
-    source: 'Market brief',
+    source: 'Financial Times',
+    logo: 'Financial Times',
     company: 'HubSpot',
     text: 'Competitor starts discounting in the same buyer segment',
     decision: 'Kept',
     reason: 'Competitive move',
   },
   {
-    source: 'Generic tech blog',
+    source: 'TechCrunch',
+    logo: 'TechCrunch',
     company: 'OpenAI',
     text: 'Broad AI productivity survey gets recirculated',
     decision: 'Skipped',
     reason: 'Weak role fit',
   },
   {
-    source: 'Policy feed',
+    source: 'The Verge',
+    logo: 'The Verge',
     company: 'Apple',
     text: 'Committee date moves for cross-border data rules',
     decision: 'Kept',
     reason: 'Timing risk',
   },
   {
-    source: 'Podcast transcript',
+    source: 'WSJ',
+    logo: 'WSJ',
     company: 'Salesforce',
     text: 'Customer segment repeats the same procurement objection',
     decision: 'Kept',
@@ -238,6 +234,7 @@ const sourceScanRows = [
   },
   {
     source: 'Bloomberg',
+    logo: 'Bloomberg',
     company: 'Nvidia',
     text: 'Enterprise buyers delay hardware spend into next quarter',
     decision: 'Skipped',
@@ -245,6 +242,7 @@ const sourceScanRows = [
   },
   {
     source: 'The Information',
+    logo: 'The Information',
     company: 'Datadog',
     text: 'Usage-based pricing pressure appears in mid-market accounts',
     decision: 'Kept',
@@ -255,152 +253,229 @@ const sourceScanRows = [
 const sourceProofs = [
   {
     source: 'Reuters',
-    detail: 'Confirms the policy change and timing.',
-    tag: 'Primary event',
+    detail: '"The new rule moves the effective date forward for importers."',
   },
   {
-    source: 'Company filing',
-    detail: 'Shows direct exposure for the company.',
-    tag: 'Business impact',
+    source: 'Wall Street Journal',
+    detail: '"Suppliers are preparing price changes ahead of the ruling."',
   },
   {
-    source: 'Industry report',
-    detail: 'Adds market context and second-order risk.',
-    tag: 'Market context',
+    source: 'Financial Times',
+    detail: '"Buyers are asking for revised terms before contracts renew."',
+  },
+  {
+    source: 'SEC filing',
+    detail: '"Import costs are listed as a material operating exposure."',
   },
 ]
 
 const useCases = [
   {
     tone: 'meeting',
-    accent: '#60A5FA',
     icon: CalendarClock,
     title: 'Before a meeting',
-    body: 'Walk in with the move, the risk, and the question that matters.',
+    body: 'Turn recent account and market changes into the few points worth bringing into the room.',
+    illustration: '/marketing-illustrations/use-case-00.png',
     label: 'Room brief',
-    metric: '12 min saved',
+    metric: 'Prepared brief',
     lines: [
-      ['Recent move', 'What changed since the last conversation'],
-      ['Risk to raise', 'The point the room may miss'],
-      ['Question to ask', 'A sharper opener for the meeting'],
+      ['What changed', 'Recent moves since the last conversation.'],
+      ['Why it matters', 'The risk or opening the room may miss.'],
+      ['What to ask', 'A sharper first question for the meeting.'],
     ],
   },
   {
     tone: 'customer',
-    accent: '#5EEAD4',
     icon: PhoneCall,
     title: 'Before a customer call',
-    body: 'See what changed around the account before you talk to them.',
+    body: 'Know what shifted around the account before you open the conversation.',
+    illustration: '/marketing-illustrations/use-case-01.png',
     label: 'Account pulse',
-    metric: '3 openings',
+    metric: 'Account signal',
     lines: [
-      ['Account change', 'New pressure on their business'],
-      ['Market signal', 'What their category is reacting to'],
-      ['Opening', 'Where the conversation can move'],
+      ['What changed', 'New pressure on their business.'],
+      ['Why it matters', 'The category signal shaping urgency.'],
+      ['What to do', 'Where the conversation can move next.'],
     ],
   },
   {
     tone: 'strategy',
-    accent: '#A78BFA',
     icon: Telescope,
     title: 'Before a strategy decision',
-    body: 'Separate real evidence from noise before the decision hardens.',
+    body: 'Separate real evidence from background noise before the decision hardens.',
+    illustration: '/marketing-illustrations/use-case-02.png',
     label: 'Decision map',
-    metric: '4 tradeoffs',
+    metric: 'Tradeoff map',
     lines: [
-      ['Evidence', 'What is actually moving'],
-      ['Tradeoff', 'What becomes harder if you wait'],
-      ['Next move', 'The decision path to pressure-test'],
+      ['What changed', 'The outside evidence that is actually moving.'],
+      ['Why it matters', 'The tradeoff that gets harder if you wait.'],
+      ['What to test', 'The decision path to pressure-test.'],
     ],
   },
   {
     tone: 'launch',
-    accent: '#FBBF24',
     icon: Rocket,
     title: 'Before a launch',
-    body: 'Track competitor moves, category shifts, and timing risks.',
+    body: 'Catch competitor moves, category shifts, and timing risks before the launch window closes.',
+    illustration: '/marketing-illustrations/use-case-03.png',
     label: 'Launch radar',
-    metric: '5 watchpoints',
+    metric: 'Timing read',
     lines: [
-      ['Competitor move', 'What changed in the market'],
-      ['Timing risk', 'Where the launch could meet resistance'],
-      ['Watch next', 'The signal to monitor after launch'],
+      ['What changed', 'Competitor or category movement.'],
+      ['Why it matters', 'Where the launch could meet resistance.'],
+      ['What to watch', 'The signal to monitor after launch.'],
     ],
   },
   {
     tone: 'investor',
-    accent: '#4ADE80',
     icon: Handshake,
     title: 'Before an investor conversation',
-    body: 'Show sharper market awareness and command of what is changing.',
+    body: 'Show command of the market changes behind the company story.',
+    illustration: '/marketing-illustrations/use-case-04.png',
     label: 'Board packet',
-    metric: '6 proof lines',
+    metric: 'Proof ready',
     lines: [
-      ['Market shift', 'What changed in the category'],
-      ['Proof point', 'A cited reason the change matters'],
-      ['Follow-up', 'The question you can answer cleanly'],
+      ['What changed', 'The category shift worth naming.'],
+      ['Why it matters', 'A cited reason the shift changes the story.'],
+      ['What to answer', 'The follow-up you can handle cleanly.'],
     ],
   },
   {
     tone: 'week',
-    accent: '#F59E0B',
     icon: BarChart3,
     title: 'Before the week starts',
-    body: 'Start with the handful of signals that can change your week.',
+    body: 'Start with the handful of signals that can actually change the week.',
+    illustration: '/marketing-illustrations/use-case-05.png',
     label: 'Week scan',
-    metric: 'Top 7 ranked',
+    metric: 'Ranked week',
     lines: [
-      ['Top signal', 'The update most worth your time'],
-      ['Why it matters', 'The consequence for your role'],
-      ['Action', 'What to watch, ask, or do next'],
+      ['What changed', 'The update most worth your time.'],
+      ['Why it matters', 'The consequence for your role.'],
+      ['What to do', 'The watchpoint, question, or action.'],
     ],
   },
 ] as const
 
-const audiences = [
-  ['Founders', 'Track market shifts, competitors, customers, and investor-relevant movement.'],
-  ['Operators', 'Know what could affect delivery, planning, hiring, and execution.'],
-  ['Product leaders', 'Spot category movement, competitor bets, customer pressure, and technology shifts.'],
-  ['Investors', 'Follow companies, markets, themes, and second-order consequences.'],
-  ['Consultants', 'Prepare faster with cited context and sharper questions.'],
-  ['Sales and partnerships', 'Walk into conversations with the context others missed.'],
+const audienceRows = [
+  [
+    'Founders',
+    'Operators',
+    'Product managers',
+    'Analysts',
+    'Investors',
+    'Chiefs of staff',
+    'Strategy leads',
+    'Revenue leaders',
+    'Sales leads',
+    'Partnerships leads',
+    'Consultants',
+    'Account managers',
+    'Product marketers',
+    'GTM leads',
+    'Customer success',
+    'Finance leads',
+    'Policy leads',
+    'Comms leads',
+    'Growth leads',
+    'Market researchers',
+    'BizOps teams',
+    'RevOps teams',
+    'Category owners',
+    'Platform leads',
+    'Launch leads',
+    'Board advisors',
+    'Venture teams',
+    'Portfolio managers',
+    'Corporate development',
+    'Competitive intelligence',
+    'Innovation teams',
+    'Procurement leads',
+    'Supply chain leads',
+    'Risk leads',
+    'Legal counsel',
+    'Talent leads',
+  ],
+  [
+    'General managers',
+    'Department heads',
+    'Research leads',
+    'Data leaders',
+    'Editorial teams',
+    'Agency partners',
+    'Startup teams',
+    'Enterprise teams',
+    'Founding teams',
+    'Product strategists',
+    'Commercial leads',
+    'Client partners',
+    'Investor relations',
+    'Business case owners',
+    'Market entry teams',
+    'Pricing teams',
+    'Field teams',
+    'Solution consultants',
+    'Enablement leads',
+    'Due diligence teams',
+    'Board operators',
+    'Functional leaders',
+    'Program managers',
+    'Transformation teams',
+    'Research desks',
+    'Industry specialists',
+    'M&A teams',
+    'Policy operators',
+    'Regulatory teams',
+    'Communications teams',
+    'Brand leaders',
+    'Executive assistants',
+    'Decision makers',
+    'People who act',
+    'People in the room',
+    'People on the hook',
+  ],
 ] as const
 
-const genericAlerts = [
-  'More links',
-  'Same summary for everyone',
-  'No role context',
-  'No clear consequence',
-  'Duplicate story spam',
-  'Leaves you to decide what matters',
-]
+const comparisonCards = [
+  {
+    tone: 'muted',
+    label: 'Generic alerts',
+    title: 'A notification with work attached.',
+    body: 'Most tools hand you a link, a headline, and the job of deciding whether it matters.',
+    rows: [
+      'Everything looks equally urgent',
+      'The same summary goes to everyone',
+      'Duplicates stack up across sources',
+      'You still have to decide the next move',
+    ],
+  },
+  {
+    tone: 'active',
+    label: 'Relevant',
+    title: 'A signal with judgment attached.',
+    body: 'Relevant ranks the change against your role, company, market, and decision window.',
+    rows: [
+      'Fewer signals, ranked by consequence',
+      'Your work context shapes the answer',
+      'Related updates stay connected',
+      'The next move is visible',
+    ],
+  },
+] as const
 
-const relevantRows = [
-  'Fewer, sharper signals',
-  'Personalized to your work context',
-  'Explains why it matters to you',
-  'Shows what to do or watch next',
-  'Updates stories as they evolve',
-  'Built for decisions, not scrolling',
-]
+const comparisonProofs = [
+  ['What changed', 'The event, company, source, and timing are separated from the noise.'],
+  ['Why it matters', 'Relevant explains the consequence for your role and current work.'],
+  ['What to do next', 'You get the watchpoint, question, or action while the window is still open.'],
+] as const
 
 const socialLinks = [
-  { label: 'Instagram', href: 'https://www.instagram.com/relevant.app/' },
-  { label: 'TikTok', href: 'https://www.tiktok.com/@relevant.app' },
-  { label: 'X', href: 'https://twitter.com/relevant' },
-  { label: 'LinkedIn', href: 'https://linkedin.com/company/relevant' },
-]
+  { label: 'Instagram', href: 'https://www.instagram.com/relevant.app/', platform: 'instagram' },
+  { label: 'TikTok', href: 'https://www.tiktok.com/@relevant.app', platform: 'tiktok' },
+  { label: 'X', href: 'https://twitter.com/relevant', platform: 'x' },
+  { label: 'LinkedIn', href: 'https://linkedin.com/company/relevant', platform: 'linkedin' },
+] as const
 
-const preparationOptions = [
-  'Meeting',
-  'Competitor',
-  'Market',
-  'Business case',
-  'Launch',
-  'Investor call',
-  'Customer call',
-  'Strategy decision',
-]
+type SocialPlatform = (typeof socialLinks)[number]['platform']
 
 function applyTheme(nextTheme: ThemeMode) {
   document.documentElement.dataset.theme = nextTheme
@@ -410,16 +485,8 @@ function applyTheme(nextTheme: ThemeMode) {
 
 export default function Home() {
   const [theme, setTheme] = useState<ThemeMode>('dark')
-  const [briefStatus, setBriefStatus] = useState<FormStatus>('idle')
-  const [briefMessage, setBriefMessage] = useState('')
-  const [briefForm, setBriefForm] = useState({
-    preparation: preparationOptions[0],
-    role: '',
-    market: '',
-    email: '',
-  })
-  const [showMobileCta, setShowMobileCta] = useState(false)
   const [navScrolled, setNavScrolled] = useState(false)
+  const [navHidden, setNavHidden] = useState(false)
   const currentYear = new Date().getFullYear()
 
   useEffect(() => {
@@ -444,31 +511,23 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    const syncMobileCta = () => {
-      if (window.innerWidth > 820) {
-        setShowMobileCta(false)
-        return
-      }
-
-      setShowMobileCta(window.scrollY > 560)
-    }
-
-    syncMobileCta()
-    window.addEventListener('scroll', syncMobileCta, { passive: true })
-    window.addEventListener('resize', syncMobileCta)
-    return () => {
-      window.removeEventListener('scroll', syncMobileCta)
-      window.removeEventListener('resize', syncMobileCta)
-    }
-  }, [])
-
-  useEffect(() => {
     const getScrollY = () => window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0
+    let previousScrollY = getScrollY()
     let ticking = false
 
     const syncNav = () => {
       const currentScrollY = getScrollY()
+      const scrollDelta = currentScrollY - previousScrollY
+
       setNavScrolled(currentScrollY > 12)
+
+      if (currentScrollY < 96) {
+        setNavHidden(false)
+      } else if (Math.abs(scrollDelta) > 6) {
+        setNavHidden(scrollDelta > 0)
+      }
+
+      previousScrollY = currentScrollY
       ticking = false
     }
 
@@ -498,44 +557,14 @@ export default function Home() {
     window.history.pushState(null, '', hash)
   }
 
-  const joinWaitlist = async (email: string, metadata?: Record<string, string>) => {
-    const response = await fetch('/api/waitlist', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, ...metadata }),
-    })
-    const data = await response.json()
-
-    if (!response.ok) throw new Error(data.error || 'Request failed')
-    return data.message || 'Thanks. We will follow up shortly.'
-  }
-
-  const handleBriefRequest = async (event: FormEvent) => {
-    event.preventDefault()
-    setBriefStatus('loading')
-    setBriefMessage('')
-
-    try {
-      await joinWaitlist(briefForm.email, {
-        source: 'homepage-intelligence-desk',
-        preparation: briefForm.preparation,
-        role: briefForm.role,
-        companyOrMarket: briefForm.market,
-      })
-      setBriefStatus('success')
-      setBriefMessage('Thanks. We will send the next step shortly.')
-      setBriefForm({ preparation: preparationOptions[0], role: '', market: '', email: '' })
-    } catch (error) {
-      setBriefStatus('error')
-      setBriefMessage(error instanceof Error ? error.message : 'Something went wrong')
-    }
-  }
-
   return (
     <div className="signal-home">
-      <nav className={`signal-nav${navScrolled ? ' is-scrolled' : ''}`} aria-label="Primary navigation">
+      <nav className={`signal-nav${navScrolled ? ' is-scrolled' : ''}${navHidden ? ' is-hidden' : ''}`} aria-label="Primary navigation">
         <div className="signal-frame signal-nav__inner">
-          <BrandMark href="#top" onClick={handleAnchorClick} />
+          <div className="signal-nav__brand">
+            <BrandMark href="#top" onClick={handleAnchorClick} />
+            <span className="signal-nav__product">Role-aware intelligence</span>
+          </div>
           <div className="signal-nav__links">
             <a href="#signals" onClick={handleAnchorClick}>Signals</a>
             <a href="#intelligence" onClick={handleAnchorClick}>Intelligence Desk</a>
@@ -543,6 +572,7 @@ export default function Home() {
             <a href="#how-it-works" onClick={handleAnchorClick}>How it Works</a>
           </div>
           <div className="signal-nav__actions">
+            <a href="/login" className="signal-nav__signin">Sign in</a>
             <button
               type="button"
               className="signal-theme-toggle"
@@ -555,20 +585,19 @@ export default function Home() {
             >
               {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
             </button>
-            <a href="/login">Sign in</a>
             <a href="/signup" className="signal-nav__cta">Get started</a>
           </div>
         </div>
       </nav>
 
-      <div className="signal-app-marquee" aria-label="Relevant app availability">
+      <div className={`signal-app-marquee${navHidden ? ' is-hidden' : ''}`} aria-label="Relevant app availability">
         <div className="signal-app-marquee__track">
-          {[0, 1, 2, 3].map((group) => (
+          {Array.from({ length: 8 }, (_, group) => (
             <div className="signal-app-marquee__group" key={group}>
               <span>The app is live</span>
+              <span>Free early access</span>
               <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">Get Relevant</a>
-              <span>Never feel behind at work</span>
-              <AppStoreBadge compact />
+              <span>More clarity. Less noise.</span>
             </div>
           ))}
         </div>
@@ -578,17 +607,17 @@ export default function Home() {
         <section className="signal-hero" aria-labelledby="home-title">
           <div className="signal-frame signal-hero__grid">
             <div className="signal-hero__copy">
-              <p className="signal-eyebrow">Professional awareness, built for your role</p>
-              <h1 id="home-title">Know what matters before it becomes obvious.</h1>
+              <p className="signal-eyebrow">AI-powered. Role-aware.</p>
+              <h1 id="home-title">The intelligence platform for people who can&apos;t miss what changed.</h1>
               <p>
-                Relevant tracks your company, role, industry, and market, then turns the noise into a few clear signals, why they matter to you, and what to do next.
+                Relevant watches the companies, topics, and market moves around your work, then turns them into short briefs: what changed, why it matters, and what to do next.
               </p>
               <div className="signal-hero__actions">
-                <a href={APP_STORE_URL} className="signal-button signal-button--primary" target="_blank" rel="noopener noreferrer">Get Relevant</a>
+                <a href="/signup" className="signal-button signal-button--primary">Get started</a>
+                <a href={APP_STORE_URL} className="signal-button signal-button--secondary" target="_blank" rel="noopener noreferrer">Download on the App Store</a>
               </div>
-              <AppStoreBadge />
               <p className="signal-hero__micro">
-                No endless feed. No generic summaries. Just the updates that could change your next move.
+                Free early access. Built for decisions, not scrolling.
               </p>
             </div>
 
@@ -611,13 +640,14 @@ export default function Home() {
           <div className="signal-frame signal-mobile-section__grid">
             <div className="signal-section__copy signal-reveal">
               <p className="signal-eyebrow">Mobile app</p>
-              <h2 id="signals-title">Never feel behind at work.</h2>
+              <h2 id="signals-title">More clarity. Less noise.</h2>
               <p>
                 Open the app, set your work context, and get the few signals that matter to your role: competitors, customers, markets, policy, technology, people, and companies you care about.
               </p>
               <a href={APP_STORE_URL} className="signal-inline-cta" target="_blank" rel="noopener noreferrer">
                 Download the app <ArrowRight size={16} />
               </a>
+              <p className="signal-cta-note">Free early access on iPhone.</p>
             </div>
 
             <div className="signal-phone-stage signal-reveal">
@@ -691,115 +721,88 @@ export default function Home() {
 
           <div className="signal-frame signal-brief-module">
             <div>
-                <h3>Build your first brief.</h3>
-              <p>We will turn your brief into cited intelligence, not a pile of links.</p>
+              <span className="signal-access-note">Free - early access</span>
+              <h3>Get Relevant working for your next decision.</h3>
+              <p>Create your account, set your work context, and start from the app instead of another blank research tab.</p>
             </div>
-            <form className="signal-brief-form" onSubmit={handleBriefRequest}>
-              <label>
-                <span>What are you preparing for?</span>
-                <select
-                  value={briefForm.preparation}
-                  onChange={(event) => setBriefForm((current) => ({ ...current, preparation: event.target.value }))}
-                >
-                  {preparationOptions.map((option) => (
-                    <option key={option}>{option}</option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                <span>Your role</span>
-                <input
-                  value={briefForm.role}
-                  onChange={(event) => setBriefForm((current) => ({ ...current, role: event.target.value }))}
-                  placeholder="Founder, operator, product lead"
-                  required
-                />
-              </label>
-              <label>
-                <span>Company or market</span>
-                <input
-                  value={briefForm.market}
-                  onChange={(event) => setBriefForm((current) => ({ ...current, market: event.target.value }))}
-                  placeholder="Company, market, or category"
-                  required
-                />
-              </label>
-              <label>
-                <span>Work email</span>
-                <input
-                  type="email"
-                  value={briefForm.email}
-                  onChange={(event) => setBriefForm((current) => ({ ...current, email: event.target.value }))}
-                  placeholder="you@company.com"
-                  required
-                />
-              </label>
-              <button type="submit" disabled={briefStatus === 'loading'}>
-                {briefStatus === 'loading' ? 'Sending' : 'Request my brief'}
-                <Send size={16} />
-              </button>
-              <p className={`signal-form-status signal-form-status--${briefStatus}`}>
-                {briefMessage || 'Tell us what you are preparing for. We will send the next step.'}
-              </p>
-            </form>
+            <div className="signal-brief-cta">
+              <a href="/signup" className="signal-button signal-button--primary">
+                Get started <ArrowRight size={16} />
+              </a>
+              <p>No credit card required during early access.</p>
+            </div>
           </div>
         </section>
 
         <section id="how-it-works" className="signal-section signal-how-section" aria-labelledby="how-title">
           <div className="signal-frame signal-section__center signal-reveal">
-            <h2 id="how-title">Four inputs. Thousands of checks. One useful signal.</h2>
+            <h2 id="how-title" className="signal-stacked-title">
+              <span>Four inputs.</span>
+              <span>Thousands of checks.</span>
+              <span>One useful signal.</span>
+            </h2>
             <p>
               Relevant starts with your work context, scans the outside world against it, and gives you the update that deserves attention.
             </p>
           </div>
           <HowItWorksVisualStory />
-          <div className="signal-frame signal-step-grid">
-            {howSteps.map(([title, body], index) => (
-              <article className="signal-step-card signal-reveal" key={title}>
-                <span>{String(index + 1).padStart(2, '0')}</span>
-                <h3>{title}</h3>
-                <p>{body}</p>
-              </article>
-            ))}
-          </div>
         </section>
 
         <section id="use-cases" className="signal-section signal-use-section" aria-labelledby="use-title">
           <div className="signal-frame signal-section__center signal-reveal">
-            <h2 id="use-title">Use Relevant before the room asks.</h2>
+            <h2 id="use-title">Know what to say before the meeting, call, or decision.</h2>
+            <p>Relevant turns company, market, and competitor changes into a short brief for the situation ahead: what changed, why it matters, and what to say or do next.</p>
           </div>
           <div className="signal-frame signal-use-grid">
             {useCases.map((useCase) => (
               <article className="signal-use-card signal-reveal" key={useCase.title}>
                 <UseCasePreview useCase={useCase} />
-                <h3>{useCase.title}</h3>
-                <p>{useCase.body}</p>
+                <div className="signal-use-card__copy">
+                  <h3>{useCase.title}</h3>
+                  <p>{useCase.body}</p>
+                </div>
               </article>
             ))}
           </div>
         </section>
 
         <section className="signal-section signal-compare-section" aria-labelledby="compare-title">
-          <div className="signal-frame signal-compare-grid">
-            <div className="signal-section__copy signal-reveal">
-              <h2 id="compare-title">Not another feed.</h2>
-              <p>Relevant is built for decisions, not scrolling.</p>
+          <div className="signal-frame signal-compare-shell">
+            <div className="signal-compare-copy signal-reveal">
+              <p className="signal-eyebrow signal-eyebrow--blue">Relevant vs. generic alerts</p>
+              <h2 id="compare-title">Alerts say something happened. Relevant says what to do with it.</h2>
+              <p>
+                The difference is judgment. Relevant does not make you open ten links to find the one move that matters.
+              </p>
+              <div className="signal-compare-actions">
+                <a href={APP_STORE_URL} className="signal-button signal-button--primary" target="_blank" rel="noopener noreferrer">
+                  Download the app <ArrowRight size={16} />
+                </a>
+                <a href="/signup" className="signal-button signal-button--secondary">
+                  Get started
+                </a>
+                <p className="signal-cta-note signal-cta-note--compare">Free early access. No credit card required.</p>
+              </div>
             </div>
-            <ComparisonColumn title="Generic alerts" rows={genericAlerts} muted />
-            <ComparisonColumn title="Relevant" rows={relevantRows} />
+
+            <ComparisonShowcase />
           </div>
         </section>
 
         <section className="signal-section signal-audience-section" aria-labelledby="audience-title">
           <div className="signal-frame signal-section__center signal-reveal">
             <h2 id="audience-title">For people whose job depends on noticing change early.</h2>
+            <p>Relevant is built for the people expected to know what moved, why it matters, and what should happen next.</p>
           </div>
-          <div className="signal-frame signal-audience-grid">
-            {audiences.map(([title, body]) => (
-              <article className="signal-audience-card signal-reveal" key={title}>
-                <h3>{title}</h3>
-                <p>{body}</p>
-              </article>
+          <div className="signal-audience-marquee signal-reveal" aria-label="Roles Relevant is built for">
+            {audienceRows.map((row, rowIndex) => (
+              <div className="signal-audience-marquee__row" data-direction={rowIndex === 0 ? 'left' : 'right'} key={`audience-row-${rowIndex}`}>
+                <div className="signal-audience-marquee__track">
+                  {[...row, ...row].map((role, index) => (
+                    <span key={`${role}-${index}`}>{role}</span>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </section>
@@ -809,7 +812,7 @@ export default function Home() {
             <div className="signal-section__copy signal-reveal">
               <h2 id="trust-title">Cited intelligence you can check.</h2>
               <p>
-                Relevant is built to show its work. Important claims should connect back to the sources behind them, so professionals can use the output in real decisions.
+                Every important point keeps the source attached, so you can see which publisher, filing, or report it came from before you trust it.
               </p>
             </div>
             <TrustCard />
@@ -824,14 +827,14 @@ export default function Home() {
                 Relevant gives you the professional awareness layer your role deserves: daily signals when the world changes, and on-demand intelligence when a decision is coming.
               </p>
               <div className="signal-hero__actions">
-                <a href={APP_STORE_URL} className="signal-button signal-button--primary" target="_blank" rel="noopener noreferrer">Get Relevant</a>
+                <a href={APP_STORE_URL} className="signal-button signal-button--primary" target="_blank" rel="noopener noreferrer">Download the app</a>
                 <a href="/signup" className="signal-button signal-button--secondary">Get started</a>
               </div>
-              <p className="signal-hero__micro">Fewer updates. Better judgment. Clearer next moves.</p>
+              <p className="signal-hero__micro">Free early access. Fewer updates. Better judgment. Clearer next moves.</p>
             </div>
 
             <div className="signal-app-store-panel">
-              <span>Get the app</span>
+              <span>Free early access</span>
               <AppStoreBadge />
               <p>Set your work context once. Let the app surface the signals worth opening.</p>
             </div>
@@ -844,14 +847,17 @@ export default function Home() {
           <div className="signal-footer__brand">
             <BrandMark />
             <p>Know what changed. See why it matters. Move prepared.</p>
-            <AppStoreBadge />
+            <div className="signal-footer__brand-actions">
+              <span>More clarity. Less noise.</span>
+            </div>
           </div>
           <div className="signal-footer__group">
             <span>Social</span>
             <div className="signal-footer__social" aria-label="Social links">
               {socialLinks.map((link) => (
-                <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer">
-                  {link.label}
+                <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.label}>
+                  <SocialLogo platform={link.platform} />
+                  <span>{link.label}</span>
                 </a>
               ))}
             </div>
@@ -876,11 +882,39 @@ export default function Home() {
           <span className="signal-footer__copy">&copy; {currentYear} Relevant</span>
         </div>
       </footer>
-
-      <div className={`signal-mobile-cta${showMobileCta ? ' is-visible' : ''}`}>
-        <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">Get Relevant</a>
-      </div>
     </div>
+  )
+}
+
+function SocialLogo({ platform }: { platform: SocialPlatform }) {
+  if (platform === 'instagram') {
+    return (
+      <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+        <path d="M12 2.16c3.2 0 3.58.02 4.85.07 3.25.15 4.77 1.7 4.92 4.92.05 1.27.07 1.65.07 4.85s-.02 3.58-.07 4.85c-.15 3.23-1.67 4.77-4.92 4.92-1.27.05-1.65.07-4.85.07s-3.58-.02-4.85-.07c-3.26-.15-4.77-1.7-4.92-4.92-.05-1.27-.07-1.65-.07-4.85s.02-3.58.07-4.85c.15-3.23 1.66-4.77 4.92-4.92 1.27-.05 1.65-.07 4.85-.07ZM12 0C8.74 0 8.33.01 7.05.07 2.69.27.27 2.69.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.2 4.36 2.62 6.78 6.98 6.98 1.28.06 1.69.07 4.95.07s3.67-.01 4.95-.07c4.35-.2 6.78-2.62 6.98-6.98.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.2-4.35-2.63-6.78-6.98-6.98C15.67.01 15.26 0 12 0Zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32ZM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm6.41-11.85a1.44 1.44 0 1 0 0 2.88 1.44 1.44 0 0 0 0-2.88Z" />
+      </svg>
+    )
+  }
+
+  if (platform === 'tiktok') {
+    return (
+      <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.3 0 .58.04.86.13V9.4a6.34 6.34 0 0 0-5.25 10.97 6.34 6.34 0 0 0 10.73-4.7V8.74a8.16 8.16 0 0 0 4.77 1.53V6.69Z" />
+      </svg>
+    )
+  }
+
+  if (platform === 'x') {
+    return (
+      <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+        <path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.65l-5.22-6.82-5.96 6.82H1.68l7.73-8.84L1.25 2.25h6.83l4.71 6.23 5.45-6.23Zm-1.16 17.52h1.83L7.08 4.13H5.12l11.96 15.64Z" />
+      </svg>
+    )
+  }
+
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+      <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04s-2.13 1.45-2.13 2.94v5.67H9.35V9h3.42v1.56h.04c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13Zm1.78 13.02H3.56V9h3.56v11.45ZM22.23 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.73V1.73C24 .77 23.21 0 22.23 0Z" />
+    </svg>
   )
 }
 
@@ -952,8 +986,8 @@ function HeroIntelligenceVisual() {
         transition={{ duration: 0.9, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
       >
         <div className="signal-hero-scan-field__header">
-          <ScanLine size={15} />
-          <span>AI checking live sources</span>
+          <i aria-hidden="true" />
+          <span>Live source scan</span>
         </div>
         <div className="signal-hero-headline-cloud">
           {headlineStreams.slice(0, 6).map((item, index) => (
@@ -970,7 +1004,7 @@ function HeroIntelligenceVisual() {
                 ease: 'easeInOut',
               }}
             >
-              <em>{item.source}</em>
+              <em className="signal-publisher-wordmark">{item.logo}</em>
               {item.text}
             </motion.span>
           ))}
@@ -994,7 +1028,7 @@ function HeroIntelligenceVisual() {
         }}
       >
         <Building2 size={14} />
-        Shopify
+        Shopify store
       </motion.div>
       <motion.div
         className="signal-hero-context-pill signal-hero-context-pill--two"
@@ -1007,37 +1041,34 @@ function HeroIntelligenceVisual() {
         }}
       >
         <BriefcaseBusiness size={14} />
-        Founder
+        Store founder
       </motion.div>
 
       <div className="signal-hero-cluster" aria-hidden="true">
         {heroSignals.map((shot, index) => {
-          const baseRotate = index === 0 ? -2.4 : index === 1 ? 5 : 3
+          const floatPath = index === 0 ? [0, -4, 0] : [0, 3, 0]
 
           return (
             <motion.div
               className={`signal-hero-signal ${shot.className}`}
               key={shot.src}
-              initial={{ opacity: 0, y: 42, scale: 0.9, rotate: baseRotate - 2 }}
+              initial={{ opacity: 0, y: 28, scale: index === 0 ? 0.94 : 0.9 }}
               animate={{
                 opacity: 1,
-                y: index === 0 ? [0, -8, 0] : index === 1 ? [0, 7, 0] : [0, -5, 0],
+                y: floatPath,
                 scale: 1,
-                rotate: baseRotate,
               }}
               transition={{
                 opacity: { duration: 0.55, delay: 0.28 + index * 0.15 },
                 scale: { duration: 0.55, delay: 0.28 + index * 0.15 },
-                rotate: { duration: 0.75, delay: 0.28 + index * 0.15 },
                 y: {
-                  duration: index === 0 ? 5.8 : 6.6,
+                  duration: index === 0 ? 6.2 : 7,
                   delay: 0.28 + index * 0.15,
                   repeat: Infinity,
                   ease: 'easeInOut',
                 },
               }}
             >
-              <span>{shot.label}</span>
               <Image
                 src={shot.src}
                 alt=""
@@ -1052,23 +1083,6 @@ function HeroIntelligenceVisual() {
         })}
       </div>
 
-      <motion.div
-        className="signal-hero-output-card"
-        initial={{ opacity: 0, x: 34, scale: 0.92 }}
-        animate={{ opacity: 1, x: 0, scale: [1, 1.025, 1] }}
-        transition={{
-          opacity: { duration: 0.5, delay: 0.88 },
-          x: { duration: 0.5, delay: 0.88 },
-          scale: { duration: 4.4, delay: 0.88, repeat: Infinity, ease: 'easeInOut' },
-        }}
-      >
-        <span><Sparkles size={13} /> Signal card</span>
-        <p>What changed. Why it matters. What to do next.</p>
-        <div>
-          <em>3 source-backed reasons</em>
-          <em>1 next move</em>
-        </div>
-      </motion.div>
     </motion.div>
   )
 }
@@ -1081,17 +1095,23 @@ function HowItWorksVisualStory() {
           <span>01</span>
           <h3>Tell Relevant the basics.</h3>
         </div>
-        <div className="signal-context-input-grid">
-          {contextInputs.map((input) => {
-            const Icon = input.icon
-            return (
-              <div className="signal-context-input" key={input.label}>
-                <Icon size={18} />
-                <span>{input.label}</span>
-                <strong>{input.value}</strong>
-              </div>
-            )
-          })}
+        <div className="signal-how-visual-body signal-how-visual-body--context">
+          <div className="signal-context-input-grid">
+            {contextInputs.map((input) => {
+              const Icon = input.icon
+              return (
+                <div className="signal-context-input" key={input.label}>
+                  <Icon size={18} />
+                  <span>{input.label}</span>
+                  <strong>{input.value}</strong>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+        <div className="signal-how-card-copy">
+          <strong>{howSteps[0][0]}</strong>
+          <p>{howSteps[0][1]}</p>
         </div>
       </article>
 
@@ -1100,38 +1120,50 @@ function HowItWorksVisualStory() {
           <span>02</span>
           <h3>Relevant scans live sources.</h3>
         </div>
-        <div className="signal-source-stream" aria-hidden="true">
-          <div className="signal-source-stream__header">
-            <span>Live source scan</span>
-            <em>role lens active</em>
-          </div>
-          <div className="signal-source-stream__viewport">
-            <div className="signal-source-stream__track">
-              {[...sourceScanRows, ...sourceScanRows].map((item, index) => (
-                <div
-                  className={`signal-source-row${item.decision === 'Kept' ? ' signal-source-row--match' : ''}`}
-                  key={`${item.source}-${item.company}-${index}`}
-                >
-                  <div className="signal-source-row__icon">
-                    {item.source === 'Company filing' ? <Building2 size={15} /> : <Newspaper size={15} />}
-                  </div>
-                  <div className="signal-source-row__body">
-                    <div>
-                      <strong>{item.company}</strong>
-                      <span>{item.source}</span>
+        <div className="signal-how-visual-body signal-how-visual-body--scan">
+          <div className="signal-source-stream" aria-hidden="true">
+            <div className="signal-source-stream__header">
+              <span>Live source scan</span>
+              <em>role lens active</em>
+            </div>
+            <div className="signal-source-stream__viewport">
+              <div className="signal-source-stream__track">
+                {[...sourceScanRows, ...sourceScanRows].map((item, index) => (
+                  <div
+                    className={`signal-source-row${item.decision === 'Kept' ? ' signal-source-row--match' : ''}`}
+                    key={`${item.source}-${item.company}-${index}`}
+                  >
+                    <div className="signal-source-row__logo" aria-hidden="true">
+                      <span>{item.logo}</span>
                     </div>
-                    <p>{item.text}</p>
+                    <div className="signal-source-row__body">
+                      <div>
+                        <strong>{item.company}</strong>
+                        <span>{item.source}</span>
+                      </div>
+                      <p>{item.text}</p>
+                    </div>
+                    <em>{item.decision}</em>
                   </div>
-                  <em>{item.decision}</em>
-                </div>
-              ))}
+                ))}
+              </div>
+            </div>
+            <div className="signal-source-scan-card">
+              <ScanLine size={18} />
+              <div className="signal-source-metric signal-source-metric--read">
+                <strong>2,847</strong>
+                <span>read</span>
+              </div>
+              <div className="signal-source-metric signal-source-metric--matched">
+                <strong>7</strong>
+                <span>matched to you</span>
+              </div>
             </div>
           </div>
-          <div className="signal-source-scan-card">
-            <ScanLine size={18} />
-            <strong>2,847 articles scanned</strong>
-            <span>7 matched your context</span>
-          </div>
+        </div>
+        <div className="signal-how-card-copy">
+          <strong>{howSteps[1][0]}</strong>
+          <p>{howSteps[1][1]}</p>
         </div>
       </article>
 
@@ -1140,20 +1172,21 @@ function HowItWorksVisualStory() {
           <span>03</span>
           <h3>Relevant gives you the card.</h3>
         </div>
-        <div className="signal-output-phone">
-          <Image
-            src="/marketing-screenshots/signal-card.png"
-            alt="Relevant signal card output"
-            width={1290}
-            height={1818}
-            sizes="(max-width: 900px) 74vw, 280px"
-            className="signal-product-screenshot"
-          />
+        <div className="signal-how-visual-body signal-how-visual-body--output">
+          <div className="signal-output-phone">
+            <Image
+              src="/marketing-screenshots/signal-card.png"
+              alt="Relevant signal card output"
+              width={1290}
+              height={1818}
+              sizes="(max-width: 900px) 74vw, 280px"
+              className="signal-product-screenshot"
+            />
+          </div>
         </div>
-        <div className="signal-output-tags">
-          <span>What changed</span>
-          <span>Why it matters</span>
-          <span>What to do next</span>
+        <div className="signal-how-card-copy">
+          <strong>{howSteps[2][0]}</strong>
+          <p>{howSteps[2][1]}</p>
         </div>
       </article>
     </div>
@@ -1172,102 +1205,91 @@ function StatCard({ label, value, detail }: { label: string; value: string; deta
 
 function UseCasePreview({ useCase }: { useCase: (typeof useCases)[number] }) {
   const Icon = useCase.icon
-  const [primaryLine, secondaryLine, tertiaryLine] = useCase.lines
 
   return (
     <div
       className={`signal-use-preview signal-use-preview--${useCase.tone}`}
-      style={{ '--use-accent': useCase.accent } as CSSProperties}
       aria-hidden="true"
     >
       <div className="signal-use-preview__top">
         <span><Icon size={15} /> {useCase.label}</span>
         <em>{useCase.metric}</em>
       </div>
-      <div className="signal-use-preview__stage">
-        <div className="signal-use-preview__grid" />
-        <div className="signal-use-preview__radar">
-          <span />
-          <span />
-          <span />
-        </div>
-        <div className="signal-use-preview__brief">
-          <span>{primaryLine[0]}</span>
-          <strong>{primaryLine[1]}</strong>
-        </div>
-        <div className="signal-use-preview__note signal-use-preview__note--one">
-          <span>{secondaryLine[0]}</span>
-          <strong>{secondaryLine[1]}</strong>
-        </div>
-        <div className="signal-use-preview__note signal-use-preview__note--two">
-          <span>{tertiaryLine[0]}</span>
-          <strong>{tertiaryLine[1]}</strong>
-        </div>
-        <div className="signal-use-preview__rank">
-          <i />
-          <i />
-          <i />
-        </div>
-        <div className="signal-use-preview__path" />
+      <div className="signal-use-image">
+        <Image
+          src={useCase.illustration}
+          alt=""
+          width={512}
+          height={512}
+          sizes="(max-width: 720px) calc(100vw - 84px), 320px"
+        />
       </div>
-      <div className="signal-use-preview__footer">
-        {useCase.lines.map(([label]) => (
-          <span key={label}>{label}</span>
+      <div className="signal-use-preview__brief">
+        {useCase.lines.map(([label, detail]) => (
+          <div className="signal-use-preview__row" key={label}>
+            <strong>{label}</strong>
+            <p>{detail}</p>
+          </div>
         ))}
       </div>
     </div>
   )
 }
 
-function ComparisonColumn({ title, rows, muted = false }: { title: string; rows: string[]; muted?: boolean }) {
+function ComparisonShowcase() {
   return (
-    <article className={`signal-compare-column${muted ? ' signal-compare-column--muted' : ''} signal-reveal`}>
-      <h3>{title}</h3>
-      <ul>
-        {rows.map((row) => (
-          <li key={row}>
-            <Check size={15} />
-            <span>{row}</span>
-          </li>
+    <div className="signal-compare-board signal-reveal">
+      <div className="signal-compare-board__top">
+        <span>Decision layer</span>
+        <p>Same outside-world change. Different outcome.</p>
+      </div>
+      <div className="signal-compare-card-grid">
+        {comparisonCards.map((card) => (
+          <article
+            className={`signal-compare-column signal-compare-column--${card.tone}`}
+            key={card.label}
+          >
+            <span>{card.label}</span>
+            <h3>{card.title}</h3>
+            <p>{card.body}</p>
+            <ul>
+              {card.rows.map((row) => (
+                <li key={row}>
+                  {card.tone === 'muted' ? <Circle size={10} /> : <Check size={15} />}
+                  <span>{row}</span>
+                </li>
+              ))}
+            </ul>
+          </article>
         ))}
-      </ul>
-    </article>
+      </div>
+      <div className="signal-compare-proof-grid">
+        {comparisonProofs.map(([title, body]) => (
+          <div className="signal-compare-proof" key={title}>
+            <strong>{title}</strong>
+            <p>{body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
 
 function TrustCard() {
   return (
     <article className="signal-trust-card signal-reveal">
-      <div className="signal-trust-proof">
-        <div className="signal-trust-source-stack" aria-label="Source proof examples">
-          {sourceProofs.map((source, index) => (
-            <div className="signal-trust-source" key={source.source} style={{ '--delay': `${index * 0.16}s` } as CSSProperties}>
-              <span>{source.tag}</span>
-              <strong>{source.source}</strong>
-              <p>{source.detail}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="signal-trust-link-path" aria-hidden="true">
-          <Link2 size={20} />
-        </div>
-
-        <div className="signal-trust-card__screen">
-          <Image
-            src="/marketing-screenshots/signal-detail.png"
-            alt="Relevant full signal detail screen"
-            width={1290}
-            height={12645}
-            sizes="(max-width: 900px) 84vw, 420px"
-            className="signal-product-screenshot"
-          />
-        </div>
+      <div className="signal-trust-publishers" aria-label="Publisher source examples">
+        {sourceProofs.map((source) => (
+          <div className="signal-trust-publisher" key={source.source}>
+            <span>{source.source}</span>
+            <p>{source.detail}</p>
+          </div>
+        ))}
       </div>
-      <span>Real signal detail</span>
-      <h3>Sources, consequence, and next move stay in one place.</h3>
+      <span>Source-backed signal</span>
+      <h3>Open the source behind every claim.</h3>
       <p>
-        The full detail screen shows the signal with the source-backed context around it, so the user is not guessing why it matters.
+        Relevant does not ask people to trust a black box. It keeps the article, filing, or report visible next to the intelligence.
       </p>
     </article>
   )

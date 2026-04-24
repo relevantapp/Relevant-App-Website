@@ -364,14 +364,44 @@ function MediaSection({ mediaLinks }: { mediaLinks: NonNullable<ProBriefItem['me
 function DetailSkeleton() {
   return (
     <div className="py-6">
-      <div className="mb-6 h-5 w-20 animate-pulse rounded bg-[var(--surface)]" />
-      <div className="mb-4 h-8 w-3/4 animate-pulse rounded bg-[var(--surface)]" />
-      <div className="mb-2 h-4 w-1/2 animate-pulse rounded bg-[var(--surface)]" />
-      <div className="mb-6 h-40 w-full animate-pulse rounded-xl bg-[var(--surface)]" />
-      <div className="space-y-3">
-        <div className="h-4 w-full animate-pulse rounded bg-[var(--surface)]" />
-        <div className="h-4 w-5/6 animate-pulse rounded bg-[var(--surface)]" />
-        <div className="h-4 w-4/6 animate-pulse rounded bg-[var(--surface)]" />
+      <div className="mb-6 flex items-center justify-between">
+        <div className="h-5 w-20 animate-pulse rounded bg-[var(--surface)]" />
+        <div className="h-9 w-24 animate-pulse rounded-lg bg-[var(--surface)]" />
+      </div>
+
+      <div className="mb-6 h-72 w-full animate-pulse rounded-xl bg-[var(--surface)]" />
+
+      <div className="flex flex-col gap-8 lg:flex-row">
+        <div className="min-w-0 flex-1">
+          <div className="mb-4 h-12 w-11/12 animate-pulse rounded bg-[var(--surface)] lg:h-16" />
+          <div className="mb-6 flex gap-3">
+            <div className="h-6 w-24 animate-pulse rounded-full bg-[var(--surface)]" />
+            <div className="h-6 w-20 animate-pulse rounded-full bg-[var(--surface)]" />
+            <div className="h-6 w-28 animate-pulse rounded-full bg-[var(--surface)]" />
+          </div>
+          <div className="mb-4 grid grid-cols-3 gap-1 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-1">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="h-10 animate-pulse rounded-lg bg-[var(--bg-elevated)]" />
+            ))}
+          </div>
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5">
+            <div className="mb-5 rounded-xl bg-[var(--text)] p-4">
+              <div className="mb-3 h-3 w-24 animate-pulse rounded bg-[var(--bg)]/25" />
+              <div className="h-4 w-full animate-pulse rounded bg-[var(--bg)]/20" />
+              <div className="mt-2 h-4 w-4/5 animate-pulse rounded bg-[var(--bg)]/20" />
+            </div>
+            <div className="space-y-3">
+              <div className="h-4 w-full animate-pulse rounded bg-[var(--surface)]" />
+              <div className="h-4 w-5/6 animate-pulse rounded bg-[var(--surface)]" />
+              <div className="h-4 w-4/6 animate-pulse rounded bg-[var(--surface)]" />
+            </div>
+          </div>
+        </div>
+
+        <aside className="w-full shrink-0 space-y-4 lg:w-[340px]">
+          <div className="h-48 animate-pulse rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)]" />
+          <div className="h-36 animate-pulse rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)]" />
+        </aside>
       </div>
     </div>
   )
@@ -460,9 +490,14 @@ export default function SignalDetailPage() {
     'What Happened': (
       <div>
         {signal.synthesis && (
-          <p className="mb-4 rounded-lg bg-[var(--surface)] p-4 text-sm leading-relaxed text-[var(--text)]">
-            {signal.synthesis}
-          </p>
+          <div className="mb-5 overflow-hidden rounded-xl border border-[var(--border-strong)] bg-[var(--text)] p-4 text-[var(--bg)] shadow-[0_18px_46px_rgba(0,0,0,0.16)]">
+            <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.22em] opacity-65">
+              Bottom line
+            </p>
+            <p className="mt-2 text-sm font-medium leading-6 opacity-90">
+              {signal.synthesis}
+            </p>
+          </div>
         )}
         <ul className="flex flex-col gap-2">
           {signal.what_happened.map((point, i) => (
@@ -492,31 +527,37 @@ export default function SignalDetailPage() {
                 No timeline entries yet. This thread will show updates here as they land.
               </p>
             ) : (
-              <div className="relative ml-1.5 border-l-2 border-[var(--border)] pl-5">
+              <div className="relative">
+                <div className="absolute bottom-4 left-[6px] top-1 w-px bg-[var(--border-strong)]" aria-hidden="true" />
                 {visibleTimeline.map((update, i) => (
-                  <div key={update.id} className="relative pb-5 last:pb-0">
-                    {/* Dot on rail */}
-                    <div
-                      className={`absolute -left-[23px] top-1 h-2.5 w-2.5 rounded-full border-2 border-[var(--bg-elevated)] ${
-                        i === 0 ? 'bg-accent-blue' : 'bg-[var(--surface-strong)]'
-                      }`}
-                    />
-                    <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
+                  <div key={update.id} className="relative grid grid-cols-[14px_minmax(0,1fr)] gap-3 pb-5 last:pb-0">
+                    <div className="relative pt-1.5">
+                      <span
+                        className={`relative z-10 block h-3 w-3 rounded-full border-2 border-[var(--bg-elevated)] ${
+                          i === 0 ? 'bg-accent-blue shadow-[0_0_0_4px_rgba(47,107,255,0.14)]' : 'bg-[var(--surface-strong)]'
+                        }`}
+                      />
+                    </div>
+                    <div className={`rounded-xl border p-3 ${
+                      i === 0
+                        ? 'border-[var(--border-strong)] bg-[var(--text)] text-[var(--bg)]'
+                        : 'border-[var(--border)] bg-[var(--bg-elevated)]'
+                    }`}>
                       <div className="mb-1.5 flex items-center gap-2">
-                        <span className="text-xs font-medium text-[var(--text-soft)]">
+                        <span className={`text-xs font-medium ${i === 0 ? 'opacity-65' : 'text-[var(--text-soft)]'}`}>
                           {formatTimelineDate(update.created_at)}
                         </span>
                         {update.sourceCount > 0 && (
-                          <span className="rounded-full bg-[var(--surface)] px-2 py-0.5 text-[10px] text-[var(--text-muted)]">
+                          <span className={`rounded-full px-2 py-0.5 text-[10px] ${i === 0 ? 'bg-[var(--bg)]/10 opacity-75' : 'bg-[var(--surface)] text-[var(--text-muted)]'}`}>
                             {update.sourceCount} source{update.sourceCount === 1 ? '' : 's'}
                           </span>
                         )}
                       </div>
                       {update.headline && (
-                        <p className="mb-1 text-sm font-medium text-[var(--text)]">{update.headline}</p>
+                        <p className={`mb-1 text-sm font-semibold ${i === 0 ? '' : 'text-[var(--text)]'}`}>{update.headline}</p>
                       )}
                       {update.delta_summary && (
-                        <p className="text-sm leading-relaxed text-[var(--text-muted)]">{update.delta_summary}</p>
+                        <p className={`text-sm leading-relaxed ${i === 0 ? 'opacity-75' : 'text-[var(--text-muted)]'}`}>{update.delta_summary}</p>
                       )}
                     </div>
                   </div>
@@ -583,7 +624,7 @@ export default function SignalDetailPage() {
           <motion.h1
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-4 font-display text-2xl font-bold leading-tight text-[var(--text)] sm:text-3xl lg:text-4xl"
+            className="mb-4 max-w-4xl font-display text-3xl font-semibold leading-[1.02] tracking-[-0.055em] text-[var(--text)] sm:text-4xl lg:text-5xl"
           >
             {signal.headline}
           </motion.h1>
@@ -620,7 +661,7 @@ export default function SignalDetailPage() {
           </div>
 
           {/* Tabs */}
-          <div className="mb-4 flex gap-1 rounded-lg bg-[var(--surface)] p-1">
+          <div className="mb-4 flex gap-1 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-1">
             {TABS.map((tab) => {
               const Icon = TAB_ICONS[tab]
               const active = activeTab === tab
@@ -630,7 +671,7 @@ export default function SignalDetailPage() {
                   onClick={() => setActiveTab(tab)}
                   className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-xs font-medium transition-colors sm:text-sm ${
                     active
-                      ? 'bg-[var(--bg-elevated)] text-[var(--text)] shadow-sm'
+                      ? 'bg-[var(--text)] text-[var(--bg)] shadow-[0_8px_24px_rgba(0,0,0,0.18)]'
                       : 'text-[var(--text-muted)] hover:text-[var(--text)]'
                   }`}
                 >
@@ -648,7 +689,7 @@ export default function SignalDetailPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.2 }}
-              className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5"
+              className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-5 shadow-[0_1px_0_rgba(255,255,255,0.04)_inset]"
             >
               {tabContent[activeTab]}
             </motion.div>
