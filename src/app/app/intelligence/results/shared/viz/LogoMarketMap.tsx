@@ -122,7 +122,7 @@ function LogoTileArt({ player }: { player: MarketPlayerTile }) {
 
   if (visual.kind === 'initials') {
     return (
-      <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-sm font-semibold text-[var(--text)]">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-sm font-semibold text-[var(--text)]">
         {getTileInitials(player.name)}
       </span>
     )
@@ -132,7 +132,7 @@ function LogoTileArt({ player }: { player: MarketPlayerTile }) {
     <img
       src={visual.src}
       alt=""
-      className="h-11 w-11 rounded-2xl border border-[var(--border)] bg-[var(--surface)] object-contain p-2 [filter:grayscale(1)_sepia(0.3)_saturate(0.55)]"
+      className="h-11 w-11 shrink-0 rounded-2xl border border-[var(--border)] bg-[var(--surface)] object-contain p-2 [filter:grayscale(1)_sepia(0.3)_saturate(0.55)]"
       onError={() => {
         if (player.domain && visual.src !== getFaviconUrl(player.domain)) {
           setVisual({ kind: 'image', src: getFaviconUrl(player.domain) })
@@ -343,7 +343,7 @@ export default function LogoMarketMap({ data, headline, subhead, asOf, sources, 
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="kicker">Segment</p>
-                    <h3 className="mt-2 text-base font-semibold text-[var(--text)]">{segment.name}</h3>
+                    <h3 className="mt-2 break-words text-base font-semibold text-[var(--text)]">{segment.name}</h3>
                   </div>
                   <span
                     className="relative"
@@ -388,8 +388,8 @@ export default function LogoMarketMap({ data, headline, subhead, asOf, sources, 
                       >
                         <LogoTileArt player={player} />
                         <span className="min-w-0">
-                          <span className="block text-sm font-medium leading-snug text-[var(--text)]">{player.name}</span>
-                          <span className="mt-1 block text-xs text-[var(--text-soft)]">
+                          <span className="block break-words text-sm font-medium leading-snug text-[var(--text)]">{player.name}</span>
+                          <span className="mt-1 block break-words text-xs leading-snug text-[var(--text-soft)]">
                             {[allTiles.find((tile) => tile.name === player.name)?.stage, player.domain ?? 'detail unavailable']
                               .filter(Boolean)
                               .join(' · ')}
@@ -414,9 +414,9 @@ export default function LogoMarketMap({ data, headline, subhead, asOf, sources, 
             <>
               <div className="mt-4 flex items-center gap-3">
                 <LogoTileArt player={activeTile} />
-                <div>
-                  <p className="text-base font-semibold text-[var(--text)]">{activeTile.name}</p>
-                  <p className="text-sm text-[var(--text-soft)]">
+                <div className="min-w-0">
+                  <p className="break-words text-base font-semibold text-[var(--text)]">{activeTile.name}</p>
+                  <p className="break-words text-sm leading-snug text-[var(--text-soft)]">
                     {[
                       activeTile.segment,
                       activeTile.stage ? formatStageLabel(activeTile.stage) : null,
@@ -425,7 +425,7 @@ export default function LogoMarketMap({ data, headline, subhead, asOf, sources, 
                   </p>
                 </div>
               </div>
-              <p className="mt-4 text-sm leading-relaxed text-[var(--text-muted)]">{activeTile.rationale}</p>
+              <p className="mt-4 break-words text-sm leading-relaxed text-[var(--text-muted)]">{activeTile.rationale}</p>
               {getDetailUrl(activeTile.domain) ? (
                 <a
                   href={getDetailUrl(activeTile.domain) ?? undefined}

@@ -27,10 +27,13 @@ export default function InsightSection({ title, icon, bullets, onSourceClick }: 
   if (bullets.length === 0) return null
 
   return (
-    <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden' }}>
-      <div style={{ padding: '12px 18px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span>{icon}</span>
-        <span className="kicker">{title}</span>
+    <section style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 18, overflow: 'hidden' }}>
+      <div style={{ padding: '14px 18px 12px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 10 }}>
+        <span style={{ color: 'var(--accent)' }}>{icon}</span>
+        <div>
+          <span className="kicker">{title}</span>
+          <div style={{ width: 56, height: 1, background: 'var(--accent)', marginTop: 8 }} aria-hidden="true" />
+        </div>
       </div>
       <div style={{ padding: '14px 18px 16px' }}>
         {bullets.map((bullet, i) => (
@@ -72,6 +75,6 @@ export default function InsightSection({ title, icon, bullets, onSourceClick }: 
           </div>
         ))}
       </div>
-    </div>
+    </section>
   )
 }

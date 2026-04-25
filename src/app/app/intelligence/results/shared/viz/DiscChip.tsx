@@ -82,7 +82,7 @@ export default function DiscChip({ disc, personName, commsStyleTag }: DiscChipPr
   const ariaLabel = formatAriaLabel(disc)
 
   return (
-    <span className="relative inline-flex items-center">
+    <span className="inline-flex flex-col items-start">
       <button
         type="button"
         className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-[var(--border-strong)] bg-[var(--bg-elevated)] text-[var(--text)] shadow-sm transition hover:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2 focus:ring-offset-[var(--bg-elevated)]"
@@ -115,7 +115,7 @@ export default function DiscChip({ disc, personName, commsStyleTag }: DiscChipPr
       {open && (
         <div
           id={panelId}
-          className="absolute left-0 top-[calc(100%+0.5rem)] z-20 w-72 rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4 shadow-[0_18px_50px_rgba(0,0,0,0.18)]"
+          className="mt-2 w-[min(18rem,calc(100vw-2rem))] rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4 shadow-[0_18px_50px_rgba(0,0,0,0.18)]"
           role="dialog"
           aria-label={`${personName} communication style`}
         >

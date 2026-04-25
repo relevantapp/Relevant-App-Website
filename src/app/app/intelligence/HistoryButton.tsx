@@ -20,7 +20,7 @@ export default function HistoryButton({ compact = false }: HistoryButtonProps) {
         color: 'var(--text-muted)',
         background: 'transparent',
         border: '1px solid var(--border)',
-        borderRadius: 6,
+        borderRadius: 9999,
         textDecoration: 'none',
         cursor: 'pointer',
       }}

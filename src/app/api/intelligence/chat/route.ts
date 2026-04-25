@@ -5,6 +5,7 @@ import { createClient } from '@supabase/supabase-js'
 import { callOpenRouterMessages } from '@/lib/intelligence/openrouter'
 import {
   DEFAULT_MODEL_PREFERENCE,
+  normalizeModelPreference,
 } from '@/lib/intelligence/models'
 import {
   AI_ONLY_INTELLIGENCE_PROVIDERS,
@@ -16,6 +17,7 @@ const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? '').replace(/^=+/, 
 const anonKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '').replace(/^=+/, '').trim()
 
 const MAX_QUESTION_LENGTH = 500
+const MAX_MODEL_LENGTH = 160
 const MAX_HISTORY = 10
 const FOLLOW_UP_TIMEOUT = 20_000
 
@@ -66,7 +68,11 @@ export async function POST(request: NextRequest) {
   const body = await request.json()
   const briefId = typeof body.briefId === 'string' ? body.briefId.slice(0, 50) : ''
   const question = typeof body.question === 'string' ? body.question.slice(0, MAX_QUESTION_LENGTH) : ''
-  const preferredModel = DEFAULT_MODEL_PREFERENCE
+  const preferredModel = normalizeModelPreference(
+    typeof body.preferredModel === 'string'
+      ? body.preferredModel.slice(0, MAX_MODEL_LENGTH)
+      : DEFAULT_MODEL_PREFERENCE,
+  )
 
   if (!briefId || !question.trim()) {
     return NextResponse.json({ error: 'briefId and question are required' }, { status: 400 })

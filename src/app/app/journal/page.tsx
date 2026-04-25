@@ -139,10 +139,9 @@ export default function JournalPage() {
       const to = from + PAGE_SIZE - 1
 
       const { data, error } = await supabase
-        .from('goal_journal_entries')
+        .from('notes_entries')
         .select('*')
         .eq('user_id', user.id)
-        .neq('entry_type', 'weekly_summary')
         .order('is_pinned', { ascending: false })
         .order('created_at', { ascending: false })
         .range(from, to)
@@ -198,7 +197,7 @@ export default function JournalPage() {
         .slice(0, 5)
 
       const { error } = await supabase
-        .from('goal_journal_entries')
+        .from('notes_entries')
         .insert({
           user_id: user.id,
           content: compContent.trim(),
@@ -232,15 +231,17 @@ export default function JournalPage() {
   }
 
   const handleTogglePin = async (noteId: string) => {
+    if (!user) return
     const note = notes.find(n => n.id === noteId)
     if (!note) return
     const next = !note.is_pinned
     setNotes(prev => prev.map(n => n.id === noteId ? { ...n, is_pinned: next } : n))
 
     const { error } = await supabase
-      .from('goal_journal_entries')
+      .from('notes_entries')
       .update({ is_pinned: next })
       .eq('id', noteId)
+      .eq('user_id', user.id)
 
     if (error) {
       setNotes(prev => prev.map(n => n.id === noteId ? { ...n, is_pinned: !next } : n))
@@ -248,11 +249,13 @@ export default function JournalPage() {
   }
 
   const handleDelete = async (noteId: string) => {
+    if (!user) return
     try {
       const { error } = await supabase
-        .from('goal_journal_entries')
+        .from('notes_entries')
         .delete()
         .eq('id', noteId)
+        .eq('user_id', user.id)
 
       if (error) {
         console.error('Delete error:', error)

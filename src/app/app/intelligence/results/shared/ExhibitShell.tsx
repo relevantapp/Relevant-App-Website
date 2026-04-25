@@ -1,8 +1,8 @@
 'use client'
 
-import { Download } from 'lucide-react'
+import { ChevronDown, Download } from 'lucide-react'
 import { toPng } from 'html-to-image'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import type { PropsWithChildren } from 'react'
 import type { BriefSource } from '@/lib/intelligence/contracts'
 import AsOfChip from './AsOfChip'
@@ -33,6 +33,7 @@ export default function ExhibitShell({
   children,
 }: ExhibitShellProps) {
   const ref = useRef<HTMLDivElement>(null)
+  const [sourcesOpen, setSourcesOpen] = useState(false)
 
   const handleScreenshot = async () => {
     if (!ref.current) return
@@ -51,7 +52,7 @@ export default function ExhibitShell({
   return (
     <section
       ref={ref}
-      className={`overflow-hidden rounded-[28px] border border-[var(--border)] bg-[var(--bg-elevated)] ${className ?? ''}`.trim()}
+      className={`rounded-[28px] border border-[var(--border)] bg-[var(--bg-elevated)] ${className ?? ''}`.trim()}
     >
       <div className="border-b border-[var(--border)] px-5 py-5 sm:px-6">
         <DeclarativeHeadline headline={headline} />
@@ -60,6 +61,7 @@ export default function ExhibitShell({
             {subhead}
           </p>
         )}
+        <div className="mt-4 h-px w-24 bg-[var(--accent)]" aria-hidden="true" />
         <ClaimFeedback
           className="mt-3"
           claimKey={`exhibit:${slugify(headline) || 'headline'}`}
@@ -73,18 +75,32 @@ export default function ExhibitShell({
       </div>
 
       <div className="flex flex-col gap-4 border-t border-[var(--border)] px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-        <div className="flex flex-wrap items-center gap-2">
-          {sources.map((source) => (
-            <a
-              key={source.id}
-              href={source.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs text-[var(--text-muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--text)]"
-            >
-              {source.domain}
-            </a>
-          ))}
+        <div className="min-w-0 flex-1">
+          <button
+            type="button"
+            aria-expanded={sourcesOpen}
+            onClick={() => setSourcesOpen((value) => !value)}
+            className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs text-[var(--text-muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+          >
+            <ChevronDown className={`h-3.5 w-3.5 transition-transform ${sourcesOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
+            <span>Sources ({sources.length})</span>
+          </button>
+
+          {sourcesOpen && (
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              {sources.map((source) => (
+                <a
+                  key={source.id}
+                  href={source.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs text-[var(--text-muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--text)]"
+                >
+                  {source.domain}
+                </a>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="flex flex-wrap items-center gap-2">

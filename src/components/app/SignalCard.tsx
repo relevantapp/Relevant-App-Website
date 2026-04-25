@@ -79,6 +79,7 @@ export default function SignalCard({ signal, onClick, index = 0 }: Props) {
           .select('id')
           .eq('user_id', userId)
           .eq('source_ref', signal.id)
+          .eq('origin', 'feed_save')
           .limit(1)
           .maybeSingle(),
       ])
@@ -97,6 +98,13 @@ export default function SignalCard({ signal, onClick, index = 0 }: Props) {
       cancelled = true
     }
   }, [signal.id])
+
+  const handleCardKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
+    if (event.defaultPrevented || event.target !== event.currentTarget) return
+    if (event.key !== 'Enter' && event.key !== ' ') return
+    event.preventDefault()
+    onClick()
+  }
 
   const handleShare = async (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -186,26 +194,39 @@ export default function SignalCard({ signal, onClick, index = 0 }: Props) {
         origin: 'feed_save',
         is_prompt_response: false,
         prompt_text: null,
+        is_pinned: false,
+        is_polished: false,
+        tags: [],
       }
 
-      const { error } = await supabase.from('notes_entries').insert(notePayload)
+      const { data: insertedRow, error } = await supabase.from('notes_entries').insert(notePayload).select('id').single()
 
       if (error && /column|schema cache/i.test(error.message)) {
-        const { error: fallbackError } = await supabase.from('notes_entries').insert({
+        const { data: fallbackInsertedRow, error: fallbackError } = await supabase.from('notes_entries').insert({
           user_id: userId,
           week_key: weekKey,
           entry_type: 'freeform',
           content: 'Saved',
           source_ref: signal.id,
-        })
+        }).select('id').single()
         if (fallbackError) {
           setSaved(false)
+        }
+        if (fallbackInsertedRow?.id) {
+          void supabase.functions.invoke('pro-note-polish', { body: { note_id: fallbackInsertedRow.id } }).catch(() => {})
+          void supabase.functions.invoke('pro-note-tags', { body: { note_id: fallbackInsertedRow.id } }).catch(() => {})
         }
         return
       }
 
       if (error) {
         setSaved(false)
+        return
+      }
+
+      if (insertedRow?.id) {
+        void supabase.functions.invoke('pro-note-polish', { body: { note_id: insertedRow.id } }).catch(() => {})
+        void supabase.functions.invoke('pro-note-tags', { body: { note_id: insertedRow.id } }).catch(() => {})
       }
     } catch {
       setSaved(false)
@@ -235,7 +256,12 @@ export default function SignalCard({ signal, onClick, index = 0 }: Props) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, delay: index * 0.06, ease: [0, 0, 0.2, 1] }}
-      className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] shadow-[0_1px_0_rgba(255,255,255,0.03)_inset] transition-[border-color,background-color,box-shadow] duration-200 hover:border-[var(--border-strong)] hover:bg-[var(--surface)] hover:shadow-[0_18px_48px_rgba(0,0,0,0.16)]"
+      onClick={onClick}
+      onKeyDown={handleCardKeyDown}
+      role="link"
+      tabIndex={0}
+      aria-label={`Open signal: ${signal.headline}`}
+      className="cursor-pointer overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] shadow-[0_1px_0_rgba(255,255,255,0.03)_inset] transition-[border-color,background-color,box-shadow] duration-200 hover:border-[var(--border-strong)] hover:bg-[var(--surface)] hover:shadow-[0_18px_48px_rgba(0,0,0,0.16)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/35"
     >
       <div className="flex min-h-full flex-col p-5">
         {hasImage ? (
