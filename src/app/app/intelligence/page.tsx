@@ -19,6 +19,7 @@ import IntelligenceSetupNotice from './IntelligenceSetupNotice'
 import ActivityRail from './ActivityRail'
 import HistoryButton from './HistoryButton'
 import { useIntelligenceStream } from '@/hooks/useIntelligenceStream'
+import { MODEL_STORAGE_KEY, normalizeModelPreference } from '@/lib/intelligence/models'
 import type {
   MeetingPrepBrief,
   CompetitiveAnalysisBrief,
@@ -128,6 +129,12 @@ function buildApiBodyFromInput(input: IntelligenceInput): Record<string, unknown
     depth: input.depth || undefined,
     steering: input.steering || undefined,
   }
+}
+
+function getStoredPreferredModel() {
+  return typeof window !== 'undefined'
+    ? normalizeModelPreference(localStorage.getItem(MODEL_STORAGE_KEY))
+    : undefined
 }
 
 export default function IntelligencePage() {
@@ -265,6 +272,7 @@ export default function IntelligencePage() {
 
     await generate({
       ...apiBody,
+      preferredModel: getStoredPreferredModel(),
     })
   }, [generate, generateReady, pendingInput])
 
@@ -276,6 +284,7 @@ export default function IntelligencePage() {
     setSavedBriefError(null)
     void generate({
       ...lastRequestPayload,
+      preferredModel: getStoredPreferredModel(),
     })
   }, [generate, generateReady, lastRequestPayload, loadingSavedBrief, streamState.isStreaming])
 
@@ -338,7 +347,12 @@ export default function IntelligencePage() {
       <div data-intel="v4" className="intel-shell">
         <div className="intel-stage">
           {researchType === 'meeting_prep' && (
-            <IntelligenceResults brief={brief as MeetingPrepBrief} onNewSearch={handleNewSearch} savedBriefId={savedBriefId} />
+            <IntelligenceResults
+              brief={brief as MeetingPrepBrief}
+              onNewSearch={handleNewSearch}
+              savedBriefId={savedBriefId}
+              requestPayload={lastRequestPayload}
+            />
           )}
           {researchType === 'competitive_analysis' && (
             <CompetitiveResults brief={brief as CompetitiveAnalysisBrief} onNewSearch={handleNewSearch} savedBriefId={savedBriefId} />

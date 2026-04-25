@@ -5,6 +5,7 @@ import { createClient } from '@supabase/supabase-js'
 import { callOpenRouterPrompt } from '@/lib/intelligence/openrouter'
 import {
   DEFAULT_MODEL_PREFERENCE,
+  normalizeModelPreference,
 } from '@/lib/intelligence/models'
 import {
   AI_ONLY_INTELLIGENCE_PROVIDERS,
@@ -17,6 +18,7 @@ export const maxDuration = 30
 const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? '').replace(/^=+/, '').trim()
 const anonKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '').replace(/^=+/, '').trim()
 const REFINE_TIMEOUT = 15_000
+const MAX_MODEL_LENGTH = 160
 
 const SYSTEM_PROMPT = `You are a research strategist. The user gives you a rough meeting goal.
 Rewrite it into a sharper, more specific, actionable goal statement.
@@ -54,7 +56,11 @@ export async function POST(request: NextRequest) {
   const goal = typeof body.goal === 'string' ? body.goal.trim().slice(0, 500) : ''
   const meetingType = typeof body.meetingType === 'string' ? body.meetingType.trim() : ''
   const accountName = typeof body.accountName === 'string' ? body.accountName.trim().slice(0, 200) : ''
-  const preferredModel = DEFAULT_MODEL_PREFERENCE
+  const preferredModel = normalizeModelPreference(
+    typeof body.preferredModel === 'string'
+      ? body.preferredModel.slice(0, MAX_MODEL_LENGTH)
+      : DEFAULT_MODEL_PREFERENCE,
+  )
 
   if (!goal) {
     return NextResponse.json({ error: 'Goal is required' }, { status: 400 })

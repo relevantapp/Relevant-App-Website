@@ -104,6 +104,19 @@ function buildEvidencePlan(input: IntelligenceInput): Array<[string, string]> {
   ]
 }
 
+function buildMeetingPrepTargetCheck(input: IntelligenceInput): Array<[string, string]> {
+  if (input.researchType !== 'meeting_prep') return []
+
+  return [
+    ['Company', input.accountName],
+    ['Website', input.website || 'Missing. Adding a website improves company matching.'],
+    ['Selling', input.whatYoureSelling || 'Missing. Add the offer to reduce synthesis drift.'],
+    ['Goal', input.goal],
+    ['Desired next step', input.desiredNextStep || 'Not provided'],
+    ['Attendees', input.attendees?.length ? input.attendees.map((attendee) => attendee.name).join(', ') : 'No attendees provided'],
+  ]
+}
+
 export default function ResearchConfirmation({
   input,
   onChange,
@@ -118,6 +131,7 @@ export default function ResearchConfirmation({
   const typeLabel = TYPE_LABELS[input.researchType]
   const brief = buildBrief(input, profile)
   const evidencePlan = buildEvidencePlan(input)
+  const targetCheck = buildMeetingPrepTargetCheck(input)
 
   useEffect(() => {
     if (!user?.id) return
@@ -126,7 +140,7 @@ export default function ResearchConfirmation({
     const loadProfile = async () => {
       const { data } = await supabase
         .from('users')
-        .select('industry_raw, role_raw, company_id, company_name_manual')
+        .select('profile_kind, industry_raw, role_raw, company_id, company_name_manual')
         .eq('id', user.id)
         .maybeSingle()
 
@@ -147,7 +161,7 @@ export default function ResearchConfirmation({
 
       if (cancelled) return
       setProfile({
-        profileKind: null,
+        profileKind: clean(row.profile_kind as string | null),
         industry: clean(row.industry_raw as string | null),
         role: clean(row.role_raw as string | null),
         company: clean(company),
@@ -276,6 +290,33 @@ export default function ResearchConfirmation({
             </div>
           ))}
         </div>
+
+        {targetCheck.length > 0 && (
+          <section className="mt-7 overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)]">
+            <div className="flex flex-wrap items-start justify-between gap-3 border-b border-[var(--border)] px-4 py-4">
+              <div>
+                <Kicker>Target check</Kicker>
+                <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted)]">
+                  Confirm the company and offer before you run. This is what the system will use to judge whether the brief stayed on target.
+                </p>
+              </div>
+              {input.researchType === 'meeting_prep' && !input.website && (
+                <span className="rounded-full border border-[var(--accent-amber)]/35 bg-[color-mix(in_oklch,var(--accent-amber)_12%,transparent)] px-3 py-1.5 text-[10px] uppercase tracking-[0.16em] text-[var(--accent-amber)]">
+                  Website recommended
+                </span>
+              )}
+            </div>
+
+            <div className="grid gap-px bg-[var(--border)] md:grid-cols-2">
+              {targetCheck.map(([label, value]) => (
+                <div key={label} className="bg-[var(--bg-elevated)] px-4 py-4">
+                  <Kicker>{label}</Kicker>
+                  <p className="mt-2 text-sm leading-relaxed text-[var(--text)]">{value}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         <div style={{ marginTop: 28 }}>
           <Kicker>Evidence plan</Kicker>

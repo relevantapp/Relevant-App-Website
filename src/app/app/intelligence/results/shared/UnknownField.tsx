@@ -14,7 +14,7 @@ export default function UnknownField({ label, queriesTried }: UnknownFieldProps)
 
   return (
     <span
-      className="relative inline-flex max-w-full flex-col items-start"
+      className="inline-flex max-w-full flex-col items-start"
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
     >
@@ -35,7 +35,7 @@ export default function UnknownField({ label, queriesTried }: UnknownFieldProps)
       {open && (
         <div
           id={panelId}
-          className="absolute left-0 top-[calc(100%+0.5rem)] z-20 w-72 rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4 shadow-[0_18px_50px_rgba(0,0,0,0.18)]"
+          className="mt-2 w-full max-w-[18rem] rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4 shadow-[0_18px_50px_rgba(0,0,0,0.18)]"
           role="status"
         >
           <p className="kicker">Queries tried</p>

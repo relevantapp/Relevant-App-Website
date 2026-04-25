@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Clock, FileText, BarChart3, Users, TrendingUp, Share2, Loader2 } from 'lucide-react'
 import { getValidAccessToken } from '@/lib/supabase'
+import { buildIntelligenceShareUrl } from '@/lib/public-url'
 import type { BriefListItem } from '@/lib/intelligence/db'
 
 const TYPE_CONFIG: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
@@ -71,8 +72,7 @@ export default function IntelligenceHistoryPage() {
           ),
         )
         if (!isShared && data.slug) {
-          const url = `${window.location.origin}/intelligence/share/${data.slug}`
-          await navigator.clipboard.writeText(url)
+          await navigator.clipboard.writeText(buildIntelligenceShareUrl(data.slug))
         }
       }
     } catch {

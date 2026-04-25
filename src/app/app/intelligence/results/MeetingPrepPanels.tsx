@@ -569,7 +569,16 @@ export function VisualTimeline({
                           </span>
                         </div>
                       </div>
-                      <span className="mt-1 h-3 w-3 shrink-0 rounded-full" style={{ background: tone }} />
+                      <span
+                        className="mt-1 shrink-0 rounded-full border px-2.5 py-1 text-[10px] uppercase tracking-[0.16em]"
+                        style={{
+                          color: tone,
+                          borderColor: `color-mix(in oklch, ${tone} 35%, var(--border))`,
+                          background: getToneBackground(tone),
+                        }}
+                      >
+                        {event.impact}
+                      </span>
                     </div>
                   </div>
 
@@ -599,7 +608,19 @@ export function VisualTimeline({
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="mono text-[10px] uppercase tracking-[0.16em] text-[var(--text-soft)]">{event.date}</p>
-                  <p className="mt-1.5 text-sm leading-relaxed text-[var(--text)]">{event.text}</p>
+                  <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                    <span
+                      className="rounded-full border px-2.5 py-1 text-[10px] uppercase tracking-[0.16em]"
+                      style={{
+                        color: tone,
+                        borderColor: `color-mix(in oklch, ${tone} 35%, var(--border))`,
+                        background: getToneBackground(tone),
+                      }}
+                    >
+                      {event.impact}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-sm leading-relaxed text-[var(--text)]">{event.text}</p>
                   <SourceChipRow sourceIds={event.sourceIds} onSourceClick={onSourceClick} />
                 </div>
               </div>

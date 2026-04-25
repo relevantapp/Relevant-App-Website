@@ -123,13 +123,13 @@ export default function CapabilityMatrix({ data, headline, subhead, asOf, source
   return (
     <ExhibitShell headline={headline} subhead={subhead} asOf={asOf} sources={sources}>
       <div className="overflow-x-auto">
-        <table className="min-w-full border-separate border-spacing-0 text-left">
+        <table className="min-w-[760px] border-separate border-spacing-0 text-left">
           <thead>
             <tr>
-              <th className="sticky left-0 top-0 z-20 border-b border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3 text-[11px] uppercase tracking-[0.16em] text-[var(--text-soft)]">
+              <th className="sticky left-0 top-0 z-20 min-w-[190px] border-b border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3 text-[11px] uppercase tracking-[0.16em] text-[var(--text-soft)]">
                 Dimension
               </th>
-              <th className="sticky top-0 z-10 border-b border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3 text-[11px] uppercase tracking-[0.16em] text-[var(--text-soft)]">
+              <th className="sticky top-0 z-10 min-w-[180px] border-b border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3 text-[11px] uppercase tracking-[0.16em] text-[var(--text-soft)]">
                 Weight
               </th>
               {companies.map((company) => {
@@ -138,15 +138,15 @@ export default function CapabilityMatrix({ data, headline, subhead, asOf, source
                   <th
                     key={company}
                     data-testid={`capability-company-${companyKey(company)}`}
-                    className="sticky top-0 z-10 border-b border-[var(--border)] px-4 py-3 text-[11px] uppercase tracking-[0.16em] text-[var(--text-soft)]"
+                    className="sticky top-0 z-10 min-w-[200px] border-b border-[var(--border)] px-4 py-3 text-[11px] uppercase tracking-[0.16em] text-[var(--text-soft)]"
                     style={{
                       background: isYourCompany ? 'color-mix(in oklch, var(--accent-teal) 12%, var(--bg-elevated))' : 'var(--bg-elevated)',
                     }}
                   >
-                    <div className="flex items-center gap-2">
-                      <span>{company}</span>
+                    <div className="flex min-w-0 items-center gap-2">
+                      <span className="break-words leading-tight">{company}</span>
                       {isYourCompany ? (
-                        <span className="inline-flex rounded-full bg-[color-mix(in_oklch,var(--accent-teal)_16%,transparent)] px-2 py-1 text-[9px] font-medium uppercase tracking-[0.12em] text-[var(--accent-teal)]">
+                        <span className="inline-flex shrink-0 rounded-full bg-[color-mix(in_oklch,var(--accent-teal)_16%,transparent)] px-2 py-1 text-[9px] font-medium uppercase tracking-[0.12em] text-[var(--accent-teal)]">
                           you
                         </span>
                       ) : null}
@@ -159,7 +159,7 @@ export default function CapabilityMatrix({ data, headline, subhead, asOf, source
           <tbody>
             {data.map((row) => (
               <tr key={row.dimension}>
-                <td className="sticky left-0 z-10 border-b border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-4 text-sm font-medium text-[var(--text)]">
+                <td className="sticky left-0 z-10 min-w-[190px] border-b border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-4 text-sm font-medium text-[var(--text)]">
                   {row.dimension}
                 </td>
                 <td className="border-b border-[var(--border)] px-4 py-4">
@@ -200,7 +200,7 @@ export default function CapabilityMatrix({ data, headline, subhead, asOf, source
                       }}
                     >
                       {value ? (
-                        <div className="min-w-[180px] space-y-2" title={`${value.score}/5`}>
+                        <div className="min-w-[180px] max-w-[260px] space-y-2" title={`${value.score}/5`}>
                           <div className="h-2 overflow-hidden rounded-full bg-[var(--surface)]">
                             <div
                               className="h-full rounded-full"
@@ -210,7 +210,7 @@ export default function CapabilityMatrix({ data, headline, subhead, asOf, source
                               }}
                             />
                           </div>
-                          <p className="text-sm leading-relaxed text-[var(--text-muted)]">{value.position}</p>
+                          <p className="break-words text-sm leading-relaxed text-[var(--text-muted)]">{value.position}</p>
                         </div>
                       ) : (
                         <span className="text-sm text-[var(--text-soft)]">No score recorded</span>
@@ -223,10 +223,10 @@ export default function CapabilityMatrix({ data, headline, subhead, asOf, source
           </tbody>
           <tfoot>
             <tr>
-              <th className="sticky bottom-0 left-0 z-20 border-t border-[var(--border-strong)] bg-[var(--bg-elevated)] px-4 py-3 text-[11px] uppercase tracking-[0.16em] text-[var(--text-soft)]">
+              <th className="sticky bottom-0 left-0 z-20 min-w-[190px] border-t border-[var(--border-strong)] bg-[var(--bg-elevated)] px-4 py-3 text-[11px] uppercase tracking-[0.16em] text-[var(--text-soft)]">
                 Weighted total
               </th>
-              <th className="sticky bottom-0 z-10 border-t border-[var(--border-strong)] bg-[var(--bg-elevated)] px-4 py-3 text-[11px] uppercase tracking-[0.16em] text-[var(--text-soft)]">
+              <th className="sticky bottom-0 z-10 min-w-[180px] border-t border-[var(--border-strong)] bg-[var(--bg-elevated)] px-4 py-3 text-[11px] uppercase tracking-[0.16em] text-[var(--text-soft)]">
                 live
               </th>
               {companies.map((company) => {

@@ -102,9 +102,9 @@ export default function MeetingPrepForm({ value, onChange, onSubmit, loading }: 
       estimate="~1m 45s · 8–12 sources"
       docket={[
         { label: 'Subject', value: value.accountName?.trim() || 'Unset' },
+        { label: 'Offer', value: value.whatYoureSelling?.trim() || 'Unset' },
         { label: 'Lens', value: meetingTypeLabel },
         { label: 'Goal', value: value.goal?.trim() ? 'Drafted' : 'Unset' },
-        { label: 'Context', value: advancedOpen ? 'Expanded' : 'Standard' },
       ]}
       output={[
         'What changed recently',
@@ -113,7 +113,7 @@ export default function MeetingPrepForm({ value, onChange, onSubmit, loading }: 
       ]}
       footer={
         <>
-          <div className="mono intel-sheet-note">Required: subject, goal, meeting type</div>
+          <div className="mono intel-sheet-note">Required: subject, goal, meeting type. Recommended: offer, website.</div>
           <Btn
             variant="amber"
             size="lg"
@@ -173,6 +173,22 @@ export default function MeetingPrepForm({ value, onChange, onSubmit, loading }: 
 
         <FormSection
           index="03"
+          label="What are you selling or proposing?"
+          hint="Put the offer in plain words. We use this to catch offer drift in the final brief."
+        >
+          <input
+            type="text"
+            value={value.whatYoureSelling ?? ''}
+            onChange={(e) => onChange({ ...value, whatYoureSelling: e.target.value })}
+            placeholder="Arrow workforce solutions staffing services"
+            maxLength={200}
+            disabled={loading}
+            style={inputStyle}
+          />
+        </FormSection>
+
+        <FormSection
+          index="04"
           label="Meeting type"
           hint="Adjusts the analysis lens."
           required
@@ -187,7 +203,7 @@ export default function MeetingPrepForm({ value, onChange, onSubmit, loading }: 
         </FormSection>
 
         <FormSection
-          index="04"
+          index="05"
           label="Their website"
           hint="Optional. We scrape recent content directly."
           error={errors.website}
@@ -200,9 +216,14 @@ export default function MeetingPrepForm({ value, onChange, onSubmit, loading }: 
             disabled={loading}
             style={inputStyle}
           />
+          {!value.website?.trim() && (
+            <p className="mt-2 text-xs leading-relaxed text-[var(--accent-amber)]">
+              Adding a website improves company matching.
+            </p>
+          )}
         </FormSection>
 
-        <FormSection index="05" label="Attendees" hint="Up to 5. We search LinkedIn + public profiles.">
+        <FormSection index="06" label="Attendees" hint="Up to 5. We search LinkedIn + public profiles.">
           <TagInput
             value={(value.attendees ?? []).map((a) => a.name)}
             onChange={(tags) => onChange({ ...value, attendees: tags.map((name) => ({ name })) })}
@@ -231,19 +252,7 @@ export default function MeetingPrepForm({ value, onChange, onSubmit, loading }: 
               />
             </FormSection>
 
-            <FormSection index="A2" label="What you're selling or proposing">
-              <input
-                type="text"
-                value={value.whatYoureSelling ?? ''}
-                onChange={(e) => onChange({ ...value, whatYoureSelling: e.target.value })}
-                placeholder="e.g. Enterprise SaaS platform, consulting retainer"
-                maxLength={200}
-                disabled={loading}
-                style={inputStyle}
-              />
-            </FormSection>
-
-            <FormSection index="A3" label="Desired next step">
+            <FormSection index="A2" label="Desired next step">
               <input
                 type="text"
                 value={value.desiredNextStep ?? ''}
@@ -255,7 +264,7 @@ export default function MeetingPrepForm({ value, onChange, onSubmit, loading }: 
               />
             </FormSection>
 
-            <FormSection index="A4" label="Key topics or context">
+            <FormSection index="A3" label="Key topics or context">
               <textarea
                 rows={3}
                 value={value.context ?? ''}
@@ -267,7 +276,7 @@ export default function MeetingPrepForm({ value, onChange, onSubmit, loading }: 
               />
             </FormSection>
 
-            <FormSection index="A5" label="Pain points to explore">
+            <FormSection index="A4" label="Pain points to explore">
               <TagInput
                 value={value.painPoints ?? []}
                 onChange={(tags) => onChange({ ...value, painPoints: tags })}
@@ -277,7 +286,7 @@ export default function MeetingPrepForm({ value, onChange, onSubmit, loading }: 
               />
             </FormSection>
 
-            <FormSection index="A6" label="Competitors to watch">
+            <FormSection index="A5" label="Competitors to watch">
               <TagInput
                 value={value.competitors ?? []}
                 onChange={(tags) => onChange({ ...value, competitors: tags })}

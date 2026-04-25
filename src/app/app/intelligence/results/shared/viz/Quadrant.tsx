@@ -23,11 +23,26 @@ const PLOT_TOP = 28
 const PLOT_BOTTOM = 232
 const PLOT_WIDTH = PLOT_RIGHT - PLOT_LEFT
 const PLOT_HEIGHT = PLOT_BOTTOM - PLOT_TOP
+const LABEL_WIDTH = 106
+const LABEL_HEIGHT = 32
 
 export function getQuadrantPoint(scale: number, momentum: number) {
   return {
     x: PLOT_LEFT + scale * PLOT_WIDTH,
     y: PLOT_BOTTOM - momentum * PLOT_HEIGHT,
+  }
+}
+
+function getLabelBox(point: { x: number; y: number }, index: number) {
+  const placeLeft = point.x > PLOT_LEFT + PLOT_WIDTH * 0.62
+  const placeBelow = point.y < PLOT_TOP + PLOT_HEIGHT * 0.36
+  const stagger = (index % 3) * 10
+  const rawX = placeLeft ? point.x - LABEL_WIDTH - 12 : point.x + 12
+  const rawY = placeBelow ? point.y + 8 + stagger : point.y - LABEL_HEIGHT - 8 - stagger
+
+  return {
+    x: Math.min(PLOT_RIGHT - LABEL_WIDTH - 6, Math.max(PLOT_LEFT + 6, rawX)),
+    y: Math.min(PLOT_BOTTOM - LABEL_HEIGHT - 6, Math.max(PLOT_TOP + 6, rawY)),
   }
 }
 
@@ -82,19 +97,25 @@ export default function Quadrant({ players, label = 'Player quadrant' }: Quadran
 
         {plottedPlayers.map((player) => {
           const point = getQuadrantPoint(player.scale as number, player.momentum as number)
+          const labelBox = getLabelBox(point, plottedPlayers.indexOf(player))
           return (
             <g key={player.name}>
               <circle cx={point.x} cy={point.y} r="7" fill={CATEGORY_COLOR[player.category]} opacity={activePlayer?.name === player.name ? 1 : 0.82}>
                 <title>{`${player.name}: ${player.scaleRationale ?? 'Scale rationale unavailable.'} ${player.momentumRationale ?? 'Momentum rationale unavailable.'}`}</title>
               </circle>
-              <text
-                x={Math.min(PLOT_RIGHT - 8, point.x + 10)}
-                y={Math.max(PLOT_TOP + 12, point.y - 10)}
-                className="mono"
-                style={{ fontSize: 10, fill: 'var(--text)' }}
-              >
-                {player.name}
-              </text>
+              <foreignObject x={labelBox.x} y={labelBox.y} width={LABEL_WIDTH} height={LABEL_HEIGHT}>
+                <div
+                  className="mono"
+                  style={{
+                    color: 'var(--text)',
+                    fontSize: 10,
+                    lineHeight: 1.12,
+                    overflowWrap: 'anywhere',
+                  }}
+                >
+                  {player.name}
+                </div>
+              </foreignObject>
             </g>
           )
         })}

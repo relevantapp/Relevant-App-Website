@@ -25,6 +25,29 @@ const STAGE_LABELS: Array<{ stage: MaturityStage; label: string }> = [
   { stage: 'plateau', label: 'Plateau' },
 ]
 
+const STAGE_COPY: Record<MaturityStage, { label: string; cue: string }> = {
+  'innovation-trigger': {
+    label: 'Innovation trigger',
+    cue: 'Watch for the first repeatable buyer problem before over-investing.',
+  },
+  peak: {
+    label: 'Peak expectations',
+    cue: 'Separate real budget from attention before committing roadmap or sales focus.',
+  },
+  trough: {
+    label: 'Practical reset',
+    cue: 'Look for resilient use cases while weak claims fall away.',
+  },
+  slope: {
+    label: 'Practical evaluation',
+    cue: 'Buyers are comparing proof, workflow fit, and execution risk.',
+  },
+  plateau: {
+    label: 'Productivity plateau',
+    cue: 'Compete on reliability, distribution, and measurable operating impact.',
+  },
+}
+
 export function getMaturityDotX(stage: MaturityStage) {
   return 30 + MATURITY_STAGE_X[stage] * 360
 }
@@ -62,6 +85,7 @@ interface MaturityCurveProps {
 export default function MaturityCurve({ data, headline, subhead, asOf, sources }: MaturityCurveProps) {
   const dotX = getMaturityDotX(data.stage)
   const dotY = getMaturityDotY(data.stage)
+  const currentStage = STAGE_COPY[data.stage]
 
   return (
     <ExhibitShell headline={headline} subhead={subhead} asOf={asOf} sources={sources}>
@@ -79,7 +103,17 @@ export default function MaturityCurve({ data, headline, subhead, asOf, sources }
             strokeWidth="3"
             strokeLinecap="round"
           />
-          <circle data-testid="maturity-dot" cx={dotX} cy={dotY} r="9" fill="var(--accent-teal)" />
+          <line
+            x1={dotX}
+            x2={dotX}
+            y1={dotY + 12}
+            y2={LABEL_Y - 20}
+            stroke="var(--accent)"
+            strokeDasharray="3 5"
+            strokeOpacity="0.55"
+          />
+          <circle data-testid="maturity-dot" cx={dotX} cy={dotY} r="11" fill="var(--bg-elevated)" stroke="var(--accent)" strokeWidth="3" />
+          <circle cx={dotX} cy={dotY} r="4" fill="var(--accent)" />
 
           {STAGE_LABELS.map((label) => (
             <text
@@ -99,8 +133,15 @@ export default function MaturityCurve({ data, headline, subhead, asOf, sources }
           ))}
         </svg>
 
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-4 text-sm leading-relaxed text-[var(--text-muted)]">
-          <CitedText spans={[data.rationale]} sources={sources} />
+        <div className="grid gap-3 lg:grid-cols-[240px_minmax(0,1fr)]">
+          <div className="rounded-2xl border border-[var(--accent)]/40 bg-[color-mix(in_oklch,var(--accent)_10%,transparent)] px-4 py-4">
+            <p className="kicker text-[var(--accent)]">Current stage</p>
+            <p className="mt-2 text-base font-semibold text-[var(--text)]">{currentStage.label}</p>
+            <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted)]">{currentStage.cue}</p>
+          </div>
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-4 text-sm leading-relaxed text-[var(--text-muted)]">
+            <CitedText spans={[data.rationale]} sources={sources} />
+          </div>
         </div>
       </div>
     </ExhibitShell>

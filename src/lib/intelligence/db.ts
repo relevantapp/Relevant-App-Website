@@ -160,7 +160,21 @@ export async function toggleShare(
   share: boolean,
 ): Promise<{ slug: string | null; error: string | null }> {
   if (share) {
-    const slug = generateShareSlug()
+    const { data: existing, error: existingError } = await supabase
+      .from('intelligence_briefs')
+      .select('share_slug, is_shared')
+      .eq('id', briefId)
+      .eq('user_id', userId)
+      .maybeSingle()
+
+    if (existingError) return { slug: null, error: existingError.message }
+
+    const existingRow = existing as { share_slug?: string | null; is_shared?: boolean } | null
+    if (existingRow?.is_shared && existingRow.share_slug) {
+      return { slug: existingRow.share_slug, error: null }
+    }
+
+    const slug = existingRow?.share_slug || generateShareSlug()
     const { error } = await supabase
       .from('intelligence_briefs')
       .update({ is_shared: true, shared_at: new Date().toISOString(), share_slug: slug })

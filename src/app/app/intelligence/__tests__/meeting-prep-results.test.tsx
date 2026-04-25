@@ -2,7 +2,7 @@
 
 import '@testing-library/jest-dom/vitest'
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { SnapshotCard, VisualTimeline } from '../results/MeetingPrepPanels'
 import SourcesStrip from '../results/shared/SourcesStrip'
@@ -131,15 +131,22 @@ describe('meeting prep results UI', () => {
     expect(screen.getAllByText('Security review delays are still showing up in public references.').length).toBeGreaterThan(0)
   })
 
-  it('groups sources into an evidence ledger and surfaces used/internal badges', () => {
+  it('groups sources into a collapsed evidence ledger with role filters', () => {
     render(React.createElement(SourcesStrip, { sources: ledgerSources }))
 
     expect(screen.getByText('Evidence ledger · 3')).toBeInTheDocument()
-    expect(screen.getByText('Used in answer')).toBeInTheDocument()
-    expect(screen.getByText('Supporting but unused')).toBeInTheDocument()
-    expect(screen.getByText('Internal memory')).toBeInTheDocument()
-    expect(screen.getAllByText('Used').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Internal').length).toBeGreaterThan(0)
+    expect(screen.getByRole('button', { name: 'Cited in answer · 1' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Counter-evidence · 1' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Internal memory · 1' })).toBeInTheDocument()
+    expect(screen.queryByText('Used source')).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Cited in answer · 1' }))
+    expect(screen.getByText('Used source')).toBeInTheDocument()
+    expect(screen.getAllByText('cited').length).toBeGreaterThan(0)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Internal memory · 1' }))
+    expect(screen.getByText('Internal memory note')).toBeInTheDocument()
+    expect(screen.getAllByText('internal').length).toBeGreaterThan(0)
   })
 
   it('shows found, ranked, and used counts in the status bar', () => {

@@ -40,6 +40,9 @@ function getClient(): SupabaseClient {
       on: () => ({ subscribe: () => ({}) }),
     }),
     removeChannel: () => {},
+    functions: {
+      invoke: async () => ({ data: null, error: null }),
+    },
   } as unknown as SupabaseClient
 }
 

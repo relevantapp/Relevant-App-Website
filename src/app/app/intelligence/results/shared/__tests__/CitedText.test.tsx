@@ -5,6 +5,8 @@ import React from 'react'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 import CitedText from '../CitedText'
+import ClaimSpotlight from '../ClaimSpotlight'
+import { ClaimSpotlightProvider } from '../ClaimSpotlightContext'
 
 afterEach(() => cleanup())
 
@@ -76,5 +78,24 @@ describe('CitedText', () => {
 
     expect(screen.getByText('source no longer available.')).toBeInTheDocument()
     expect(button.className).toContain('text-[var(--text-soft)]')
+  })
+
+  it('opens the spotlight rail instead of the inline popover when a provider is present', () => {
+    render(
+      <ClaimSpotlightProvider>
+        <CitedText
+          spans={[{ text: 'Relevant wins on answer quality.', sourceIds: ['s1', 's2'], sourceSnippet: 'Answer quality evidence.' }]}
+          sources={sources}
+        />
+        <ClaimSpotlight sources={sources} />
+      </ClaimSpotlightProvider>,
+    )
+
+    const button = screen.getByRole('button', { name: 'Open source 1' })
+    fireEvent.focus(button)
+
+    expect(screen.getByRole('dialog', { name: 'Claim spotlight' })).toBeInTheDocument()
+    expect(screen.getByText('Source one')).toBeInTheDocument()
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument()
   })
 })

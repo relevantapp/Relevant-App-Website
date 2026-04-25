@@ -13,6 +13,8 @@ const PLOT_TOP = 40
 const PLOT_BOTTOM = 320
 const PLOT_WIDTH = PLOT_RIGHT - PLOT_LEFT
 const PLOT_HEIGHT = PLOT_BOTTOM - PLOT_TOP
+const LABEL_WIDTH = 112
+const LABEL_HEIGHT = 36
 
 type ActivePanel =
   | { kind: 'point'; entity: string; rationale: CitedSpan }
@@ -26,14 +28,16 @@ export function getCompositeQuadrantPoint(x: number, y: number) {
   }
 }
 
-function getPointLabelPosition(x: number, y: number) {
-  const anchor: 'end' | 'start' = x > PLOT_LEFT + PLOT_WIDTH * 0.72 ? 'end' : 'start'
-  const offsetX = anchor === 'end' ? -10 : 10
+function getPointLabelBox(x: number, y: number, index: number) {
+  const placeLeft = x > PLOT_LEFT + PLOT_WIDTH * 0.64
+  const placeBelow = y < PLOT_TOP + PLOT_HEIGHT * 0.36
+  const stagger = (index % 3) * 10
+  const rawX = placeLeft ? x - LABEL_WIDTH - 12 : x + 12
+  const rawY = placeBelow ? y + 10 + stagger : y - LABEL_HEIGHT - 8 - stagger
 
   return {
-    x: Math.min(PLOT_RIGHT - 6, Math.max(PLOT_LEFT + 6, x + offsetX)),
-    y: Math.min(PLOT_BOTTOM - 8, Math.max(PLOT_TOP + 14, y - 10)),
-    anchor,
+    x: Math.min(PLOT_RIGHT - LABEL_WIDTH - 6, Math.max(PLOT_LEFT + 6, rawX)),
+    y: Math.min(PLOT_BOTTOM - LABEL_HEIGHT - 6, Math.max(PLOT_TOP + 6, rawY)),
   }
 }
 
@@ -77,9 +81,9 @@ export default function CompositeQuadrant({ data, headline, subhead, asOf, sourc
           <line x1={PLOT_LEFT + PLOT_WIDTH / 2} y1={PLOT_TOP} x2={PLOT_LEFT + PLOT_WIDTH / 2} y2={PLOT_BOTTOM} stroke="var(--border)" strokeDasharray="6 6" />
           <line x1={PLOT_LEFT} y1={PLOT_TOP + PLOT_HEIGHT / 2} x2={PLOT_RIGHT} y2={PLOT_TOP + PLOT_HEIGHT / 2} stroke="var(--border)" strokeDasharray="6 6" />
 
-          {data.points.map((point) => {
+          {data.points.map((point, index) => {
             const quadrantPoint = getCompositeQuadrantPoint(point.x, point.y)
-            const labelPosition = getPointLabelPosition(quadrantPoint.x, quadrantPoint.y)
+            const labelBox = getPointLabelBox(quadrantPoint.x, quadrantPoint.y, index)
 
             return (
               <g
@@ -94,15 +98,19 @@ export default function CompositeQuadrant({ data, headline, subhead, asOf, sourc
               >
                 <circle cx={quadrantPoint.x} cy={quadrantPoint.y} r="8" fill="var(--accent-teal)" />
                 <circle cx={quadrantPoint.x} cy={quadrantPoint.y} r="12" fill="transparent" stroke="transparent" />
-                <text
-                  x={labelPosition.x}
-                  y={labelPosition.y}
-                  textAnchor={labelPosition.anchor}
-                  className="mono"
-                  style={{ fontSize: 10, fill: 'var(--text)' }}
-                >
-                  {point.entity}
-                </text>
+                <foreignObject x={labelBox.x} y={labelBox.y} width={LABEL_WIDTH} height={LABEL_HEIGHT}>
+                  <div
+                    className="mono"
+                    style={{
+                      color: 'var(--text)',
+                      fontSize: 10,
+                      lineHeight: 1.12,
+                      overflowWrap: 'anywhere',
+                    }}
+                  >
+                    {point.entity}
+                  </div>
+                </foreignObject>
               </g>
             )
           })}
@@ -110,34 +118,34 @@ export default function CompositeQuadrant({ data, headline, subhead, asOf, sourc
 
         <button
           type="button"
-          className="absolute bottom-0 left-1/2 -translate-x-1/2 rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-1.5 text-[11px] uppercase tracking-[0.14em] text-[var(--text-soft)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2 focus:ring-offset-[var(--bg-elevated)]"
+          className="absolute bottom-0 left-1/2 max-w-[60%] -translate-x-1/2 rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-1.5 text-[11px] uppercase leading-tight tracking-[0.14em] text-[var(--text-soft)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2 focus:ring-offset-[var(--bg-elevated)]"
           onClick={() => setActivePanel({ kind: 'axis', entity: data.xAxis.name, rationale: data.xAxis.rationale })}
         >
           {data.xAxis.name}
         </button>
         <button
           type="button"
-          className="absolute left-0 top-1/2 -translate-y-1/2 -rotate-90 rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-1.5 text-[11px] uppercase tracking-[0.14em] text-[var(--text-soft)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2 focus:ring-offset-[var(--bg-elevated)]"
+          className="absolute left-0 top-1/2 max-w-[210px] -translate-y-1/2 -rotate-90 rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-1.5 text-[11px] uppercase leading-tight tracking-[0.14em] text-[var(--text-soft)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2 focus:ring-offset-[var(--bg-elevated)]"
           onClick={() => setActivePanel({ kind: 'axis', entity: data.yAxis.name, rationale: data.yAxis.rationale })}
         >
           {data.yAxis.name}
         </button>
-
-        {activePanel ? (
-          <div
-            role="tooltip"
-            className="absolute right-0 top-0 z-10 w-72 rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4 shadow-[0_18px_50px_rgba(0,0,0,0.18)]"
-          >
-            <p className="text-xs font-medium uppercase tracking-[0.16em] text-[var(--text-soft)]">
-              {activePanel.kind === 'axis' ? 'Axis rationale' : 'Point rationale'}
-            </p>
-            <p className="mt-1 text-sm font-semibold text-[var(--text)]">{activePanel.entity}</p>
-            <div className="mt-3 text-sm leading-relaxed text-[var(--text-muted)]">
-              <CitedText spans={[activePanel.rationale]} sources={sources} />
-            </div>
-          </div>
-        ) : null}
       </div>
+
+      {activePanel ? (
+        <div
+          role="tooltip"
+          className="mt-4 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[0_18px_50px_rgba(0,0,0,0.12)]"
+        >
+          <p className="text-xs font-medium uppercase tracking-[0.16em] text-[var(--text-soft)]">
+            {activePanel.kind === 'axis' ? 'Axis rationale' : 'Point rationale'}
+          </p>
+          <p className="mt-1 break-words text-sm font-semibold text-[var(--text)]">{activePanel.entity}</p>
+          <div className="mt-3 text-sm leading-relaxed text-[var(--text-muted)]">
+            <CitedText spans={[activePanel.rationale]} sources={sources} />
+          </div>
+        </div>
+      ) : null}
     </ExhibitShell>
   )
 }

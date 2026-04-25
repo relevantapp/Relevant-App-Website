@@ -16,6 +16,7 @@ interface AnswerBlockProps {
     whyItMatters?: string | null
   }
   sources: BriefSource[]
+  sticky?: boolean
 }
 
 function countWords(text: string) {
@@ -32,17 +33,26 @@ function Slot({
   accent?: string
 }) {
   return (
-    <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-4">
-      <p className="kicker" style={accent ? { color: accent } : undefined}>{label}</p>
-      <div className="mt-2">{children}</div>
+    <section className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)]">
+      <div className="border-b border-[var(--border)] px-4 py-3">
+        <p className="kicker" style={accent ? { color: accent } : undefined}>{label}</p>
+      </div>
+      <div className="px-4 py-4">{children}</div>
     </section>
   )
 }
 
-export default function AnswerBlock({ answer, fallback, sources }: AnswerBlockProps) {
+export default function AnswerBlock({ answer, fallback, sources, sticky = true }: AnswerBlockProps) {
   const wordCount = answer
     ? countWords([answer.conclusion.text, answer.whyItMatters.text, answer.whatChanged?.text ?? ''].join(' '))
     : 0
+
+  const containerClassName = [
+    'rounded-[28px] border border-[var(--border)] bg-[var(--bg-elevated)] px-5 py-5 shadow-[0_14px_40px_rgba(0,0,0,0.08)]',
+    sticky ? 'sticky top-0 z-20 backdrop-blur' : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
 
   useEffect(() => {
     if (!answer || process.env.NODE_ENV === 'production' || wordCount <= 120) return
@@ -56,7 +66,7 @@ export default function AnswerBlock({ answer, fallback, sources }: AnswerBlockPr
 
   if (!answer) {
     return (
-      <section data-intel-answer-block className="sticky top-0 z-20 rounded-[28px] border border-[var(--border)] bg-[var(--bg-elevated)] px-5 py-5 shadow-[0_14px_40px_rgba(0,0,0,0.08)] backdrop-blur">
+      <section data-intel-answer-block className={containerClassName}>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="max-w-3xl">
             <p className="kicker text-[var(--accent)]">Bottom line</p>
@@ -77,7 +87,7 @@ export default function AnswerBlock({ answer, fallback, sources }: AnswerBlockPr
   }
 
   return (
-    <section data-intel-answer-block className="sticky top-0 z-20 rounded-[28px] border border-[var(--border)] bg-[var(--bg-elevated)] px-5 py-5 shadow-[0_14px_40px_rgba(0,0,0,0.08)] backdrop-blur">
+    <section data-intel-answer-block className={containerClassName}>
       <div className="grid gap-4 lg:grid-cols-2">
         <Slot label="Conclusion" accent="var(--accent)">
           <CitedText spans={[answer.conclusion]} sources={sources} />

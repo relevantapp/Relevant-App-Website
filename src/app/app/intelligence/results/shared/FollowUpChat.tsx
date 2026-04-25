@@ -2,8 +2,9 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { Send, Loader2 } from 'lucide-react'
+import { MessageCircle, Send, Loader2, X } from 'lucide-react'
 import { getValidAccessToken } from '@/lib/supabase'
+import { MODEL_STORAGE_KEY, normalizeModelPreference } from '@/lib/intelligence/models'
 
 interface ChatMessage {
   role: 'user' | 'assistant'
@@ -42,6 +43,7 @@ export default function FollowUpChat({ briefId, researchType }: FollowUpChatProp
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [open, setOpen] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -69,6 +71,7 @@ export default function FollowUpChat({ briefId, researchType }: FollowUpChatProp
         body: JSON.stringify({
           briefId,
           question: q,
+          preferredModel: normalizeModelPreference(localStorage.getItem(MODEL_STORAGE_KEY)),
         }),
       })
 
@@ -96,124 +99,246 @@ export default function FollowUpChat({ briefId, researchType }: FollowUpChatProp
   const suggestions = SUGGESTED_QUESTIONS[researchType ?? ''] ?? SUGGESTED_QUESTIONS.meeting_prep
 
   return (
-    <div
-      style={{
-        marginTop: 32,
-        background: 'var(--bg-elevated)',
-        border: '1px solid var(--border)',
-        borderRadius: 12,
-        overflow: 'hidden',
-      }}
-    >
-      {/* Header */}
-      <div style={{ padding: '10px 18px', borderBottom: '1px solid var(--border)' }}>
-        <span className="kicker">Ask a follow-up</span>
-      </div>
+    <>
+      <button
+        type="button"
+        className="intel-ask-fab"
+        aria-expanded={open}
+        aria-controls="intel-ask-panel"
+        onClick={() => setOpen((value) => !value)}
+      >
+        <MessageCircle className="h-4 w-4" aria-hidden="true" />
+        <span>Ask AI</span>
+      </button>
 
-      {/* Suggested questions (shown when no messages yet) */}
-      {messages.length === 0 && (
-        <div style={{ padding: '12px 18px', display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-          {suggestions.map((q) => (
-            <button
-              key={q}
-              onClick={() => handleSend(q)}
-              disabled={loading}
-              style={{
-                padding: '6px 12px',
-                fontSize: 12,
-                color: 'var(--text-muted)',
-                background: 'transparent',
-                border: '1px solid var(--border)',
-                borderRadius: 4,
-                cursor: 'pointer',
-                transition: 'border-color 150ms, color 150ms',
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.borderColor = 'var(--accent)'
-                e.currentTarget.style.color = 'var(--text)'
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.borderColor = 'var(--border)'
-                e.currentTarget.style.color = 'var(--text-muted)'
-              }}
-            >
-              {q}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* Message history */}
-      {messages.length > 0 && (
-        <div ref={scrollRef} style={{ maxHeight: 360, overflowY: 'auto', padding: '12px 18px' }}>
-          {messages.map((msg, i) => (
-            <div
-              key={i}
-              style={{
-                marginBottom: 12,
-                padding: '10px 14px',
-                background: msg.role === 'user' ? 'var(--surface)' : 'transparent',
-                borderLeft: msg.role === 'assistant' ? '2px solid var(--accent-teal)' : 'none',
-                borderRadius: msg.role === 'user' ? 6 : 0,
-              }}
-            >
-              <div className="kicker" style={{ marginBottom: 4, color: msg.role === 'user' ? 'var(--text-soft)' : 'var(--accent-teal)' }}>
-                {msg.role === 'user' ? 'You' : 'Intelligence'}
-              </div>
-              <p style={{ fontSize: 13, lineHeight: 1.55, color: 'var(--text-muted)', margin: 0, whiteSpace: 'pre-wrap' }}>
-                {msg.content}
-              </p>
+      {open && (
+        <aside id="intel-ask-panel" className="intel-ask-panel" aria-label="Ask AI">
+          <div className="intel-ask-header">
+            <div>
+              <span className="kicker">Ask AI</span>
+              <p>Ask a follow-up about this brief.</p>
             </div>
-          ))}
-          {loading && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderLeft: '2px solid var(--accent-teal)' }}>
-              <Loader2 className="h-3 w-3 animate-spin" style={{ color: 'var(--accent-teal)' }} />
-              <span className="mono" style={{ fontSize: 11, color: 'var(--text-soft)' }}>Thinking…</span>
+            <button type="button" aria-label="Close Ask AI" onClick={() => setOpen(false)}>
+              <X className="h-4 w-4" aria-hidden="true" />
+            </button>
+          </div>
+
+          {messages.length === 0 && (
+            <div className="intel-ask-suggestions">
+              {suggestions.map((q) => (
+                <button
+                  key={q}
+                  type="button"
+                  onClick={() => handleSend(q)}
+                  disabled={loading}
+                >
+                  {q}
+                </button>
+              ))}
             </div>
           )}
-        </div>
+
+          {messages.length > 0 && (
+            <div ref={scrollRef} className="intel-ask-messages">
+              {messages.map((msg, i) => (
+                <div key={i} className={`intel-ask-message intel-ask-message--${msg.role}`}>
+                  <div className="kicker">
+                    {msg.role === 'user' ? 'You' : 'Intelligence'}
+                  </div>
+                  <p>{msg.content}</p>
+                </div>
+              ))}
+              {loading && (
+                <div className="intel-ask-loading">
+                  <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
+                  <span className="mono">Thinking...</span>
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="intel-ask-input-row">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
+              placeholder="Ask about this brief..."
+              maxLength={500}
+            />
+            <button
+              type="button"
+              onClick={() => handleSend()}
+              disabled={loading || !input.trim()}
+              aria-label="Send question"
+            >
+              <Send className="h-3.5 w-3.5" aria-hidden="true" />
+            </button>
+          </div>
+        </aside>
       )}
 
-      {/* Input bar */}
-      <div style={{ padding: '10px 18px', borderTop: '1px solid var(--border)', display: 'flex', gap: 8, alignItems: 'center' }}>
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
-          placeholder="Ask anything about this brief…"
-          maxLength={500}
-          style={{
-            flex: 1,
-            padding: '8px 12px',
-            fontSize: 13,
-            color: 'var(--text)',
-            background: 'var(--surface)',
-            border: '1px solid var(--border)',
-            borderRadius: 6,
-            outline: 'none',
-          }}
-        />
-        <button
-          onClick={() => handleSend()}
-          disabled={loading || !input.trim()}
-          style={{
-            padding: '8px 12px',
-            background: input.trim() ? 'var(--accent)' : 'var(--surface)',
-            color: input.trim() ? '#fff' : 'var(--text-soft)',
-            border: '1px solid var(--border)',
-            borderRadius: 6,
-            cursor: input.trim() ? 'pointer' : 'default',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-            fontSize: 12,
-            transition: 'background 150ms',
-          }}
-        >
-          <Send className="h-3.5 w-3.5" />
-        </button>
-      </div>
-    </div>
+      <style jsx>{`
+        .intel-ask-fab {
+          position: fixed;
+          right: 24px;
+          bottom: 24px;
+          z-index: 55;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          min-height: 44px;
+          padding: 0 16px;
+          border: 1px solid color-mix(in oklch, var(--accent) 48%, var(--border));
+          border-radius: 9999px;
+          background: var(--accent);
+          color: #fff;
+          font-size: 13px;
+          font-weight: 700;
+          box-shadow: 0 18px 52px rgba(0, 0, 0, 0.28);
+        }
+        .intel-ask-panel {
+          position: fixed;
+          right: 24px;
+          bottom: 82px;
+          z-index: 56;
+          width: min(420px, calc(100vw - 32px));
+          max-height: min(620px, calc(100vh - 112px));
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+          border: 1px solid var(--border);
+          border-radius: 18px;
+          background: var(--bg-elevated);
+          box-shadow: 0 26px 80px rgba(0, 0, 0, 0.36);
+        }
+        .intel-ask-header {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 14px;
+          padding: 16px 18px;
+          border-bottom: 1px solid var(--border);
+        }
+        .intel-ask-header p {
+          margin-top: 5px;
+          color: var(--text-muted);
+          font-size: 12px;
+          line-height: 1.4;
+        }
+        .intel-ask-header button {
+          display: inline-flex;
+          width: 32px;
+          height: 32px;
+          align-items: center;
+          justify-content: center;
+          border: 1px solid var(--border);
+          border-radius: 9999px;
+          background: var(--surface);
+          color: var(--text-muted);
+        }
+        .intel-ask-suggestions {
+          display: grid;
+          gap: 8px;
+          padding: 14px 18px;
+        }
+        .intel-ask-suggestions button {
+          min-height: 38px;
+          padding: 8px 11px;
+          border: 1px solid var(--border);
+          border-radius: 10px;
+          background: var(--surface);
+          color: var(--text-muted);
+          font-size: 12px;
+          text-align: left;
+        }
+        .intel-ask-suggestions button:hover:not(:disabled) {
+          border-color: var(--accent);
+          color: var(--text);
+        }
+        .intel-ask-messages {
+          min-height: 120px;
+          max-height: 360px;
+          overflow-y: auto;
+          padding: 14px 18px;
+        }
+        .intel-ask-message {
+          margin-bottom: 12px;
+          padding: 11px 13px;
+          border: 1px solid var(--border);
+          border-radius: 12px;
+          background: var(--surface);
+        }
+        .intel-ask-message--assistant {
+          border-left: 3px solid var(--accent);
+          background: transparent;
+        }
+        .intel-ask-message .kicker {
+          margin-bottom: 5px;
+          color: var(--accent);
+        }
+        .intel-ask-message p {
+          margin: 0;
+          color: var(--text-muted);
+          font-size: 13px;
+          line-height: 1.55;
+          white-space: pre-wrap;
+        }
+        .intel-ask-loading {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 10px 13px;
+          color: var(--text-soft);
+          font-size: 11px;
+        }
+        .intel-ask-input-row {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 12px;
+          border-top: 1px solid var(--border);
+          background: var(--surface);
+        }
+        .intel-ask-input-row input {
+          min-width: 0;
+          flex: 1;
+          height: 38px;
+          border: 1px solid var(--border);
+          border-radius: 10px;
+          background: var(--bg-elevated);
+          color: var(--text);
+          font-size: 13px;
+          outline: none;
+          padding: 0 12px;
+        }
+        .intel-ask-input-row button {
+          display: inline-flex;
+          width: 38px;
+          height: 38px;
+          align-items: center;
+          justify-content: center;
+          border: 1px solid var(--border);
+          border-radius: 10px;
+          background: ${input.trim() ? 'var(--accent)' : 'var(--bg-elevated)'};
+          color: ${input.trim() ? '#fff' : 'var(--text-soft)'};
+        }
+        .intel-ask-input-row button:disabled {
+          cursor: default;
+          opacity: 0.62;
+        }
+        @media (max-width: 640px) {
+          .intel-ask-fab {
+            right: 16px;
+            bottom: 16px;
+          }
+          .intel-ask-panel {
+            right: 12px;
+            bottom: 72px;
+            width: calc(100vw - 24px);
+          }
+        }
+      `}</style>
+    </>
   )
 }

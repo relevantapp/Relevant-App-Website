@@ -32,7 +32,8 @@ const PdfExportSheet = forwardRef<HTMLDivElement, PdfExportSheetProps>(function 
         <div
           ref={ref}
           data-theme="light"
-          className="intel-pdf-sheet w-[1080px] bg-[var(--canvas)] px-8 py-8 text-[var(--text)]"
+          className="intel-pdf-sheet w-[1080px] px-8 py-8 text-[var(--text)]"
+          style={{ background: '#f8f9fa' }}
         >
           {title ? (
             <div className="mb-6 border-b border-[var(--border)] pb-4">

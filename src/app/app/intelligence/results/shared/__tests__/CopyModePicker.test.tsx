@@ -8,31 +8,57 @@ import CopyModePicker from '../CopyModePicker'
 import { meetingPrepFixture } from '../../__fixtures__/meeting-prep.fixture'
 
 const toPngMock = vi.fn().mockResolvedValue('data:image/png;base64,pdf-test')
+const pdfMock = vi.hoisted(() => ({
+  addImage: vi.fn(),
+  save: vi.fn(),
+  jsPDF: vi.fn(),
+}))
 
 vi.mock('html-to-image', () => ({
   toPng: (...args: unknown[]) => toPngMock(...args),
 }))
 
-afterEach(() => cleanup())
+vi.mock('jspdf', () => ({
+  jsPDF: function jsPDF(...args: unknown[]) {
+    return pdfMock.jsPDF(...args)
+  },
+}))
+
+afterEach(() => {
+  cleanup()
+  vi.unstubAllGlobals()
+})
 
 describe('CopyModePicker', () => {
   const exportNode = document.createElement('div')
   const pdfNode = document.createElement('div')
   const exportRef = { current: exportNode }
   const pdfRef = { current: pdfNode }
-  let openSpy: ReturnType<typeof vi.spyOn>
 
   beforeEach(() => {
     toPngMock.mockClear()
-    openSpy = vi.spyOn(window, 'open').mockImplementation(() => ({
-      document: {
-        write: vi.fn(),
-        close: vi.fn(),
+    pdfMock.addImage.mockClear()
+    pdfMock.save.mockClear()
+    pdfMock.jsPDF.mockClear()
+    pdfMock.jsPDF.mockReturnValue({
+      internal: {
+        pageSize: {
+          getWidth: () => 842,
+          getHeight: () => 595,
+        },
       },
-      focus: vi.fn(),
-      print: vi.fn(),
-      close: vi.fn(),
-    }) as unknown as Window)
+      addImage: pdfMock.addImage,
+      save: pdfMock.save,
+    })
+    vi.stubGlobal('Image', class {
+      width = 1200
+      height = 630
+      onload: (() => void) | null = null
+      onerror: (() => void) | null = null
+      set src(_value: string) {
+        setTimeout(() => this.onload?.(), 0)
+      }
+    })
     Object.assign(navigator, {
       clipboard: {
         writeText: vi.fn(),
@@ -44,18 +70,41 @@ describe('CopyModePicker', () => {
     render(<CopyModePicker brief={meetingPrepFixture} exportRef={exportRef} pdfRef={pdfRef} />)
 
     fireEvent.click(screen.getByRole('button', { name: /copy as/i }))
-    fireEvent.click(screen.getByRole('button', { name: /export as pdf/i }))
+    fireEvent.click(screen.getByRole('menuitem', { name: /export as pdf/i }))
 
     await waitFor(() => {
       expect(toPngMock).toHaveBeenCalledWith(pdfNode, expect.objectContaining({
         cacheBust: true,
         pixelRatio: 2,
       }))
-      expect(openSpy).toHaveBeenCalledTimes(1)
+      expect(pdfMock.addImage).toHaveBeenCalledTimes(1)
+      expect(pdfMock.save).toHaveBeenCalledWith(expect.stringMatching(/\.pdf$/))
     })
+  })
 
-    const popup = openSpy.mock.results[0]?.value
-    expect(popup.document.write).toHaveBeenCalledWith(expect.stringContaining('@page { size: landscape; margin: 12mm; }'))
-    expect(popup.document.write).toHaveBeenCalledWith(expect.stringContaining('data:image/png;base64,pdf-test'))
+  it('keeps PDF export visible as a top-level action', async () => {
+    render(<CopyModePicker brief={meetingPrepFixture} exportRef={exportRef} pdfRef={pdfRef} />)
+
+    fireEvent.click(screen.getByRole('button', { name: /save pdf/i }))
+
+    await waitFor(() => {
+      expect(toPngMock).toHaveBeenCalledWith(pdfNode, expect.objectContaining({
+        cacheBust: true,
+        pixelRatio: 2,
+      }))
+      expect(pdfMock.save).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  it('copies the whole brief from the copy menu', async () => {
+    render(<CopyModePicker brief={meetingPrepFixture} exportRef={exportRef} pdfRef={pdfRef} />)
+
+    fireEvent.click(screen.getByRole('button', { name: /copy as/i }))
+    fireEvent.click(screen.getByRole('menuitem', { name: /whole brief/i }))
+
+    await waitFor(() => {
+      expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expect.stringContaining('## Sources'))
+      expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expect.stringContaining(meetingPrepFixture.headline))
+    })
   })
 })
