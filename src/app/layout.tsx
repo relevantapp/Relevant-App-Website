@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next'
+import { Analytics } from '@vercel/analytics/next'
 import { IBM_Plex_Mono, Inter, Space_Grotesk } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from '@/context/AuthContext'
@@ -133,6 +134,7 @@ export default function RootLayout({
             {children}
           </AuthGuard>
         </AuthProvider>
+        <Analytics />
       </body>
     </html>
   )
