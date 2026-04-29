@@ -114,24 +114,23 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="grid min-h-screen lg:grid-cols-2">
+    <div className="auth-page-shell">
       {/* Left showcase panel */}
-      <div className="relative hidden lg:flex flex-col items-center justify-center overflow-hidden bg-[#08080a]">
-        <div className="pointer-events-none absolute inset-0" style={{
-          background: 'radial-gradient(ellipse 60% 50% at 50% 60%, rgba(99,102,241,0.18) 0%, transparent 70%), radial-gradient(ellipse 50% 40% at 30% 80%, rgba(168,85,247,0.12) 0%, transparent 60%)',
-        }} />
-        <div className="relative z-10 w-[260px] drop-shadow-2xl">
+      <div className="auth-showcase">
+        <div className="auth-showcase__glow" />
+        <div className="auth-product-preview relative z-10">
           <Image
-            src="/relevant-feed-mobile.png"
-            alt="Relevant app feed"
-            width={520}
-            height={1040}
+            src="/marketing-screenshots/home-feed.png"
+            alt="Relevant mobile app professional signal feed"
+            width={1290}
+            height={2502}
+            sizes="(max-width: 1200px) 300px, 340px"
             priority
-            className="rounded-[2rem] border border-white/10"
+            className="auth-product-preview__image"
             style={{ width: '100%', height: 'auto' }}
           />
         </div>
-        <div className="relative z-10 mt-8 text-center px-8">
+        <div className="auth-showcase__copy">
           <h2 className="font-display text-xl font-bold text-white">
             Less noise. More clarity.
           </h2>
@@ -141,14 +140,14 @@ export default function SignupPage() {
         </div>
         <Link
           href="/"
-          className="absolute top-6 left-6 z-20 flex items-center gap-1.5 text-sm text-white/50 transition-colors hover:text-white/80"
+          className="auth-showcase__back"
         >
           <ArrowLeft size={16} /> Back to home
         </Link>
       </div>
 
       {/* Right form panel */}
-      <div className="flex items-start justify-center bg-[var(--bg)] px-5 py-8 sm:items-center sm:px-6 sm:py-12">
+      <div className="auth-form-panel flex items-start justify-center px-5 py-8 sm:items-center sm:px-6 sm:py-12">
         <motion.div {...fadeIn} className="w-full max-w-[420px] pt-2 sm:pt-0">
           <Link href="/" className="mb-6 flex items-center gap-2 text-sm text-[var(--text-muted)] transition-colors hover:text-[var(--text)] lg:hidden">
             <ArrowLeft size={16} /> Back to home

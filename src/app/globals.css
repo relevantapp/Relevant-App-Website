@@ -119,6 +119,154 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+.auth-page-shell {
+  display: grid;
+  min-height: 100svh;
+  background: var(--bg);
+}
+
+.auth-showcase {
+  position: relative;
+  display: none;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background:
+    linear-gradient(rgba(8, 13, 22, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(8, 13, 22, 0.04) 1px, transparent 1px),
+    #f7f8fb;
+  background-size: 46px 46px, 46px 46px, auto;
+  padding: clamp(32px, 5vw, 64px);
+}
+
+.auth-showcase__glow {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 62% 50% at 50% 58%, rgba(47, 128, 255, 0.12) 0%, transparent 72%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(247, 248, 251, 0.9));
+}
+
+.auth-showcase__copy {
+  position: relative;
+  z-index: 10;
+  max-width: 320px;
+  margin-top: clamp(22px, 3.2vh, 36px);
+  padding: 0 16px;
+  text-align: center;
+}
+
+.auth-showcase__copy h2 {
+  color: #090d14;
+}
+
+.auth-showcase__copy p {
+  color: #566274;
+}
+
+.auth-showcase__back {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(8, 13, 22, 0.55);
+  font-size: 0.875rem;
+  transition: color 160ms ease;
+}
+
+.auth-showcase__back:hover {
+  color: rgba(8, 13, 22, 0.82);
+}
+
+.auth-form-panel {
+  background: var(--bg);
+}
+
+.auth-product-preview {
+  width: min(clamp(218px, 22vw, 304px), 60vh);
+  max-width: min(70%, 304px);
+  padding: 12px;
+  border: 1px solid rgba(11, 18, 32, 0.08);
+  border-radius: 32px;
+  background:
+    radial-gradient(circle at 70% 10%, rgba(47, 128, 255, 0.1), transparent 14rem),
+    #f7f8fb;
+  box-shadow: 0 34px 90px rgba(0, 0, 0, 0.32);
+}
+
+.auth-product-preview__image {
+  display: block;
+  border-radius: 24px;
+}
+
+[data-theme="light"] .auth-showcase {
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.032) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.032) 1px, transparent 1px),
+    #07090d;
+  background-size: 46px 46px, 46px 46px, auto;
+}
+
+[data-theme="light"] .auth-showcase__glow {
+  background:
+    radial-gradient(ellipse 62% 50% at 50% 58%, rgba(47, 128, 255, 0.2) 0%, transparent 72%),
+    linear-gradient(180deg, rgba(9, 11, 15, 0.94), rgba(5, 6, 9, 0.98));
+}
+
+[data-theme="light"] .auth-showcase__copy h2 {
+  color: #ffffff;
+}
+
+[data-theme="light"] .auth-showcase__copy p {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+[data-theme="light"] .auth-showcase__back {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+[data-theme="light"] .auth-showcase__back:hover {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+@media (min-width: 1024px) {
+  .auth-page-shell {
+    grid-template-columns: minmax(0, 1fr) minmax(420px, 0.86fr);
+  }
+
+  .auth-showcase {
+    display: flex;
+  }
+}
+
+@media (min-width: 1440px) {
+  .auth-page-shell {
+    grid-template-columns: minmax(0, 1.08fr) minmax(480px, 0.92fr);
+  }
+}
+
+@media (max-height: 760px) and (min-width: 1024px) {
+  .auth-product-preview {
+    width: min(clamp(196px, 20vw, 250px), 54vh);
+    padding: 10px;
+    border-radius: 28px;
+  }
+
+  .auth-product-preview__image {
+    border-radius: 22px;
+  }
+
+  .auth-showcase__copy {
+    margin-top: 18px;
+  }
+}
+
 /* GPU-accelerate transitions used on auth pages and signal page */
 .sp-hero-img,
 .sp-pill-btn,
@@ -12176,6 +12324,8 @@ body:has(.signal-home) {
   font-weight: 850;
   line-height: 0.9;
   text-wrap: balance;
+  max-width: 100%;
+  overflow-wrap: normal;
 }
 
 .signal-hero__copy h1 {
@@ -12776,15 +12926,16 @@ body:has(.signal-home) {
 .signal-trust-grid,
 .signal-compare-grid {
   display: grid;
-  grid-template-columns: minmax(0, 0.78fr) minmax(360px, 1fr);
-  gap: clamp(36px, 6vw, 88px);
+  grid-template-columns: minmax(320px, 0.72fr) minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 72px);
   align-items: center;
 }
 
 .signal-section__copy h2,
 .signal-desk-section__copy h2,
 .signal-final-card__copy h2 {
-  font-size: clamp(2.7rem, 5.5vw, 6rem);
+  font-size: clamp(2.55rem, 4.25vw, 4.85rem);
+  line-height: 0.96;
 }
 
 .signal-inline-cta {
@@ -15082,8 +15233,8 @@ body:has(.signal-home) {
 
 .signal-compare-shell {
   display: grid;
-  grid-template-columns: minmax(290px, 0.72fr) minmax(0, 1.28fr);
-  gap: clamp(28px, 5vw, 72px);
+  grid-template-columns: minmax(360px, 0.82fr) minmax(0, 1.18fr);
+  gap: clamp(24px, 4vw, 56px);
   align-items: stretch;
   padding: clamp(24px, 3.2vw, 42px);
   border: 1px solid var(--signal-line);
@@ -15103,12 +15254,12 @@ body:has(.signal-home) {
 
 .signal-compare-copy h2 {
   margin: 14px 0 0;
-  max-width: 560px;
+  max-width: 100%;
   color: var(--signal-text);
   font-family: var(--font-display), system-ui, sans-serif;
-  font-size: clamp(2.55rem, 4.9vw, 5.5rem);
+  font-size: clamp(2.35rem, 3.55vw, 4.25rem);
   font-weight: 850;
-  line-height: 0.94;
+  line-height: 0.98;
   text-wrap: balance;
 }
 
@@ -16461,6 +16612,120 @@ body:has(.signal-home) {
   line-height: 1.55;
 }
 
+.signal-access-panel {
+  align-content: start;
+  gap: 20px;
+  min-height: 0;
+}
+
+.signal-ios-access {
+  display: grid;
+  gap: 8px;
+}
+
+.signal-ios-access p {
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.signal-android-access {
+  display: grid;
+  gap: 12px;
+  padding-top: 18px;
+  border-top: 1px solid var(--signal-line);
+}
+
+.signal-android-access h3 {
+  margin: 0;
+  color: var(--signal-text);
+  font-size: clamp(1.3rem, 2.1vw, 1.8rem);
+  line-height: 1.05;
+}
+
+.signal-android-access p {
+  margin: 8px 0 0;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.signal-android-access input {
+  width: 100%;
+  min-height: 50px;
+  border: 1px solid var(--signal-line);
+  border-radius: 14px;
+  background: var(--signal-app-control);
+  color: var(--signal-text);
+  padding: 0 14px;
+  font: inherit;
+  box-shadow: none;
+}
+
+.signal-android-access input::placeholder {
+  color: var(--signal-soft);
+}
+
+.signal-android-access input:focus {
+  border-color: var(--signal-blue);
+  outline: none;
+}
+
+.signal-android-access input:invalid {
+  box-shadow: none;
+}
+
+.signal-android-access button,
+.signal-android-steps a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: 0 16px;
+  font: inherit;
+  font-weight: 850;
+}
+
+.signal-android-access button {
+  background: var(--signal-blue-strong);
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.signal-android-access button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.signal-android-access__status {
+  margin-top: 0 !important;
+  color: var(--signal-soft) !important;
+  font-size: 0.86rem !important;
+}
+
+.signal-android-steps {
+  display: grid;
+  gap: 10px;
+}
+
+.signal-android-steps a {
+  border-color: var(--signal-line-strong);
+  background: var(--signal-panel);
+  color: var(--signal-text);
+}
+
+.signal-android-steps p {
+  margin: 2px 0 0;
+  color: var(--signal-soft);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.signal-inline-cta--android {
+  margin-top: 12px;
+}
+
 @keyframes signal-marquee {
   from {
     transform: translateX(0);
@@ -16791,11 +17056,36 @@ body:has(.signal-home) {
   background: var(--signal-app-control) !important;
 }
 
+.signal-home .signal-app-marquee,
+.signal-home .signal-hero-visual::before,
+.signal-home .signal-hero-scan-field {
+  border-color: var(--signal-app-control-border) !important;
+  background:
+    linear-gradient(180deg, rgba(12, 14, 19, 0.96), rgba(7, 9, 13, 0.98)),
+    #080a0f !important;
+  box-shadow:
+    0 18px 60px rgba(0, 0, 0, 0.32),
+    var(--signal-app-inset-shadow) !important;
+}
+
+.signal-home .signal-app-marquee,
+.signal-home .signal-hero-scan-field {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.signal-home .signal-hero-headline-cloud span,
+.signal-home .signal-hero-context-pill,
+.signal-home .signal-publisher-wordmark {
+  border-color: var(--signal-app-control-border) !important;
+  background: var(--signal-app-control) !important;
+}
+
 .signal-home .signal-final-card {
   border-color: var(--signal-line) !important;
   background:
-    linear-gradient(180deg, var(--signal-panel-strong), var(--signal-panel)),
-    var(--signal-panel) !important;
+    linear-gradient(180deg, rgba(25, 27, 32, 0.98), rgba(13, 15, 20, 0.98)),
+    #0d0f14 !important;
   box-shadow: var(--signal-shadow) !important;
 }
 
@@ -16807,6 +17097,34 @@ body:has(.signal-home) {
 
 .signal-home .signal-app-store-panel > span {
   color: var(--signal-muted) !important;
+}
+
+[data-theme="light"] .signal-home .signal-hero-visual::before {
+  border-color: rgba(8, 13, 22, 0.1) !important;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(238, 243, 249, 0.78)),
+    #f7f8fb !important;
+  box-shadow:
+    0 36px 90px rgba(34, 45, 62, 0.13),
+    var(--signal-app-inset-shadow) !important;
+}
+
+[data-theme="light"] .signal-home .signal-hero-scan-field {
+  border-color: rgba(8, 13, 22, 0.12) !important;
+  background: rgba(255, 255, 255, 0.74) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.82),
+    0 22px 70px rgba(34, 45, 62, 0.12) !important;
+}
+
+[data-theme="light"] .signal-home .signal-final-card {
+  border-color: rgba(8, 13, 22, 0.1) !important;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(247, 248, 251, 0.94)),
+    #f7f8fb !important;
+  box-shadow:
+    0 28px 80px rgba(34, 45, 62, 0.13),
+    var(--signal-app-inset-shadow) !important;
 }
 
 [data-theme="light"] .signal-home .signal-nav__inner,

@@ -11,8 +11,8 @@ export const siteConfig = {
 export const heroContent = {
   headline: "You shouldn't need to read the news just to stay sharp at work.",
   subheadline: 'Relevant turns market noise into clear, role-aware signals.',
-  cta: 'Get Relevant',
-  microcopy: 'The app is live. Get Relevant from the App Store.',
+  cta: 'Get iOS access',
+  microcopy: 'The iOS app is live. Android is in closed testing.',
 }
 
 export const problemContent = {
@@ -98,9 +98,9 @@ export const whoItsForContent = {
 
 export const waitlistContent = {
   title: 'You have better things to do than read the news.',
-  subtext: 'The app is live. Get Relevant from the App Store.',
-  cta: 'Get Relevant',
-  mobileNote: 'Download from the App Store.',
+  subtext: 'Get iOS access now, or join the Android closed test.',
+  cta: 'Get iOS access',
+  mobileNote: 'iOS is live. Android is in closed testing.',
   microcopy: 'Set your work context and start with sharper signals.',
 }
 
@@ -118,7 +118,7 @@ export const navLinks = [
   { label: 'How it works', href: '#how-it-works' },
   { label: 'Features', href: '#features' },
   { label: 'Pricing', href: '#pricing' },
-  { label: 'Get Relevant', href: 'https://apps.apple.com/app/id6756225699' },
+  { label: 'Get iOS access', href: 'https://apps.apple.com/app/id6756225699' },
 ]
 
 export const footerLinks = [

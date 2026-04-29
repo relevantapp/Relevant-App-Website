@@ -21,7 +21,7 @@ import {
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { type CSSProperties, MouseEvent, useEffect, useState } from 'react'
+import { type CSSProperties, type FormEvent, type MouseEvent, useEffect, useState } from 'react'
 import BrandMark from '@/components/BrandMark'
 
 type ThemeMode = 'dark' | 'light'
@@ -35,6 +35,8 @@ type ScreenshotSurface = {
 }
 
 const APP_STORE_URL = 'https://apps.apple.com/app/id6756225699'
+const ANDROID_GROUP_URL = 'https://groups.google.com/g/relevant-app/'
+const ANDROID_PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.relevant.news'
 
 const promiseCards = [
   {
@@ -487,6 +489,10 @@ export default function Home() {
   const [theme, setTheme] = useState<ThemeMode>('dark')
   const [navScrolled, setNavScrolled] = useState(false)
   const [navHidden, setNavHidden] = useState(false)
+  const [androidEmail, setAndroidEmail] = useState('')
+  const [androidSubmitting, setAndroidSubmitting] = useState(false)
+  const [androidAccessReady, setAndroidAccessReady] = useState(false)
+  const [androidStatus, setAndroidStatus] = useState('')
   const currentYear = new Date().getFullYear()
 
   useEffect(() => {
@@ -557,6 +563,40 @@ export default function Home() {
     window.history.pushState(null, '', hash)
   }
 
+  const handleAndroidAccess = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const email = androidEmail.trim().toLowerCase()
+
+    if (!email) {
+      setAndroidStatus('Enter the Google email you will use on Play Store.')
+      return
+    }
+
+    setAndroidSubmitting(true)
+    setAndroidStatus('')
+
+    try {
+      const response = await fetch('/api/android-test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, source: 'homepage-android-access' }),
+      })
+      const result = await response.json().catch(() => ({}))
+
+      if (!response.ok) {
+        setAndroidStatus(result.error || 'That did not go through. Try again.')
+        return
+      }
+
+      setAndroidAccessReady(true)
+      setAndroidStatus(result.message || 'Email saved. Use the same Google account for both steps.')
+    } catch {
+      setAndroidStatus('That did not go through. Try again.')
+    } finally {
+      setAndroidSubmitting(false)
+    }
+  }
+
   return (
     <div className="signal-home">
       <nav className={`signal-nav${navScrolled ? ' is-scrolled' : ''}${navHidden ? ' is-hidden' : ''}`} aria-label="Primary navigation">
@@ -596,7 +636,8 @@ export default function Home() {
             <div className="signal-app-marquee__group" key={group}>
               <span>The app is live</span>
               <span>Free early access</span>
-              <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">Get Relevant</a>
+              <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">Get iOS access</a>
+              <a href="#android-access" onClick={handleAnchorClick}>Get Android access</a>
               <span>More clarity. Less noise.</span>
             </div>
           ))}
@@ -614,7 +655,8 @@ export default function Home() {
               </p>
               <div className="signal-hero__actions">
                 <a href="/signup" className="signal-button signal-button--primary">Get started</a>
-                <a href={APP_STORE_URL} className="signal-button signal-button--secondary" target="_blank" rel="noopener noreferrer">Download on the App Store</a>
+                <a href={APP_STORE_URL} className="signal-button signal-button--secondary" target="_blank" rel="noopener noreferrer">Get iOS access</a>
+                <a href="#android-access" className="signal-button signal-button--secondary" onClick={handleAnchorClick}>Get Android access</a>
               </div>
               <p className="signal-hero__micro">
                 Free early access. Built for decisions, not scrolling.
@@ -645,9 +687,12 @@ export default function Home() {
                 Open the app, set your work context, and get the few signals that matter to your role: competitors, customers, markets, policy, technology, people, and companies you care about.
               </p>
               <a href={APP_STORE_URL} className="signal-inline-cta" target="_blank" rel="noopener noreferrer">
-                Download the app <ArrowRight size={16} />
+                Get iOS access <ArrowRight size={16} />
               </a>
-              <p className="signal-cta-note">Free early access on iPhone.</p>
+              <a href="#android-access" className="signal-inline-cta signal-inline-cta--android" onClick={handleAnchorClick}>
+                Get Android access <ArrowRight size={16} />
+              </a>
+              <p className="signal-cta-note">Free early access on iPhone and Android closed testing.</p>
             </div>
 
             <div className="signal-phone-stage signal-reveal">
@@ -684,6 +729,9 @@ export default function Home() {
               <h2 id="desk-title">What decision are you preparing for?</h2>
               <p>
                 Pick the job. Give Relevant a short brief. Get ranked evidence, role-aware judgment, and the next moves you can use.
+              </p>
+              <p>
+                Intelligence Desk is web-only for now, built for the deeper work that needs a full browser: meeting prep, market questions, competitor moves, and business cases.
               </p>
               <div className="signal-stat-grid" aria-label="Intelligence Desk stats">
                 <StatCard label="Workflows" value="04" detail="meeting, competitor, market, case" />
@@ -776,7 +824,10 @@ export default function Home() {
               </p>
               <div className="signal-compare-actions">
                 <a href={APP_STORE_URL} className="signal-button signal-button--primary" target="_blank" rel="noopener noreferrer">
-                  Download the app <ArrowRight size={16} />
+                  Get iOS access <ArrowRight size={16} />
+                </a>
+                <a href="#android-access" className="signal-button signal-button--secondary" onClick={handleAnchorClick}>
+                  Get Android access
                 </a>
                 <a href="/signup" className="signal-button signal-button--secondary">
                   Get started
@@ -827,16 +878,55 @@ export default function Home() {
                 Relevant gives you the professional awareness layer your role deserves: daily signals when the world changes, and on-demand intelligence when a decision is coming.
               </p>
               <div className="signal-hero__actions">
-                <a href={APP_STORE_URL} className="signal-button signal-button--primary" target="_blank" rel="noopener noreferrer">Download the app</a>
+                <a href={APP_STORE_URL} className="signal-button signal-button--primary" target="_blank" rel="noopener noreferrer">Get iOS access</a>
+                <a href="#android-access" className="signal-button signal-button--secondary" onClick={handleAnchorClick}>Get Android access</a>
                 <a href="/signup" className="signal-button signal-button--secondary">Get started</a>
               </div>
               <p className="signal-hero__micro">Free early access. Fewer updates. Better judgment. Clearer next moves.</p>
             </div>
 
-            <div className="signal-app-store-panel">
-              <span>Free early access</span>
-              <AppStoreBadge />
-              <p>Set your work context once. Let the app surface the signals worth opening.</p>
+            <div id="android-access" className="signal-app-store-panel signal-access-panel">
+              <span>App access</span>
+              <div className="signal-ios-access">
+                <strong>iOS</strong>
+                <AppStoreBadge />
+                <p>iPhone access is live from the App Store.</p>
+              </div>
+
+              <form className="signal-android-access" onSubmit={handleAndroidAccess}>
+                <div>
+                  <strong>Android</strong>
+                  <h3>Get Android access</h3>
+                  <p>Enter the Google email you will use on Play Store. Then join the test group and open the Play Store link.</p>
+                </div>
+                <label>
+                  <span className="sr-only">Google email for Android closed test</span>
+                  <input
+                    type="email"
+                    value={androidEmail}
+                    onChange={(event) => setAndroidEmail(event.target.value)}
+                    placeholder="you@gmail.com"
+                    autoComplete="email"
+                    required
+                  />
+                </label>
+                <button type="submit" disabled={androidSubmitting}>
+                  {androidSubmitting ? 'Saving...' : 'Continue to Android'}
+                </button>
+                {androidStatus && <p className="signal-android-access__status">{androidStatus}</p>}
+              </form>
+
+              {androidAccessReady && (
+                <div className="signal-android-steps" aria-label="Android closed test steps">
+                  <a href={ANDROID_GROUP_URL} target="_blank" rel="noopener noreferrer">
+                    Join Google Group <ArrowRight size={15} />
+                  </a>
+                  <a href={ANDROID_PLAY_STORE_URL} target="_blank" rel="noopener noreferrer">
+                    Open Play Store <ArrowRight size={15} />
+                  </a>
+                  <p>Use the same Google account for both steps, then tap Become a tester in Google Play.</p>
+                </div>
+              )}
             </div>
           </div>
         </section>

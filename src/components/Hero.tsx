@@ -40,7 +40,7 @@ export default function Hero() {
 
         {/* Trust Text */}
         <p className="mt-6 text-sm animate-fade-in-up animation-delay-400" style={{ color: 'var(--text-soft)' }}>
-          The app is live. Get Relevant from the App Store.
+          Get iOS access now. Android is in closed testing.
         </p>
       </div>
     </section>

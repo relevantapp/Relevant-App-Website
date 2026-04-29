@@ -40,6 +40,7 @@ export const metadata: Metadata = {
   authors: [{ name: 'Relevant' }],
   creator: 'Relevant',
   publisher: 'Relevant',
+  manifest: '/site.webmanifest',
   robots: {
     index: true,
     follow: true,
@@ -52,8 +53,26 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: '/app-icon.png',
-    apple: '/app-icon.png',
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon.png', type: 'image/png', sizes: '1024x1024' },
+      {
+        url: '/favicon-light.png',
+        type: 'image/png',
+        sizes: '1024x1024',
+        media: '(prefers-color-scheme: light)',
+      },
+      {
+        url: '/favicon-dark.png',
+        type: 'image/png',
+        sizes: '1024x1024',
+        media: '(prefers-color-scheme: dark)',
+      },
+    ],
+    shortcut: '/favicon.ico',
+    apple: [
+      { url: '/apple-touch-icon.png', type: 'image/png', sizes: '180x180' },
+    ],
   },
   openGraph: {
     title: "The intelligence platform for people who can't miss what changed.",
@@ -91,7 +110,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   viewportFit: 'cover',
   themeColor: [
-    { media: '(prefers-color-scheme: dark)', color: '#07090d' },
+    { media: '(prefers-color-scheme: dark)', color: '#000000' },
     { media: '(prefers-color-scheme: light)', color: '#f7f8fb' },
   ],
 }
