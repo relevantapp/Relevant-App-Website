@@ -4,6 +4,7 @@ import { IBM_Plex_Mono, Inter, Space_Grotesk } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from '@/context/AuthContext'
 import AuthGuard from '@/components/app/AuthGuard'
+import { Analytics } from '@vercel/analytics/next'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
 const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-display' })
